@@ -32,24 +32,49 @@ import Leaveformadmin from '@/components/forms/Leaveformadmin'
 import axios, { AxiosError } from 'axios'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
+import { leaveType } from '@/types/data'
+import PaginitionComponent from '@/components/common/Pagination'
+import Spinner from '@/components/common/Spinner'
 
 
+type Leave = {
+  requestid: string
+  manager:  string
+  status:  string
+  name:  string
+  type: number,
+  leavestart:  string
+  leaveend:  string
+  
+}
+
+type Caculate = {
+  totalworkingdays:  number
+  inwellnessday: boolean
+  totalHoliday:  number
+  totalworkinghoursonleave:  number
+  workinghoursduringleave: number
+}
+
+type LeaveWithCalculation = Leave & Caculate;
 
 
 export default function Sickleavetable() {
   const [dialog, setDialog] = useState(false)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const [totalpage, setTotalpage] = useState(0)
+  const [currentpage, setCurrentpage] = useState(0)
 
   //list
-  const [searchemployee, setSearchEmployee] = useState('')
+  const [searchName, setSearchName] = useState('')
   const [list, setList]= useState([])
   useEffect(() => {
     setLoading(true)
     try {
       const timer = setTimeout(() => {
         const getList = async () => {
-          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/leave/superadminleaverequestlist?page=0&limit=10`,{
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/leave/superadminleaverequestlist?page=0&limit=10&status=Pending`,{
             withCredentials: true,
             headers: {
               'Content-Type': 'application/json'
@@ -100,7 +125,105 @@ export default function Sickleavetable() {
   }
     
     
-  },[searchemployee])
+  },[searchName])
+
+
+  const [leave, setLeave] = useState<LeaveWithCalculation[]>([])
+  const getCalculate = async (start: string, end: string): Promise<Caculate> => {
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/leave/calculateleavedays`, {
+        params: { startdate: start, enddate: end },
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      return response.data.data as Caculate;
+    } catch (error) {
+      
+      // Provide default values for Caculate if the API call fails
+      return {
+        totalworkingdays: 0,
+        inwellnessday: false,
+        totalHoliday: 0,
+        totalworkinghoursonleave: 0,
+        workinghoursduringleave: 0,
+      };
+    }
+  };
+
+  //leave list
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const fetchLeaveData = async () => {
+        setLoading(true);
+        try {
+          const response = await axios.get(
+            `${process.env.NEXT_PUBLIC_API_URL}/leave/superadminleaverequestlist?page=${currentpage}&limit=10&status=Pending&employeenamefilter=${searchName}`,
+            {
+              withCredentials: true,
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+  
+          setTotalpage(response.data.data.totalpages)
+    
+          const leaveList: Leave[] = response.data.data.requestlist;
+    
+          // Fetch calculated data for each leave item in parallel
+          const leaveWithCalculations = await Promise.all(
+            leaveList.map(async (leave) => {
+              const calculateData = await getCalculate(leave.leavestart, leave.leaveend);
+              return {
+                ...leave, // merge original leave data
+                ...calculateData, // merge calculated data
+              };
+            })
+          );
+    
+          setLeave(leaveWithCalculations);
+          setLoading(false);
+        } catch (error) {
+          setLoading(false);
+    
+          if (axios.isAxiosError(error)) {
+            const axiosError = error as AxiosError<{ message: string; data: string }>;
+            if (axiosError.response) {
+              const status = axiosError.response.status;
+              const message = axiosError.response.data.data;
+              if (status === 401) {
+                toast.error(message);
+                router.push('/');
+              } else {
+                toast.error(message);
+              }
+            }
+          }
+        }
+      };
+    
+      fetchLeaveData();
+    }, 500)
+
+    return () => clearTimeout(timer)
+    
+  }, [currentpage, searchName]);
+
+  const findType = (id: number) => {
+    const find = leaveType.find((item) => item.id === id)
+
+    return find?.type
+  }
+
+
+  console.log(leave)
+
+  //paginition
+  const handlePageChange = (page: number) => {
+    setCurrentpage(page)
+  }
 
   return (
     <div className=' w-full h-full flex justify-center bg-secondary p-6 text-zinc-100'>
@@ -116,16 +239,25 @@ export default function Sickleavetable() {
           </div>
 
             <div className=' flex items-center gap-2'>
-                <Input placeholder='Search' type='text' className=' bg-primary h-[35px] text-zinc-100'/>
+                <Input value={searchName} onChange={(e) => setSearchName(e.target.value)} placeholder='Search' type='text' className=' bg-primary h-[35px] text-zinc-100'/>
                 <button className=' bg-red-700 px-8 py-2 rounded-sm text-xs'>Search</button>
             </div>
             
         </div>
 
         <Table className=' mt-4'>
+        {leave.length === 0 &&  
+          <TableCaption className=' text-xs text-zinc-500'>No data</TableCaption>
+          }
+          
+        {loading === true && (
+            <TableCaption className=' '>
+              <Spinner/>
+            </TableCaption>
+          )}
         <TableHeader>
             <TableRow>
-            <TableHead className=' text-xs' >Approved Timestamp</TableHead>
+            {/* <TableHead className=' text-xs' >Approved Timestamp</TableHead> */}
             <TableHead className=' text-xs'>Manager</TableHead>
             <TableHead className=' text-xs'>Status</TableHead>
             <TableHead className=' text-xs'>Name</TableHead>
@@ -137,77 +269,32 @@ export default function Sickleavetable() {
             <TableHead className=' text-xs'>In a Wellness Day Cycle?</TableHead>
             <TableHead className=' text-xs'>Total Working Hours on Leave</TableHead>
             <TableHead className=' text-xs'>Total Worked Hours during Leave</TableHead>
-            <TableHead className=' text-xs'>Total Hours for Payroll</TableHead>
+            {/* <TableHead className=' text-xs'>Total Hours for Payroll</TableHead> */}
             <TableHead className=' text-xs'>Action</TableHead>
             </TableRow>
         </TableHeader>
         <TableBody>
-          {list.map(() => (
-             <TableRow>
-             <TableCell className="font-medium">00001</TableCell>
-             <TableCell>Pending</TableCell>
-             <TableCell>Test</TableCell>
-             <TableCell>Test</TableCell>
-             <TableCell>Test</TableCell>
-             <TableCell>Test</TableCell>
-             <TableCell>Test</TableCell>
-             <TableCell>Test</TableCell>
-             <TableCell>Test</TableCell>
-             <TableCell>Test</TableCell>
-             <TableCell>Test</TableCell>
-             <TableCell>Test</TableCell>
-             <TableCell>16/08/24</TableCell>
+          {leave.map((item, index) => (
+             <TableRow key={index}>
+             <TableCell className="">{item.manager}</TableCell>
+             <TableCell>{item.status}</TableCell>
+             <TableCell>{item.name}</TableCell>
+             <TableCell>{findType(item.type)}</TableCell>
+             <TableCell>{item.leavestart}</TableCell>
+             <TableCell>{item.leaveend}</TableCell>
+             <TableCell>{item.totalworkingdays}</TableCell>
+             <TableCell>{item.totalHoliday}</TableCell>
+             <TableCell>{item.inwellnessday === true ? 'Yes' : 'No'}</TableCell>
+             <TableCell>{item.totalworkinghoursonleave.toFixed(2)}</TableCell>
+             <TableCell>{item.workinghoursduringleave.toFixed(2)}</TableCell>
+             {/* <TableCell>Test</TableCell> */}
+             {/* <TableCell>16/08/24</TableCell> */}
              <TableCell className="">
                <Leaveformadmin onClick={() => undefined}>
-                 {/* <Viewbtn disabled={false} onClick={() => undefined} name='Approved / Deny'/> */}
+                 
                    <button className=' whitespace-nowrap bg-red-700 text-white text-xs p-2 rounded-sm'>Approved / Denied</button>
-               </Leaveformadmin>
-               {/* <Dialog open={dialog} onOpenChange={setDialog}>
-                   <DialogTrigger>
-                     <Viewbtn onClick={() => undefined} name='View'/>
-                   </DialogTrigger>
-                   <DialogContent className=' bg-secondary border-none text-zinc-100 grid grid-cols-1 lg:grid-cols-[250px,1fr]'>
-                     <div className=' bg-blue-400 lg:block hidden'
-                     style={{backgroundImage: `url('/bg2.png')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat:"no-repeat"}}
-                     
-                     >
-                       <p className=' p-2 uppercase text-sm font-semibold mt-8 bg-gradient-to-r from-zinc-950 to-zinc-950/10'>Leave Request</p>
-                     </div>
- 
-                     <div className=' flex flex-col gap-2 p-4'>
-                      
-                     <div className=' flex flex-col '>
-                       <h2 className=' uppercase font-semibold text-sm'>Details</h2>
-                       <div className=' w-full flex items-start gap-8'>
-                         <div className=' flex flex-col gap-2 mt-4 text-xs'>
-                           <p className=' text-zinc-400'>Request by: <span className=' text-zinc-100'>Test Test</span></p>
-                           <p className=' text-zinc-400'>Start date: <span className=' text-zinc-100'>00/00/00</span></p>
-                           <p className=' text-zinc-400'>End date: <span className=' text-zinc-100'>00/00/00</span></p>
-                         </div>
- 
-                         <div className=' flex flex-col gap-2 mt-4 text-xs'>
-                           <p className=' text-zinc-400'>Data: <span className=' text-zinc-100'>Test Test</span></p>
-                           <p className=' text-zinc-400'>Data: <span className=' text-zinc-100'>Details</span></p>
-                           <p className=' text-zinc-400'>Data: <span className=' text-zinc-100'>Details</span></p>
-                         </div>
-                       </div>
-                       
- 
-                       <label htmlFor="" className=' mt-4 text-xs'>Reason:</label>
-                       <Textarea placeholder='Reason' className=' bg-primary border-none h-[200px] text-xs'/>
- 
-                     </div>
-                     
-                       <div className=' w-full flex items-end justify-end gap-2 mt-8'>
-                         <Actionbtn onClick={() => setDialog(false)} name='Close' color=' border-[1px] border-zinc-600'/>
-                         <Actionbtn onClick={() => undefined} name='Deny' color=' border-[1px] border-red-700'/>
-                         <Actionbtn onClick={() => undefined} name='Approve' color=' bg-red-700'/>
-                       </div>
- 
-                     </div>
-                     
-                   </DialogContent>
-                 </Dialog> */}
+                </Leaveformadmin>
+              
              </TableCell>
  
              </TableRow>
@@ -216,22 +303,9 @@ export default function Sickleavetable() {
         </TableBody>
         </Table>
 
-        <Pagination className=' mt-4'>
-        <PaginationContent>
-            <PaginationItem>
-            <PaginationPrevious href="#" />
-            </PaginationItem>
-            <PaginationItem>
-            <PaginationLink href="#">1</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-            <PaginationEllipsis />
-            </PaginationItem>
-            <PaginationItem>
-            <PaginationNext href="#" />
-            </PaginationItem>
-        </PaginationContent>
-        </Pagination>
+        {leave.length !== 0 && (
+        <PaginitionComponent currentPage={currentpage} total={totalpage} onPageChange={handlePageChange}/>
+        )}
       </div>
         
     </div>

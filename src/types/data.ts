@@ -1,3 +1,17 @@
+export const leaveType = [
+  {id:0, type:'Annual Leave'},
+  {id:1, type:'SickLleave'},
+  {id:2, type:'Careers Leave'},
+  {id:3, type:'Bereavement Leave'},
+  {id:4, type:'Study Leave'},
+  {id:5, type:'Long Service Leave'},
+  {id:6, type:'Anniversary Day'},
+  {id:7, type:'Paid Parental Leave'},
+  {id:8, type:'Time in Lieu'},
+  {id:9, type:'Leave without pay'},
+  {id:10, type:'Other Leave'},
+]
+
 export const Tabs = [
     {name: 'Show All'},
     {name: 'Nsw Cc'},

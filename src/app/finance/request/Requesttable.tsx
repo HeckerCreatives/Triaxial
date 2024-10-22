@@ -26,6 +26,7 @@ import Wfhform from '@/components/forms/Wfhform'
 import axios, { AxiosError } from 'axios'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
+import { leaveType } from '@/types/data'
 
 
 type Wellnessday = {
@@ -91,116 +92,88 @@ export default function Requesttable() {
   },[])
 
 
-  //leave
-  const [loading, setLoading] = useState(false)
-  const [leave, setLeave] = useState<LeaveWithCalculation[]>([])
-  useEffect(() => {
-    setLoading(true)
-    try {
-      const timer = setTimeout(() => {
-        const getList = async () => {
-          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/leave/employeeleaverequestlist?status=Pending&page=0&limit=10`,{
-            withCredentials: true,
-            headers: {
-              'Content-Type': 'application/json'
-              }
-          })
-      
-          setLeave(response.data.data.requestlist)
-          setLoading(false)
-
-        }
-        getList()
-      }, 500)
-      return () => clearTimeout(timer)
+//leave
+const [loading, setLoading] = useState(false)
+const [leave, setLeave] = useState<LeaveWithCalculation[]>([])
+const getCalculate = async (start: string, end: string): Promise<Caculate> => {
+  try {
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/leave/calculateleavedays`, {
+      params: { startdate: start, enddate: end },
+      withCredentials: true,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return response.data.data as Caculate;
   } catch (error) {
-      setLoading(false)
+    
+    // Provide default values for Caculate if the API call fails
+    return {
+      totalworkingdays: 0,
+      inwellnessday: false,
+      totalHoliday: 0,
+      totalworkinghoursonleave: 0,
+      workinghoursduringleave: 0,
+    };
+  }
+};
+
+useEffect(() => {
+  const fetchLeaveData = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/leave/employeeleaverequestlist?status=Pending&page=0&limit=10`,
+        {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      const leaveList: Leave[] = response.data.data.requestlist;
+
+      // Fetch calculated data for each leave item in parallel
+      const leaveWithCalculations = await Promise.all(
+        leaveList.map(async (leave) => {
+          const calculateData = await getCalculate(leave.startdate, leave.enddate);
+          return {
+            ...leave, // merge original leave data
+            ...calculateData, // merge calculated data
+          };
+        })
+      );
+
+      setLeave(leaveWithCalculations);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
 
       if (axios.isAxiosError(error)) {
-              const axiosError = error as AxiosError<{ message: string, data: string }>;
-              if (axiosError.response && axiosError.response.status === 401) {
-                  toast.error(`${axiosError.response.data.data}`)
-                  router.push('/')   
-              }
-
-              if (axiosError.response && axiosError.response.status === 400) {
-                  toast.error(`${axiosError.response.data.data}`)     
-                    
-              }
-
-              if (axiosError.response && axiosError.response.status === 402) {
-                  toast.error(`${axiosError.response.data.data}`)          
-                        
-              }
-
-              if (axiosError.response && axiosError.response.status === 403) {
-                  toast.error(`${axiosError.response.data.data}`)              
-                
-              }
-
-              if (axiosError.response && axiosError.response.status === 404) {
-                  toast.error(`${axiosError.response.data.data}`)             
-              }
-      } 
-    
-  }
-    
-    
-  },[])
-
-  const [data, setData] = useState<LeaveWithCalculation[]>([])
-
-
-  const getCalculate = async (start: string, end: string): Promise<Caculate> => {
-    try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/leave/calculateleavedays`, {
-        params: { startdate: start, enddate: end },
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      return response.data.data as Caculate;
-    } catch (error) {
-      
-      // Provide default values for Caculate if the API call fails
-      return {
-        totalworkingdays: 0,
-        inwellnessday: false,
-        totalHoliday: 0,
-        totalworkinghoursonleave: 0,
-        workinghoursduringleave: 0,
-      };
+        const axiosError = error as AxiosError<{ message: string; data: string }>;
+        if (axiosError.response) {
+          const status = axiosError.response.status;
+          const message = axiosError.response.data.data;
+          if (status === 401) {
+            toast.error(message);
+            router.push('/');
+          } else {
+            toast.error(message);
+          }
+        }
+      }
     }
   };
 
-// Merging function
-// const calculateAndMergeLeaves = async () => {
-//   try {
-//     const mergedResults: LeaveWithCalculation[] = await Promise.all(
-//       leave.map(async (item) => {
-//         // Get calculation data or default values
-//         const calculation = await getCalculate(item.startdate, item.enddate);
+  fetchLeaveData();
+}, []);
 
-//         // Merge and return Leave and Caculate objects
-//         return { ...item, ...calculation };
-//       })
-//     );
+const findType = (id: number) => {
+  const find = leaveType.find((item) => item.id === id)
 
-//     // Set the merged data to the state or do something with it
-//     setLeave(mergedResults);
-//   } catch (error) {
-//     console.error('Error merging leave and calculations', error);
-//   }
-// };
-
-
-// useEffect(() => {
-//   if (leave.length > 0) {
-//     calculateAndMergeLeaves();
-//   }
-// }, [leave]);
-
+  return find?.type
+}
 
 
 
@@ -350,12 +323,12 @@ export default function Requesttable() {
           <TableBody>
             {leave.map(( item, index) => (
               <TableRow key={index}>
-              <TableCell className="font-medium">{item.type}</TableCell>
+              <TableCell className="font-medium">{findType(item.type)}</TableCell>
               <TableCell>{item.startdate}</TableCell>
               <TableCell>{item.enddate}</TableCell>
               <TableCell>{item.totalworkingdays}</TableCell>
               <TableCell>{item.totalHoliday}</TableCell>
-              <TableCell>{item.inwellnessday}</TableCell>
+              <TableCell>{item.inwellnessday === true ? 'Yes' : 'No'}</TableCell>
               <TableCell>{item.totalworkinghoursonleave}</TableCell>
               <TableCell>{item.workinghoursduringleave}</TableCell>
               <TableCell>{item.status}</TableCell>
