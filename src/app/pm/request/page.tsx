@@ -13,11 +13,12 @@ import Breadcrumbdb from '@/components/common/Breadcrumb'
 import EmployeeLayout from '@/components/layout/EmployeeLayout'
 import { Requestcards } from './Requestcards'
 import Requestable from './Requesttable'
+import PmLayout from '@/components/layout/PmLayout'
 
 
 export default function page() {
   return (
-    <EmployeeLayout>
+    <PmLayout>
       <div className=' absolute p-6 top-0 left-0 w-full h-[150px] bg-zinc-800'
       style={{backgroundImage: `url('/dbbg.png')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat:"no-repeat"}}
       >
@@ -26,6 +27,6 @@ export default function page() {
       </div>
       <Requestcards/>
       <Requestable/>
-    </EmployeeLayout>
+    </PmLayout>
   )
 }

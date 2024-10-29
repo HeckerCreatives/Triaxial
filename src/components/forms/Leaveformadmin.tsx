@@ -15,6 +15,9 @@ import { Textarea } from '../ui/textarea'
 import { Checkbox } from '../ui/checkbox'
 import { Plus } from 'lucide-react'
 import { leaveType } from '@/types/data'
+import axios, { AxiosError } from 'axios'
+import toast from 'react-hot-toast'
+import { useRouter } from 'next/navigation'
 
 
 interface Data {
@@ -47,6 +50,10 @@ interface Data {
 
 export default function Leaveformadmin( prop: Data) {
   const [dialog, setDialog] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [loading1, setLoading1] = useState(false)
+  const [comments, setComments] = useState('')
+  const router = useRouter()
 
   const findType = (id: number) => {
     const find = leaveType.find((item) => item.id === id)
@@ -54,14 +61,150 @@ export default function Leaveformadmin( prop: Data) {
     return find?.type
   }
 
+  const approved = async () => {
+    setLoading(true)
+    try {
+      const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/leave/superadminprocessleaverequest`,{
+      requestid: prop.requestid,
+      status: "Approved",
+      comment : comments
+       
+      },
+          {
+              withCredentials: true,
+              headers: {
+              'Content-Type': 'application/json'
+              }
+          }
+      )
+
+    const response = await toast.promise(request, {
+        loading: 'Approving leave request....',
+        success: `Successfully approved`,
+        error: 'Error while approving leave request',
+    });
+
+   if(response.data.message === 'success'){
+    
+     setDialog(false)
+     router.push('?state=false')
+     setLoading(false)
+
+   }
+
+   console.log(response)
+
+ 
+     
+  } catch (error) {
+      setLoading(false)
+
+       if (axios.isAxiosError(error)) {
+              const axiosError = error as AxiosError<{ message: string, data: string }>;
+              if (axiosError.response && axiosError.response.status === 401) {
+                  toast.error(`${axiosError.response.data.data}`) 
+                  router.push('/')    
+              }
+
+              if (axiosError.response && axiosError.response.status === 400) {
+                  toast.error(`${axiosError.response.data.data}`)     
+                     
+              }
+
+              if (axiosError.response && axiosError.response.status === 402) {
+                  toast.error(`${axiosError.response.data.data}`)          
+                         
+              }
+
+              if (axiosError.response && axiosError.response.status === 403) {
+                  toast.error(`${axiosError.response.data.data}`)              
+                 
+              }
+
+              if (axiosError.response && axiosError.response.status === 404) {
+                  toast.error(`${axiosError.response.data.data}`)             
+              }
+      } 
+     
+  }
+  }
+
+  const reject = async () => {
+    setLoading1(true)
+    try {
+      const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/leave/superadminprocessleaverequest`,{
+      requestid: prop.requestid,
+      status: "Rejected",
+      comment : comments
+       
+      },
+          {
+              withCredentials: true,
+              headers: {
+              'Content-Type': 'application/json'
+              }
+          }
+      )
+
+    const response = await toast.promise(request, {
+        loading: 'Approving leave request....',
+        success: `Successfully approved`,
+        error: 'Error while approving leave request',
+    });
+
+   if(response.data.message === 'success'){
+    
+     setDialog(false)
+     router.push('?state=false')
+     setLoading1(false)
+
+   }
+
+   console.log(response)
+
+ 
+     
+  } catch (error) {
+      setLoading1(false)
+
+       if (axios.isAxiosError(error)) {
+              const axiosError = error as AxiosError<{ message: string, data: string }>;
+              if (axiosError.response && axiosError.response.status === 401) {
+                  toast.error(`${axiosError.response.data.data}`) 
+                  router.push('/')    
+              }
+
+              if (axiosError.response && axiosError.response.status === 400) {
+                  toast.error(`${axiosError.response.data.data}`)     
+                     
+              }
+
+              if (axiosError.response && axiosError.response.status === 402) {
+                  toast.error(`${axiosError.response.data.data}`)          
+                         
+              }
+
+              if (axiosError.response && axiosError.response.status === 403) {
+                  toast.error(`${axiosError.response.data.data}`)              
+                 
+              }
+
+              if (axiosError.response && axiosError.response.status === 404) {
+                  toast.error(`${axiosError.response.data.data}`)             
+              }
+      } 
+     
+  }
+  }
+
   
   return (
-    <Dialog >
+    <Dialog open={dialog} onOpenChange={setDialog} >
     <DialogTrigger>
        {prop.children}
     </DialogTrigger>
     <DialogContent className=' max-h-[90%] overflow-y-auto'>
-      <form className=' w-full p-4 flex flex-col gap-4'>
+      <div className=' w-full p-4 flex flex-col gap-4'>
         <p className=' text-sm uppercase font-semibold text-red-700'>Leave request form</p>
         <div className=' w-full flex flex-col gap-1'>
           <p className=' text-xs font-semibold mb-2'>Employee Details</p>
@@ -188,12 +331,20 @@ export default function Leaveformadmin( prop: Data) {
           </div>
 
            <Label className=' mt-2 text-zinc-500'>Comments:</Label>
-          <Textarea placeholder='Please input text here' value={''} className=' text-xs bg-zinc-200'/>
+          <Textarea  placeholder='Please input text here' value={comments} onChange={(e) => setComments(e.target.value)} className=' text-xs bg-zinc-200'/>
 
 
           <div className=' flex items-center gap-4 mt-4'>
-            <button className=' border-[1px] border-red-700 px-4 py-2 text-xs rounded-sm mt-4 w-auto'>Deny</button>
-            <button className=' bg-red-700 text-zinc-100 px-4 py-2 text-xs rounded-sm mt-4 w-auto'>Approved</button>
+          <button onClick={reject} className=' bg-red-700 text-zinc-100 px-4 py-2 text-xs rounded-sm mt-4 w-auto flex items-center justify-center gap-2'>
+            {loading1 === true && (
+              <div className=' spinner2'></div>
+            )}
+              Reject</button>
+            <button onClick={approved} className=' bg-red-700 text-zinc-100 px-4 py-2 text-xs rounded-sm mt-4 w-auto flex items-center justify-center gap-2'>
+            {loading === true && (
+              <div className=' spinner2'></div>
+            )}
+              Approved</button>
 
           </div>
 
@@ -201,7 +352,7 @@ export default function Leaveformadmin( prop: Data) {
          
         </div>
 
-      </form>
+      </div>
     </DialogContent>
     </Dialog>
 

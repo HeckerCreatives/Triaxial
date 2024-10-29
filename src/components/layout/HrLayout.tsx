@@ -150,7 +150,7 @@ export default function HrLayout({
                   className={` ${path === '/hr/mail' ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
                 >
                   <Mail className="h-4 w-4" />
-                  Mail
+                  Messages
                 </Link>
 
               

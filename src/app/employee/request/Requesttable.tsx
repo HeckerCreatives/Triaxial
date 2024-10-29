@@ -82,7 +82,7 @@ export default function Requesttable() {
   useEffect(() => {
     const timer = setTimeout(() => {
       const getList = async () => {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/wellnessday/requestlist?page=${currentpage}&limit=10`,{
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/wellnessday/wellnessdaylist?page=${currentpage}&limit=10`,{
           withCredentials: true,
           headers: {
             'Content-Type': 'application/json'

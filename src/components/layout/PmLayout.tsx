@@ -140,13 +140,13 @@ export default function PmLayout({
                 </Link>
 
 
-                <Link
+                {/* <Link
                   href="/pm/event"
                   className={` ${path === '/pm/event' ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
                 >
                   <CalendarCheck className="h-4 w-4" />
                   Events
-                </Link>
+                </Link> */}
 
 
                 <Link
@@ -162,7 +162,7 @@ export default function PmLayout({
                   className={` ${path === '/pm/mail' ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
                 >
                   <Mail className="h-4 w-4" />
-                  Mail
+                  Messages
                 </Link>
 
                
@@ -195,7 +195,7 @@ export default function PmLayout({
                   </div>
                 </div>
                 <nav className="grid gap-2 text-lg font-medium">
-                  <Link
+                <Link
                   href="/pm/dashboard"
                   className={` ${path === '/pm/dashboard' ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
                 >
@@ -204,45 +204,56 @@ export default function PmLayout({
                 </Link>
 
                 <Link
-                  href="/pm/projectcomponent"
-                  className={` ${path === '/pm/projectcomponent' ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                >
-                  <Component className="h-4 w-4" />
-                  Project Components
-                </Link>
-
-                 <Link
-                  href="/pm/schedule"
-                  className={` ${path === '/pm/schedule' ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                >
-                  <Calendar className="h-4 w-4" />
-                  Schedules
-                </Link>
-
-
-                <Link
-                  href="/pm/project"
-                  className={` ${path === '/pm/project' ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                >
-                  <FileArchive className="h-4 w-4" />
-                  Project Master List
-                </Link>
-
-                 {/* <Link
-                  href="/pm/invoice"
-                  className={` ${path === '/pm/invoice' ? ' text-red-700' : 'text-zinc-100'} uppercase  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
+                  href="/pm/yourworkload"
+                  className={` ${path === '/pm/yourworkload' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
                 >
                   <List className="h-4 w-4" />
-                  Invoice
-                </Link> */}
+                  Your Workload
+                </Link>
+
+                {/* <Accordion type="single" collapsible>
+                <AccordionItem value="item-1">
+                  <div className={` px-3 flex items-center w-full gap-2 hover:text-red-700 ${path.includes('/pm/project') ? ' text-red-700' : 'text-zinc-100'}`}>
+                    <Box className="h-4 w-4" />
+                    <AccordionTrigger className=' w-[200px] text-sm'>Projects</AccordionTrigger>
+                  </div>
+                  
+                  <AccordionContent className=' pl-8'>
+                    {ProjectsPm.map((item, index) => (
+                      <Link
+                      key={index}
+                      href={`${item.route}?team=${item.name}`}
+                      className={` ${getTeam === item.name ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
+                    >
+                      
+                      {item.name}
+                    </Link>
+                    ))}
+                     
+
+                   
+                   
+                  </AccordionContent>
+                </AccordionItem>
+                </Accordion> */}
 
                 <Link
-                  href="/pm/team"
-                  className={` ${path === '/pm/team' ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
+                  href="/pm/teams"
+                  className={` ${path === '/pm/teams' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
                 >
                   <Users className="h-4 w-4" />
-                  Member List
+                  Teams
                 </Link>
+
+
+                {/* <Link
+                  href="/pm/event"
+                  className={` ${path === '/pm/event' ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
+                >
+                  <CalendarCheck className="h-4 w-4" />
+                  Events
+                </Link> */}
+
 
                 <Link
                   href="/pm/request"
@@ -257,7 +268,7 @@ export default function PmLayout({
                   className={` ${path === '/pm/mail' ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
                 >
                   <Mail className="h-4 w-4" />
-                  Mail
+                  Messages
                 </Link>
 
 

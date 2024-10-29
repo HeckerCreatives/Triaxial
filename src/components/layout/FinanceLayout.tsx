@@ -106,15 +106,15 @@ export default function FinaceLayout({
                   Your Workload
                 </Link>
 
-                 <Link
+                 {/* <Link
                     href="/finance/schedule"
                     className={` ${path === '/finance/schedule' ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
                     >
                     <Calendar className="h-4 w-4" />
                     Schedule
-                  </Link>
+                  </Link> */}
 
-                 <Accordion type="single" collapsible>
+                 {/* <Accordion type="single" collapsible>
                 <AccordionItem value="item-1">
                   <div className={` px-3 flex items-center w-full gap-2 hover:text-red-700 ${path.includes('/finance/project') ? ' text-red-700' : 'text-zinc-100'}`}>
                     <Box className="h-4 w-4" />
@@ -138,7 +138,7 @@ export default function FinaceLayout({
                    
                   </AccordionContent>
                 </AccordionItem>
-                </Accordion>
+                </Accordion> */}
 
                 {/* <Link
                     href="/finance/team"
@@ -148,13 +148,13 @@ export default function FinaceLayout({
                     Team
                 </Link> */}
 
-                 <Link
+                 {/* <Link
                     href="/finance/wip"
                     className={` ${path === '/finance/wip' ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
                     >
                     <ListCheck className="h-4 w-4" />
                     Wip
-                </Link>
+                </Link> */}
 
                  {/* <Link
                   href="/finance/invoice"
@@ -193,7 +193,7 @@ export default function FinaceLayout({
                   className={` ${path === '/finance/mail' ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
                 >
                   <Mail className="h-4 w-4" />
-                  Mail
+                  Messages
                 </Link>
 
                

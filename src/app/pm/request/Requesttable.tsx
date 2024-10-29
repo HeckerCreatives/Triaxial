@@ -82,7 +82,7 @@ export default function Requesttable() {
   useEffect(() => {
     const timer = setTimeout(() => {
       const getList = async () => {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/wellnessday/requestlist?page=${currentpage}&limit=10`,{
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/wellnessday/wellnessdaylist?page=${currentpage}&limit=10`,{
           withCredentials: true,
           headers: {
             'Content-Type': 'application/json'
@@ -98,93 +98,6 @@ export default function Requesttable() {
     return () => clearTimeout(timer)
   },[refresh, currentpage])
 
-
-  //leave
-  const [loading, setLoading] = useState(false)
-  const [leave, setLeave] = useState<LeaveWithCalculation[]>([])
-  const getCalculate = async (start: string, end: string): Promise<Caculate> => {
-    try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/leave/calculateleavedays`, {
-        params: { startdate: start, enddate: end },
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      return response.data.data as Caculate;
-    } catch (error) {
-      
-      // Provide default values for Caculate if the API call fails
-      return {
-        totalworkingdays: 0,
-        inwellnessday: false,
-        totalHoliday: 0,
-        totalworkinghoursonleave: 0,
-        workinghoursduringleave: 0,
-      };
-    }
-  };
-
-  useEffect(() => {
-    const fetchLeaveData = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/leave/employeeleaverequestlist?status=Pending&page=${currentpage}&limit=10`,
-          {
-            withCredentials: true,
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-  
-        const leaveList: Leave[] = response.data.data.requestlist;
-        setTotalpage(response.data.data.totalPages)
-  
-        // Fetch calculated data for each leave item in parallel
-        const leaveWithCalculations = await Promise.all(
-          leaveList.map(async (leave) => {
-            const calculateData = await getCalculate(leave.startdate, leave.enddate);
-            return {
-              ...leave, // merge original leave data
-              ...calculateData, // merge calculated data
-            };
-          })
-        );
-  
-        setLeave(leaveWithCalculations);
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-  
-        if (axios.isAxiosError(error)) {
-          const axiosError = error as AxiosError<{ message: string; data: string }>;
-          if (axiosError.response) {
-            const status = axiosError.response.status;
-            const message = axiosError.response.data.data;
-            if (status === 401) {
-              toast.error(message);
-              router.push('/');
-            } else {
-              toast.error(message);
-            }
-          }
-        }
-      }
-    };
-  
-    fetchLeaveData();
-  }, [refresh, currentpage]);
-
-  const findType = (id: number) => {
-    const find = leaveType.find((item) => item.id === id)
-
-    return find?.type
-  }
-
-
-  console.log(leave)
 
   //paginition
   const handlePageChange = (page: number) => {

@@ -1,6 +1,5 @@
 "use client"
 import React, { useEffect, useState } from 'react'
-import { Input } from "@/components/ui/input"
 import {
   Table,
   TableBody,
@@ -10,32 +9,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination"
-import Actionbtn from '@/components/common/Actionbutton'
-import Leaveform from '@/components/forms/Leaveform'
-import WDform from '@/components/forms/Wellnessday'
-import Wfhform from '@/components/forms/Wfhform'
 import axios, { AxiosError } from 'axios'
 import { useRouter, useSearchParams } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { leaveType } from '@/types/data'
 import PaginitionComponent from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
+import { cache } from 'react'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 
-type Wellnessday = {
-  createdAt: string
-  requestdate:string 
-  firstdayofwellnessdaycycle: string
-}
 
 type Leave = {
   employeeid: string
@@ -61,13 +50,7 @@ type Caculate = {
   workinghoursduringleave: number
 }
 
-const Tab = [
-  "Leaves",
-  "Wellness Day",
-  "WFH",
-]
 
-type LeaveWithCalculation = Leave & Caculate;
 
 
 
@@ -79,6 +62,7 @@ export default function Leaves() {
   const refresh = params.get('state')
   const [totalpage, setTotalpage] = useState(0)
   const [currentpage, setCurrentpage] = useState(0)
+  const [status, setStatus] = useState('Pending')
 
    //paginition
    const handlePageChange = (page: number) => {
@@ -91,35 +75,13 @@ export default function Leaves() {
   //leave
   const [loading, setLoading] = useState(false)
   const [leave, setLeave] = useState<Leave[]>([])
-  const getCalculate = async (start: string, end: string): Promise<Caculate> => {
-    try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/leave/calculateleavedays`, {
-        params: { startdate: start, enddate: end },
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      return response.data.data as Caculate;
-    } catch (error) {
-      
-      // Provide default values for Caculate if the API call fails
-      return {
-        totalworkingdays: 0,
-        inwellnessday: false,
-        totalHoliday: 0,
-        totalworkinghoursonleave: 0,
-        workinghoursduringleave: 0,
-      };
-    }
-  };
 
   useEffect(() => {
-    const fetchLeaveData = async () => {
+    const fetchLeaveData = cache(async () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/leave/employeeleaverequestlist?status=Pending&page=${currentpage}&limit=10`,
+          `${process.env.NEXT_PUBLIC_API_URL}/leave/employeeleaverequestlist?status=${status}&page=${currentpage}&limit=10`,
           {
             withCredentials: true,
             headers: {
@@ -138,10 +100,10 @@ export default function Leaves() {
   
        
       }
-    };
+    });
   
     fetchLeaveData();
-  }, [refresh, currentpage]);
+  }, [refresh, currentpage, status]);
 
   const findType = (id: number) => {
     const find = leaveType.find((item) => item.id === id)
@@ -162,29 +124,6 @@ export default function Leaves() {
 
   }
 
-  const totalWorkingDays = (start: string, end: string) =>  {
-    const startDate = new Date(start)
-    const endDate = new Date(end)
-    let workingDays = 0;
-
-    for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
-        const dayOfWeek = date.getDay();
-        if (dayOfWeek !== 0 && dayOfWeek !== 6) {
-            workingDays++;
-        }
-    }
-
-    return workingDays;
-}
-
-const getHoursperday = (data: boolean) => {
-  if(data === true){
-    return 8.44
-  } else {
-    return 7.6
-  }
-
-}
 
 
 
@@ -193,8 +132,18 @@ const getHoursperday = (data: boolean) => {
     <div className=' w-full h-full flex justify-center bg-secondary p-6 text-zinc-100'>
 
       <div className=' w-full max-w-[1520px] flex flex-col'>
-    
-    
+        <label htmlFor="" className=' text-xs text-zinc-400'>Filter by status</label>
+      <Select value={status} onValueChange={setStatus}>
+      <SelectTrigger className="w-[180px] bg-primary mt-2">
+        <SelectValue placeholder="Filter by status" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="Pending">Pending</SelectItem>
+        <SelectItem value="Approved">Approved</SelectItem>
+        <SelectItem value="Rejected">Rejected</SelectItem>
+      </SelectContent>
+    </Select>
+
           <Table className=' mt-4'>
           {leave.length === 0 &&  
           <TableCaption className=' text-xs text-zinc-500'>No data</TableCaption>

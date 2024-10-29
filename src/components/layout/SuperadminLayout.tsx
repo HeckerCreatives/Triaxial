@@ -153,8 +153,8 @@ export default function SuperadminLayout({
                     </Link>
 
                     <Link
-                      href="/superadmin/manageuser/teams"
-                      className={` ${path === '/superadmin/manageuser/teams' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
+                      href="/superadmin/teams"
+                      className={` ${path === '/superadmin/teams' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
                     >
                       
                       Teams

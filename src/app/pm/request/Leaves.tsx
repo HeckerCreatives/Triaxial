@@ -1,6 +1,5 @@
 "use client"
 import React, { useEffect, useState } from 'react'
-import { Input } from "@/components/ui/input"
 import {
   Table,
   TableBody,
@@ -10,32 +9,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination"
-import Actionbtn from '@/components/common/Actionbutton'
-import Leaveform from '@/components/forms/Leaveform'
-import WDform from '@/components/forms/Wellnessday'
-import Wfhform from '@/components/forms/Wfhform'
 import axios, { AxiosError } from 'axios'
 import { useRouter, useSearchParams } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { leaveType } from '@/types/data'
 import PaginitionComponent from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
+import { cache } from 'react'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 
-type Wellnessday = {
-  createdAt: string
-  requestdate:string 
-  firstdayofwellnessdaycycle: string
-}
 
 type Leave = {
   employeeid: string
@@ -44,6 +33,12 @@ type Leave = {
   startdate: string
   enddate: string
   status: string
+  totalworkingdays: number
+  totalpublicholidays: number
+  wellnessdaycycle: boolean
+  workinghoursduringleave: number
+  comments: string
+  workinghoursonleave: number
   
 }
 
@@ -55,13 +50,7 @@ type Caculate = {
   workinghoursduringleave: number
 }
 
-const Tab = [
-  "Leaves",
-  "Wellness Day",
-  "WFH",
-]
 
-type LeaveWithCalculation = Leave & Caculate;
 
 
 
@@ -73,6 +62,7 @@ export default function Leaves() {
   const refresh = params.get('state')
   const [totalpage, setTotalpage] = useState(0)
   const [currentpage, setCurrentpage] = useState(0)
+  const [status, setStatus] = useState('Pending')
 
    //paginition
    const handlePageChange = (page: number) => {
@@ -84,36 +74,14 @@ export default function Leaves() {
 
   //leave
   const [loading, setLoading] = useState(false)
-  const [leave, setLeave] = useState<LeaveWithCalculation[]>([])
-  const getCalculate = async (start: string, end: string): Promise<Caculate> => {
-    try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/leave/calculateleavedays`, {
-        params: { startdate: start, enddate: end },
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      return response.data.data as Caculate;
-    } catch (error) {
-      
-      // Provide default values for Caculate if the API call fails
-      return {
-        totalworkingdays: 0,
-        inwellnessday: false,
-        totalHoliday: 0,
-        totalworkinghoursonleave: 0,
-        workinghoursduringleave: 0,
-      };
-    }
-  };
+  const [leave, setLeave] = useState<Leave[]>([])
 
   useEffect(() => {
-    const fetchLeaveData = async () => {
+    const fetchLeaveData = cache(async () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/leave/employeeleaverequestlist?status=Pending&page=${currentpage}&limit=10`,
+          `${process.env.NEXT_PUBLIC_API_URL}/leave/employeeleaverequestlist?status=${status}&page=${currentpage}&limit=10`,
           {
             withCredentials: true,
             headers: {
@@ -123,43 +91,19 @@ export default function Leaves() {
         );
 
         setTotalpage(response.data.data.totalpage)
-  
-        const leaveList: Leave[] = response.data.data.requestlist;
-  
-        // Fetch calculated data for each leave item in parallel
-        const leaveWithCalculations = await Promise.all(
-          leaveList.map(async (leave) => {
-            const calculateData = await getCalculate(leave.startdate, leave.enddate);
-            return {
-              ...leave, // merge original leave data
-              ...calculateData, // merge calculated data
-            };
-          })
-        );
-  
-        setLeave(leaveWithCalculations);
+        setLeave(response.data.data.requestlist)
         setLoading(false);
+  
+      
       } catch (error) {
         setLoading(false);
   
-        if (axios.isAxiosError(error)) {
-          const axiosError = error as AxiosError<{ message: string; data: string }>;
-          if (axiosError.response) {
-            const status = axiosError.response.status;
-            const message = axiosError.response.data.data;
-            if (status === 401) {
-              toast.error(message);
-              router.push('/');
-            } else {
-              toast.error(message);
-            }
-          }
-        }
+       
       }
-    };
+    });
   
     fetchLeaveData();
-  }, [refresh, currentpage]);
+  }, [refresh, currentpage, status]);
 
   const findType = (id: number) => {
     const find = leaveType.find((item) => item.id === id)
@@ -168,15 +112,19 @@ export default function Leaves() {
   }
 
 
-  console.log(leave)
-  
-  
+  const statusColor = (data: string) => {
+    if(data === 'Pending'){
+      return 'text-blue-500'
+    } else if (data === 'Approved') {
+      return 'text-green-500'
+    } else {
+      return 'text-red-500'
+      
+    }
+
+  }
 
 
-
-
-
-     
 
 
   
@@ -184,8 +132,18 @@ export default function Leaves() {
     <div className=' w-full h-full flex justify-center bg-secondary p-6 text-zinc-100'>
 
       <div className=' w-full max-w-[1520px] flex flex-col'>
-    
-    
+        <label htmlFor="" className=' text-xs text-zinc-400'>Filter by status</label>
+      <Select value={status} onValueChange={setStatus}>
+      <SelectTrigger className="w-[180px] bg-primary mt-2">
+        <SelectValue placeholder="Filter by status" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="Pending">Pending</SelectItem>
+        <SelectItem value="Approved">Approved</SelectItem>
+        <SelectItem value="Rejected">Rejected</SelectItem>
+      </SelectContent>
+    </Select>
+
           <Table className=' mt-4'>
           {leave.length === 0 &&  
           <TableCaption className=' text-xs text-zinc-500'>No data</TableCaption>
@@ -218,11 +176,11 @@ export default function Leaves() {
               <TableCell>{item.startdate}</TableCell>
               <TableCell>{item.enddate}</TableCell>
               <TableCell>{item.totalworkingdays}</TableCell>
-              <TableCell>{item.totalHoliday}</TableCell>
-              <TableCell>{item.inwellnessday === true ? 'Yes' : 'No'}</TableCell>
-              <TableCell>{item.totalworkinghoursonleave}</TableCell>
-              <TableCell>{item.workinghoursduringleave.toFixed(2)}</TableCell>
-              <TableCell>{item.status}</TableCell>
+              <TableCell>{item.totalpublicholidays}</TableCell>
+              <TableCell>{item.wellnessdaycycle === true ? 'Yes' : 'No'}</TableCell>
+              <TableCell>{item?.workinghoursonleave ? item.workinghoursonleave.toFixed(2) : '0'}</TableCell>
+              <TableCell>{item.workinghoursduringleave}</TableCell>
+              <TableCell className={` ${statusColor(item.status)} text-xs`}>{item.status}</TableCell>
      
               </TableRow>
             ))}

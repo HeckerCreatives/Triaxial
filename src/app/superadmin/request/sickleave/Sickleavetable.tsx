@@ -35,6 +35,13 @@ import { useRouter } from 'next/navigation'
 import { leaveType } from '@/types/data'
 import PaginitionComponent from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 
 type Leave = {
@@ -63,6 +70,8 @@ export default function Sickleavetable() {
   const [totalpage, setTotalpage] = useState(0)
   const [currentpage, setCurrentpage] = useState(0)
   const currentDate = new Date()
+  const [status, setStatus] = useState('Pending')
+
 
   console.log(currentDate)
 
@@ -138,7 +147,7 @@ export default function Sickleavetable() {
         setLoading(true);
         try {
           const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_URL}/leave/superadminleaverequestlist?page=${currentpage}&limit=10&status=Pending&employeenamefilter=${searchName}`,
+            `${process.env.NEXT_PUBLIC_API_URL}/leave/superadminleaverequestlist?page=${currentpage}&limit=10&status=${status}&employeenamefilter=${searchName}`,
             {
               withCredentials: true,
               headers: {
@@ -164,7 +173,7 @@ export default function Sickleavetable() {
 
     return () => clearTimeout(timer)
     
-  }, [currentpage, searchName]);
+  }, [currentpage, searchName, status]);
 
   const findType = (id: number) => {
     const find = leaveType.find((item) => item.id === id)
@@ -178,6 +187,18 @@ export default function Sickleavetable() {
   //paginition
   const handlePageChange = (page: number) => {
     setCurrentpage(page)
+  }
+
+  const statusColor = (data: string) => {
+    if(data === 'Pending'){
+      return 'text-blue-500'
+    } else if (data === 'Approved') {
+      return 'text-green-500'
+    } else {
+      return 'text-red-500'
+      
+    }
+
   }
 
   return (
@@ -199,6 +220,18 @@ export default function Sickleavetable() {
             </div>
             
         </div>
+
+        <label htmlFor="" className=' text-xs text-zinc-400 mt-4'>Filter by status</label>
+      <Select value={status} onValueChange={setStatus}>
+      <SelectTrigger className="w-[180px] bg-primary mt-2">
+        <SelectValue placeholder="Filter by status" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="Pending">Pending</SelectItem>
+        <SelectItem value="Approved">Approved</SelectItem>
+        <SelectItem value="Rejected">Rejected</SelectItem>
+      </SelectContent>
+    </Select>
 
         <Table className=' mt-4'>
         {leave.length === 0 &&  
@@ -225,14 +258,16 @@ export default function Sickleavetable() {
             <TableHead className=' text-xs'>Total Working Hours on Leave</TableHead>
             <TableHead className=' text-xs'>Total Worked Hours during Leave</TableHead>
             {/* <TableHead className=' text-xs'>Total Hours for Payroll</TableHead> */}
-            <TableHead className=' text-xs'>Action</TableHead>
+            {status === 'Pending' && (
+              <TableHead className=' text-xs'>Action</TableHead>
+            )}
             </TableRow>
         </TableHeader>
         <TableBody>
           {leave.map((item, index) => (
              <TableRow key={index}>
              <TableCell className="">{item.manager}</TableCell>
-             <TableCell className=' text-blue-500'>{item.status}</TableCell>
+             <TableCell className={` ${statusColor(item.status)} text-xs`}>{item.status}</TableCell>
              <TableCell>{item.name}</TableCell>
              <TableCell>{findType(item.type)}</TableCell>
              <TableCell>{item.leavestart}</TableCell>
@@ -242,15 +277,18 @@ export default function Sickleavetable() {
              <TableCell>{item.wellnessdaycycle === true ? 'Yes' : 'No'}</TableCell>
              <TableCell>{item?.workinghoursonleave ? item.workinghoursonleave.toFixed(2) : '0'}</TableCell>
              <TableCell>{item.workinghoursduringleave}</TableCell>
-             {/* <TableCell>Test</TableCell> */}
-             {/* <TableCell>16/08/24</TableCell> */}
-             <TableCell className="">
-               <Leaveformadmin onClick={() => undefined} requestid={`${item.requestid}`} manager={`${item.manager}`} status={`${item.status}`} name={`${item.name}`} type={item.type} leavestart={`${item.leavestart}`} leaveend={`${item.leaveend}`} totalworkingdays={item.totalworkingdays} totalpublicholidays={item.totalpublicholidays} wellnessdaycycle={item.wellnessdaycycle} workinghoursonleave={item.workinghoursonleave} workinghoursduringleave={item.workinghoursduringleave} details={item.details}>
-                 
-                   <button className=' whitespace-nowrap bg-red-700 text-white text-xs p-2 rounded-sm'>Approved / Denied</button>
-                </Leaveformadmin>
-              
-             </TableCell>
+
+             {status === 'Pending' && (
+              <TableCell className="">
+              <Leaveformadmin onClick={() => undefined} requestid={`${item.requestid}`} manager={`${item.manager}`} status={`${item.status}`} name={`${item.name}`} type={item.type} leavestart={`${item.leavestart}`} leaveend={`${item.leaveend}`} totalworkingdays={item.totalworkingdays} totalpublicholidays={item.totalpublicholidays} wellnessdaycycle={item.wellnessdaycycle} workinghoursonleave={item.workinghoursonleave} workinghoursduringleave={item.workinghoursduringleave} details={item.details}>
+                
+                  <button className=' whitespace-nowrap bg-red-700 text-white text-xs p-2 rounded-sm'>Approved / Denied</button>
+               </Leaveformadmin>
+             
+            </TableCell>
+            )}
+            
+             
  
              </TableRow>
           ))}
