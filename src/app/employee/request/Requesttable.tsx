@@ -190,14 +190,6 @@ export default function Requesttable() {
   const handlePageChange = (page: number) => {
     setCurrentpage(page)
   }
-  
-  
-
-
-
-
-
-     
 
 
   
@@ -207,20 +199,6 @@ export default function Requesttable() {
       <div className=' w-full max-w-[1520px] flex flex-col'>
         <div className=' flex md:flex-row flex-col items-center justify-between gap-4'>
             <div className=' flex flex-col gap-8'>
-
-              {/* <div className=' flex items-center bg-primary rounded-sm'>
-              <Actionbtn onClick={() => undefined} name='Request:' color={''}/>
-              <Leaveform onClick={() => undefined}>
-                <Actionbtn onClick={() => setTab('Leave')} name='Leave' color={ `${tab === 'Leave' && 'bg-red-700'}`}/>
-              </Leaveform>
-              <WDform onClick={() => undefined}>
-                <Actionbtn onClick={() => setTab('Wellness Day')} name='Wellness Day' color={ `${tab === 'Wellness Day' && 'bg-red-700'}`}/>
-              </WDform>
-
-              <Wfhform onClick={() => undefined}>
-                <Actionbtn onClick={() => setTab('Wfh')} name='Wfh' color={ `${tab === 'Wfh' && 'bg-red-700'}`}/>
-              </Wfhform>
-              </div> */}
 
               <div className=' flex gap-4'>
                 {Tab.map((item) => (

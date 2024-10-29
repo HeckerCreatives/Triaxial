@@ -75,12 +75,14 @@ export default function Requesttable() {
   const router = useRouter()
   const params = useSearchParams()
   const refresh = params.get('state')
+  const [totalpage, setTotalpage] = useState(0)
+  const [currentpage, setCurrentpage] = useState(0)
 
   //wellness day
   useEffect(() => {
     const timer = setTimeout(() => {
       const getList = async () => {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/wellnessday/requestlist?page&limit`,{
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/wellnessday/requestlist?page=${currentpage}&limit=10`,{
           withCredentials: true,
           headers: {
             'Content-Type': 'application/json'
@@ -88,12 +90,13 @@ export default function Requesttable() {
         })
   
         setLiest(response.data.data.history)
+        setTotalpage(response.data.data.totalPages)
        
       }
       getList()
     }, 500)
     return () => clearTimeout(timer)
-  },[refresh])
+  },[refresh, currentpage])
 
 
   //leave
@@ -127,7 +130,7 @@ export default function Requesttable() {
       setLoading(true);
       try {
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/leave/employeeleaverequestlist?status=Pending&page=0&limit=10`,
+          `${process.env.NEXT_PUBLIC_API_URL}/leave/employeeleaverequestlist?status=Pending&page=${currentpage}&limit=10`,
           {
             withCredentials: true,
             headers: {
@@ -137,6 +140,7 @@ export default function Requesttable() {
         );
   
         const leaveList: Leave[] = response.data.data.requestlist;
+        setTotalpage(response.data.data.totalPages)
   
         // Fetch calculated data for each leave item in parallel
         const leaveWithCalculations = await Promise.all(
@@ -171,7 +175,7 @@ export default function Requesttable() {
     };
   
     fetchLeaveData();
-  }, [refresh]);
+  }, [refresh, currentpage]);
 
   const findType = (id: number) => {
     const find = leaveType.find((item) => item.id === id)
@@ -181,14 +185,11 @@ export default function Requesttable() {
 
 
   console.log(leave)
-  
-  
 
-
-
-
-
-     
+  //paginition
+  const handlePageChange = (page: number) => {
+    setCurrentpage(page)
+  }
 
 
   
@@ -198,20 +199,6 @@ export default function Requesttable() {
       <div className=' w-full max-w-[1520px] flex flex-col'>
         <div className=' flex md:flex-row flex-col items-center justify-between gap-4'>
             <div className=' flex flex-col gap-8'>
-
-              <div className=' flex items-center bg-primary rounded-sm'>
-              <Actionbtn onClick={() => undefined} name='Request:' color={''}/>
-              <Leaveform onClick={() => undefined}>
-                <Actionbtn onClick={() => setTab('Leave')} name='Leave' color={ `${tab === 'Leave' && 'bg-red-700'}`}/>
-              </Leaveform>
-              <WDform onClick={() => undefined}>
-                <Actionbtn onClick={() => setTab('Wellness Day')} name='Wellness Day' color={ `${tab === 'Wellness Day' && 'bg-red-700'}`}/>
-              </WDform>
-
-              <Wfhform onClick={() => undefined}>
-                <Actionbtn onClick={() => setTab('Wfh')} name='Wfh' color={ `${tab === 'Wfh' && 'bg-red-700'}`}/>
-              </Wfhform>
-              </div>
 
               <div className=' flex gap-4'>
                 {Tab.map((item) => (
@@ -253,67 +240,13 @@ export default function Requesttable() {
         </TableBody>
           </Table>
 
-          <Pagination className=' mt-4'>
-          <PaginationContent>
-              <PaginationItem>
-              <PaginationPrevious href="#" />
-              </PaginationItem>
-              <PaginationItem>
-              <PaginationLink href="#">1</PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-              <PaginationEllipsis />
-              </PaginationItem>
-              <PaginationItem>
-              <PaginationNext href="#" />
-              </PaginationItem>
-          </PaginationContent>
-          </Pagination>
+          {list.length !== 0 && (
+          <PaginitionComponent currentPage={currentpage} total={totalpage} onPageChange={handlePageChange}/>
+          )}
           </>
         )} 
 
-        {/* {active === 'Leaves' && (
-          <Table className=' mt-4'>
-          <TableHeader>
-              <TableRow>
-              <TableHead className=' text-xs' >Approved Timestamp</TableHead>
-              <TableHead className=' text-xs'>Manager</TableHead>
-              <TableHead className=' text-xs'>Status</TableHead>
-              <TableHead className=' text-xs'>Name</TableHead>
-              <TableHead className=' text-xs'>Leave Type</TableHead>
-              <TableHead className=' text-xs'>First day of Leave</TableHead>
-              <TableHead className=' text-xs'>Last day of Leave</TableHead>
-              <TableHead className=' text-xs'>Total Number of Working Days</TableHead>
-              <TableHead className=' text-xs'>Total Public Holidays</TableHead>
-              <TableHead className=' text-xs'>In a Wellness Day Cycle?</TableHead>
-              <TableHead className=' text-xs'>Total Working Hours on Leave</TableHead>
-              <TableHead className=' text-xs'>Total Worked Hours during Leave</TableHead>
-              <TableHead className=' text-xs'>Total Hours for Payroll</TableHead>
-              </TableRow>
-          </TableHeader>
-          <TableBody>
-              <TableRow>
-              <TableCell className="font-medium">00001</TableCell>
-              <TableCell>Pending</TableCell>
-  
-              <TableCell>Test</TableCell>
-              <TableCell>Test</TableCell>
-              <TableCell>Test</TableCell>
-              <TableCell>Test</TableCell>
-              <TableCell>Test</TableCell>
-              <TableCell>Test</TableCell>
-              <TableCell>Test</TableCell>
-              <TableCell>Test</TableCell>
-              <TableCell>Test</TableCell>
-              <TableCell>Test</TableCell>
-              <TableCell>16/08/24</TableCell>
-           
-  
-              </TableRow>
-          </TableBody>
-          </Table>
-        )} */}
-
+        
         {active === 'Leaves' && (
           <>
           <Leaves/>

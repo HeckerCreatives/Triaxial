@@ -1,5 +1,16 @@
 "use client"
 import React, { useState } from 'react'
+import { Plus, Delete, Trash, Eye, CircleAlert, CalendarCheck } from 'lucide-react'
+import { Checkbox } from '@/components/ui/checkbox'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,22 +19,44 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-
-
+import Actionbtn from '@/components/common/Actionbutton'
+import Leaveform from '@/components/forms/Leaveform'
+import WDform from '@/components/forms/Wellnessday'
+import Wfhform from '@/components/forms/Wfhform'
 
 
 export default function Yourworkload() {
   const [tab, setTab] = useState('Workload')
+  const [tab2, setTab2] = useState('Leave')
+
 
   return (
-    <div className=' w-full h-full flex flex-col justify-center bg-secondary p-4 text-zinc-100'>
+   <div className=' w-full h-full flex flex-col justify-center bg-secondary p-4 text-zinc-100'>
 
       <div className=' w-full flex items-center justify-between h-auto bg-primary mb-2 p-4 text-xs'>
         <div className=' flex flex-col gap-1'>
           <p className=' text-zinc-400'>Name: <span className=' text-zinc-100 underline'>Name</span></p>
           <p className=' text-zinc-400'>Initial: <span className=' text-zinc-100 underline'>ABC</span></p>
           <p className=' text-zinc-400'>Email: <span className=' text-zinc-100 underline'>test@gmail.com</span></p>
+        </div>
 
+        <div className=' flex flex-col gap-2 bg-primary rounded-sm text-xs'>
+
+          <p>Request :</p>
+          <div className='flex items-center gap-2 bg-primary rounded-sm text-xs'>
+              <Leaveform onClick={() => undefined}>
+                <button onClick={() =>  setTab2('Leave')} className={`text-xs px-3 py-1 bg-red-600  rounded-sm`}>Leave</button>
+              </Leaveform>
+              <WDform onClick={() => undefined}>
+                <button onClick={() =>  setTab2('WD')} className={`text-xs px-3 py-1 bg-red-600  rounded-sm`}>Wellness Day</button>
+              </WDform>
+
+              <Wfhform onClick={() => undefined}>
+                <button onClick={() =>  setTab2('WFH')} className={`text-xs px-3 py-1 bg-red-600  rounded-sm`}>WFH</button>
+              </Wfhform>
+
+          </div>
+            
         </div>
 
         <div className=' flex items-center justify-center gap-4 text-xs bg-secondary p-2 rounded-sm'>
@@ -272,131 +305,7 @@ export default function Yourworkload() {
         
       </div>
 
-      {/* <div className=' text-zinc-100 w-full grid grid-cols-1 lg:grid-cols-2 gap-4 max-w-[1720px] p-4'>
-        <div className=' w-full h-full flex-flex-col'>
-            <div className=' grid grid-cols-2 mt-2'>
-              <div className=' w-full flex flex-col gap-2'>
-                <p className=' text-xs mt-4'>Status Legend</p>
-
-                <div className=' flex items-center gap-2'>
-                  <div className=' h-4 aspect-square bg-red-500'></div>
-                  <p className=' text-xs text-zinc-400'>Due On</p>
-
-
-                </div>
-                 <div className=' flex items-center gap-2'>
-                  <div className=' h-4 aspect-square bg-orange-400'></div>
-                  <p className=' text-xs text-zinc-400'>25%</p>
-
-
-                </div>
-
-                 <div className=' flex items-center gap-2'>
-                  <div className=' h-4 aspect-square bg-yellow-300'></div>
-                  <p className=' text-xs text-zinc-400'>50%</p>
-
-
-                </div>
-
-                <div className=' flex items-center gap-2'>
-                  <div className=' h-4 aspect-square bg-green-500'></div>
-                  <p className=' text-xs text-zinc-400'>75%</p>
-
-
-                </div>
-
-                <div className=' flex items-center gap-2'>
-                  <div className=' h-4 aspect-square bg-blue-500'></div>
-                  <p className=' text-xs text-zinc-400'>100%</p>
-
-
-                </div>
-
-                <div className=' flex items-center gap-2'>
-                  <div className=' h-4 aspect-square bg-cyan-400'></div>
-                  <p className=' text-xs text-zinc-400'>CNST PH.</p>
-
-
-                </div>
-              </div>
-
-              <div className=' w-full flex flex-col gap-2'>
-                <p className=' text-xs mt-4'>Day / Hours Legend</p>
-
-                <div className=' flex items-center gap-2'>
-                  <div className=' h-4 aspect-square bg-fuchsia-400'></div>
-                  <p className=' text-xs text-zinc-400'>Greater than 8 hours/ day or  40 hours / week</p>
-
-
-                </div>
-
-                 <div className=' flex items-center gap-2'>
-                  <div className=' h-4 aspect-square bg-green-300'></div>
-                  <p className=' text-xs text-zinc-400'>Unapplied Leave / WD or Holiday Leave</p>
-
-
-                </div>
-
-                <div className=' flex items-center gap-2'>
-                  <div className=' h-4 aspect-square bg-violet-500'></div>
-                  <p className=' text-xs text-zinc-400'>Leave</p>
-
-
-                </div>
-
-                <div className=' flex items-center gap-2'>
-                  <div className=' h-4 aspect-square bg-rose-300'></div>
-                  <p className=' text-xs text-zinc-400'>Wellness Day</p>
-
-
-                </div>
-
-                
-
-                 
-              </div>
-
-            </div>
-
-        </div>
-         
-        <div className=' w-full grid grid-cols-2 gap-4'>
-           
-            <div className=' flex md:flex-row flex-col gap-2 w-full h-auto bg-primary p-4'>
-              <div className=' flex flex-col gap-2'>
-                <h2 className=' uppercase font-semibold text-sm'>Current Event</h2>
-                <p className=' text-sm text-zinc-400'>08/14/24</p>
-                <p className=' text-zinc-300 text-xs'>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Commodi laborum, obcaecati velit molestiae ex atque illum similique sit corrupt.</p>
-              </div>
-
-              <div className=' flex items-center justify-center'>
-                <div className='  p-4 bg-secondary'>
-                <CalendarCheck size={30}/>
-
-                </div>
-              </div>
-              
-            </div>
-
-            <div className=' flex md:flex-row flex-col gap-2 w-full h-auto bg-primary p-4'>
-              <div className=' flex flex-col gap-2'>
-                <h2 className=' uppercase font-semibold text-sm'>Upcoming Event</h2>
-                <p className=' text-sm text-zinc-400'>08/14/24</p>
-                <p className=' text-zinc-300 text-xs'>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Commodi laborum, obcaecati velit molestiae ex atque illum similique sit corrupt.</p>
-              </div>
-
-              <div className=' flex items-center justify-center'>
-                <div className='  p-4 bg-secondary'>
-                <CalendarCheck size={30}/>
-
-                </div>
-              </div>
-              
-            </div>
-        </div>
-          
-            
-        </div> */}
+    
         
     </div>
   )
