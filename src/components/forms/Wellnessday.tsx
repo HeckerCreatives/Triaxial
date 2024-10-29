@@ -57,6 +57,8 @@ export default function WDform( prop: Data) {
   const onSubmit = async (data: WdSchema) => {
     const { declaration, ...filteredData } = data;
     setLoading(true)
+    router.push('?state=true')
+
     try {
       const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/wellnessday/wellnessdayrequest`,{
        requestdate: data.startdate // Format YYYY-MM

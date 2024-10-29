@@ -16,7 +16,8 @@ import {
   UserRoundPlus,
   Box,
   Mail,
-  CalendarCheck
+  CalendarCheck,
+  ListChecks
 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -111,35 +112,113 @@ export default function SuperadminLayout({
                   Your Workload
                 </Link>
 
-                 <Link
+                 {/* <Link
                   href="/superadmin/client"
                   className={` ${path === '/superadmin/client' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
                 >
                   <UserRoundPlus className="h-4 w-4" />
                   Clients
-                </Link>
+                </Link> */}
 
                 <Link
                   href="/superadmin/project"
                   className={` ${path.includes('/superadmin/project') ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
                 >
                   <Box className="h-4 w-4" />
-                  Project Master List
+                  Scheduling
                 </Link>
 
                 <Link
-                  href="/superadmin/teams"
-                  className={` ${path.includes('/superadmin/teams') ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
+                  href="/superadmin/invoice"
+                  className={` ${path.includes('/superadmin/invoice') ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
                 >
-                  <Users className="h-4 w-4" />
-                  Teams
+                  <ListChecks className="h-4 w-4" />
+                  Invoice
                 </Link>
 
                 <Accordion type="single" collapsible>
                 <AccordionItem value="item-1">
                   <div className={` px-3 flex items-center w-full gap-2 hover:text-red-700 ${path.includes('/superadmin/manageuser') ? ' text-red-700' : 'text-zinc-100'}`}>
                     <User className="h-4 w-4" />
-                    <AccordionTrigger className=' w-[200px] text-sm'>Manage User</AccordionTrigger>
+                    <AccordionTrigger className=' w-[200px] text-sm'>Searches</AccordionTrigger>
+                  </div>
+                  
+                  <AccordionContent className=' pl-8'>
+                     <Link
+                      href="/superadmin/client"
+                      className={` ${path === '/superadmin/client' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
+                    >
+                      
+                      Clients
+                    </Link>
+
+                    <Link
+                      href="/superadmin/manageuser/teams"
+                      className={` ${path === '/superadmin/manageuser/teams' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
+                    >
+                      
+                      Teams
+                    </Link>
+
+                   
+                   
+                  </AccordionContent>
+                </AccordionItem>
+                </Accordion>
+
+                {/* <Link
+                  href="/superadmin/teams"
+                  className={` ${path.includes('/superadmin/teams') ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
+                >
+                  <Users className="h-4 w-4" />
+                  Teams
+                </Link> */}
+
+                <Accordion type="single" collapsible>
+                <AccordionItem value="item-1" className=' w-full'>
+                  <div className={` ${path.includes('/superadmin/request') ? ' text-red-700' : 'text-zinc-100'} px-3 flex items-center w-full gap-2 hover:text-red-700`}>
+                    <ListCheck className="h-4 w-4" />
+                    <AccordionTrigger className=' w-[200px] text-sm'>Request</AccordionTrigger>
+                  </div>
+                  
+                  <AccordionContent className=' pl-8'>
+                     <Link
+                      href="/superadmin/request/wellnessday"
+                      className={` ${path === '/superadmin/request/wellnessday' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
+                    >
+                      
+                      Wellness Day
+                    </Link>
+
+                    <Link
+                      href="/superadmin/request/sickleave"
+                      className={` ${path === '/superadmin/request/sickleave' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
+                    >
+                      
+                      Leaves
+                    </Link>
+
+                    <Link
+                      href="/superadmin/request/wfh"
+                      className={` ${path === '/superadmin/request/wfh' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
+                    >
+                      
+                      Work From Home
+                    </Link>
+
+                   
+
+                    
+                   
+                  </AccordionContent>
+                </AccordionItem>
+                </Accordion>
+
+                <Accordion type="single" collapsible>
+                <AccordionItem value="item-1">
+                  <div className={` px-3 flex items-center w-full gap-2 hover:text-red-700 ${path.includes('/superadmin/manageuser') ? ' text-red-700' : 'text-zinc-100'}`}>
+                    <User className="h-4 w-4" />
+                    <AccordionTrigger className=' w-[200px] text-sm'>Administration</AccordionTrigger>
                   </div>
                   
                   <AccordionContent className=' pl-8'>
@@ -179,58 +258,14 @@ export default function SuperadminLayout({
                 </AccordionItem>
                 </Accordion>
 
-                <Accordion type="single" collapsible>
-                <AccordionItem value="item-1" className=' w-full'>
-                  <div className={` ${path.includes('/superadmin/request') ? ' text-red-700' : 'text-zinc-100'} px-3 flex items-center w-full gap-2 hover:text-red-700`}>
-                    <ListCheck className="h-4 w-4" />
-                    <AccordionTrigger className=' w-[200px] text-sm'>Request</AccordionTrigger>
-                  </div>
-                  
-                  <AccordionContent className=' pl-8'>
-                     <Link
-                      href="/superadmin/request/wellnessday"
-                      className={` ${path === '/superadmin/request/wellnessday' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                    >
-                      
-                      Wellness Day
-                    </Link>
-
-                    <Link
-                      href="/superadmin/request/sickleave"
-                      className={` ${path === '/superadmin/request/sickleave' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                    >
-                      
-                      Leaves
-                    </Link>
-
-                    <Link
-                      href="/superadmin/request/wfh"
-                      className={` ${path === '/superadmin/request/wfh' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                    >
-                      
-                      Work From Home
-                    </Link>
-
-                    <Link
-                      href="/superadmin/request/invoice"
-                      className={` ${path === '/superadmin/request/invoice' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                    >
-                      
-                      Invoices
-                    </Link>
-
-                    
-                   
-                  </AccordionContent>
-                </AccordionItem>
-                </Accordion>
+                
 
                 <Link
                   href="/superadmin/emails"
                   className={` ${path === '/superadmin/emails' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
                 >
                   <Mail className="h-4 w-4" />
-                  Emails
+                  Messages
                   {/* <Badge className=' rounded-none bg-neutral'>99</Badge> */}
                 </Link>
 

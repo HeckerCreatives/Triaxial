@@ -33,9 +33,9 @@ export default function PaginitionComponent({ currentPage, total, onPageChange }
 
         <div className=' flex items-center gap-6 text-xs'>
      
-            <button onClick={prev}  disabled={currentPage === 0} className=' bg-zinc-900 py-3 w-[120px] flex items-center justify-center gap-2'><ChevronLeft size={15}/>Previous</button>
-            <p className=' flex items-center justify-center gap-6 text-sm'>{currentPage + 1} <Ellipsis size={15}/></p>
-            <button onClick={next} disabled={currentPage + 1 === total} className='bg-zinc-900 py-3 w-[120px] flex items-center justify-center gap-2'>Next <ChevronRight size={15}/></button>
+            <button onClick={prev}  disabled={currentPage === 0} className=' bg-zinc-900 py-2 px-4 flex items-center justify-center gap-2'><ChevronLeft size={15}/></button>
+            <p className=' flex items-center justify-center gap-6 text-xs'>{currentPage + 1} / {total}</p>
+            <button onClick={next} disabled={currentPage + 1 === total} className='bg-zinc-900 py-2 px-4 flex items-center justify-center gap-2'><ChevronRight size={15}/></button>
           
 
         </div>

@@ -168,7 +168,7 @@ export default function ClientTable() {
         const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/clients/createclients`,{
         clientname: data.clientname,
         priority: data.priority, // Priority 1, Priority 2, Priority 3, Others
-        teams: selectedIds // teamsid
+        //teams: selectedIds 
         },
             {
                 withCredentials: true,
@@ -240,7 +240,7 @@ export default function ClientTable() {
           clientid: clientid,
         clientname: data.clientname,
         priority: data.priority, // Priority 1, Priority 2, Priority 3, Others
-        teams: selectedIds // teamsid
+        //teams: selectedIds // teamsid
         },
             {
                 withCredentials: true,
@@ -536,89 +536,9 @@ export default function ClientTable() {
                       {errors.priority && <p className=' text-[.6em] text-red-500'>{errors.priority.message}</p>}
 
 
-                      <Command
-                        onKeyDown={handleKeyDown}
-                        className="overflow-visible text-white bg-primary mt-2"
-                      >
-                        <div className="group bg-primary px-3 py-2 text-sm ">
-                          <div className="flex flex-wrap gap-1">
-                            {selected.map((item) => {
-                              return (
-                                <Badge key={item.teamid} variant="secondary" className=' text-white'>
-                                  {item.teamname}
-                                  <button
-                                    className="ml-1 rounded-full text-white outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                                    onKeyDown={(e) => {
-                                      if (e.key === "Enter") {
-                                        handleUnselect(item);
-                                      }
-                                    }}
-                                    onMouseDown={(e) => {
-                                      e.preventDefault();
-                                      e.stopPropagation();
-                                    }}
-                                    onClick={() => handleUnselect(item)}
-                                  >
-                                    <X className="h-3 w-3 text-red-600" />
-                                  </button>
-                                </Badge>
-                              );
-                            })}
-                            {/* Avoid having the "Search" Icon */}
-                            <CommandPrimitive.Input
-                              ref={inputRef}
-                              value={inputValue}
-                              onValueChange={setInputValue}
-                              onBlur={() => setOpen(false)}
-                              onFocus={() => setOpen(true)}
-                              placeholder="Select teams"
-                              className=" flex-1 bg-transparent outline-none placeholder:text-white"
-                            />
-                          </div>
-                        </div>
-                        <div className="relative mt-2">
-                          <CommandList>
-                            {open && selectables.length > 0 ? (
-                              <div className="absolute top-0 z-10 w-full h-[200px] rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in">
-                                <CommandGroup className="h-full overflow-auto">
-                                  {selectables.map((item) => {
-                                    return (
-                                      <CommandItem
-                                        key={item.teamid}
-                                        onMouseDown={(e) => {
-                                          e.preventDefault();
-                                          e.stopPropagation();
-                                        }}
-                                        onSelect={(value) => {
-                                          setInputValue("");
-                                          setSelected((prev) => [...prev, item]);
-                                        }}
-                                        className={"cursor-pointer"}
-                                      >
-                                        {item.teamname}
-                                      </CommandItem>
-                                    );
-                                  })}
-                                </CommandGroup>
-                              </div>
-                            ) : null}
-                          </CommandList>
-                        </div>
-                      </Command>
+                     
 
-                      {/* <label htmlFor="" className=' mt-2 text-xs'>Team</label>
-                        <Select>
-                        <SelectTrigger className="w-full text-xs h-[35px] bg-primary">
-                          <SelectValue placeholder="Select" />
-                        </SelectTrigger>
-                        <SelectContent className=' text-xs'>
-                          {Teams.map((item, index) => (
-                          <SelectItem key={index} value={item.name}>{item.name}</SelectItem>
-                          ))}
-                          
-                        </SelectContent>
-                      </Select> */}
-
+                    
 
                       </div>
 
@@ -690,7 +610,7 @@ export default function ClientTable() {
             <TableHead className="">Select</TableHead>
             <TableHead>Client Name</TableHead>
             <TableHead>Priority</TableHead>
-            <TableHead>Team</TableHead>
+        
             <TableHead >Created At</TableHead>
             <TableHead >Action</TableHead>
             {/* <TableHead >Action</TableHead> */}
@@ -708,41 +628,9 @@ export default function ClientTable() {
             </TableCell>
             <TableCell className="font-medium">{item.clientname}</TableCell>
             <TableCell className="font-medium ">{item.priority}</TableCell>
-            <TableCell className=' '>
-             
-                <Dialog>
-                <DialogTrigger><button className=' bg-red-700 p-2 rounded-sm text-white flex items-center gap-2'><Eye size={15}/>View Team</button></DialogTrigger>
-                <DialogContent className=' p-6 bg-secondary text-white border-none'>
-                  <DialogHeader>
-                    <DialogTitle className=' text-red-700'>Team</DialogTitle>
-                    <DialogDescription>
-                      
-                    </DialogDescription>
-                  </DialogHeader>
 
-                   <Table className=''>
-                    <TableHeader>
-                        <TableRow>
-                        <TableHead>Team Id</TableHead>
-                        <TableHead>Name</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {item.teams.map((item, index) => (
-                        <TableRow key={index}>
-                          <TableCell className="font-medium">{item._id}</TableCell>
-                          <TableCell className="font-medium">{item.teamname}</TableCell>
-                        </TableRow>
-                      ))}
-                        
-                    </TableBody>
-                    </Table>
-                </DialogContent>
-              </Dialog>
-          
+
             
- 
-             </TableCell>
           
             <TableCell className="font-medium">{new Date(item.createdAt).toLocaleString()}</TableCell>
             <TableCell className="font-medium">
@@ -786,89 +674,7 @@ export default function ClientTable() {
                       {errors.priority && <p className=' text-[.6em] text-red-500'>{errors.priority.message}</p>}
 
 
-                      <Command
-                        onKeyDown={handleKeyDown}
-                        className="overflow-visible text-white bg-primary mt-2"
-                      >
-                        <div className="group bg-primary px-3 py-2 text-sm ">
-                          <div className="flex flex-wrap gap-1">
-                            {selected.map((item) => {
-                              return (
-                                <Badge key={item.teamid} variant="secondary" className=' text-white'>
-                                  {item.teamname}
-                                  <button
-                                    className="ml-1 rounded-full text-white outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                                    onKeyDown={(e) => {
-                                      if (e.key === "Enter") {
-                                        handleUnselect(item);
-                                      }
-                                    }}
-                                    onMouseDown={(e) => {
-                                      e.preventDefault();
-                                      e.stopPropagation();
-                                    }}
-                                    onClick={() => handleUnselect(item)}
-                                  >
-                                    <X className="h-3 w-3 text-red-600" />
-                                  </button>
-                                </Badge>
-                              );
-                            })}
-                            {/* Avoid having the "Search" Icon */}
-                            <CommandPrimitive.Input
-                              ref={inputRef}
-                              value={inputValue}
-                              onValueChange={setInputValue}
-                              onBlur={() => setOpen(false)}
-                              onFocus={() => setOpen(true)}
-                              placeholder="Select teams"
-                              className=" flex-1 bg-transparent outline-none placeholder:text-white"
-                            />
-                          </div>
-                        </div>
-                        <div className="relative mt-2">
-                          <CommandList>
-                            {open && selectables.length > 0 ? (
-                              <div className="absolute top-0 z-10 w-full h-[200px] rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in">
-                                <CommandGroup className="h-full overflow-auto">
-                                  {selectables.map((item) => {
-                                    return (
-                                      <CommandItem
-                                        key={item.teamid}
-                                        onMouseDown={(e) => {
-                                          e.preventDefault();
-                                          e.stopPropagation();
-                                        }}
-                                        onSelect={(value) => {
-                                          setInputValue("");
-                                          setSelected((prev) => [...prev, item]);
-                                        }}
-                                        className={"cursor-pointer"}
-                                      >
-                                        {item.teamname}
-                                      </CommandItem>
-                                    );
-                                  })}
-                                </CommandGroup>
-                              </div>
-                            ) : null}
-                          </CommandList>
-                        </div>
-                      </Command>
-
-                      {/* <label htmlFor="" className=' mt-2 text-xs'>Team</label>
-                        <Select>
-                        <SelectTrigger className="w-full text-xs h-[35px] bg-primary">
-                          <SelectValue placeholder="Select" />
-                        </SelectTrigger>
-                        <SelectContent className=' text-xs'>
-                          {Teams.map((item, index) => (
-                          <SelectItem key={index} value={item.name}>{item.name}</SelectItem>
-                          ))}
-                          
-                        </SelectContent>
-                      </Select> */}
-
+                
 
                       </div>
 

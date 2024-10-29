@@ -19,10 +19,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import Actionbtn from '@/components/common/Actionbutton'
+import Leaveform from '@/components/forms/Leaveform'
+import WDform from '@/components/forms/Wellnessday'
+import Wfhform from '@/components/forms/Wfhform'
 
 
 export default function Yourworkload() {
   const [tab, setTab] = useState('Workload')
+  const [tab2, setTab2] = useState('Leave')
+
 
   return (
    <div className=' w-full h-full flex flex-col justify-center bg-secondary p-4 text-zinc-100'>
@@ -32,7 +38,25 @@ export default function Yourworkload() {
           <p className=' text-zinc-400'>Name: <span className=' text-zinc-100 underline'>Name</span></p>
           <p className=' text-zinc-400'>Initial: <span className=' text-zinc-100 underline'>ABC</span></p>
           <p className=' text-zinc-400'>Email: <span className=' text-zinc-100 underline'>test@gmail.com</span></p>
+        </div>
 
+        <div className=' flex flex-col gap-2 bg-primary rounded-sm text-xs'>
+
+          <p>Request :</p>
+          <div className='flex items-center gap-2 bg-primary rounded-sm text-xs'>
+              <Leaveform onClick={() => undefined}>
+                <button onClick={() =>  setTab2('Leave')} className={`text-xs px-3 py-1 bg-red-600  rounded-sm`}>Leave</button>
+              </Leaveform>
+              <WDform onClick={() => undefined}>
+                <button onClick={() =>  setTab2('WD')} className={`text-xs px-3 py-1 bg-red-600  rounded-sm`}>Wellness Day</button>
+              </WDform>
+
+              <Wfhform onClick={() => undefined}>
+                <button onClick={() =>  setTab2('WFH')} className={`text-xs px-3 py-1 bg-red-600  rounded-sm`}>WFH</button>
+              </Wfhform>
+
+          </div>
+            
         </div>
 
         <div className=' flex items-center justify-center gap-4 text-xs bg-secondary p-2 rounded-sm'>

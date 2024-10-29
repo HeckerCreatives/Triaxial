@@ -28,7 +28,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { leaveType } from '@/types/data'
 import PaginitionComponent from '@/components/common/Pagination'
-import Leaves from './Leaves'
+import Spinner from '@/components/common/Spinner'
 
 
 type Wellnessday = {
@@ -67,33 +67,19 @@ type LeaveWithCalculation = Leave & Caculate;
 
 
 
-export default function Requesttable() {
-  const [dialog, setDialog] = useState(false)
-  const [tab, setTab] = useState('Leave')
-  const [list, setLiest] = useState<Wellnessday[]>([])
-  const [active, setActive] = useState('Leaves')
+export default function Leaves() {
   const router = useRouter()
   const params = useSearchParams()
   const refresh = params.get('state')
+  const [totalpage, setTotalpage] = useState(0)
+  const [currentpage, setCurrentpage] = useState(0)
 
-  //wellness day
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const getList = async () => {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/wellnessday/requestlist?page&limit`,{
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'application/json'
-            }
-        })
-  
-        setLiest(response.data.data.history)
-       
-      }
-      getList()
-    }, 500)
-    return () => clearTimeout(timer)
-  },[refresh])
+   //paginition
+   const handlePageChange = (page: number) => {
+    setCurrentpage(page)
+  }
+
+
 
 
   //leave
@@ -127,7 +113,7 @@ export default function Requesttable() {
       setLoading(true);
       try {
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/leave/employeeleaverequestlist?status=Pending&page=0&limit=10`,
+          `${process.env.NEXT_PUBLIC_API_URL}/leave/employeeleaverequestlist?status=Pending&page=${currentpage}&limit=10`,
           {
             withCredentials: true,
             headers: {
@@ -135,6 +121,8 @@ export default function Requesttable() {
             },
           }
         );
+
+        setTotalpage(response.data.data.totalpage)
   
         const leaveList: Leave[] = response.data.data.requestlist;
   
@@ -171,7 +159,7 @@ export default function Requesttable() {
     };
   
     fetchLeaveData();
-  }, [refresh]);
+  }, [refresh, currentpage]);
 
   const findType = (id: number) => {
     const find = leaveType.find((item) => item.id === id)
@@ -196,90 +184,20 @@ export default function Requesttable() {
     <div className=' w-full h-full flex justify-center bg-secondary p-6 text-zinc-100'>
 
       <div className=' w-full max-w-[1520px] flex flex-col'>
-        <div className=' flex md:flex-row flex-col items-center justify-between gap-4'>
-            <div className=' flex flex-col gap-8'>
-
-              <div className=' flex items-center bg-primary rounded-sm'>
-              <Actionbtn onClick={() => undefined} name='Request:' color={''}/>
-              <Leaveform onClick={() => undefined}>
-                <Actionbtn onClick={() => setTab('Leave')} name='Leave' color={ `${tab === 'Leave' && 'bg-red-700'}`}/>
-              </Leaveform>
-              <WDform onClick={() => undefined}>
-                <Actionbtn onClick={() => setTab('Wellness Day')} name='Wellness Day' color={ `${tab === 'Wellness Day' && 'bg-red-700'}`}/>
-              </WDform>
-
-              <Wfhform onClick={() => undefined}>
-                <Actionbtn onClick={() => setTab('Wfh')} name='Wfh' color={ `${tab === 'Wfh' && 'bg-red-700'}`}/>
-              </Wfhform>
-              </div>
-
-              <div className=' flex gap-4'>
-                {Tab.map((item) => (
-                <p onClick={() => setActive(item)} key={item} className={` text-sm px-4 cursor-pointer ${active === item ? 'border-b-2 border-red-700' : ''}`}>{item}</p>
-
-                ))}
-
-              </div>
-
-            </div>
-
-            
-
-        </div>
-
-        {active === 'Wellness Day' && (
-          <>
+    
+    
           <Table className=' mt-4'>
-        <TableHeader>
-            <TableRow>
-            <TableHead className="">Requested at</TableHead>
-            <TableHead>Type</TableHead>
-            <TableHead>Start Date</TableHead>
-            <TableHead className="">First Day of Wellness Day Cycle</TableHead>
-            {/* <TableHead className="">Status</TableHead> */}
-            </TableRow>
-        </TableHeader>
-        <TableBody>
-          {list.map((item, index) => (
-            <TableRow key={index}>
-            <TableCell className="">{new Date(item.createdAt).toLocaleString()}</TableCell>
-            <TableCell>Wellness Day</TableCell>
-            <TableCell>{item.requestdate}</TableCell>
-            <TableCell className="">{item.firstdayofwellnessdaycycle}</TableCell>
-            {/* <TableCell className=" text-purple-500">Pending</TableCell> */}
-            </TableRow>
-          ))}
-            
-        </TableBody>
-          </Table>
-
-          <Pagination className=' mt-4'>
-          <PaginationContent>
-              <PaginationItem>
-              <PaginationPrevious href="#" />
-              </PaginationItem>
-              <PaginationItem>
-              <PaginationLink href="#">1</PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-              <PaginationEllipsis />
-              </PaginationItem>
-              <PaginationItem>
-              <PaginationNext href="#" />
-              </PaginationItem>
-          </PaginationContent>
-          </Pagination>
-          </>
-        )} 
-
-        {/* {active === 'Leaves' && (
-          <Table className=' mt-4'>
+          {leave.length === 0 &&  
+          <TableCaption className=' text-xs text-zinc-500'>No data</TableCaption>
+          }
+          
+        {loading === true && (
+            <TableCaption className=' '>
+              <Spinner/>
+            </TableCaption>
+          )}
           <TableHeader>
               <TableRow>
-              <TableHead className=' text-xs' >Approved Timestamp</TableHead>
-              <TableHead className=' text-xs'>Manager</TableHead>
-              <TableHead className=' text-xs'>Status</TableHead>
-              <TableHead className=' text-xs'>Name</TableHead>
               <TableHead className=' text-xs'>Leave Type</TableHead>
               <TableHead className=' text-xs'>First day of Leave</TableHead>
               <TableHead className=' text-xs'>Last day of Leave</TableHead>
@@ -288,39 +206,34 @@ export default function Requesttable() {
               <TableHead className=' text-xs'>In a Wellness Day Cycle?</TableHead>
               <TableHead className=' text-xs'>Total Working Hours on Leave</TableHead>
               <TableHead className=' text-xs'>Total Worked Hours during Leave</TableHead>
-              <TableHead className=' text-xs'>Total Hours for Payroll</TableHead>
+              {/* <TableHead className=' text-xs'>Total Hours for Payroll</TableHead> */}
+              <TableHead className=' text-xs'>Status</TableHead>
+
               </TableRow>
           </TableHeader>
           <TableBody>
-              <TableRow>
-              <TableCell className="font-medium">00001</TableCell>
-              <TableCell>Pending</TableCell>
-  
-              <TableCell>Test</TableCell>
-              <TableCell>Test</TableCell>
-              <TableCell>Test</TableCell>
-              <TableCell>Test</TableCell>
-              <TableCell>Test</TableCell>
-              <TableCell>Test</TableCell>
-              <TableCell>Test</TableCell>
-              <TableCell>Test</TableCell>
-              <TableCell>Test</TableCell>
-              <TableCell>Test</TableCell>
-              <TableCell>16/08/24</TableCell>
-           
-  
+            {leave.map(( item, index) => (
+              <TableRow key={index}>
+              <TableCell className="font-medium">{findType(item.type)}</TableCell>
+              <TableCell>{item.startdate}</TableCell>
+              <TableCell>{item.enddate}</TableCell>
+              <TableCell>{item.totalworkingdays}</TableCell>
+              <TableCell>{item.totalHoliday}</TableCell>
+              <TableCell>{item.inwellnessday === true ? 'Yes' : 'No'}</TableCell>
+              <TableCell>{item.totalworkinghoursonleave}</TableCell>
+              <TableCell>{item.workinghoursduringleave.toFixed(2)}</TableCell>
+              <TableCell>{item.status}</TableCell>
+     
               </TableRow>
+            ))}
+              
           </TableBody>
           </Table>
-        )} */}
 
-        {active === 'Leaves' && (
-          <>
-          <Leaves/>
-          </>
-          
-        )}
-
+          {leave.length !== 0 && (
+          <PaginitionComponent currentPage={currentpage} total={totalpage} onPageChange={handlePageChange}/>
+          )}
+      
         
 
       </div>

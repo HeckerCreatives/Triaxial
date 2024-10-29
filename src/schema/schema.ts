@@ -23,9 +23,10 @@ workingdays: z
     .number(),
 holidays: z
     .number(),
-// wdcycle: z
-//     .string(),
-declaration: z.boolean().refine((val) => val === true, { message: "You must agree to the declaration" })
+ wdcycle: z
+     .string(),
+declaration: z.boolean().refine((val) => val === true, { message: "You must agree to the declaration" }),
+
 
 });
 
@@ -141,6 +142,11 @@ export const createEvent = z.object({
     enddate: z.string().nonempty('Please add a end date'),
 })
 
+export const processLeave = z.object({
+    comments: z.string(),
+    status: z.string()
+})
+
 export type LeaveSchema = z.infer<typeof leaveSchema>;
 export type WdSchema = z.infer<typeof wdSchema>;
 export type WfhSchema = z.infer<typeof wfhSchema>;
@@ -151,3 +157,4 @@ export type CreateEmployee = z.infer<typeof createEmployee>
 export type CreateTeam = z.infer<typeof createTeam>
 export type CreateClient = z.infer<typeof createClient>
 export type CreateEvent = z.infer<typeof createEvent>
+export type ProcessLeave = z.infer<typeof processLeave>

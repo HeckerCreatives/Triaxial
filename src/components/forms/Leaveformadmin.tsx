@@ -14,6 +14,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Textarea } from '../ui/textarea'
 import { Checkbox } from '../ui/checkbox'
 import { Plus } from 'lucide-react'
+import { leaveType } from '@/types/data'
 
 
 interface Data {
@@ -27,12 +28,33 @@ interface Data {
     // details: string
     // wd
      children?: React.ReactNode;
+     requestid: string
+    manager:string
+    status: string
+    name:string
+    type: number,
+    leavestart: string
+    leaveend: string
+    totalworkingdays: number
+    totalpublicholidays: number
+    wellnessdaycycle: boolean
+    workinghoursonleave: number
+    workinghoursduringleave: number
+    details: string
 
 }
 
 
 export default function Leaveformadmin( prop: Data) {
   const [dialog, setDialog] = useState(false)
+
+  const findType = (id: number) => {
+    const find = leaveType.find((item) => item.id === id)
+
+    return find?.type
+  }
+
+  
   return (
     <Dialog >
     <DialogTrigger>
@@ -44,11 +66,11 @@ export default function Leaveformadmin( prop: Data) {
         <div className=' w-full flex flex-col gap-1'>
           <p className=' text-xs font-semibold mb-2'>Employee Details</p>
           <label htmlFor="" className=' text-xs text-zinc-700'>Name</label>
-          <Input type='text' className=' text-xs h-[35px] bg-zinc-200' placeholder='Name'/>
+          <Input type='text' value={prop.name} className=' text-xs h-[35px] bg-zinc-200' placeholder='Name'/>
 
           <label htmlFor="" className=' text-xs text-zinc-700'>Type <span className=' text-red-500'>*</span></label>
 
-            <RadioGroup defaultValue="Annual Leave" className=' w-full grid grid-cols-3'>
+            <RadioGroup defaultValue={findType(prop.type)} value={findType(prop.type)} className=' w-full grid grid-cols-3'>
               <div className=' flex flex-col gap-2'>
                 <div className="flex items-center space-x-2">
                 <RadioGroupItem value="Annual Leave" id="Annual Leave" />
@@ -109,19 +131,19 @@ export default function Leaveformadmin( prop: Data) {
             </RadioGroup>
 
           <Label className=' mt-2 text-zinc-500'>Details:</Label>
-          <Textarea placeholder='Please input text here' className=' text-xs bg-zinc-200'/>
+          <Textarea value={prop.details} placeholder='Please input text here' className=' text-xs bg-zinc-200'/>
 
           <Label className=' mt-4 font-semibold'>Period Of Leave</Label>
           <div className=' flex items-center gap-4'>
             <div>
               <Label className=' mt-2 text-zinc-500'>First Day Of Leave:</Label>
-              <Input type='date' className=' text-xs h-[35px] bg-zinc-200' placeholder='Name'/>
+              <Input type='date' value={prop.leavestart} className=' text-xs h-[35px] bg-zinc-200' placeholder='Name'/>
 
             </div>
 
             <div>
               <Label className=' mt-2 text-zinc-500'>Last Day Of Leave:</Label>
-              <Input type='date' className=' text-xs h-[35px] bg-zinc-200' placeholder='Name'/>
+              <Input type='date' value={prop.leaveend} className=' text-xs h-[35px] bg-zinc-200' placeholder='Name'/>
 
             </div>
 
@@ -130,18 +152,18 @@ export default function Leaveformadmin( prop: Data) {
           <div className=' w-full flex items-center gap-2'>
             <div className=' w-full'>
               <Label className=' mt-2 text-zinc-500'>Total Number of Working Days:</Label>
-            < Input type='number' className=' text-xs h-[35px] bg-zinc-200' placeholder='0'/>
+            < Input type='number' value={prop.totalworkingdays} className=' text-xs h-[35px] bg-zinc-200' placeholder='0'/>
             </div>
 
             <div className=' w-full'>
               <Label className=' mt-2 text-zinc-500'>Total Public Holidays(if applicable)</Label>
-            < Input type='number' className=' text-xs h-[35px] bg-zinc-200' placeholder='0'/>
+            < Input type='number' value={prop.totalpublicholidays} className=' text-xs h-[35px] bg-zinc-200' placeholder='0'/>
             </div>
           </div>
 
           <div className=' flex items-center gap-2 mt-4'>
             <Label className=' text-zinc-500'>Are you in a Wellness Day Cycle? <span className=' text-red-500'>*</span></Label>
-            <RadioGroup defaultValue="option-one" className=' flex items-center gap-2'>
+            <RadioGroup defaultValue="Yes" value={prop.wellnessdaycycle === true ? 'Yes' : 'No'} className=' flex items-center gap-2'>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="Yes" id="Yes" />
                 <Label htmlFor="Yes">Yes</Label>
@@ -156,17 +178,17 @@ export default function Leaveformadmin( prop: Data) {
           <div className=' w-full flex items-center gap-2 mt-4'>
             <div className=' w-full'>
               <Label className=' text-zinc-500'>Total Working Hours on Leave:</Label>
-            < Input type='number' className=' text-xs h-[35px] bg-zinc-200' placeholder='0'/>
+            < Input type='number' value={prop.workinghoursonleave} className=' text-xs h-[35px] bg-zinc-200' placeholder='0'/>
             </div>
 
             <div className=' w-full'>
               <Label className=' text-zinc-500'>Total Working Hours During Leave:</Label>
-            < Input type='number' className=' text-xs h-[35px] bg-zinc-200' placeholder='0'/>
+            < Input type='number' value={prop.workinghoursduringleave} className=' text-xs h-[35px] bg-zinc-200' placeholder='0'/>
             </div>
           </div>
 
            <Label className=' mt-2 text-zinc-500'>Comments:</Label>
-          <Textarea placeholder='Please input text here' className=' text-xs bg-zinc-200'/>
+          <Textarea placeholder='Please input text here' value={''} className=' text-xs bg-zinc-200'/>
 
 
           <div className=' flex items-center gap-4 mt-4'>

@@ -19,6 +19,7 @@ import { boolean, number, string } from 'zod'
 import axios, { AxiosError } from 'axios'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
+import { start } from 'repl'
 
 
 interface Data {
@@ -50,6 +51,8 @@ export default function Leaveform( prop: Data) {
   const router = useRouter()
   const [start, setStart] = useState('')
   const [end, setEnd] = useState('')
+  const [wd, setWd] = useState('Yes')
+  const [total, setTotal] = useState(0)
 
 
    const {
@@ -62,20 +65,29 @@ export default function Leaveform( prop: Data) {
   } = useForm<LeaveSchema>({
     resolver: zodResolver(leaveSchema),
     defaultValues:{
-      type: '0'
+      type: '0',
+      wdcycle: 'Yes'
     }
   });
 
   const onSubmit = async (data: LeaveSchema) => {
     const { declaration, ...filteredData } = data;
     setLoading(true)
+    router.push('?state=true')
+
+
     try {
       const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/leave/requestleave`,{
       leavetype: data.type, // 0 to total number of types
       details: data.details,
       leavestart: data.startdate, // YYYY-MM-DD
       leaveend: data.enddate, // YYYY-MM-DD
-      comments: ""
+      comments: '',
+      totalworkingdays: data.workingdays,
+      totalpublicholidays: data.holidays,
+      wellnessdaycycle: data.wdcycle === 'Yes' ? true : false,
+      workinghoursonleave: data.totalhoursonleave,
+      workinghoursduringleave: data.duringleave
        
       },
           {
@@ -87,9 +99,9 @@ export default function Leaveform( prop: Data) {
       )
 
     const response = await toast.promise(request, {
-        loading: 'Requesting wellness day ....',
+        loading: 'Requesting a leave....',
         success: `Successfully rquested`,
-        error: 'Error while requesting wellness day',
+        error: 'Error while requesting a leave',
     });
 
    if(response.data.message === 'success'){
@@ -137,15 +149,14 @@ export default function Leaveform( prop: Data) {
   }
   };
 
-  useEffect(() => {
-    reset()
-  },[dialog])
-
 
   //calculate
   const startValue = watch('startdate')
   const endValue = watch('enddate')
   const [data, setData] = useState<Caculate>()
+  const [holidays, setHolidays] = useState(0)
+  const [onLeave, setOnleave] = useState(0)
+  const hours = wd === 'Yes' ? 8.44 : 7.6
   useEffect(() => {
     setLoading(true)
     if(startValue !== '' && endValue !== ''){
@@ -167,6 +178,36 @@ export default function Leaveform( prop: Data) {
 
   const selectedLeaveType = watch("type");
 
+  function totalWorkingDays(): number {
+    const startDate = new Date(start)
+    const endDate = new Date(end)
+    let workingDays = 0;
+
+    for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
+        const dayOfWeek = date.getDay();
+        if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+            workingDays++;
+        }
+    }
+
+
+    return workingDays;
+}
+
+  useEffect(() => {
+    reset()
+    totalWorkingDays()
+  },[dialog])
+
+  const workingDays = totalWorkingDays() - holidays;
+  const hoursonleave = ((totalWorkingDays() - holidays) * hours) - onLeave
+  useEffect(() => {
+    setValue('workingdays', workingDays); // Update form value whenever workingDays changes
+    setValue('totalhoursonleave', hoursonleave)
+}, [workingDays, setValue, hoursonleave, wd]);
+
+
+  console.log(errors, hoursonleave)
   
 
   
@@ -253,23 +294,23 @@ export default function Leaveform( prop: Data) {
           <div className=' flex items-center gap-4'>
             <div>
               <Label className=' mt-2 text-zinc-500'>First Day Of Leave: <span className=' text-red-500'>*</span></Label>
-              <Input type='date' className=' text-xs h-[35px] bg-zinc-200' placeholder='Name' {...register('startdate')}/>
+              <Input type='date' className=' text-xs h-[35px] bg-zinc-200'  placeholder='Name' {...register('startdate',{ onChange: (e) => setStart(e.target.value)})}/>
               {errors.startdate && <p className=' text-[.6em] text-red-500'>{errors.startdate.message}</p>}
             </div>
 
             <div>
               <Label className=' mt-2 text-zinc-500'>Last Day Of Leave: <span className=' text-red-500'>*</span></Label>
-              <Input type='date' className=' text-xs h-[35px] bg-zinc-200' placeholder='Name' {...register('enddate')}/>
+              <Input type='date' className=' text-xs h-[35px] bg-zinc-200' placeholder='Name' {...register('enddate', { onChange: (e) => setEnd(e.target.value)})}/>
               {errors.enddate && <p className=' text-[.6em] text-red-500'>{errors.enddate.message}</p>}
 
             </div>
 
-            <div className=' w-full flex items-start flex-col gap-1 mt-2'>
+            {/* <div className=' w-full flex items-start flex-col gap-1 mt-2'>
               <Label className=' text-zinc-500'>Attach file</Label>
               <input type="file" 
               accept=".pdf, .doc, .docx" 
               className=' bg-zinc-200 text-xs p-2 rounded-sm' />
-            </div>
+            </div> */}
 
 
           </div>
@@ -277,22 +318,22 @@ export default function Leaveform( prop: Data) {
           <div className=' w-full flex items-start gap-2'>
             <div className=' w-full'>
               <Label className=' mt-2 text-zinc-500'>Total Number of Working Days:</Label>
-            < Input type='number' value={data?.totalworkingdays} defaultValue={0} className=' text-xs h-[35px] bg-zinc-200' placeholder='0' {...register('workingdays',{ valueAsNumber: true})}/>
+            < Input type='number' value={workingDays} className=' text-xs h-[35px] bg-zinc-200' placeholder='0' {...register('workingdays', { valueAsNumber: true})}/>
               {errors.workingdays && <p className=' text-[.6em] text-red-500'>{errors.workingdays.message}</p>}
 
             </div>
 
             <div className=' w-full'>
               <Label className=' mt-2 text-zinc-500'>Total Public Holidays(if applicable)</Label>
-            < Input type='number' value={data?.totalworkingdays} defaultValue={0} className=' text-xs h-[35px] bg-zinc-200' placeholder='0' {...register('holidays',{ valueAsNumber: true})}/>
+            < Input type='number' value={holidays} defaultValue={0} className=' text-xs h-[35px] bg-zinc-200' placeholder='0' {...register('holidays',{ valueAsNumber: true, onChange: (e) => setHolidays(e.target.value)})}/>
               {errors.holidays && <p className=' text-[.6em] text-red-500'>{errors.holidays.message}</p>}
 
             </div>
           </div>
 
-          {/* <div className=' flex items-center gap-2 mt-4'>
+          <div className=' flex items-center gap-2 mt-4'>
             <Label className=' text-zinc-500'>Are you in a Wellness Day Cycle? <span className=' text-red-500'>*</span></Label>
-            <RadioGroup defaultValue="Yes"  className=' flex items-center gap-2' {...register('wdcycle')} >
+            <RadioGroup className=' flex items-center gap-2' value={watch('wdcycle')}  onValueChange={(value) => {setValue('wdcycle', value), setWd(value)}} >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="Yes" id="Yes"  />
                 <Label htmlFor="Yes">Yes</Label>
@@ -302,19 +343,19 @@ export default function Leaveform( prop: Data) {
                 <Label htmlFor="No">No</Label>
               </div>
             </RadioGroup>
-          </div> */}
+          </div>
 
           <div className=' w-full flex items-start gap-2 mt-4'>
             <div className=' w-full'>
               <Label className=' text-zinc-500'>Total Working Hours on Leave:</Label>
-            < Input type='number' value={data?.totalworkinghoursonleave} defaultValue={0} className=' text-xs h-[35px] bg-zinc-200' placeholder='0' {...register('totalhoursonleave',{ valueAsNumber: true})}/>
+            < Input type='number' value={hoursonleave.toLocaleString()} defaultValue={0} className=' text-xs h-[35px] bg-zinc-200' placeholder='0' {...register('totalhoursonleave',{ valueAsNumber: true})}/>
               {errors.totalhoursonleave && <p className=' text-[.6em] text-red-500'>{errors.totalhoursonleave.message}</p>}
 
             </div>
 
             <div className=' w-full'>
               <Label className=' text-zinc-500'>Total Working Hours During Leave:</Label>
-            < Input type='number' value={data?.workinghoursduringleave} defaultValue={0} className=' text-xs h-[35px] bg-zinc-200' placeholder='0' {...register('duringleave',{ valueAsNumber: true})}/>
+            < Input type='number' value={onLeave}  defaultValue={0} className=' text-xs h-[35px] bg-zinc-200' placeholder='0' {...register('duringleave',{ valueAsNumber: true, onChange: (e) => setOnleave(e.target.value)})}/>
               {errors.duringleave && <p className=' text-[.6em] text-red-500'>{errors.duringleave.message}</p>}
 
             </div>

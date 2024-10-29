@@ -1,6 +1,6 @@
 export const leaveType = [
   {id:0, type:'Annual Leave'},
-  {id:1, type:'SickLleave'},
+  {id:1, type:'Sick Leave'},
   {id:2, type:'Careers Leave'},
   {id:3, type:'Bereavement Leave'},
   {id:4, type:'Study Leave'},

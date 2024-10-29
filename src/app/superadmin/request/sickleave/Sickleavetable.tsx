@@ -39,24 +39,21 @@ import Spinner from '@/components/common/Spinner'
 
 type Leave = {
   requestid: string
-  manager:  string
-  status:  string
-  name:  string
+  manager:string
+  status: string
+  name:string
   type: number,
-  leavestart:  string
-  leaveend:  string
+  leavestart: string
+  leaveend: string
+  totalworkingdays: number
+  totalpublicholidays: number
+  wellnessdaycycle: boolean
+  workinghoursonleave: number
+  workinghoursduringleave: number
+  details: string
   
 }
 
-type Caculate = {
-  totalworkingdays:  number
-  inwellnessday: boolean
-  totalHoliday:  number
-  totalworkinghoursonleave:  number
-  workinghoursduringleave: number
-}
-
-type LeaveWithCalculation = Leave & Caculate;
 
 
 export default function Sickleavetable() {
@@ -65,6 +62,9 @@ export default function Sickleavetable() {
   const router = useRouter()
   const [totalpage, setTotalpage] = useState(0)
   const [currentpage, setCurrentpage] = useState(0)
+  const currentDate = new Date()
+
+  console.log(currentDate)
 
   //list
   const [searchName, setSearchName] = useState('')
@@ -128,29 +128,8 @@ export default function Sickleavetable() {
   },[searchName])
 
 
-  const [leave, setLeave] = useState<LeaveWithCalculation[]>([])
-  const getCalculate = async (start: string, end: string): Promise<Caculate> => {
-    try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/leave/calculateleavedays`, {
-        params: { startdate: start, enddate: end },
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      return response.data.data as Caculate;
-    } catch (error) {
-      
-      // Provide default values for Caculate if the API call fails
-      return {
-        totalworkingdays: 0,
-        inwellnessday: false,
-        totalHoliday: 0,
-        totalworkinghoursonleave: 0,
-        workinghoursduringleave: 0,
-      };
-    }
-  };
+  const [leave, setLeave] = useState<Leave[]>([])
+
 
   //leave list
   useEffect(() => {
@@ -169,38 +148,14 @@ export default function Sickleavetable() {
           );
   
           setTotalpage(response.data.data.totalpages)
+          setLeave(response.data.data.requestlist)
     
-          const leaveList: Leave[] = response.data.data.requestlist;
-    
-          // Fetch calculated data for each leave item in parallel
-          const leaveWithCalculations = await Promise.all(
-            leaveList.map(async (leave) => {
-              const calculateData = await getCalculate(leave.leavestart, leave.leaveend);
-              return {
-                ...leave, // merge original leave data
-                ...calculateData, // merge calculated data
-              };
-            })
-          );
-    
-          setLeave(leaveWithCalculations);
+         
           setLoading(false);
         } catch (error) {
           setLoading(false);
     
-          if (axios.isAxiosError(error)) {
-            const axiosError = error as AxiosError<{ message: string; data: string }>;
-            if (axiosError.response) {
-              const status = axiosError.response.status;
-              const message = axiosError.response.data.data;
-              if (status === 401) {
-                toast.error(message);
-                router.push('/');
-              } else {
-                toast.error(message);
-              }
-            }
-          }
+         
         }
       };
     
@@ -232,9 +187,9 @@ export default function Sickleavetable() {
         <div className=' flex md:flex-row flex-col items-center justify-between gap-4'>
 
           <div className=' flex items-center gap-2'>
-            <p className=' text-xs text-zinc-400'>Status Legend:</p>
-            <p className=' bg-purple-700 text-zinc-100 text-xs px-4 py-1 rounded-sm'>Leave Today</p>
-            <p className=' bg-cyan-700 text-zinc-100 text-xs px-4 py-1 rounded-sm'>Pending Leave</p>
+            <p className=' text-[.7rem] text-zinc-400'>Status Legend:</p>
+            <p className=' bg-pink-500 text-zinc-100 text-[.6rem] px-4 py-1 rounded-sm'>Leave Today</p>
+            <p className=' bg-blue-500 text-zinc-100 text-[.6rem] px-4 py-1 rounded-sm'>Pending Leave</p>
 
           </div>
 
@@ -277,20 +232,20 @@ export default function Sickleavetable() {
           {leave.map((item, index) => (
              <TableRow key={index}>
              <TableCell className="">{item.manager}</TableCell>
-             <TableCell>{item.status}</TableCell>
+             <TableCell className=' text-blue-500'>{item.status}</TableCell>
              <TableCell>{item.name}</TableCell>
              <TableCell>{findType(item.type)}</TableCell>
              <TableCell>{item.leavestart}</TableCell>
              <TableCell>{item.leaveend}</TableCell>
              <TableCell>{item.totalworkingdays}</TableCell>
-             <TableCell>{item.totalHoliday}</TableCell>
-             <TableCell>{item.inwellnessday === true ? 'Yes' : 'No'}</TableCell>
-             <TableCell>{item.totalworkinghoursonleave.toFixed(2)}</TableCell>
-             <TableCell>{item.workinghoursduringleave.toFixed(2)}</TableCell>
+             <TableCell>{item.totalpublicholidays}</TableCell>
+             <TableCell>{item.wellnessdaycycle === true ? 'Yes' : 'No'}</TableCell>
+             <TableCell>{item?.workinghoursonleave ? item.workinghoursonleave.toFixed(2) : '0'}</TableCell>
+             <TableCell>{item.workinghoursduringleave}</TableCell>
              {/* <TableCell>Test</TableCell> */}
              {/* <TableCell>16/08/24</TableCell> */}
              <TableCell className="">
-               <Leaveformadmin onClick={() => undefined}>
+               <Leaveformadmin onClick={() => undefined} requestid={`${item.requestid}`} manager={`${item.manager}`} status={`${item.status}`} name={`${item.name}`} type={item.type} leavestart={`${item.leavestart}`} leaveend={`${item.leaveend}`} totalworkingdays={item.totalworkingdays} totalpublicholidays={item.totalpublicholidays} wellnessdaycycle={item.wellnessdaycycle} workinghoursonleave={item.workinghoursonleave} workinghoursduringleave={item.workinghoursduringleave} details={item.details}>
                  
                    <button className=' whitespace-nowrap bg-red-700 text-white text-xs p-2 rounded-sm'>Approved / Denied</button>
                 </Leaveformadmin>
