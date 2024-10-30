@@ -512,7 +512,6 @@ export default function ClientTable() {
                   <div className=' flex flex-col gap-2 p-4'>
                     <DialogHeader>
                     <DialogDescription>
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Incidunt, reprehenderit sequi. Quisquam, libero quam placeat molestias cum est.
                     </DialogDescription>
                     </DialogHeader>
                   <form onSubmit={handleSubmit(onSubmit)} className=' flex flex-col '>
@@ -650,7 +649,6 @@ export default function ClientTable() {
                   <div className=' flex flex-col gap-2 p-4'>
                     <DialogHeader>
                     <DialogDescription>
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Incidunt, reprehenderit sequi. Quisquam, libero quam placeat molestias cum est.
                     </DialogDescription>
                     </DialogHeader>
                   <form onSubmit={handleSubmit(editClient)} className=' flex flex-col '>

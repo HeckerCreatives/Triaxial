@@ -177,9 +177,9 @@ export default function Projecttable() {
             <TableHead className="">Job No</TableHead>
             <TableHead>Project Name</TableHead>
             <TableHead>Client Name</TableHead>
-            <TableHead className="">Job Manger</TableHead>
+            <TableHead className="">Job Manager</TableHead>
             <TableHead className="">Est.$</TableHead>
-            <TableHead className="">%Inv</TableHead>
+            <TableHead className="">%Invoice</TableHead>
             <TableHead className="">Job Component</TableHead>
             <TableHead className="">Job Members</TableHead>
             <TableHead className="">Team Name</TableHead>

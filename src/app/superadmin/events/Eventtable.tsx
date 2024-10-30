@@ -170,8 +170,6 @@ export default function Eventtable() {
   });
 
   const onSubmit = async (data: CreateEvent) => {
-
-   
     setLoading(true)
     const selectedIds = selected.map((row) => row.teamid);
     router.push('?state=true')
@@ -265,6 +263,10 @@ export default function Eventtable() {
     setCurrentpage(page)
   }
 
+  useEffect(() => {
+    setSelected([])
+  },[dialog, dialog2])
+
 
   return (
     <div className=' w-full h-full flex justify-center bg-secondary p-6 mt-[150px] text-zinc-100'>
@@ -287,7 +289,6 @@ export default function Eventtable() {
                   <div className=' flex flex-col gap-2 p-4'>
                     <DialogHeader>
                     <DialogDescription>
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Incidunt, reprehenderit sequi. Quisquam, libero quam placeat molestias cum est.
                     </DialogDescription>
                     </DialogHeader>
                   <form onSubmit={handleSubmit(onSubmit)} className=' flex flex-col '>

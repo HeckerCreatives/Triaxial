@@ -582,6 +582,10 @@ export default function Teamstable() {
     }
   }, [teamdata]);
 
+  useEffect(() => {
+    setSelected([])
+  },[dialog, dialog3, dialog2])
+
   return (
     <>
     {tab === null && (
@@ -605,7 +609,7 @@ export default function Teamstable() {
                   <div className=' flex flex-col gap-2 p-4'>
                     <DialogHeader>
                     <DialogDescription>
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Incidunt, reprehenderit sequi. Quisquam, libero quam placeat molestias cum est.
+                      
                     </DialogDescription>
                     </DialogHeader>
                     <form onSubmit={handleSubmit(onSubmit)} action="" className=' flex flex-col '>
