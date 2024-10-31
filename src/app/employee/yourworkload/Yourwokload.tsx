@@ -188,7 +188,7 @@ export default function Yourworkload() {
       </div>
 
       <div className=' w-full flex flex-col max-w-[1920px]'>
-        <div className=' h-[580px] overflow-y-auto flex items-start justify-center bg-zinc-100 w-full max-w-[1920px]'>
+        <div className=' h-full overflow-y-auto flex items-start justify-center bg-zinc-100 w-full max-w-[1920px]'>
         <table className="table-auto w-full border-collapse ">
           <thead className=' bg-secondary h-[103px]'>
             <tr className=' text-[0.6rem] text-zinc-100 font-normal'>

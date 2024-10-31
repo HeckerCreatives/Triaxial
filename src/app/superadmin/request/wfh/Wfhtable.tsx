@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Input } from "@/components/ui/input"
 import {
   Table,
@@ -19,7 +19,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
-import { Plus, Delete, Trash, Eye, ViewIcon } from 'lucide-react'
+import { Plus, Delete, Trash, Eye } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -28,89 +28,293 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import ButtonSecondary from '@/components/common/ButtonSecondary'
-import Button from '@/components/common/Button'
-import ButtonDanger from '@/components/common/ButtonDanger'
-import { Textarea } from '@/components/ui/textarea'
-import Actionbtn from '@/components/common/Actionbutton'
-import Viewbtn from '@/components/common/Viewbtn'
+import Leaveformadmin from '@/components/forms/Leaveformadmin'
+import axios, { AxiosError } from 'axios'
+import toast from 'react-hot-toast'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { leaveType } from '@/types/data'
+import PaginitionComponent from '@/components/common/Pagination'
+import Spinner from '@/components/common/Spinner'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import Wfhformadmin from '@/components/forms/Wfhformadmin'
 
+
+type Wfh = {
+  employeeid: string
+  requestid:string
+  startdate: string
+  enddate: string
+  totalworkingdays: number
+  totalholidays: number
+  totalworkinghours:  number
+  wellnessdaycycle: true,
+  hoursofleave:  number
+  reason: string
+  comments: string
+  createdAt: string
+  status: string
+  manager: string
+  employeename: string
+  
+}
+
+type Wfhlist = {
+  requestid: string
+  userid: string
+  fullname: string
+  requestdate: string
+  requestend:string
+  wellnessdaycycle: boolean
+  totalhourswfh: number
+  hoursofleave: number
+  reason:  string
+  status: string
+  
+}
 
 
 
 export default function Wfhtable() {
   const [dialog, setDialog] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
+  const [totalpage, setTotalpage] = useState(0)
+  const [currentpage, setCurrentpage] = useState(0)
+  const currentDate = new Date()
+  const [status, setStatus] = useState('Pending')
+  const params = useSearchParams()
+  const refresh = params.get('state')
+
+
+  console.log(currentDate)
+
+  //list
+  const [searchName, setSearchName] = useState('')
+  const [list, setList]= useState([])
+  useEffect(() => {
+    setLoading(true)
+    try {
+      const timer = setTimeout(() => {
+        const getList = async () => {
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/wfh/listwfhrequestadmin?statusfilter=Pending&fullnamefilter&page=0&limit=10`,{
+            withCredentials: true,
+            headers: {
+              'Content-Type': 'application/json'
+              }
+          })
+      
+          console.log('Leave list',response.data)
+          setList(response.data.data.wfhlist)
+          // setTotalpage(response.data.data.totalpages)
+          setLoading(false)
+
+      
+        
+        }
+        getList()
+      }, 500)
+      return () => clearTimeout(timer)
+  } catch (error) {
+      setLoading(false)
+
+      if (axios.isAxiosError(error)) {
+              const axiosError = error as AxiosError<{ message: string, data: string }>;
+              if (axiosError.response && axiosError.response.status === 401) {
+                  toast.error(`${axiosError.response.data.data}`)
+                  router.push('/')   
+              }
+
+              if (axiosError.response && axiosError.response.status === 400) {
+                  toast.error(`${axiosError.response.data.data}`)     
+                    
+              }
+
+              if (axiosError.response && axiosError.response.status === 402) {
+                  toast.error(`${axiosError.response.data.data}`)          
+                        
+              }
+
+              if (axiosError.response && axiosError.response.status === 403) {
+                  toast.error(`${axiosError.response.data.data}`)              
+                
+              }
+
+              if (axiosError.response && axiosError.response.status === 404) {
+                  toast.error(`${axiosError.response.data.data}`)             
+              }
+      } 
+    
+  }
+    
+    
+  },[searchName, refresh])
+
+
+  const [leave, setLeave] = useState<Wfhlist[]>([])
+
+
+  //wfh list
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const fetchLeaveData = async () => {
+        setLoading(true);
+        try {
+          const response = await axios.get(
+            `${process.env.NEXT_PUBLIC_API_URL}/wfh/listwfhrequestadmin?page=${currentpage}&limit=10&statusfilter=${status}&fullnamefilter=${searchName}`,
+            {
+              withCredentials: true,
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+  
+          setTotalpage(response.data.data.totalpage)
+          setLeave(response.data.data.wfhlist)
+    
+         
+          setLoading(false);
+        } catch (error) {
+          setLoading(false);
+    
+         
+        }
+      };
+    
+      fetchLeaveData();
+    }, 500)
+
+    return () => clearTimeout(timer)
+    
+  }, [currentpage, searchName, status, refresh]);
+
+  const findType = (id: number) => {
+    const find = leaveType.find((item) => item.id === id)
+
+    return find?.type
+  }
+
+
+  console.log(leave)
+
+  //paginition
+  const handlePageChange = (page: number) => {
+    setCurrentpage(page)
+  }
+
+  const statusColor = (data: string) => {
+    if(data === 'Pending'){
+      return 'text-blue-500'
+    } else if (data === 'Approved') {
+      return 'text-green-500'
+    } else {
+      return 'text-red-500'
+      
+    }
+
+  }
 
   return (
-    <div className=' w-full h-full flex justify-center bg-secondary p-6 mt-[150px] text-zinc-100'>
+    <div className=' w-full h-full flex justify-center bg-secondary p-6 text-zinc-100'>
 
-      <div className=' w-full flex flex-col max-w-[1520px]'>
-        <div className=' flex md:flex-row flex-col items-center justify-end gap-4'>
+      <div className=' w-full flex flex-col max-w-[1520px] '>
+        <div className=' flex md:flex-row flex-col items-center justify-between gap-4'>
+
+          <div className=' flex flex-col gap-2'>
+            <label htmlFor="" className=' text-xs text-zinc-400 mt-4'>Filter by status</label>
+            <Select value={status} onValueChange={setStatus}>
+            <SelectTrigger className="w-[180px] bg-primary mt-2">
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Pending">Pending</SelectItem>
+              <SelectItem value="Approved">Approved</SelectItem>
+              <SelectItem value="Denied">Rejected</SelectItem>
+            </SelectContent>
+          </Select>
+
+          </div>
 
             <div className=' flex items-center gap-2'>
-                <Input type='text' className=' bg-primary h-[35px] text-zinc-100'/>
+                <Input value={searchName} onChange={(e) => setSearchName(e.target.value)} placeholder='Search' type='text' className=' bg-primary h-[35px] text-zinc-100'/>
                 <button className=' bg-red-700 px-8 py-2 rounded-sm text-xs'>Search</button>
             </div>
             
         </div>
 
+       
+
         <Table className=' mt-4'>
+        {leave.length === 0 &&  
+          <TableCaption className=' text-xs text-zinc-500'>No data</TableCaption>
+          }
+          
+        {loading === true && (
+            <TableCaption className=' '>
+              <Spinner/>
+            </TableCaption>
+          )}
         <TableHeader>
-            <TableRow>
-            <TableHead >Manager</TableHead>
-            <TableHead>Timestamp</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Reason</TableHead>
-            <TableHead>Day of WFH</TableHead>
-            <TableHead>In a Wellness Day Cycle?</TableHead>
-            <TableHead>Total Hours WFH</TableHead>
-            <TableHead>Hours of Leave</TableHead>
-            <TableHead>Total Hours</TableHead>
-            <TableHead>Action</TableHead>
-            </TableRow>
+        <TableRow>
+              {/* <TableHead className=' text-xs'>Requested at</TableHead> */}
+              <TableHead className=' text-xs'>Name</TableHead>
+              <TableHead className=' text-xs'>Reason</TableHead>
+              <TableHead className=' text-xs'>First day of Leave</TableHead>
+              <TableHead className=' text-xs'>Last day of Leave</TableHead>
+              <TableHead className=' text-xs'>In a Wellness Day Cycle?</TableHead>
+              <TableHead className=' text-xs'>Total Working Hours on Leave</TableHead>
+              <TableHead className=' text-xs'>hours of Leave</TableHead>
+              {/* <TableHead className=' text-xs'>Total Hours for Payroll</TableHead> */}
+              <TableHead className=' text-xs'>Status</TableHead>
+           
+              {status === 'Pending' && (
+                 <TableHead className=' text-xs'>Action</TableHead>
+              )}
+
+              </TableRow>
         </TableHeader>
         <TableBody>
-            <TableRow>
-            <TableCell className="font-medium">00001</TableCell>
-            <TableCell>Test</TableCell>
-            <TableCell>16/08/24</TableCell>
-            <TableCell>Reason</TableCell>
-            <TableCell>16/08/24</TableCell>
-            <TableCell>No</TableCell>
-            <TableCell>24</TableCell>
-            <TableCell>24</TableCell>
-            <TableCell>24</TableCell>
-            <TableCell className="">
 
-              <Wfhformadmin onClick={() => undefined}>
-                <button className=' bg-red-700 rounded-sm text-xs text-white p-2'>Approved / Denied</button>
-              </Wfhformadmin>
-               
+        {leave.map(( item, index) => (
+              <TableRow key={index}>
+              <TableCell>{item.fullname}</TableCell>
+              <TableCell>{item.reason}</TableCell>
+              <TableCell>{item.requestdate}</TableCell>
+              <TableCell>{item.requestend}</TableCell>
+              <TableCell>{item.wellnessdaycycle === true ? 'Yes' : 'No'}</TableCell>
+              <TableCell>{item?.totalhourswfh ? item.totalhourswfh.toFixed(2) : '0'}</TableCell>
+              <TableCell>{item.hoursofleave}</TableCell>
+              <TableCell className={` ${statusColor(item.status)} text-xs`}>{item.status}</TableCell>
+              {status === 'Pending' && (
+              <TableCell className="">
+              <Wfhformadmin requestid={item.requestid} startdate={item.requestdate} enddate={item.requestend} totalworkinghours={item.totalhourswfh} wellnessdaycycle={item.wellnessdaycycle} hoursofleave={item.hoursofleave} reason={item.reason} fullname={item.fullname} >
+                
+                  <button className=' whitespace-nowrap bg-red-700 text-white text-xs p-2 rounded-sm'>Approved / Denied</button>
+               </Wfhformadmin>
+             
             </TableCell>
-
-            </TableRow>
+            )}
+     
+              </TableRow>
+            ))}
+        
+           
         </TableBody>
         </Table>
 
-        <Pagination className=' mt-4'>
-        <PaginationContent>
-            <PaginationItem>
-            <PaginationPrevious href="#" />
-            </PaginationItem>
-            <PaginationItem>
-            <PaginationLink href="#">1</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-            <PaginationEllipsis />
-            </PaginationItem>
-            <PaginationItem>
-            <PaginationNext href="#" />
-            </PaginationItem>
-        </PaginationContent>
-        </Pagination>
+        {leave.length !== 0 && (
+        <PaginitionComponent currentPage={currentpage} total={totalpage} onPageChange={handlePageChange}/>
+        )}
       </div>
         
     </div>
   )
 }
+
+

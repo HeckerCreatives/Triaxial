@@ -30,6 +30,7 @@ import { ToastSuccess } from '../common/Toast'
 import { motion } from 'framer-motion'
 import axios from 'axios'
 import toast from 'react-hot-toast'
+import { employee } from '@/types/routes'
 
 
 export default function EmployeeLayout({
@@ -84,78 +85,20 @@ export default function EmployeeLayout({
               </div>
             <div className="flex-1 mt-4">
               <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
+
+                {employee.map((item, index) => (
                   <Link
-                  href="/employee/dashboard"
-                  className={` ${path === '/employee/dashboard' ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
+                  key={index}
+                  href={item.path}
+                  className={` ${path.includes(item.path) ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
                 >
-                  <Home className="h-4 w-4" />
-                  Dashboard
+                  {item.icon}
+                  {item.name}
                   </Link>
+                ))}
+                  
 
-                  <Link
-                  href="/employee/yourworkload"
-                  className={` ${path === '/employee/yourworkload' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                >
-                  <List className="h-4 w-4" />
-                  Your Workload
-                </Link>
-
-                  {/* <Link
-                    href="/employee/schedule"
-                    className={` ${path === '/employee/schedule' ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                  >
-                    <Calendar className="h-4 w-4" />
-                    Schedules
-                  </Link> */}
-
-                  {/* <Link
-                    href="/employee/team"
-                    className={` ${path === '/employee/team' ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                  >
-                    <UsersRound className="h-4 w-4" />
-                    Team
-                  </Link> */}
-
-                   {/* <Link
-                    href="/employee/projectmasterlist"
-                    className={` ${path === '/employee/projectmasterlist' ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                  >
-                    <Box className="h-4 w-4" />
-                    Project Master List
-                  </Link> */}
-
-                   {/* <Link
-                    href="/employee/memberlist"
-                    className={` ${path === '/employee/memberlist' ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                  >
-                  <Users className="h-4 w-4" />
-                    Member List
-                  </Link> */}
-
-                  {/* <Link
-                    href="/employee/event"
-                    className={` ${path === '/employee/event' ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                  >
-                  <CalendarCheck className="h-4 w-4" />
-                    Events
-                  </Link> */}
-
-                  <Link
-                    href="/employee/request"
-                    className={` ${path === '/employee/request' ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                  >
-                    <ArrowRightLeft className="h-4 w-4" />
-                    Request
-                  </Link>
-
-
-                  <Link
-                    href="/employee/mail"
-                    className={` ${path === '/employee/mail' ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                  >
-                    <Mail className="h-4 w-4" />
-                    Mail
-                  </Link>
+                  
 
                 
               

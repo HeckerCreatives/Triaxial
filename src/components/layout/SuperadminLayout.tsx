@@ -42,6 +42,7 @@ import { useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import axios from 'axios'
 import toast from 'react-hot-toast'
+import { superadmin } from '@/types/routes'
 
 export default function SuperadminLayout({
   children,
@@ -96,186 +97,46 @@ export default function SuperadminLayout({
               </div>
             <div className="flex-1 mt-4 overflow-y-auto">
               <nav className=" flex flex-col px-2 text-sm font-medium lg:px-4">
-                <Link
-                  href="/superadmin/dashboard"
-                  className={` ${path === '/superadmin/dashboard' ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                >
-                  <Home className="h-4 w-4" />
-                  Dashboard
-                </Link>
-
-                 <Link
-                  href="/superadmin/workload"
-                  className={` ${path === '/superadmin/workload' ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                >
-                  <List className="h-4 w-4" />
-                  Your Workload
-                </Link>
-
-                 {/* <Link
-                  href="/superadmin/client"
-                  className={` ${path === '/superadmin/client' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                >
-                  <UserRoundPlus className="h-4 w-4" />
-                  Clients
-                </Link> */}
-
-                <Link
-                  href="/superadmin/project"
-                  className={` ${path.includes('/superadmin/project') ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                >
-                  <Box className="h-4 w-4" />
-                  Scheduling
-                </Link>
-
-                <Link
-                  href="/superadmin/invoice"
-                  className={` ${path.includes('/superadmin/invoice') ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                >
-                  <ListChecks className="h-4 w-4" />
-                  Invoice
-                </Link>
-
-                <Accordion type="single" collapsible>
-                <AccordionItem value="item-1">
-                  <div className={` px-3 flex items-center w-full gap-2 hover:text-red-700 ${path.includes('/superadmin/manageuser') ? ' text-red-700' : 'text-zinc-100'}`}>
-                    <User className="h-4 w-4" />
-                    <AccordionTrigger className=' w-[200px] text-sm'>Searches</AccordionTrigger>
-                  </div>
+                {superadmin.map((item, index) => (
+                  <>
+                  {item.subpath.length === 0 ? (
+                    <Link
+                      href={item.path}
+                      className={` ${path.includes(item.path) ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
+                    >
+                      {item.icon}
+                      {item.name}
+                    </Link>
+                  ) : (
+                    <Accordion type="single" collapsible>
+                      <AccordionItem value="item-1">
+                        <div className={` px-3 flex items-center w-full gap-2 hover:text-red-700 ${path.includes(item.path) ? ' text-red-700' : 'text-zinc-100'}`}>
+                          {item.icon}
+                          <AccordionTrigger className=' w-[200px] text-sm'>{item.name}</AccordionTrigger>
+                        </div>
+                        
+                        <AccordionContent className=' pl-8'>
+                          {item.subpath.map((item, index) => (
+                             <Link
+                             key={index}
+                             href={item.path}
+                             className={` ${path.includes(item.path) ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
+                           >
+                             
+                            {item.name}
+                           </Link>
+                          ))}
+                         
+                        </AccordionContent>
+                      </AccordionItem>
+                      </Accordion>
+                  )}
                   
-                  <AccordionContent className=' pl-8'>
-                     <Link
-                      href="/superadmin/client"
-                      className={` ${path === '/superadmin/client' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                    >
-                      
-                      Clients
-                    </Link>
-
-                    <Link
-                      href="/superadmin/teams"
-                      className={` ${path === '/superadmin/teams' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                    >
-                      
-                      Teams
-                    </Link>
-
-                   
-                   
-                  </AccordionContent>
-                </AccordionItem>
-                </Accordion>
-
-                {/* <Link
-                  href="/superadmin/teams"
-                  className={` ${path.includes('/superadmin/teams') ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                >
-                  <Users className="h-4 w-4" />
-                  Teams
-                </Link> */}
-
-                <Accordion type="single" collapsible>
-                <AccordionItem value="item-1" className=' w-full'>
-                  <div className={` ${path.includes('/superadmin/request') ? ' text-red-700' : 'text-zinc-100'} px-3 flex items-center w-full gap-2 hover:text-red-700`}>
-                    <ListCheck className="h-4 w-4" />
-                    <AccordionTrigger className=' w-[200px] text-sm'>Request</AccordionTrigger>
-                  </div>
-                  
-                  <AccordionContent className=' pl-8'>
-                     <Link
-                      href="/superadmin/request/wellnessday"
-                      className={` ${path === '/superadmin/request/wellnessday' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                    >
-                      
-                      Wellness Day
-                    </Link>
-
-                    <Link
-                      href="/superadmin/request/sickleave"
-                      className={` ${path === '/superadmin/request/sickleave' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                    >
-                      
-                      Leaves
-                    </Link>
-
-                    <Link
-                      href="/superadmin/request/wfh"
-                      className={` ${path === '/superadmin/request/wfh' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                    >
-                      
-                      Work From Home
-                    </Link>
-
-                   
-
-                    
-                   
-                  </AccordionContent>
-                </AccordionItem>
-                </Accordion>
-
-                <Accordion type="single" collapsible>
-                <AccordionItem value="item-1">
-                  <div className={` px-3 flex items-center w-full gap-2 hover:text-red-700 ${path.includes('/superadmin/manageuser') ? ' text-red-700' : 'text-zinc-100'}`}>
-                    <User className="h-4 w-4" />
-                    <AccordionTrigger className=' w-[200px] text-sm'>Administration</AccordionTrigger>
-                  </div>
-                  
-                  <AccordionContent className=' pl-8'>
-                     <Link
-                      href="/superadmin/manageuser/employee"
-                      className={` ${path === '/superadmin/manageuser/employee' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                    >
-                      
-                      Employees
-                    </Link>
-
-                    <Link
-                      href="/superadmin/manageuser/pm"
-                      className={` ${path === '/superadmin/manageuser/pm' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                    >
-                      
-                      Project Managers
-                    </Link>
-
-                    <Link
-                      href="/superadmin/manageuser/hr"
-                      className={` ${path === '/superadmin/manageuser/hr' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                    >
-                      
-                      Human Resources
-                    </Link>
-
-                    <Link
-                      href="/superadmin/manageuser/finance"
-                      className={` ${path === '/superadmin/manageuser/finance' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                    >
-                      
-                      Finance Staffs
-                    </Link>
-                   
-                  </AccordionContent>
-                </AccordionItem>
-                </Accordion>
-
+                  </>
+                ))}
                 
 
-                <Link
-                  href="/superadmin/emails"
-                  className={` ${path === '/superadmin/emails' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                >
-                  <Mail className="h-4 w-4" />
-                  Messages
-                  {/* <Badge className=' rounded-none bg-neutral'>99</Badge> */}
-                </Link>
-
-                <Link
-                  href="/superadmin/events"
-                  className={` ${path === '/superadmin/events' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                >
-                  <CalendarCheck className="h-4 w-4" /> 
-                  Events
-                </Link>
+            
                
               </nav>
             </div>
@@ -305,141 +166,43 @@ export default function SuperadminLayout({
                   </div>
                 </div>
                 <nav className="grid gap-2 text-lg font-medium">
-                 <Link
-                  href="/superadmin/dashboard"
-                  className={` ${path === '/superadmin/dashboard' ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                >
-                  <Home className="h-4 w-4" />
-                  Dashboard
-                </Link>
-
-                 <Link
-                  href="/superadmin/jobcomponent"
-                  className={` ${path === '/superadmin/jobcomponent' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                >
-                  <Component className="h-4 w-4" />
-                  Job Component
-                </Link>
-
-                 <Link
-                  href="/superadmin/project"
-                  className={` ${path === '/superadmin/project' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                >
-                  <FolderKanban className="h-4 w-4" />
-                  Project
-                </Link>
-
-                <Link
-                  href="/superadmin/teams"
-                  className={` ${path === '/superadmin/teams' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                >
-                  <Users className="h-4 w-4" />
-                  Teams
-                </Link>
-
-                <Accordion type="single" collapsible>
-                <AccordionItem value="item-1">
-                  <div className={` px-3 flex items-center w-full gap-2 hover:text-red-700 ${path.includes('/superadmin/manageuser') ? ' text-red-700' : 'text-zinc-100'}`}>
-                    <User className="h-4 w-4" />
-                    <AccordionTrigger className=' w-[200px] text-sm'>Manage User</AccordionTrigger>
-                  </div>
+                {superadmin.map((item, index) => (
+                  <>
+                  {item.subpath.length === 0 ? (
+                    <Link
+                      href={item.path}
+                      className={` ${path.includes(item.path) ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
+                    >
+                      {item.icon}
+                      {item.name}
+                    </Link>
+                  ) : (
+                    <Accordion type="single" collapsible>
+                      <AccordionItem value="item-1">
+                        <div className={` px-3 flex items-center w-full gap-2 hover:text-red-700 ${path.includes(item.path) ? ' text-red-700' : 'text-zinc-100'}`}>
+                          {item.icon}
+                          <AccordionTrigger className=' w-[200px] text-sm'>{item.name}</AccordionTrigger>
+                        </div>
+                        
+                        <AccordionContent className=' pl-8'>
+                          {item.subpath.map((item, index) => (
+                             <Link
+                             key={index}
+                             href={item.path}
+                             className={` ${path.includes(item.path) ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
+                           >
+                             
+                            {item.name}
+                           </Link>
+                          ))}
+                         
+                        </AccordionContent>
+                      </AccordionItem>
+                      </Accordion>
+                  )}
                   
-                  <AccordionContent className=' pl-8'>
-                     <Link
-                      href="/superadmin/manageuser/employee"
-                      className={` ${path === '/superadmin/manageuser/employee' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                    >
-                      
-                      Employee
-                    </Link>
-
-                    <Link
-                      href="/superadmin/manageuser/pm"
-                      className={` ${path === '/superadmin/manageuser/pm' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                    >
-                      
-                      Project Manager
-                    </Link>
-
-                    <Link
-                      href="/superadmin/manageuser/hr"
-                      className={` ${path === '/superadmin/manageuser/hr' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                    >
-                      
-                      Human Resources
-                    </Link>
-
-                    <Link
-                      href="/superadmin/manageuser/finance"
-                      className={` ${path === '/superadmin/manageuser/finance' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                    >
-                      
-                      Finance Staff
-                    </Link>
-                   
-                  </AccordionContent>
-                </AccordionItem>
-                </Accordion>
-
-                <Accordion type="single" collapsible>
-                <AccordionItem value="item-1" className=' w-full'>
-                  <div className={` ${path.includes('/superadmin/request') ? ' text-red-700' : 'text-zinc-100'} px-3 flex items-center w-full gap-2 hover:text-red-700`}>
-                    <ListCheck className="h-4 w-4" />
-                    <AccordionTrigger className=' w-[200px] text-sm'>Request</AccordionTrigger>
-                  </div>
-                  
-                  <AccordionContent className=' pl-8'>
-                     <Link
-                      href="/superadmin/request/wellnessday"
-                      className={` ${path === '/superadmin/request/wellnessday' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                    >
-                      
-                      Wellness Day
-                    </Link>
-
-                    <Link
-                      href="/superadmin/request/sickleave"
-                      className={` ${path === '/superadmin/request/sickleave' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                    >
-                      
-                      Sick Leave
-                    </Link>
-
-                    <Link
-                      href="/superadmin/request/wfh"
-                      className={` ${path === '/superadmin/request/wfh' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                    >
-                      
-                      Work From Home
-                    </Link>
-
-                    <Link
-                      href="/superadmin/request/invoice"
-                      className={` ${path === '/superadmin/request/invoice' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                    >
-                      
-                      Invoice
-                    </Link>
-
-                    <Link
-                      href="/superadmin/request/emails"
-                      className={` ${path === '/superadmin/request/emails' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                    >
-                      Emails
-                      <Badge className=' rounded-none bg-neutral'>99</Badge>
-                    </Link>
-
-                    <Link
-                      href="/superadmin/request/events"
-                      className={` ${path === '/superadmin/request/events' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                    >
-                      
-                      Events
-                    </Link>
-                   
-                  </AccordionContent>
-                </AccordionItem>
-                </Accordion>
+                  </>
+                ))}
                  
                 </nav>
                

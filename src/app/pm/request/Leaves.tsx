@@ -140,7 +140,7 @@ export default function Leaves() {
       <SelectContent>
         <SelectItem value="Pending">Pending</SelectItem>
         <SelectItem value="Approved">Approved</SelectItem>
-        <SelectItem value="Rejected">Rejected</SelectItem>
+        <SelectItem value="Denied">Denied</SelectItem>
       </SelectContent>
     </Select>
 
@@ -164,6 +164,7 @@ export default function Leaves() {
               <TableHead className=' text-xs'>In a Wellness Day Cycle?</TableHead>
               <TableHead className=' text-xs'>Total Working Hours on Leave</TableHead>
               <TableHead className=' text-xs'>Total Worked Hours during Leave</TableHead>
+              <TableHead className=' text-xs'>Comments</TableHead>
               {/* <TableHead className=' text-xs'>Total Hours for Payroll</TableHead> */}
               <TableHead className=' text-xs'>Status</TableHead>
 
@@ -180,6 +181,7 @@ export default function Leaves() {
               <TableCell>{item.wellnessdaycycle === true ? 'Yes' : 'No'}</TableCell>
               <TableCell>{item?.workinghoursonleave ? item.workinghoursonleave.toFixed(2) : '0'}</TableCell>
               <TableCell>{item.workinghoursduringleave}</TableCell>
+              <TableCell>{item.comments}</TableCell>
               <TableCell className={` ${statusColor(item.status)} text-xs`}>{item.status}</TableCell>
      
               </TableRow>

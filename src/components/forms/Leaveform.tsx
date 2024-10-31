@@ -149,34 +149,10 @@ export default function Leaveform( prop: Data) {
   }
   };
 
-
-  //calculate
-  const startValue = watch('startdate')
-  const endValue = watch('enddate')
-  const [data, setData] = useState<Caculate>()
   const [holidays, setHolidays] = useState(0)
   const [onLeave, setOnleave] = useState(0)
   const hours = wd === 'Yes' ? 8.44 : 7.6
-  useEffect(() => {
-    setLoading(true)
-    if(startValue !== '' && endValue !== ''){
-      const getList = async () => {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/leave/calculateleavedays?startdate=${startValue}&enddate=${endValue}`,{
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'application/json'
-            }
-        })
-  
-        setData(response.data.data)
-       
-      }
-      getList()
-    }
-     
-  },[startValue, endValue])
 
-  const selectedLeaveType = watch("type");
 
   function totalWorkingDays(): number {
     const startDate = new Date(start)

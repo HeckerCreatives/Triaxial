@@ -50,7 +50,7 @@ type Props = {
 }
 
 
-export default function Wfhformadmin( prop: Props) {
+export default function Wfhforpm( prop: Props) {
   const [dialog, setDialog] = useState(false)
   const [loading, setLoading] = useState(false)
   const [loading1, setLoading1] = useState(false)
@@ -64,7 +64,7 @@ export default function Wfhformadmin( prop: Props) {
 
     setLoading(true)
     try {
-      const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/wfh/approvewfhrequestadmin`,{
+      const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/wfh/approvewfhrequestmanager`,{
       requestid: prop.requestid,
       approvalstatus: "Approved",
       // comment : comments
@@ -134,7 +134,7 @@ export default function Wfhformadmin( prop: Props) {
     router.push('?state=true')
 
     try {
-      const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/wfh/approvewfhrequestadmin`,{
+      const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/wfh/approvewfhrequestmanager`,{
       requestid: prop.requestid,
       approvalstatus: "Denied",
       // comment : comments

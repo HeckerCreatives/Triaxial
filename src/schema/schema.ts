@@ -51,25 +51,24 @@ startdate: z
 });
 
 export const wfhSchema = z.object({
-name: z
-    .string()
-    .nonempty("Name is empty"),
-dateofbirth: z
-    .string()
-    .nonempty("Date of birth is empty"),
-wdcycle: z
+    reason: z
     .string(),
-totalhourswfh: z
+startdate: z
     .string()
-    .transform((val) => parseFloat(val))
-    .refine((val) => !isNaN(val), { message: "Total hours WFH must be a number" }),
-hoursofleave: z
+    .nonempty("Start date is empty"),
+enddate: z
     .string()
-    .transform((val) => parseFloat(val))
-    .refine((val) => !isNaN(val), { message: "Hours of leave must be a number" }),
-reason: z
-    .string()
-    .nonempty('Please provide a reason'),
+    .nonempty("End date is empty"),
+totalhoursonleave: z
+    .number(),
+duringleave: z
+    .number(),
+workingdays: z
+    .number(),
+holidays: z
+    .number(),
+ wdcycle: z
+     .string(),
  declaration: z.boolean().refine((val) => val === true, { message: "You must agree to the declaration" })
 
 });
@@ -147,6 +146,11 @@ export const processLeave = z.object({
     status: z.string()
 })
 
+export const wdrequestperiod = z.object({
+    start: z.string().nonempty('Please enter a starting date'),
+    end: z.string().nonempty('Please enter a ednd date'),
+})
+
 export type LeaveSchema = z.infer<typeof leaveSchema>;
 export type WdSchema = z.infer<typeof wdSchema>;
 export type WfhSchema = z.infer<typeof wfhSchema>;
@@ -158,3 +162,4 @@ export type CreateTeam = z.infer<typeof createTeam>
 export type CreateClient = z.infer<typeof createClient>
 export type CreateEvent = z.infer<typeof createEvent>
 export type ProcessLeave = z.infer<typeof processLeave>
+export type Wdrequestperiod = z.infer<typeof wdrequestperiod>

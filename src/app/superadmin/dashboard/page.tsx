@@ -5,18 +5,13 @@ import Breadcrumbdb from '@/components/common/Breadcrumb'
 import Bottomcards from './Bottomcards'
 import { Tabs, Teams } from '@/types/data'
 import axios from 'axios'
+import { Team } from '@/types/types'
 
-type Team = {
-  teamname: string
-  teamid: string
-}
 
 export default function page() {
   const [teams, setTeams] = useState<Team[]>([])
   const active = teams[0]
   const [tab, setTab] = useState('Show All')
-
-
 
 
   //team list

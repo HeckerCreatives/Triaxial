@@ -16,59 +16,190 @@ import { useForm } from 'react-hook-form'
 import { leaveSchema, LeaveSchema } from '@/schema/schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { boolean, number, string } from 'zod'
+import { leaveType } from '@/types/data'
+import axios, { AxiosError } from 'axios'
+import toast from 'react-hot-toast'
+import { useRouter } from 'next/navigation'
 
 
 interface Data {
-    // open: boolean
-    // onOpenChange: boolean
-    onClick: () => void
-    // name: string
-    // type: string
-    // start: Date
-    // end: Date
-    // details: string
-    // wd
      children?: React.ReactNode;
-
+      requestid: string
+      type: number
+      startdate: string
+      enddate: string
+      totalpublicholidays: number
+      wellnessdaycycle: boolean
+      workinghoursduringleave: number  
+      workinghoursonleave: number
+      totalworkingdays:  number
+      details:  string
 }
 
 
 export default function Editleaverequest( prop: Data) {
   const [dialog, setDialog] = useState(false)
-  const [name, setName] = useState('')
+  const [start, setStart] = useState('')
+  const [end, setEnd] = useState('')
+  const [wd, setWd] = useState('Yes')
   const [type, setType] = useState('')
-  const [details, setDetails] = useState('')
-  const [startdate, setStartdate] = useState('')
-  const [enddate, setEnddate] = useState('')
-  const [cycle, setCycle] = useState('Yes')
-  const [totalhoursonleave, setTotalhours] = useState('')
-  const [duringleave, setDuringleave] = useState('')
-  const [workingdays, setWorkingdays] = useState('')
-  const [holidays,setHolidays] = useState('')
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
+
+  const [holidays, setHolidays] = useState(0)
+  const [onLeave, setOnleave] = useState(0)
+  const [totaldays, setTotaldays] = useState(0)
+  const hours = wd === 'Yes' ? 8.44 : 7.6
+ 
+
+
+  const findType = (id: number) => {
+    const find = leaveType.find((item) => item.id === id)
+    return find?.type
+  }
+
+  const getID = (id: string) => {
+    const find = leaveType.find((item) => item.type === id)
+    return find?.id
+  }
+
 
    const {
     register,
     handleSubmit,
     reset,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<LeaveSchema>({
     resolver: zodResolver(leaveSchema),
+    defaultValues:{
+      wdcycle: prop.wellnessdaycycle === true ? 'Yes' : 'No',
+     type: findType(prop.type),
+     startdate: prop.startdate,
+     enddate: prop.enddate,
+     holidays: prop.totalpublicholidays,
+     duringleave: prop.workinghoursduringleave,
+     totalhoursonleave: prop.workinghoursonleave,
+     details: prop.details,
+     workingdays: prop.totalworkingdays
+    }
   });
 
-  const onSubmit = (data: LeaveSchema) => {
-    console.log(data); // Handle form submission
+  const onSubmit = async (data: LeaveSchema) => {
+    setLoading(true)
+    router.push('?state=true')
+    try {
+      const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/leave/editrequestleave`,{
+        requestid: prop.requestid,
+        leavetype: getID(data.type), // 0 to total number of types
+        details: data.details,
+        leavestart: data.startdate, // YYYY-MM-DD
+        leaveend: data.enddate, // YYYY-MM-DD
+        totalworkingdays: data.workingdays,
+        totalpublicholidays: data.holidays,
+        wellnessdaycycle: data.wdcycle === 'Yes' ? true : false,
+        workinghoursonleave: data.totalhoursonleave,
+        workinghoursduringleave: data.duringleave,
+        comments: ""
+       
+      },
+          {
+              withCredentials: true,
+              headers: {
+              'Content-Type': 'application/json'
+              }
+          }
+      )
+
+    const response = await toast.promise(request, {
+        loading: 'Updating leave request....',
+        success: `Successfully updated`,
+        error: 'Error while updating leave rquest',
+    });
+
+   if(response.data.message === 'success'){
+     reset()
+     setDialog(false)
+     router.push('?state=false')
+     setLoading(false)
+
+   }
+
+   console.log(response)
+
+ 
+     
+  } catch (error) {
+      setLoading(false)
+
+       if (axios.isAxiosError(error)) {
+              const axiosError = error as AxiosError<{ message: string, data: string }>;
+              if (axiosError.response && axiosError.response.status === 401) {
+                  toast.error(`${axiosError.response.data.data}`) 
+                  router.push('/')    
+              }
+
+              if (axiosError.response && axiosError.response.status === 400) {
+                  toast.error(`${axiosError.response.data.data}`)     
+                     
+              }
+
+              if (axiosError.response && axiosError.response.status === 402) {
+                  toast.error(`${axiosError.response.data.data}`)          
+                         
+              }
+
+              if (axiosError.response && axiosError.response.status === 403) {
+                  toast.error(`${axiosError.response.data.data}`)              
+                 
+              }
+
+              if (axiosError.response && axiosError.response.status === 404) {
+                  toast.error(`${axiosError.response.data.data}`)             
+              }
+      } 
+     
+  }
   };
 
   useEffect(() => {
     reset()
   },[dialog])
 
-  console.log(errors)
+  function totalWorkingDays(): number {
+    const startDate = new Date(start)
+    const endDate = new Date(end)
+    let workingDays = 0;
 
-   const handleRadioChange = (value: string) => {
-    setCycle(value);
-    
-  };
+    for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
+        const dayOfWeek = date.getDay();
+        if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+            workingDays++;
+        }
+    }
+
+
+    return workingDays;
+}
+
+const workingDays = totalWorkingDays() - holidays;
+const hoursonleave = ((totalWorkingDays() - holidays) * hours) - onLeave
+
+useEffect(()=> {
+  setStart(prop.startdate)
+  setEnd(prop.enddate)
+  setOnleave(prop.workinghoursduringleave)
+  setTotaldays(prop.totalworkingdays)
+  setValue('workingdays', prop.totalworkingdays)
+},[])
+
+useEffect(() => {
+  setTotaldays(workingDays)
+  setValue('workingdays', workingDays)
+},[start, end])
+
+
 
   
   return (
@@ -87,15 +218,15 @@ export default function Editleaverequest( prop: Data) {
 
           <label htmlFor="" className=' text-xs text-zinc-700'>Type <span className=' text-red-500'>*</span></label>
 
-            <RadioGroup defaultValue="Annual Leave" className=' w-full grid grid-cols-3' {...register('type')}>
-              <div className=' flex flex-col gap-2'>
+            <RadioGroup defaultValue="Annual Leave" className=' w-full grid grid-cols-3' value={watch('type')}  onValueChange={(value) => {setValue('type', value), setType(value)}}>
+            <div className=' flex flex-col gap-2'>
                 <div className="flex items-center space-x-2">
                 <RadioGroupItem value="Annual Leave" id="Annual Leave" />
                 <Label htmlFor="Annual Leave">Annual leave</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="Sick Leave" id="SickLeave" />
-                  <Label htmlFor="SickLeave">Sick Leave</Label>
+                  <RadioGroupItem value="Sick Leave" id="Sick Leave" />
+                  <Label htmlFor="Sick Leave">Sick Leave</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="Carer's Leave" id="Carer's Leave" />
@@ -154,13 +285,13 @@ export default function Editleaverequest( prop: Data) {
           <div className=' flex items-center gap-4'>
             <div>
               <Label className=' mt-2 text-zinc-500'>First Day Of Leave: <span className=' text-red-500'>*</span></Label>
-              <Input type='date' className=' text-xs h-[35px] bg-zinc-200' placeholder='Name' {...register('startdate')}/>
+              <Input type='date' className=' text-xs h-[35px] bg-zinc-200' placeholder='Name' {...register('startdate',{ onChange: (e) => setStart(e.target.value)})}/>
               {errors.startdate && <p className=' text-[.6em] text-red-500'>{errors.startdate.message}</p>}
             </div>
 
             <div>
               <Label className=' mt-2 text-zinc-500'>Last Day Of Leave: <span className=' text-red-500'>*</span></Label>
-              <Input type='date' className=' text-xs h-[35px] bg-zinc-200' placeholder='Name' {...register('enddate')}/>
+              <Input type='date' className=' text-xs h-[35px] bg-zinc-200' placeholder='Name' {...register('enddate', { onChange: (e) => setEnd(e.target.value)})}/>
               {errors.enddate && <p className=' text-[.6em] text-red-500'>{errors.enddate.message}</p>}
 
             </div>
@@ -170,22 +301,22 @@ export default function Editleaverequest( prop: Data) {
           <div className=' w-full flex items-start gap-2'>
             <div className=' w-full'>
               <Label className=' mt-2 text-zinc-500'>Total Number of Working Days:</Label>
-            < Input type='number' defaultValue={0} className=' text-xs h-[35px] bg-zinc-200' placeholder='0' {...register('workingdays',{ valueAsNumber: true})}/>
+            <Input disabled type='number' value={totaldays} className=' text-xs h-[35px] bg-zinc-200' {...register('workingdays', { valueAsNumber: true , onChange: (e) => setTotaldays(e.target.value)})}/>
               {errors.workingdays && <p className=' text-[.6em] text-red-500'>{errors.workingdays.message}</p>}
 
             </div>
 
             <div className=' w-full'>
               <Label className=' mt-2 text-zinc-500'>Total Public Holidays(if applicable)</Label>
-            < Input type='number' defaultValue={0} className=' text-xs h-[35px] bg-zinc-200' placeholder='0' {...register('holidays',{ valueAsNumber: true})}/>
+            < Input type='number' value={holidays} defaultValue={0} className=' text-xs h-[35px] bg-zinc-200' placeholder='0' {...register('holidays',{ valueAsNumber: true, onChange: (e) => setHolidays(e.target.value)})}/>
               {errors.holidays && <p className=' text-[.6em] text-red-500'>{errors.holidays.message}</p>}
 
             </div>
           </div>
 
-          {/* <div className=' flex items-center gap-2 mt-4'>
+          <div className=' flex items-center gap-2 mt-4'>
             <Label className=' text-zinc-500'>Are you in a Wellness Day Cycle? <span className=' text-red-500'>*</span></Label>
-            <RadioGroup defaultValue="Yes"  className=' flex items-center gap-2' {...register('wdcycle')} >
+            <RadioGroup className=' flex items-center gap-2' value={watch('wdcycle')}  onValueChange={(value) => {setValue('wdcycle', value), setWd(value)}} >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="Yes" id="Yes"  />
                 <Label htmlFor="Yes">Yes</Label>
@@ -195,19 +326,21 @@ export default function Editleaverequest( prop: Data) {
                 <Label htmlFor="No">No</Label>
               </div>
             </RadioGroup>
-          </div> */}
+          </div>
+
+      
 
           <div className=' w-full flex items-start gap-2 mt-4'>
             <div className=' w-full'>
               <Label className=' text-zinc-500'>Total Working Hours on Leave:</Label>
-            < Input type='number' defaultValue={0} className=' text-xs h-[35px] bg-zinc-200' placeholder='0' {...register('totalhoursonleave',{ valueAsNumber: true})}/>
+            < Input disabled type='number' value={hoursonleave} className=' text-xs h-[35px] bg-zinc-200' placeholder='0' {...register('totalhoursonleave',{ valueAsNumber: true})}/>
               {errors.totalhoursonleave && <p className=' text-[.6em] text-red-500'>{errors.totalhoursonleave.message}</p>}
 
             </div>
 
             <div className=' w-full'>
               <Label className=' text-zinc-500'>Total Working Hours During Leave:</Label>
-            < Input type='number' defaultValue={0} className=' text-xs h-[35px] bg-zinc-200' placeholder='0' {...register('duringleave',{ valueAsNumber: true})}/>
+            < Input type='number' value={onLeave} defaultValue={0} className=' text-xs h-[35px] bg-zinc-200' placeholder='0' {...register('duringleave',{ valueAsNumber: true, onChange: (e) => setOnleave(e.target.value)})}/>
               {errors.duringleave && <p className=' text-[.6em] text-red-500'>{errors.duringleave.message}</p>}
 
             </div>

@@ -10,15 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination"
+
 import { Plus, Delete, Trash, Eye, Pen } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -29,16 +21,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import ButtonSecondary from '@/components/common/ButtonSecondary'
-import Button from '@/components/common/Button'
-import ButtonDanger from '@/components/common/ButtonDanger'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+
 import { X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -134,32 +117,32 @@ export default function Eventtable() {
 
 
   //event list
-  useEffect(() => {
-    setLoading(true)
-    const timer = setTimeout(() => {
-      const getList = async () => {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/events/listevents?page=${currentpage}&limit=10&eventtitlefilter=${search}`,{
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'application/json'
-            }
-        })
+  // useEffect(() => {
+  //   setLoading(true)
+  //   const timer = setTimeout(() => {
+  //     const getList = async () => {
+  //       const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/events/listevents?page=${currentpage}&limit=10&eventtitlefilter=${search}`,{
+  //         withCredentials: true,
+  //         headers: {
+  //           'Content-Type': 'application/json'
+  //           }
+  //       })
   
-        console.log('Event list',response.data)
-        setList(response.data.data.eventlist)
-        setTotalpage(response.data.data.totalpages)
-        setLoading(false)
+  //       console.log('Event list',response.data)
+  //       setList(response.data.data.eventlist)
+  //       setTotalpage(response.data.data.totalpages)
+  //       setLoading(false)
 
-        if(search !== ''){
-          setCurrentpage(0)
-        }
+  //       if(search !== ''){
+  //         setCurrentpage(0)
+  //       }
        
-      }
-      getList()
-    }, 500)
-    return () => clearTimeout(timer)
+  //     }
+  //     getList()
+  //   }, 500)
+  //   return () => clearTimeout(timer)
     
-  },[search, currentpage, state])
+  // },[search, currentpage, state])
 
    //create events
    const {
@@ -293,7 +276,7 @@ export default function Eventtable() {
               const axiosError = error as AxiosError<{ message: string, data: string }>;
               if (axiosError.response && axiosError.response.status === 401) {
                   toast.error(`${axiosError.response.data.data}`) 
-                 router.push('/')    
+                  router.push('/')    
               }
 
               if (axiosError.response && axiosError.response.status === 400) {
@@ -341,12 +324,7 @@ export default function Eventtable() {
     setCurrentpage(page)
   }
 
-  // useEffect(() => {
-  //   if(dialog && dialog2 === false){
-  //     setSelected([])
-  //     setOpen(false)
-  //   }
-  // },[dialog, dialog2])
+ 
 
 
 

@@ -148,6 +148,93 @@ export default function PmLayout({
                   Events
                 </Link> */}
 
+                <Accordion type="single" collapsible>
+                <AccordionItem value="item-1">
+                  <div className={` px-3 flex items-center w-full gap-2 hover:text-red-700 ${path.includes('/pm/request/leave') ? ' text-red-700' : 'text-zinc-100'}`}>
+                    <ArrowRightLeft className="h-4 w-4" />
+                    <AccordionTrigger className=' w-[200px] text-sm'>Leave</AccordionTrigger>
+                  </div>
+                  
+                  <AccordionContent className=' pl-8'>
+                     <Link
+                      href="/pm/request/leave/employee"
+                      className={` ${path === '/pm/request/leave/employee' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
+                    >
+                      
+                      Employee Request List
+                    </Link>
+
+                    <Link
+                      href="/pm/request/leave/yourrequest"
+                      className={` ${path === '/pm/request/leave/yourrequest' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
+                    >
+                    Your Request
+                    </Link>
+
+                   
+                   
+                  </AccordionContent>
+                </AccordionItem>
+                </Accordion>
+
+                <Accordion type="single" collapsible>
+                <AccordionItem value="item-1">
+                  <div className={` px-3 flex items-center w-full gap-2 hover:text-red-700 ${path.includes('/pm/request/wfh') ? ' text-red-700' : 'text-zinc-100'}`}>
+                    <ArrowRightLeft className="h-4 w-4" />
+                    <AccordionTrigger className=' w-[200px] text-sm'>Wfh</AccordionTrigger>
+                  </div>
+                  
+                  <AccordionContent className=' pl-8'>
+                     <Link
+                      href="/pm/request/wfh/employee"
+                      className={` ${path === '/pm/request/wfh/employee' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
+                    >
+                      
+                      Employee Request List
+                    </Link>
+
+                    <Link
+                      href="/pm/request/wfh/yourrequest"
+                      className={` ${path === '/pm/request/wfh/yourrequest' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
+                    >
+                    Your Request
+                    </Link>
+
+                   
+                   
+                  </AccordionContent>
+                </AccordionItem>
+                </Accordion>
+
+                {/* <Accordion type="single" collapsible>
+                <AccordionItem value="item-1">
+                  <div className={` px-3 flex items-center w-full gap-2 hover:text-red-700 ${path.includes('/superadmin/clients') || path.includes('/superadmin/teams') ? ' text-red-700' : 'text-zinc-100'}`}>
+                    <ArrowRightLeft className="h-4 w-4" />
+                    <AccordionTrigger className=' w-[200px] text-sm'>Wellness Day</AccordionTrigger>
+                  </div>
+                  
+                  <AccordionContent className=' pl-8'>
+                     <Link
+                      href=""
+                      className={` ${path === '/superadmin/client' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
+                    >
+                      
+                      Employee Request List
+                    </Link>
+
+                    <Link
+                      href=""
+                      className={` ${path === '/superadmin/teams' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
+                    >
+                    Your Request List
+                    </Link>
+
+                   
+                   
+                  </AccordionContent>
+                </AccordionItem>
+                </Accordion> */}
+
 
                 <Link
                   href="/pm/request"

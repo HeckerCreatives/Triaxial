@@ -9,21 +9,8 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel"
 import { CalendarCheck } from 'lucide-react'
+import { Events } from '@/types/types'
 
-
-type Events = {
-  title: string
- start: string
- end:  string
- teams: Subdata[]
- 
- }
- 
- type Subdata = {
-   teamname: string
- _id: string
- 
- }
 
 
 export default function Bottomcards() {
@@ -55,26 +42,6 @@ export default function Bottomcards() {
     return () => clearTimeout(timer)
   },[])
 
-  useEffect(() => {
-
-    const timer = setTimeout(() => {
-      const getList = async () => {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/wellnessday/requestlist`,{
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'application/json'
-            }
-        })
-  
-        console.log('list',response.data)
-     
-     
-       
-      }
-      getList()
-    }, 500)
-    return () => clearTimeout(timer)
-  },[])
 
   
   return (

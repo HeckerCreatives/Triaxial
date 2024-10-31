@@ -10,20 +10,8 @@ import {
 } from "@/components/ui/carousel"
 import Autoplay from "embla-carousel-autoplay"
 import axios from 'axios'
+import { Events } from '@/types/types'
 
-type Events = {
- title: string
-start: string
-end:  string
-teams: Subdata[]
-
-}
-
-type Subdata = {
-  teamname: string
-_id: string
-
-}
 
 export default function Bottomcards() {
 

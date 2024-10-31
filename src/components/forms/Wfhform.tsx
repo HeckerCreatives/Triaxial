@@ -18,6 +18,9 @@ import { useForm } from 'react-hook-form'
 import { WfhSchema, wfhSchema } from '@/schema/schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { boolean } from 'zod'
+import axios, { AxiosError } from 'axios'
+import { useRouter } from 'next/navigation'
+import toast from 'react-hot-toast'
 
 
 interface Data {
@@ -34,27 +37,154 @@ interface Data {
 
 }
 
+type Caculate = {
+  totalworkingdays:  number
+  inwellnessday: boolean
+  totalHoliday:  number
+  totalworkinghoursonleave:  number
+  workinghoursduringleave: number
+}
+
 
 export default function Wfhform( prop: Data) {
   const [dialog, setDialog] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [start, setStart] = useState('')
+  const [end, setEnd] = useState('')
+  const [wd, setWd] = useState('Yes')
+  const router = useRouter()
+
+
 
    const {
     register,
     handleSubmit,
     reset,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm<WfhSchema>({
     resolver: zodResolver(wfhSchema),
+    defaultValues:{
+      wdcycle: 'Yes'
+    }
   });
 
-  const onSubmit = (data: WfhSchema) => {
-    const {declaration, ...filteredData} = data
-    console.log(filteredData); // Handle form submission
+  const requestWfh = async (data: WfhSchema) => {
+    const { declaration, ...filteredData } = data;
+    setLoading(true)
+    router.push('?state=true')
+
+
+    try {
+      const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/wfh/requestwfhemployee`,{
+        requestdate: data.startdate,
+        requestend: data.enddate,
+        reason: data.reason,
+        wellnessdaycycle:  data.wdcycle === 'Yes' ? true : false ,
+        totalhourswfh: data.totalhoursonleave,
+        hoursofleave: data.duringleave
+       
+      },
+          {
+              withCredentials: true,
+              headers: {
+              'Content-Type': 'application/json'
+              }
+          }
+      )
+
+    const response = await toast.promise(request, {
+        loading: 'Requesting a wfh setup....',
+        success: `Successfully rquested`,
+        error: 'Error while requesting wfh setup',
+    });
+
+   if(response.data.message === 'success'){
+     reset()
+     setDialog(false)
+     router.push('?state=false')
+     setLoading(false)
+
+   }
+
+   console.log(response)
+
+ 
+     
+  } catch (error) {
+      setLoading(false)
+
+       if (axios.isAxiosError(error)) {
+              const axiosError = error as AxiosError<{ message: string, data: string }>;
+              if (axiosError.response && axiosError.response.status === 401) {
+                  toast.error(`${axiosError.response.data.data}`) 
+                  router.push('/')    
+              }
+
+              if (axiosError.response && axiosError.response.status === 400) {
+                  toast.error(`${axiosError.response.data.data}`)     
+                     
+              }
+
+              if (axiosError.response && axiosError.response.status === 402) {
+                  toast.error(`${axiosError.response.data.data}`)          
+                         
+              }
+
+              if (axiosError.response && axiosError.response.status === 403) {
+                  toast.error(`${axiosError.response.data.data}`)              
+                 
+              }
+
+              if (axiosError.response && axiosError.response.status === 404) {
+                  toast.error(`${axiosError.response.data.data}`)             
+              }
+      } 
+     
+  }
   };
+
 
   useEffect(() => {
     reset()
   },[dialog])
+
+   const [holidays, setHolidays] = useState(0)
+   const [onLeave, setOnleave] = useState(0)
+   const hours = wd === 'Yes' ? 8.44 : 7.6
+
+
+   function totalWorkingDays(): number {
+     const startDate = new Date(start)
+     const endDate = new Date(end)
+     let workingDays = 0;
+ 
+     for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
+         const dayOfWeek = date.getDay();
+         if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+             workingDays++;
+         }
+     }
+ 
+ 
+     return workingDays;
+ }
+ 
+   useEffect(() => {
+     reset()
+     totalWorkingDays()
+   },[dialog])
+ 
+   const workingDays = totalWorkingDays() - holidays;
+   const hoursonleave = ((totalWorkingDays() - holidays) * hours) - onLeave
+   useEffect(() => {
+     setValue('workingdays', workingDays); // Update form value whenever workingDays changes
+     setValue('totalhoursonleave', hoursonleave)
+ }, [workingDays, setValue, hoursonleave, wd]);
+ 
+ 
+   console.log(errors, hoursonleave)
 
 
   return (
@@ -63,27 +193,51 @@ export default function Wfhform( prop: Data) {
        {prop.children}
     </DialogTrigger>
     <DialogContent className=' max-h-[90%] overflow-y-auto'>
-      <form className=' w-full p-4 flex flex-col gap-4' onSubmit={handleSubmit(onSubmit)}>
+      <form className=' w-full p-4 flex flex-col gap-4' onSubmit={handleSubmit(requestWfh)}>
         <p className=' text-sm uppercase font-semibold text-red-700'>Work from home application form</p>
         <div className=' w-full flex flex-col gap-1'>
-          <p className=' text-xs font-semibold mb-2'>Employee Details</p>
-          <label htmlFor="" className=' text-xs text-zinc-700'>Name</label>
-          <Input type='text' className=' text-xs h-[35px] bg-zinc-200' placeholder='Name' {...register('name')}/>
-           {errors.name && <p className=' text-[.6em] text-red-500'>{errors.name.message}</p>}
 
+        <Label className=' mt-4 font-semibold'>Wfh Period</Label>
+          <div className=' flex items-center gap-4'>
+            <div>
+              <Label className=' mt-2 text-zinc-500'>First Day Of Leave: <span className=' text-red-500'>*</span></Label>
+              <Input type='date' className=' text-xs h-[35px] bg-zinc-200'  placeholder='Name' {...register('startdate',{ onChange: (e) => setStart(e.target.value)})}/>
+              {errors.startdate && <p className=' text-[.6em] text-red-500'>{errors.startdate.message}</p>}
+            </div>
 
-          <Label className=' mt-4 font-semibold'>Work From Home Details</Label>
+            <div>
+              <Label className=' mt-2 text-zinc-500'>Last Day Of Leave: <span className=' text-red-500'>*</span></Label>
+              <Input type='date' className=' text-xs h-[35px] bg-zinc-200' placeholder='Name' {...register('enddate', { onChange: (e) => setEnd(e.target.value)})}/>
+              {errors.enddate && <p className=' text-[.6em] text-red-500'>{errors.enddate.message}</p>}
 
-           <Label className=' mt-2 text-zinc-500'>Date of Birth: <span className=' text-red-700'>*</span></Label>
-            <Input type='date' className=' text-xs h-[35px] bg-zinc-200 w-fit' placeholder='Name' {...register('dateofbirth')}/>
-            {errors.dateofbirth && <p className=' text-[.6em] text-red-500'>{errors.dateofbirth.message}</p>}
+            </div>
 
+  
 
-            <div className=' flex items-center gap-2 mt-4'>
+          </div>
+        
+
+            <div className=' w-full flex items-start gap-2'>
+            <div className=' w-full'>
+              <Label className=' mt-2 text-zinc-500'>Total Number of Working Days:</Label>
+            < Input type='number' value={workingDays} className=' text-xs h-[35px] bg-zinc-200' placeholder='0' {...register('workingdays', { valueAsNumber: true})}/>
+              {errors.workingdays && <p className=' text-[.6em] text-red-500'>{errors.workingdays.message}</p>}
+
+            </div>
+
+            <div className=' w-full'>
+              <Label className=' mt-2 text-zinc-500'>Total Public Holidays(if applicable)</Label>
+            < Input type='number' value={holidays} defaultValue={0} className=' text-xs h-[35px] bg-zinc-200' placeholder='0' {...register('holidays',{ valueAsNumber: true, onChange: (e) => setHolidays(e.target.value)})}/>
+              {errors.holidays && <p className=' text-[.6em] text-red-500'>{errors.holidays.message}</p>}
+
+            </div>
+          </div>
+
+          <div className=' flex items-center gap-2 mt-4'>
             <Label className=' text-zinc-500'>Are you in a Wellness Day Cycle? <span className=' text-red-500'>*</span></Label>
-            <RadioGroup defaultValue="Yes" className=' flex items-center gap-2' {...register('wdcycle')}>
+            <RadioGroup className=' flex items-center gap-2' value={watch('wdcycle')}  onValueChange={(value) => {setValue('wdcycle', value), setWd(value)}} >
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="Yes" id="Yes" />
+                <RadioGroupItem value="Yes" id="Yes"  />
                 <Label htmlFor="Yes">Yes</Label>
               </div>
               <div className="flex items-center space-x-2">
@@ -91,35 +245,20 @@ export default function Wfhform( prop: Data) {
                 <Label htmlFor="No">No</Label>
               </div>
             </RadioGroup>
-            </div>
+          </div>
 
-
-          {/* <div className=' w-full flex items-center gap-2'>
+          <div className=' w-full flex items-start gap-2 mt-4'>
             <div className=' w-full'>
-              <Label className=' mt-2 text-zinc-500'>Total Number of Working Days:</Label>
-            < Input type='number' className=' text-xs h-[35px] bg-zinc-200' placeholder='0'/>
-            </div>
-
-            <div className=' w-full'>
-              <Label className=' mt-2 text-zinc-500'>Total Public Holidays(if applicable)</Label>
-            < Input type='number' className=' text-xs h-[35px] bg-zinc-200' placeholder='0'/>
-            </div>
-          </div> */}
-
-          
-
-          <div className=' w-full flex items-center gap-2 mt-4'>
-            <div className=' w-full'>
-              <Label className=' text-zinc-500'>Total Hours Working From Home:</Label>
-            < Input type='number' className=' text-xs h-[35px] bg-zinc-200' placeholder='0' {...register('totalhourswfh')}/>
-            {errors.totalhourswfh && <p className=' text-[.6em] text-red-500'>{errors.totalhourswfh.message}</p>}
+              <Label className=' text-zinc-500'>Total Working Hours</Label>
+            < Input type='number' value={hoursonleave.toLocaleString()} defaultValue={0} className=' text-xs h-[35px] bg-zinc-200' placeholder='0' {...register('totalhoursonleave',{ valueAsNumber: true})}/>
+              {errors.totalhoursonleave && <p className=' text-[.6em] text-red-500'>{errors.totalhoursonleave.message}</p>}
 
             </div>
 
             <div className=' w-full'>
-              <Label className=' text-zinc-500'>Hours Of Leave:</Label>
-            < Input type='number' className=' text-xs h-[35px] bg-zinc-200' placeholder='0' {...register('hoursofleave')}/>
-            {errors.hoursofleave && <p className=' text-[.6em] text-red-500'>{errors.hoursofleave.message}</p>}
+              <Label className=' text-zinc-500'>Hours of Leave:</Label>
+            < Input type='number' value={onLeave}  defaultValue={0} className=' text-xs h-[35px] bg-zinc-200' placeholder='0' {...register('duringleave',{ valueAsNumber: true, onChange: (e) => setOnleave(e.target.value)})}/>
+              {errors.duringleave && <p className=' text-[.6em] text-red-500'>{errors.duringleave.message}</p>}
 
             </div>
           </div>

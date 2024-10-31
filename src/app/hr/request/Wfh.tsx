@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/table"
 import axios, { AxiosError } from 'axios'
 import { useRouter, useSearchParams } from 'next/navigation'
+import toast from 'react-hot-toast'
 import { leaveType } from '@/types/data'
 import PaginitionComponent from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
@@ -22,14 +23,37 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import Editleaverequest from '@/components/forms/Editleaverequest'
+import Editwfhrequest from '@/components/forms/Editwfhrequest'
 import { Pen } from 'lucide-react'
-import { Leave } from '@/types/types'
-import { statusColor } from '@/utils/functions'
 
 
 
-export default function Leaves() {
+type Wfh = {
+    requestid: string
+    requestdate: string
+    requestend:string
+    wellnessdaycycle: boolean
+    totalhourswfh: number
+    createdAt: string
+    status: string
+  
+}
+
+type Caculate = {
+  totalworkingdays:  number
+  inwellnessday: boolean
+  totalHoliday:  number
+  totalworkinghoursonleave:  number
+  workinghoursduringleave: number
+}
+
+
+
+
+
+
+
+export default function Wfh() {
   const router = useRouter()
   const params = useSearchParams()
   const refresh = params.get('state')
@@ -42,16 +66,19 @@ export default function Leaves() {
     setCurrentpage(page)
   }
 
-  //leave
+
+
+
+  //wfh
   const [loading, setLoading] = useState(false)
-  const [leave, setLeave] = useState<Leave[]>([])
+  const [leave, setLeave] = useState<Wfh[]>([])
 
   useEffect(() => {
     const fetchLeaveData = cache(async () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/leave/employeeleaverequestlist?status=${status}&page=${currentpage}&limit=10`,
+          `${process.env.NEXT_PUBLIC_API_URL}/wfh/listwfhrequestemployee?statusfilter=${status}&page=${currentpage}&limit=10`,
           {
             withCredentials: true,
             headers: {
@@ -82,6 +109,19 @@ export default function Leaves() {
   }
 
 
+  const statusColor = (data: string) => {
+    if(data === 'Pending'){
+      return 'text-blue-500'
+    } else if (data === 'Approved') {
+      return 'text-green-500'
+    } else {
+      return 'text-red-500'
+      
+    }
+
+  }
+
+
 
 
   
@@ -97,7 +137,7 @@ export default function Leaves() {
       <SelectContent>
         <SelectItem value="Pending">Pending</SelectItem>
         <SelectItem value="Approved">Approved</SelectItem>
-        <SelectItem value="Denied">Denied</SelectItem>
+        <SelectItem value="Rejected">Rejected</SelectItem>
       </SelectContent>
     </Select>
 
@@ -113,51 +153,30 @@ export default function Leaves() {
           )}
           <TableHeader>
               <TableRow>
-              <TableHead className=' text-xs'>Leave Type</TableHead>
-              <TableHead className=' text-xs'>First day of Leave</TableHead>
-              <TableHead className=' text-xs'>Last day of Leave</TableHead>
-              <TableHead className=' text-xs'>Total Number of Working Days</TableHead>
-              <TableHead className=' text-xs'>Total Public Holidays</TableHead>
+              <TableHead className=' text-xs'>Requested at</TableHead>
+              <TableHead className=' text-xs'>First day of Wfh</TableHead>
+              <TableHead className=' text-xs'>Last day of Wfh</TableHead>
+              <TableHead className=' text-xs'>Total hours Wfh</TableHead>
               <TableHead className=' text-xs'>In a Wellness Day Cycle?</TableHead>
-              <TableHead className=' text-xs'>Total Working Hours on Leave</TableHead>
-              <TableHead className=' text-xs'>Total Worked Hours during Leave</TableHead>
-              <TableHead className=' text-xs'>Details</TableHead>
-              {/* <TableHead className=' text-xs'>Total Hours for Payroll</TableHead> */}
-              {status !== 'Pending' && (
-              <TableHead className=' text-xs'>Comments</TableHead>
-              )}
               <TableHead className=' text-xs'>Status</TableHead>
-              {status === 'Pending' && (
-                <TableHead className=' text-xs'>Action</TableHead>
-
-              )}
+              <TableHead className=' text-xs'>Action</TableHead>
 
               </TableRow>
           </TableHeader>
           <TableBody>
             {leave.map(( item, index) => (
               <TableRow key={index}>
-              <TableCell className="font-medium">{findType(item.type)}</TableCell>
-              <TableCell>{item.startdate}</TableCell>
-              <TableCell>{item.enddate}</TableCell>
-              <TableCell>{item.totalworkingdays}</TableCell>
-              <TableCell>{item.totalpublicholidays}</TableCell>
+              <TableCell>{new Date(item.createdAt).toLocaleString()}</TableCell>
+              <TableCell>{item.requestdate}</TableCell>
+              <TableCell>{item.requestend}</TableCell>
+              <TableCell>{item.totalhourswfh.toFixed(2)}</TableCell>
               <TableCell>{item.wellnessdaycycle === true ? 'Yes' : 'No'}</TableCell>
-              <TableCell>{item?.workinghoursonleave ? item.workinghoursonleave.toFixed(2) : '0'}</TableCell>
-              <TableCell>{item.workinghoursduringleave}</TableCell>              
-              <TableCell>{item.details}</TableCell>              
-              {status !== 'Pending' && (
-              <TableCell>{item.comments}</TableCell>
-              )}
               <TableCell className={` ${statusColor(item.status)} text-xs`}>{item.status}</TableCell>
-
-              {status === 'Pending' && (
-               <TableCell className=''>
-                <Editleaverequest requestid={item.requestid} type={item.type} startdate={item.startdate} enddate={item.enddate} totalpublicholidays={item.totalpublicholidays} wellnessdaycycle={item.wellnessdaycycle} workinghoursduringleave={item.workinghoursduringleave} workinghoursonleave={item.workinghoursonleave} totalworkingdays={item.totalworkingdays} details={item.details}>
+              <TableCell className=''>
+                <Editwfhrequest requestid={item.requestid} requestdate={item.requestdate} requestend={item.requestend} wellnessdaycycle={item.wellnessdaycycle} totalhourswfh={item.totalhourswfh}>
                   <button className=' p-2 bg-red-600 rounded-md text-white'><Pen size={15}/></button>
-                </Editleaverequest>
+                </Editwfhrequest>
               </TableCell>
-              )}
      
               </TableRow>
             ))}

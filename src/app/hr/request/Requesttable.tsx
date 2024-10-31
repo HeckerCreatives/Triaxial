@@ -29,6 +29,7 @@ import toast from 'react-hot-toast'
 import { leaveType } from '@/types/data'
 import PaginitionComponent from '@/components/common/Pagination'
 import Leaves from './Leaves'
+import Wfh from './Wfh'
 
 
 type Wellnessday = {
@@ -163,6 +164,13 @@ export default function Requesttable() {
         {active === 'Leaves' && (
           <>
           <Leaves/>
+          </>
+          
+        )}
+
+        {active === 'WFH' && (
+          <>
+          <Wfh/>
           </>
           
         )}

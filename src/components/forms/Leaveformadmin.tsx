@@ -17,7 +17,7 @@ import { Plus } from 'lucide-react'
 import { leaveType } from '@/types/data'
 import axios, { AxiosError } from 'axios'
 import toast from 'react-hot-toast'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 
 
 interface Data {
@@ -54,6 +54,8 @@ export default function Leaveformadmin( prop: Data) {
   const [loading1, setLoading1] = useState(false)
   const [comments, setComments] = useState('')
   const router = useRouter()
+  const path = usePathname()
+  const apiUrl = path.includes('/superadmin') && '/leave/superadminprocessleaverequest' || path.includes('/pm') && '/leave/managerprocessleaverequest'
 
   const findType = (id: number) => {
     const find = leaveType.find((item) => item.id === id)
@@ -64,7 +66,7 @@ export default function Leaveformadmin( prop: Data) {
   const approved = async () => {
     setLoading(true)
     try {
-      const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/leave/superadminprocessleaverequest`,{
+      const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}${apiUrl}`,{
       requestid: prop.requestid,
       status: "Approved",
       comment : comments
@@ -132,9 +134,9 @@ export default function Leaveformadmin( prop: Data) {
   const reject = async () => {
     setLoading1(true)
     try {
-      const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/leave/superadminprocessleaverequest`,{
+      const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}${apiUrl}`,{
       requestid: prop.requestid,
-      status: "Rejected",
+      status: "Denied",
       comment : comments
        
       },
@@ -339,7 +341,7 @@ export default function Leaveformadmin( prop: Data) {
             {loading1 === true && (
               <div className=' spinner2'></div>
             )}
-              Reject</button>
+              Denied</button>
             <button onClick={approved} className=' bg-red-700 text-zinc-100 px-4 py-2 text-xs rounded-sm mt-4 w-auto flex items-center justify-center gap-2'>
             {loading === true && (
               <div className=' spinner2'></div>
