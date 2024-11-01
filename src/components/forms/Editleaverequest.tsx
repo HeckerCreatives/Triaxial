@@ -211,10 +211,6 @@ useEffect(() => {
       <form className=' w-full p-4 flex flex-col gap-4' onSubmit={handleSubmit(onSubmit)}>
         <p className=' text-sm uppercase font-semibold text-red-700 flex items-center gap-2'><span className=' text-xs uppercase font-semibold px-4 py-1 bg-red-700 text-zinc-100'>Edit</span>Leave request form</p>
         <div className=' w-full flex flex-col gap-1'>
-          {/* <p className=' text-xs font-semibold mb-2'>Employee Details</p>
-          <label htmlFor="" className=' text-xs text-zinc-700'>Name</label>
-          <Input type='text' className=' text-xs h-[35px] bg-zinc-200' placeholder='Name' {...register('name')}/>
-           {errors.name && <p className=' text-[.6em] text-red-500'>{errors.name.message}</p>} */}
 
           <label htmlFor="" className=' text-xs text-zinc-700'>Type <span className=' text-red-500'>*</span></label>
 
@@ -301,7 +297,7 @@ useEffect(() => {
           <div className=' w-full flex items-start gap-2'>
             <div className=' w-full'>
               <Label className=' mt-2 text-zinc-500'>Total Number of Working Days:</Label>
-            <Input disabled type='number' value={totaldays} className=' text-xs h-[35px] bg-zinc-200' {...register('workingdays', { valueAsNumber: true , onChange: (e) => setTotaldays(e.target.value)})}/>
+            <Input disabled type='number' value={totaldays - holidays} className=' text-xs h-[35px] bg-zinc-200' {...register('workingdays', { valueAsNumber: true , onChange: (e) => setTotaldays(e.target.value)})}/>
               {errors.workingdays && <p className=' text-[.6em] text-red-500'>{errors.workingdays.message}</p>}
 
             </div>

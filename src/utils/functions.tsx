@@ -11,3 +11,9 @@ export const statusColor = (data: string) => {
     }
 
   }
+
+export  const formatDate = (date: string) => {
+    const formattedDate = date.split('T')[0];
+
+    return formattedDate
+  }

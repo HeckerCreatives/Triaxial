@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react'
+import React, { cache, useEffect, useState } from 'react'
 import { Input } from "@/components/ui/input"
 import {
   Table,
@@ -22,17 +22,6 @@ import {
 import { Plus, Delete, Trash, Eye } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -43,20 +32,62 @@ import {
 import ButtonSecondary from '@/components/common/ButtonSecondary'
 import Button from '@/components/common/Button'
 import { Textarea } from '@/components/ui/textarea'
+import axios from 'axios'
 
-
+type Message = {
+  _id: string
+  title: string
+  content: string
+  senderfullname: string
+  receiverfullname: string
+}
 export default function Emailtable() {
   const [dialog, setDialog] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [totalpage, setTotalpage] = useState(0)
+  const [currentpage, setCurrentpage] = useState(0)
+  const [list, setList] = useState<Message[]>([])
+
+
+  //messages
+  useEffect(() => {
+    const fetchLeaveData = cache(async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/email/listemail?page=${currentpage}&limit=10`,
+          {
+            withCredentials: true,
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
+        setTotalpage(response.data.data.totalpage)
+        setList(response.data.data.emaillist)
+        setLoading(false);
+  
+      
+      } catch (error) {
+        setLoading(false);
+  
+       
+      }
+    });
+  
+    fetchLeaveData();
+  }, [ currentpage]);
 
   return (
-    <div className=' w-full h-full flex justify-center bg-secondary p-6 mt-[150px] text-zinc-100'>
+    <div className=' w-full h-full flex justify-center bg-secondary p-6 text-zinc-100'>
 
       <div className=' w-full flex flex-col max-w-[1520px]'>
         <div className=' flex md:flex-row flex-col items-center justify-between gap-4'>
             <div className=' flex  items-center gap-4'>
                 <Dialog open={dialog} onOpenChange={setDialog}>
                 <DialogTrigger>
-                  <button className=' bg-red-700 px-6 py-2 rounded-sm flex items-center gap-1 text-xs'><Plus size={15}/>Create</button>
+                  <button className=' bg-red-700 text-xs px-6 py-2 rounded-sm flex items-center gap-1'><Plus size={15}/>Create</button>
                 </DialogTrigger>
                 <DialogContent className=' bg-secondary border-none text-zinc-100 grid grid-cols-1 lg:grid-cols-[250px,1fr]'>
                   <div className=' bg-blue-400 lg:block hidden'
@@ -72,14 +103,14 @@ export default function Emailtable() {
                     </DialogDescription>
                     </DialogHeader>
                   <form action="" className=' flex flex-col '>
-                    <h2 className=' uppercase font-semibold text-sm'>Recipient</h2>
+                    <h2 className=' uppercase font-semibold text-sm'>Mail</h2>
                     <div className=' grid grid-cols-1 gap-4'>
-                      <div className=' flex flex-col'>
-                        <label htmlFor="" className=' mt-4 text-xs'>Subject</label>
+                      <div className=' flex flex-col gap-1'>
+                        <label htmlFor="" className=' mt-2 text-xs'>Subject</label>
                         <Input placeholder='Subject' type='text' className=' bg-primary text-xs h-[35px]'/>
 
-                        <label htmlFor="" className=' mt-4 text-xs'>Content</label>
-                        <Textarea placeholder='Content' className=' bg-primary border-none text-xs h-[35px]'/>
+                        <label htmlFor="" className=' mt-2 text-xs'>Content</label>
+                        <Textarea placeholder='Content' className=' bg-primary border-none text-xs'/>
                       </div>
 
                       
@@ -98,29 +129,6 @@ export default function Emailtable() {
                 </DialogContent>
                 </Dialog>
 
-                <AlertDialog>
-                <AlertDialogTrigger>
-                  <button className=' bg-primary text-red-700 text-xs px-6 py-2 rounded-sm flex items-center gap-1'><Trash size={15}/>Delete</button>
-                </AlertDialogTrigger>
-                <AlertDialogContent className=' bg-secondary text-zinc-100'>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This action cannot be undone. This will permanently delete your account
-                      and remove your data from our servers.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel className=' hover:bg-primary hover:text-zinc-100'>Cancel</AlertDialogCancel>
-                    <AlertDialogAction className=' bg-purple-600 hover:bg-purple-700'>Continue</AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </div>
-
-            <div className=' flex items-center gap-4'>
-                <Input type='text' className=' text-zinc-900'/>
-                <button className=' bg-primary px-8 py-2 rounded-sm'>Search</button>
             </div>
             
         </div>
@@ -128,39 +136,29 @@ export default function Emailtable() {
         <Table className=' mt-4'>
         <TableHeader>
             <TableRow>
-            <TableHead className="w-[100px]">Select</TableHead>
+            {/* <TableHead className="w-[100px]">Select</TableHead> */}
             <TableHead>Sender</TableHead>
+            <TableHead>Title</TableHead>
             <TableHead>Message</TableHead>
             </TableRow>
         </TableHeader>
         <TableBody>
-            <TableRow>
-            <TableCell className="font-medium"><Checkbox/></TableCell>
-            <TableCell>Test</TableCell>
+          {list.map((item, index) => (
+            <TableRow key={index}>
+            {/* <TableCell className="font-medium"><Checkbox/></TableCell> */}
+            <TableCell>{item.senderfullname}</TableCell>
+            <TableCell>{item.title}</TableCell>
             <TableCell>
-              <p className=' line-clamp-3'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde nostrum in deleniti ex sequi natus numquam, quibusdam perferendis totam, reprehenderit repudiandae. Dolore voluptate qui iure nobis veritatis eaque a! Saepe?</p>
+              <p className=' line-clamp-3'>{item.content}</p>
             </TableCell>
 
             </TableRow>
+          ))}
+            
         </TableBody>
         </Table>
 
-        <Pagination className=' mt-4'>
-        <PaginationContent>
-            <PaginationItem>
-            <PaginationPrevious href="#" />
-            </PaginationItem>
-            <PaginationItem>
-            <PaginationLink href="#">1</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-            <PaginationEllipsis />
-            </PaginationItem>
-            <PaginationItem>
-            <PaginationNext href="#" />
-            </PaginationItem>
-        </PaginationContent>
-        </Pagination>
+      
       </div>
         
     </div>

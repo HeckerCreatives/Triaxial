@@ -29,42 +29,29 @@ import toast from 'react-hot-toast'
 import { leaveType } from '@/types/data'
 import PaginitionComponent from '@/components/common/Pagination'
 import Leaves from './Leaves'
+import Wfh from './Wfh'
+import { Wellnessday } from '@/types/types'
+import { formatDate } from '@/utils/functions'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { Pen, Trash2 } from 'lucide-react'
+import Editwdrequest from '@/components/forms/Editwdrequest'
 
-
-type Wellnessday = {
-  createdAt: string
-  requestdate:string 
-  firstdayofwellnessdaycycle: string
-}
-
-type Leave = {
-  employeeid: string
-  requestid: string
-  type: number
-  startdate: string
-  enddate: string
-  status: string
-  
-}
-
-type Caculate = {
-  totalworkingdays:  number
-  inwellnessday: boolean
-  totalHoliday:  number
-  totalworkinghoursonleave:  number
-  workinghoursduringleave: number
-}
 
 const Tab = [
   "Leaves",
   "Wellness Day",
   "WFH",
 ]
-
-type LeaveWithCalculation = Leave & Caculate;
-
-
-
 
 
 export default function Requesttable() {
@@ -98,6 +85,70 @@ export default function Requesttable() {
     return () => clearTimeout(timer)
   },[refresh, currentpage])
 
+  //delete
+  const deleteRequest = async (id: string) => {
+    router.push('?state=true')
+    try {
+      const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/wellnessday/deletewellnessdayrequest`,{
+        requestid: id
+     
+      },
+          {
+              withCredentials: true,
+              headers: {
+              'Content-Type': 'application/json'
+              }
+          }
+      )
+
+    const response = await toast.promise(request, {
+        loading: 'Updating wellness day request....',
+        success: `Successfully updated`,
+        error: 'Error while updating wellness day request',
+    });
+
+   if(response.data.message === 'success'){
+     router.push('?state=false')
+
+   }
+
+   console.log(response)
+
+ 
+     
+  } catch (error) {
+
+       if (axios.isAxiosError(error)) {
+              const axiosError = error as AxiosError<{ message: string, data: string }>;
+              if (axiosError.response && axiosError.response.status === 401) {
+                  toast.error(`${axiosError.response.data.data}`) 
+                  router.push('/')    
+              }
+
+              if (axiosError.response && axiosError.response.status === 400) {
+                  toast.error(`${axiosError.response.data.data}`)     
+                     
+              }
+
+              if (axiosError.response && axiosError.response.status === 402) {
+                  toast.error(`${axiosError.response.data.data}`)          
+                         
+              }
+
+              if (axiosError.response && axiosError.response.status === 403) {
+                  toast.error(`${axiosError.response.data.data}`)              
+                 
+              }
+
+              if (axiosError.response && axiosError.response.status === 404) {
+                  toast.error(`${axiosError.response.data.data}`)             
+              }
+      } 
+     
+  }
+  };
+
+
 
   //paginition
   const handlePageChange = (page: number) => {
@@ -130,27 +181,47 @@ export default function Requesttable() {
         {active === 'Wellness Day' && (
           <>
           <Table className=' mt-4'>
-        <TableHeader>
-            <TableRow>
-            <TableHead className="">Requested at</TableHead>
-            <TableHead>Type</TableHead>
-            <TableHead>Start Date</TableHead>
-            <TableHead className="">First Day of Wellness Day Cycle</TableHead>
-            {/* <TableHead className="">Status</TableHead> */}
-            </TableRow>
-        </TableHeader>
-        <TableBody>
-          {list.map((item, index) => (
-            <TableRow key={index}>
-            <TableCell className="">{new Date(item.createdAt).toLocaleString()}</TableCell>
-            <TableCell>Wellness Day</TableCell>
-            <TableCell>{item.requestdate}</TableCell>
-            <TableCell className="">{item.firstdayofwellnessdaycycle}</TableCell>
-            {/* <TableCell className=" text-purple-500">Pending</TableCell> */}
-            </TableRow>
-          ))}
-            
-        </TableBody>
+            <TableHeader>
+                <TableRow>
+                <TableHead className="">Requested at</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead>Start Date</TableHead>
+                <TableHead className="">First Day of Wellness Day Cycle</TableHead>
+                <TableHead className="">Action</TableHead>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+              {list.map((item, index) => (
+                <TableRow key={index}>
+                <TableCell className="">{new Date(item.createdAt).toLocaleString()}</TableCell>
+                <TableCell>Wellness Day</TableCell>
+                <TableCell>{formatDate(item.requestdate)}</TableCell>
+                <TableCell className="">{formatDate(item.firstdayofwellnessdaycycle)}</TableCell>
+                <TableCell className=" flex items-center gap-2">
+                  <Editwdrequest start={formatDate(item.requestdate)} id={item.requestid}>
+                    <button className=' p-2 bg-red-600 rounded-md text-white'><Pen size={15}/></button>
+                  </Editwdrequest>
+                <AlertDialog>
+                <AlertDialogTrigger><button className=' p-2 bg-red-600 text-white rounded-md'><Trash2 size={15}/></button></AlertDialogTrigger>
+                <AlertDialogContent className=' text-white'>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete your leave request.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => deleteRequest(item.requestid)} className=' bg-red-600'>Continue</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+                </TableCell>
+                
+                </TableRow>
+              ))}
+                
+            </TableBody>
           </Table>
 
           {list.length !== 0 && (
@@ -163,6 +234,13 @@ export default function Requesttable() {
         {active === 'Leaves' && (
           <>
           <Leaves/>
+          </>
+          
+        )}
+
+        {active === 'WFH' && (
+          <>
+          <Wfh/>
           </>
           
         )}

@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react'
+import React, { cache, useEffect, useState } from 'react'
 import { Input } from "@/components/ui/input"
 import {
   Table,
@@ -32,10 +32,52 @@ import {
 import ButtonSecondary from '@/components/common/ButtonSecondary'
 import Button from '@/components/common/Button'
 import { Textarea } from '@/components/ui/textarea'
+import axios from 'axios'
 
-
+type Message = {
+  _id: string
+  title: string
+  content: string
+  senderfullname: string
+  receiverfullname: string
+}
 export default function Emailtable() {
   const [dialog, setDialog] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [totalpage, setTotalpage] = useState(0)
+  const [currentpage, setCurrentpage] = useState(0)
+  const [list, setList] = useState<Message[]>([])
+
+
+  //messages
+  useEffect(() => {
+    const fetchLeaveData = cache(async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/email/listemail?page=${currentpage}&limit=10`,
+          {
+            withCredentials: true,
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
+        setTotalpage(response.data.data.totalpage)
+        setList(response.data.data.emaillist)
+        setLoading(false);
+  
+      
+      } catch (error) {
+        setLoading(false);
+  
+       
+      }
+    });
+  
+    fetchLeaveData();
+  }, [ currentpage]);
 
   return (
     <div className=' w-full h-full flex justify-center bg-secondary p-6 text-zinc-100'>
@@ -94,39 +136,29 @@ export default function Emailtable() {
         <Table className=' mt-4'>
         <TableHeader>
             <TableRow>
-            <TableHead className="w-[100px]">Select</TableHead>
+            {/* <TableHead className="w-[100px]">Select</TableHead> */}
             <TableHead>Sender</TableHead>
+            <TableHead>Title</TableHead>
             <TableHead>Message</TableHead>
             </TableRow>
         </TableHeader>
         <TableBody>
-            <TableRow>
-            <TableCell className="font-medium"><Checkbox/></TableCell>
-            <TableCell>Test</TableCell>
+          {list.map((item, index) => (
+            <TableRow key={index}>
+            {/* <TableCell className="font-medium"><Checkbox/></TableCell> */}
+            <TableCell>{item.senderfullname}</TableCell>
+            <TableCell>{item.title}</TableCell>
             <TableCell>
-              <p className=' line-clamp-3'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde nostrum in deleniti ex sequi natus numquam, quibusdam perferendis totam, reprehenderit repudiandae. Dolore voluptate qui iure nobis veritatis eaque a! Saepe?</p>
+              <p className=' line-clamp-3'>{item.content}</p>
             </TableCell>
 
             </TableRow>
+          ))}
+            
         </TableBody>
         </Table>
 
-        <Pagination className=' mt-4'>
-        <PaginationContent>
-            <PaginationItem>
-            <PaginationPrevious href="#" />
-            </PaginationItem>
-            <PaginationItem>
-            <PaginationLink href="#">1</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-            <PaginationEllipsis />
-            </PaginationItem>
-            <PaginationItem>
-            <PaginationNext href="#" />
-            </PaginationItem>
-        </PaginationContent>
-        </Pagination>
+        
       </div>
         
     </div>

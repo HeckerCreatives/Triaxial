@@ -50,6 +50,7 @@ export default function Editwfhrequest( prop: Data) {
   const [start, setStart] = useState('')
   const [end, setEnd] = useState('')
   const [wd, setWd] = useState('Yes')
+  const [totalhrs, setTotalhrs] = useState('')
   const router = useRouter()
 
 
@@ -67,7 +68,9 @@ export default function Editwfhrequest( prop: Data) {
       wdcycle: prop.wellnessdaycycle === true ? 'Yes' : 'No',
       startdate: prop.requestdate,
       enddate: prop.requestend,
-      totalhoursonleave: prop.totalhourswfh
+      totalhoursonleave: prop.totalhourswfh,
+
+
     }
   });
 
@@ -75,15 +78,13 @@ export default function Editwfhrequest( prop: Data) {
     const { declaration, ...filteredData } = data;
     setLoading(true)
     router.push('?state=true')
-
-
     try {
-      const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/wfh/editrequestwfhemployee`,{
+      const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/wfh/editrequestwfh`,{
         requestid: prop.requestid,
         requestdate: data.startdate, // Format YYYY-MM-DD
         requestend: data.enddate, // Format YYYY-MM-DD
         wellnessdaycycle: data.wdcycle === 'Yes' ? true : false ,
-        totalhourswfh: data.totalhoursonleave,
+        totalhourswfh: hoursonleave,
         hoursofleave: data.duringleave,
         reason: data.reason
        
@@ -97,9 +98,9 @@ export default function Editwfhrequest( prop: Data) {
       )
 
     const response = await toast.promise(request, {
-        loading: 'Requesting a wfh setup....',
-        success: `Successfully rquested`,
-        error: 'Error while requesting wfh setup',
+        loading: 'Updating wfh request....',
+        success: `Successfully updated`,
+        error: 'Error while updating wfh request',
     });
 
    if(response.data.message === 'success'){
@@ -174,20 +175,15 @@ export default function Editwfhrequest( prop: Data) {
      return workingDays;
  }
  
-   useEffect(() => {
-     reset()
-     totalWorkingDays()
-   },[dialog])
+
  
    const workingDays = totalWorkingDays() - holidays;
    const hoursonleave = ((totalWorkingDays() - holidays) * hours) - onLeave
-   useEffect(() => {
-     setValue('workingdays', workingDays); // Update form value whenever workingDays changes
-     setValue('totalhoursonleave', hoursonleave)
- }, [workingDays, setValue, hoursonleave, wd]);
+
+
+ console.log(errors)
  
  
-   console.log(errors, hoursonleave)
 
 
   return (
@@ -204,13 +200,13 @@ export default function Editwfhrequest( prop: Data) {
           <div className=' flex items-center gap-4'>
             <div>
               <Label className=' mt-2 text-zinc-500'>First Day Of Leave: <span className=' text-red-500'>*</span></Label>
-              <Input type='date' className=' text-xs h-[35px] bg-zinc-200'  placeholder='Name' {...register('startdate',{ onChange: (e) => setStart(e.target.value)})}/>
+              <Input type='date' value={start} className=' text-xs h-[35px] bg-zinc-200'  placeholder='Name' {...register('startdate',{ onChange: (e) => setStart(e.target.value)})}/>
               {errors.startdate && <p className=' text-[.6em] text-red-500'>{errors.startdate.message}</p>}
             </div>
 
             <div>
               <Label className=' mt-2 text-zinc-500'>Last Day Of Leave: <span className=' text-red-500'>*</span></Label>
-              <Input type='date' className=' text-xs h-[35px] bg-zinc-200' placeholder='Name' {...register('enddate', { onChange: (e) => setEnd(e.target.value)})}/>
+              <Input type='date' value={end} className=' text-xs h-[35px] bg-zinc-200' placeholder='Name' {...register('enddate', { onChange: (e) => setEnd(e.target.value)})}/>
               {errors.enddate && <p className=' text-[.6em] text-red-500'>{errors.enddate.message}</p>}
 
             </div>
@@ -220,7 +216,7 @@ export default function Editwfhrequest( prop: Data) {
           </div>
         
 
-            <div className=' w-full flex items-start gap-2'>
+            {/* <div className=' w-full flex items-start gap-2'>
             <div className=' w-full'>
               <Label className=' mt-2 text-zinc-500'>Total Number of Working Days:</Label>
             < Input type='number' value={workingDays} className=' text-xs h-[35px] bg-zinc-200' placeholder='0' {...register('workingdays', { valueAsNumber: true})}/>
@@ -234,7 +230,7 @@ export default function Editwfhrequest( prop: Data) {
               {errors.holidays && <p className=' text-[.6em] text-red-500'>{errors.holidays.message}</p>}
 
             </div>
-          </div>
+          </div> */}
 
           <div className=' flex items-center gap-2 mt-4'>
             <Label className=' text-zinc-500'>Are you in a Wellness Day Cycle? <span className=' text-red-500'>*</span></Label>

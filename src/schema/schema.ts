@@ -63,10 +63,10 @@ totalhoursonleave: z
     .number(),
 duringleave: z
     .number(),
-workingdays: z
-    .number(),
-holidays: z
-    .number(),
+// workingdays: z
+//     .number(),
+// holidays: z
+//     .number(),
  wdcycle: z
      .string(),
  declaration: z.boolean().refine((val) => val === true, { message: "You must agree to the declaration" })
@@ -148,8 +148,21 @@ export const processLeave = z.object({
 
 export const wdrequestperiod = z.object({
     start: z.string().nonempty('Please enter a starting date'),
-    end: z.string().nonempty('Please enter a ednd date'),
+    end: z.string().nonempty('Please enter a end date'),
+    cycleend: z.string().nonempty('Please enter a cycle end date'),
+    cyclestart: z.string().nonempty('Please enter a cycle start date'),
 })
+
+export const changepassword = z
+  .object({
+    cpassword: z.string().max(20).nonempty('Please enter your current password'),
+    newpassword: z.string().max(20).nonempty('Please enter a new password'),
+    confirmpassword: z.string().max(20)
+  })
+  .refine((data) => data.newpassword === data.confirmpassword, {
+    message: "Passwords don't match",
+    path: ['confirmpassword'], // Error will appear under confirmpassword field
+  });
 
 export type LeaveSchema = z.infer<typeof leaveSchema>;
 export type WdSchema = z.infer<typeof wdSchema>;
@@ -163,3 +176,4 @@ export type CreateClient = z.infer<typeof createClient>
 export type CreateEvent = z.infer<typeof createEvent>
 export type ProcessLeave = z.infer<typeof processLeave>
 export type Wdrequestperiod = z.infer<typeof wdrequestperiod>
+export type Changepassword = z.infer<typeof changepassword>

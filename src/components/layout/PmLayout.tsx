@@ -33,6 +33,7 @@ import { ProjectsPm, ProjectsSection } from '@/types/data'
 import { motion } from 'framer-motion'
 import axios from 'axios'
 import toast from 'react-hot-toast'
+import { pm } from '@/types/routes'
 
 
 export default function PmLayout({
@@ -89,169 +90,16 @@ export default function PmLayout({
               </div>
             <div className="flex-1 mt-4 overflow-y-auto">
               <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-                <Link
-                  href="/pm/dashboard"
-                  className={` ${path === '/pm/dashboard' ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
+                {pm.map((item, index) => (
+                  <Link
+                  href={item.path}
+                  className={` ${path.includes(item.path) ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
                 >
-                  <Home className="h-4 w-4" />
-                  Dashboard
+                  {item.icon}
+                  {item.name}
                 </Link>
-
-                <Link
-                  href="/pm/yourworkload"
-                  className={` ${path === '/pm/yourworkload' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                >
-                  <List className="h-4 w-4" />
-                  Your Workload
-                </Link>
-
-                {/* <Accordion type="single" collapsible>
-                <AccordionItem value="item-1">
-                  <div className={` px-3 flex items-center w-full gap-2 hover:text-red-700 ${path.includes('/pm/project') ? ' text-red-700' : 'text-zinc-100'}`}>
-                    <Box className="h-4 w-4" />
-                    <AccordionTrigger className=' w-[200px] text-sm'>Projects</AccordionTrigger>
-                  </div>
-                  
-                  <AccordionContent className=' pl-8'>
-                    {ProjectsPm.map((item, index) => (
-                      <Link
-                      key={index}
-                      href={`${item.route}?team=${item.name}`}
-                      className={` ${getTeam === item.name ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                    >
-                      
-                      {item.name}
-                    </Link>
-                    ))}
-                     
-
-                   
-                   
-                  </AccordionContent>
-                </AccordionItem>
-                </Accordion> */}
-
-                <Link
-                  href="/pm/teams"
-                  className={` ${path === '/pm/teams' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                >
-                  <Users className="h-4 w-4" />
-                  Teams
-                </Link>
-
-
-                {/* <Link
-                  href="/pm/event"
-                  className={` ${path === '/pm/event' ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                >
-                  <CalendarCheck className="h-4 w-4" />
-                  Events
-                </Link> */}
-
-                <Accordion type="single" collapsible>
-                <AccordionItem value="item-1">
-                  <div className={` px-3 flex items-center w-full gap-2 hover:text-red-700 ${path.includes('/pm/request/leave') ? ' text-red-700' : 'text-zinc-100'}`}>
-                    <ArrowRightLeft className="h-4 w-4" />
-                    <AccordionTrigger className=' w-[200px] text-sm'>Leave</AccordionTrigger>
-                  </div>
-                  
-                  <AccordionContent className=' pl-8'>
-                     <Link
-                      href="/pm/request/leave/employee"
-                      className={` ${path === '/pm/request/leave/employee' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                    >
-                      
-                      Employee Request List
-                    </Link>
-
-                    <Link
-                      href="/pm/request/leave/yourrequest"
-                      className={` ${path === '/pm/request/leave/yourrequest' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                    >
-                    Your Request
-                    </Link>
-
-                   
-                   
-                  </AccordionContent>
-                </AccordionItem>
-                </Accordion>
-
-                <Accordion type="single" collapsible>
-                <AccordionItem value="item-1">
-                  <div className={` px-3 flex items-center w-full gap-2 hover:text-red-700 ${path.includes('/pm/request/wfh') ? ' text-red-700' : 'text-zinc-100'}`}>
-                    <ArrowRightLeft className="h-4 w-4" />
-                    <AccordionTrigger className=' w-[200px] text-sm'>Wfh</AccordionTrigger>
-                  </div>
-                  
-                  <AccordionContent className=' pl-8'>
-                     <Link
-                      href="/pm/request/wfh/employee"
-                      className={` ${path === '/pm/request/wfh/employee' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                    >
-                      
-                      Employee Request List
-                    </Link>
-
-                    <Link
-                      href="/pm/request/wfh/yourrequest"
-                      className={` ${path === '/pm/request/wfh/yourrequest' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                    >
-                    Your Request
-                    </Link>
-
-                   
-                   
-                  </AccordionContent>
-                </AccordionItem>
-                </Accordion>
-
-                {/* <Accordion type="single" collapsible>
-                <AccordionItem value="item-1">
-                  <div className={` px-3 flex items-center w-full gap-2 hover:text-red-700 ${path.includes('/superadmin/clients') || path.includes('/superadmin/teams') ? ' text-red-700' : 'text-zinc-100'}`}>
-                    <ArrowRightLeft className="h-4 w-4" />
-                    <AccordionTrigger className=' w-[200px] text-sm'>Wellness Day</AccordionTrigger>
-                  </div>
-                  
-                  <AccordionContent className=' pl-8'>
-                     <Link
-                      href=""
-                      className={` ${path === '/superadmin/client' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                    >
-                      
-                      Employee Request List
-                    </Link>
-
-                    <Link
-                      href=""
-                      className={` ${path === '/superadmin/teams' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                    >
-                    Your Request List
-                    </Link>
-
-                   
-                   
-                  </AccordionContent>
-                </AccordionItem>
-                </Accordion> */}
-
-
-                <Link
-                  href="/pm/request"
-                  className={` ${path === '/pm/request' ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                >
-                  <ArrowRightLeft className="h-4 w-4" />
-                  Request
-                </Link>
-
-                <Link
-                  href="/pm/mail"
-                  className={` ${path === '/pm/mail' ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                >
-                  <Mail className="h-4 w-4" />
-                  Messages
-                </Link>
-
+                )) }
+               
                
               
               </nav>
@@ -282,82 +130,15 @@ export default function PmLayout({
                   </div>
                 </div>
                 <nav className="grid gap-2 text-lg font-medium">
-                <Link
-                  href="/pm/dashboard"
-                  className={` ${path === '/pm/dashboard' ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
+                {pm.map((item, index) => (
+                  <Link
+                  href={item.path}
+                  className={` ${path.includes(item.path) ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
                 >
-                  <Home className="h-4 w-4" />
-                  Dashboard
+                  {item.icon}
+                  {item.name}
                 </Link>
-
-                <Link
-                  href="/pm/yourworkload"
-                  className={` ${path === '/pm/yourworkload' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                >
-                  <List className="h-4 w-4" />
-                  Your Workload
-                </Link>
-
-                {/* <Accordion type="single" collapsible>
-                <AccordionItem value="item-1">
-                  <div className={` px-3 flex items-center w-full gap-2 hover:text-red-700 ${path.includes('/pm/project') ? ' text-red-700' : 'text-zinc-100'}`}>
-                    <Box className="h-4 w-4" />
-                    <AccordionTrigger className=' w-[200px] text-sm'>Projects</AccordionTrigger>
-                  </div>
-                  
-                  <AccordionContent className=' pl-8'>
-                    {ProjectsPm.map((item, index) => (
-                      <Link
-                      key={index}
-                      href={`${item.route}?team=${item.name}`}
-                      className={` ${getTeam === item.name ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                    >
-                      
-                      {item.name}
-                    </Link>
-                    ))}
-                     
-
-                   
-                   
-                  </AccordionContent>
-                </AccordionItem>
-                </Accordion> */}
-
-                <Link
-                  href="/pm/teams"
-                  className={` ${path === '/pm/teams' ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                >
-                  <Users className="h-4 w-4" />
-                  Teams
-                </Link>
-
-
-                {/* <Link
-                  href="/pm/event"
-                  className={` ${path === '/pm/event' ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                >
-                  <CalendarCheck className="h-4 w-4" />
-                  Events
-                </Link> */}
-
-
-                <Link
-                  href="/pm/request"
-                  className={` ${path === '/pm/request' ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                >
-                  <ArrowRightLeft className="h-4 w-4" />
-                  Request
-                </Link>
-
-                <Link
-                  href="/pm/mail"
-                  className={` ${path === '/pm/mail' ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                >
-                  <Mail className="h-4 w-4" />
-                  Messages
-                </Link>
-
+                )) }
 
                 </nav>
                

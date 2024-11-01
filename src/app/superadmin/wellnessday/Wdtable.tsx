@@ -120,7 +120,7 @@ export default function Wdtable() {
      setLoading(true)
      const timer = setTimeout(() => {
        const getList = async () => {
-         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/wellnessday/wellnessdayeventlisthr??page=${currentpage}&limit=10`,{
+         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/wellnessday/wellnessdayeventlistadmin?page=${currentpage}&limit=10`,{
            withCredentials: true,
            headers: {
              'Content-Type': 'application/json'
@@ -160,7 +160,7 @@ export default function Wdtable() {
     const selectedIds = selected.map((row) => row.teamid);
     router.push('?state=true')
     try {
-      const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/wellnessday/createhrwellnessevent`,{
+      const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/wellnessday/createadminwellnessevent`,{
         startdate: data.start ,
         enddate: data.end ,
         cyclestart: data.cyclestart ,
@@ -234,7 +234,7 @@ export default function Wdtable() {
     const selectedIds = selected.map((row) => row.teamid);
     router.push('?state=true')
     try {
-      const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/wellnessday/edithrwellnesseventhr`,{
+      const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/wellnessday/editwellnesseventadmin`,{
         startdate: data.start ,
         enddate: data.end ,
         cyclestart: data.cyclestart ,
@@ -309,7 +309,7 @@ export default function Wdtable() {
   //team list
   useEffect(() => {
     const getList = async () => {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teams/listteamhr?teamname`,{
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teams/teamsearchlist?teamname`,{
         withCredentials: true,
         headers: {
           'Content-Type': 'application/json'
@@ -317,7 +317,7 @@ export default function Wdtable() {
       })
 
       console.log('Teams list',response.data)
-      setTeams(response.data.data.teams)
+      setTeams(response.data.data.teamlist)
     }
     getList()
   },[])
@@ -552,7 +552,7 @@ export default function Wdtable() {
               </Dialog>
 
              </TableCell>
-             <TableCell className="">
+             <TableCell className=" flex items-center gap-2">
 
 
                <Dialog >
@@ -690,6 +690,141 @@ export default function Wdtable() {
 
                 </DialogContent>
                 </Dialog>
+
+                {/* <Dialog >
+                <DialogTrigger>
+                <button onClick={() => {setValue('start', formatDate(item.startdate)),setValue('end', formatDate(item.enddate)), setValue('cyclestart', formatDate(item.cyclestart)), setValue('cycleend', formatDate(item.cycleend)), setSelected(item.teams.map(team => ({ teamname: team.teamname, teamid: team._id }))), setId(item.eventid)}} className=' p-2 rounded-sm bg-red-700 text-white'>Approve / Deny</button>
+                </DialogTrigger>
+                <DialogContent className=' bg-secondary border-none text-zinc-100 grid grid-cols-1 lg:grid-cols-[250px,1fr]'>
+                  <div className=' bg-blue-400 lg:block hidden'
+                  style={{backgroundImage: `url('/bg2.png')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat:"no-repeat"}}
+
+                  >
+                    <p className=' p-2 uppercase text-sm font-semibold mt-8 bg-gradient-to-r from-zinc-950 to-zinc-950/10'>Edit Wellness Day</p>
+                  </div>
+
+                  <div className=' flex flex-col gap-2 p-4'>
+                    <DialogHeader>
+                    <DialogDescription>
+                    </DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handleSubmit(update)} className=' flex flex-col '>
+                      <h2 className=' uppercase font-semibold text-sm'>Details</h2>
+                      <div className=' grid grid-cols-1 gap-4'>
+                        <div className=' flex flex-col gap-1'>
+
+                          <label htmlFor="" className=' mt-2 text-xs'>Start date</label>
+                          <Input disabled placeholder='Start date' type='date' className=' bg-primary h-[35px] text-xs' {...register('start')}/>
+                          {errors.start && <p className=' text-[.6em] text-red-500'>{errors.start.message}</p>}
+
+
+                          <label htmlFor="" className=' mt-2 text-xs'>End Date</label>
+                          <Input disabled placeholder='End Date' type='date' className=' bg-primary h-[35px] text-xs' {...register('end')}/>
+                          {errors.end && <p className=' text-[.6em] text-red-500'>{errors.end.message}</p>}
+
+                          <label htmlFor="" className=' mt-2 text-xs'>Cycle Start Date</label>
+                          <Input disabled placeholder='Start date' type='date' className=' bg-primary h-[35px] text-xs' {...register('cyclestart')}/>
+                          {errors.cyclestart && <p className=' text-[.6em] text-red-500'>{errors.cyclestart.message}</p>}
+
+
+                          <label htmlFor="" className=' mt-2 text-xs'>Cycle End Date</label>
+                          <Input disabled placeholder='End Date' type='date' className=' bg-primary h-[35px] text-xs' {...register('cycleend')}/>
+                          {errors.cycleend && <p className=' text-[.6em] text-red-500'>{errors.cycleend.message}</p>}
+
+
+                          <label htmlFor="" className=' mt-2 text-xs'>Team</label>
+                          <Command
+                          onKeyDown={handleKeyDown}
+                          className="overflow-visible text-white bg-primary mt-2"
+                        >
+                          <div className="group bg-primary px-3 py-2 text-sm ">
+                            <div className="flex flex-wrap gap-1">
+                              {selected.map((framework) => {
+                                return (
+                                  <Badge key={framework.teamid} variant="secondary" className=' text-white'>
+                                    {framework.teamname}
+                                    <button
+                                      className="ml-1 rounded-full text-white outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                                      onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                          handleUnselect(framework);
+                                        }
+                                      }}
+                                      onMouseDown={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                      }}
+                                      onClick={() => handleUnselect(framework)}
+                                    >
+                                      <X className="h-3 w-3 text-red-600" />
+                                    </button>
+                                  </Badge>
+                                );
+                              })}
+                              <CommandPrimitive.Input
+                                ref={inputRef}
+                                value={inputValue}
+                                onValueChange={setInputValue}
+                                onBlur={() => setOpen(false)}
+                                onFocus={() => setOpen(true)}
+                                placeholder="Select teams"
+                                className=" flex-1 bg-transparent outline-none placeholder:text-white"
+                              />
+                            </div>
+                          </div>
+                          <div className="relative mt-2">
+                            <CommandList>
+                              {open && selectables.length > 0 ? (
+                                <div className="absolute top-0 z-10 w-full h-[200px] rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in">
+                                  <CommandGroup className="h-full overflow-auto">
+                                    {selectables.map((framework) => {
+                                      return (
+                                        <CommandItem
+                                          key={framework.teamid}
+                                          onMouseDown={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                          }}
+                                          onSelect={(value) => {
+                                            setInputValue("");
+                                            setSelected((prev) => [...prev, framework]);
+                                          }}
+                                          className={"cursor-pointer"}
+                                        >
+                                          {framework.teamname}
+                                        </CommandItem>
+                                      );
+                                    })}
+                                  </CommandGroup>
+                                </div>
+                              ) : null}
+                            </CommandList>
+                          </div>
+                          </Command>
+
+                        </div>
+
+                        <div className=' w-full flex items-end justify-end gap-2 mt-8'>
+                              <button disabled={loading} className=' btn-red flex items-center justify-center gap-2'>
+                              {loading === true && (
+                                <div className=' spinner2'></div>
+                              )}
+                                Save</button>
+
+                        </div>
+
+
+                      </div>
+
+
+                    </form>
+
+
+
+                  </div>
+
+                </DialogContent>
+                </Dialog> */}
 
 
              </TableCell>

@@ -39,6 +39,7 @@ export type Wellnessday = {
     createdAt: string
     requestdate:string 
     firstdayofwellnessdaycycle: string
+    requestid: string
 }
 
 export type Wfhemployee = {

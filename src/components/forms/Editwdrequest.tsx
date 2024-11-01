@@ -18,25 +18,25 @@ import { useForm } from 'react-hook-form'
 import { wdSchema, WdSchema } from '@/schema/schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { boolean } from 'zod'
+import { formatDate } from '@/utils/functions'
+import axios, { AxiosError } from 'axios'
+import toast from 'react-hot-toast'
+import { useRouter } from 'next/navigation'
 
 
 interface Data {
-    // open: boolean
-    // onOpenChange: boolean
-    onClick: () => void
-    // name: string
-    // type: string
-    // start: Date
-    // end: Date
-    // details: string
-    // wd
+ 
      children?: React.ReactNode;
+     start: string
+     id: string
 
 }
 
 
 export default function Editwdrequest( prop: Data) {
   const [dialog, setDialog] = useState(false)
+  const [start, setStart] = useState('')
+  const router = useRouter()
 
   const {
     register,
@@ -46,16 +46,77 @@ export default function Editwdrequest( prop: Data) {
     formState: { errors },
   } = useForm<WdSchema>({
     resolver: zodResolver(wdSchema),
+    defaultValues: {
+      startdate: prop.start
+    }
   });
 
-  const onSubmit = (data: WdSchema) => {
-    const { declaration, ...filteredData } = data;
-    console.log(filteredData); // Handle form submission
+  const onSubmit = async (data: WdSchema) => {
+    router.push('?state=true')
+    try {
+      const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/wellnessday/wellnessdayrequestedit`,{
+       requestid: prop.id,
+      requestdate: data.startdate
+     
+      },
+          {
+              withCredentials: true,
+              headers: {
+              'Content-Type': 'application/json'
+              }
+          }
+      )
+
+    const response = await toast.promise(request, {
+        loading: 'Updating wellness day request....',
+        success: `Successfully updated`,
+        error: 'Error while updating wellness day request',
+    });
+
+   if(response.data.message === 'success'){
+     router.push('?state=false')
+     setDialog(false)
+
+   }
+
+   console.log(response)
+
+ 
+     
+  } catch (error) {
+
+       if (axios.isAxiosError(error)) {
+              const axiosError = error as AxiosError<{ message: string, data: string }>;
+              if (axiosError.response && axiosError.response.status === 401) {
+                  toast.error(`${axiosError.response.data.data}`) 
+                  router.push('/')    
+              }
+
+              if (axiosError.response && axiosError.response.status === 400) {
+                  toast.error(`${axiosError.response.data.data}`)     
+                     
+              }
+
+              if (axiosError.response && axiosError.response.status === 402) {
+                  toast.error(`${axiosError.response.data.data}`)          
+                         
+              }
+
+              if (axiosError.response && axiosError.response.status === 403) {
+                  toast.error(`${axiosError.response.data.data}`)              
+                 
+              }
+
+              if (axiosError.response && axiosError.response.status === 404) {
+                  toast.error(`${axiosError.response.data.data}`)             
+              }
+      } 
+     
+  }
   };
 
-  useEffect(() => {
-    reset()
-  },[dialog])
+
+  console.log(prop)
 
   
   return (
@@ -67,45 +128,22 @@ export default function Editwdrequest( prop: Data) {
       <form className=' w-full p-4 flex flex-col gap-4' onSubmit={handleSubmit(onSubmit)}>
         <p className=' text-sm uppercase font-semibold text-red-700 flex items-center gap-2'><span className=' text-xs uppercase font-semibold px-4 py-1 bg-red-700 text-zinc-100'>Edit</span>Wellness Day application Form</p>
         <div className=' w-full flex flex-col gap-1'>
-          <p className=' text-xs font-semibold mb-2'>Employee Details</p>
-          {/* <label htmlFor="" className=' text-xs text-zinc-700'>Name</label>
-          <Input type='text' className=' text-xs h-[35px] bg-zinc-200' placeholder='Name' {...register('name')}/>
-           {errors.name && <p className=' text-[.6em] text-red-500'>{errors.name.message}</p>} */}
+
+         
 
 
           <Label className=' mt-4 font-semibold'>Period Wellness Day Cycle</Label>
           <div className=' flex items-center gap-2 w-full'>
             <div  className=' w-full'>
               <Label className=' mt-2 text-zinc-500'>Start Day Of Wellness Day Cycle: <span className=' text-red-700'>*</span></Label>
-              <Input type='date' className=' text-xs h-[35px] bg-zinc-200' placeholder='Name' {...register('startdate')}/>
+              <Input type='date' className=' text-xs h-[35px] bg-zinc-200' placeholder='Name' {...register('startdate',{ onChange: (e) => setStart(e.target.value)})}/>
               {errors.startdate && <p className=' text-[.6em] text-red-500'>{errors.startdate.message}</p>}
 
 
             </div>
-
-            {/* <div className=' w-full'> 
-              <Label className=' mt-2 text-zinc-500'>This will be your Wellness Day:</Label>
-              <Input type='date' className=' text-xs h-[35px] bg-zinc-200' placeholder='Name' {...register('enddate')}/>
-
-            </div> */}
-
           </div>
 
-          {/* <div className=' w-full flex items-center gap-2 mt-4'>
-            <div className=' w-full'>
-              <Label className=' text-zinc-500'>Total Number Of Working Days:</Label>
-            < Input type='number' className=' text-xs h-[35px] bg-zinc-200' placeholder='0' {...register('totalworkingdays')}/>
-              {errors.totalworkingdays && <p className=' text-[.6em] text-red-500'>{errors.totalworkingdays.message}</p>}
-
-            </div>
-
-            <div className=' w-full'>
-              <Label className=' text-zinc-500'>Total Working Hours During Wellness Day Cycle:</Label>
-            < Input type='number' className=' text-xs h-[35px] bg-zinc-200' placeholder='0' {...register('totalhoursduring')}/>
-              {errors.totalhoursduring && <p className=' text-[.6em] text-red-500'>{errors.totalhoursduring.message}</p>}
-
-            </div>
-          </div> */}
+        
 
 
           <p className=' text-xs text-zinc-500 mt-4'>Note: <span className=' text-red-500'>*</span><span className=' italic'>- Required</span></p>

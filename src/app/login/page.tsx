@@ -21,98 +21,6 @@ export default function Login() {
     const router = useRouter()
     const [loading, setLoading] = useState(false)
 
-    // const login = () => {
-    //     if(email === 'hr@gmail.com' && password === 'dev123'){
-    //         router.push('/hr/dashboard')
-    //         ToastSuccess('Success')
-
-    //     } else if (email === 'pm@gmail.com' && password === 'dev123'){
-    //         router.push('/pm/dashboard')
-    //         ToastSuccess('Success')
-
-    //     }else if (email === 'finance@gmail.com' && password === 'dev123'){
-    //         router.push('/finance/dashboard')
-    //         ToastSuccess('Success')
-
-    //     }else if (email === 'employee@gmail.com' && password === 'dev123'){
-    //         router.push('/employee/dashboard')
-    //         ToastSuccess('Success')
-
-    //     } else {
-    //         ToastError('Invalid Credentials')
-    //     }
-    // }
-
-    const loginUser = async () => {
-        setLoading(true)
-        try {
-            const request = axios.get(`${process.env.NEXT_API_URL}/auth/login?username=${username}&password=${password}`,
-                {
-                    withCredentials: true,
-                    headers: {
-                    'Content-Type': 'application/json'
-                    }
-                }
-            )
-
-         const response = await toast.promise(request, {
-             loading: 'Log in account....',
-             success: `Successfully loged in`,
-             error: 'Error while logging your account',
-         });
-
-        if (response.data.data.auth === 'user' ){
-            toast.success('Successfully logged in')
-            router.push('/user/dashboard')
-            setLoading(false)
-
-
-        } else if(response.data.data.auth === 'superadmin'){
-            toast.success('Successfully logged in')
-            router.push('/superadmin/dashboard')
-            setLoading(false)
-        } else if(response.data.data.auth === 'admin'){
-            toast.success('Successfully logged in')
-            router.push('/admin/dashboard')
-            setLoading(false)
-        } else {
-            toast.error(response.data.data)
-            setLoading(false)
-
-        }
-            
-        } catch (error) {
-            setLoading(false)
-
-             if (axios.isAxiosError(error)) {
-                    const axiosError = error as AxiosError<{ message: string, data: string }>;
-                    if (axiosError.response && axiosError.response.status === 401) {
-                        toast.error(`${axiosError.response.data.data}`)     
-                    }
-
-                    if (axiosError.response && axiosError.response.status === 400) {
-                        toast.error(`${axiosError.response.data.data}`)     
-                            
-                    }
-
-                    if (axiosError.response && axiosError.response.status === 402) {
-                        toast.error(`${axiosError.response.data.data}`)          
-                                
-                    }
-
-                    if (axiosError.response && axiosError.response.status === 403) {
-                        toast.error(`${axiosError.response.data.data}`)              
-                        
-                    }
-
-                    if (axiosError.response && axiosError.response.status === 404) {
-                        toast.error(`${axiosError.response.data.data}`)             
-                    }
-            } 
-            
-        }
-    }
-
     const {
         register,
         handleSubmit,
@@ -259,10 +167,10 @@ export default function Login() {
 
                      
 
-                         <div className=' p-1 text-sm mt-8 flex items-center justify-center w-fit'>
+                         {/* <div className=' p-1 text-sm mt-8 flex items-center justify-center w-fit'>
                             <a href="/login/superadmin" className=' flex items-center gap-2 text-red-500'>Superadmin? <LogIn size={15}/></a>
 
-                        </div>
+                        </div> */}
                 </div>
                 <div className=' w-full h-full bg-zinc-600 hidden lg:block'
                 style={{backgroundImage: `url('/admin.webp')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat:"no-repeat"}}

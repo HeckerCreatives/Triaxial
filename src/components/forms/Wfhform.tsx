@@ -77,7 +77,7 @@ export default function Wfhform( prop: Data) {
 
 
     try {
-      const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/wfh/requestwfhemployee`,{
+      const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/wfh/requestwfh`,{
         requestdate: data.startdate,
         requestend: data.enddate,
         reason: data.reason,
@@ -179,7 +179,7 @@ export default function Wfhform( prop: Data) {
    const workingDays = totalWorkingDays() - holidays;
    const hoursonleave = ((totalWorkingDays() - holidays) * hours) - onLeave
    useEffect(() => {
-     setValue('workingdays', workingDays); // Update form value whenever workingDays changes
+    //  setValue('workingdays', workingDays); 
      setValue('totalhoursonleave', hoursonleave)
  }, [workingDays, setValue, hoursonleave, wd]);
  
@@ -217,7 +217,7 @@ export default function Wfhform( prop: Data) {
           </div>
         
 
-            <div className=' w-full flex items-start gap-2'>
+            {/* <div className=' w-full flex items-start gap-2'>
             <div className=' w-full'>
               <Label className=' mt-2 text-zinc-500'>Total Number of Working Days:</Label>
             < Input type='number' value={workingDays} className=' text-xs h-[35px] bg-zinc-200' placeholder='0' {...register('workingdays', { valueAsNumber: true})}/>
@@ -231,7 +231,7 @@ export default function Wfhform( prop: Data) {
               {errors.holidays && <p className=' text-[.6em] text-red-500'>{errors.holidays.message}</p>}
 
             </div>
-          </div>
+          </div> */}
 
           <div className=' flex items-center gap-2 mt-4'>
             <Label className=' text-zinc-500'>Are you in a Wellness Day Cycle? <span className=' text-red-500'>*</span></Label>

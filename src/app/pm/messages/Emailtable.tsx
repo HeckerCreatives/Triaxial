@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react'
+import React, { cache, useEffect, useState } from 'react'
 import { Input } from "@/components/ui/input"
 import {
   Table,
@@ -22,17 +22,6 @@ import {
 import { Plus, Delete, Trash, Eye } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -43,10 +32,52 @@ import {
 import ButtonSecondary from '@/components/common/ButtonSecondary'
 import Button from '@/components/common/Button'
 import { Textarea } from '@/components/ui/textarea'
+import axios from 'axios'
 
-
+type Message = {
+  _id: string
+  title: string
+  content: string
+  senderfullname: string
+  receiverfullname: string
+}
 export default function Emailtable() {
   const [dialog, setDialog] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [totalpage, setTotalpage] = useState(0)
+  const [currentpage, setCurrentpage] = useState(0)
+  const [list, setList] = useState<Message[]>([])
+
+
+  //messages
+  useEffect(() => {
+    const fetchLeaveData = cache(async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/email/listemail?page=${currentpage}&limit=10`,
+          {
+            withCredentials: true,
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
+        setTotalpage(response.data.data.totalpage)
+        setList(response.data.data.emaillist)
+        setLoading(false);
+  
+      
+      } catch (error) {
+        setLoading(false);
+  
+       
+      }
+    });
+  
+    fetchLeaveData();
+  }, [ currentpage]);
 
   return (
     <div className=' w-full h-full flex justify-center bg-secondary p-6 text-zinc-100'>
@@ -56,14 +87,14 @@ export default function Emailtable() {
             <div className=' flex  items-center gap-4'>
                 <Dialog open={dialog} onOpenChange={setDialog}>
                 <DialogTrigger>
-                  <button className=' bg-red-700 px-6 py-2 rounded-sm flex items-center gap-1 text-xs'><Plus size={15}/>Create</button>
+                  <button className=' bg-red-700 text-xs px-6 py-2 rounded-sm flex items-center gap-1'><Plus size={15}/>Create</button>
                 </DialogTrigger>
                 <DialogContent className=' bg-secondary border-none text-zinc-100 grid grid-cols-1 lg:grid-cols-[250px,1fr]'>
                   <div className=' bg-blue-400 lg:block hidden'
                   style={{backgroundImage: `url('/bg2.png')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat:"no-repeat"}}
                   
                   >
-                    <p className=' p-2 uppercase text-lg font-semibold mt-8 bg-gradient-to-r from-zinc-950 to-zinc-950/10'>Create Mail</p>
+                    <p className=' p-2 uppercase text-sm font-semibold mt-8 bg-gradient-to-r from-zinc-950 to-zinc-950/10'>Create Mail</p>
                   </div>
 
                   <div className=' flex flex-col gap-2 p-4'>
@@ -74,12 +105,12 @@ export default function Emailtable() {
                   <form action="" className=' flex flex-col '>
                     <h2 className=' uppercase font-semibold text-sm'>Mail</h2>
                     <div className=' grid grid-cols-1 gap-4'>
-                      <div className=' flex flex-col'>
-                        <label htmlFor="" className=' mt-4 text-sm'>Subject</label>
-                        <Input placeholder='Subject' type='text' className=' bg-primary'/>
+                      <div className=' flex flex-col gap-1'>
+                        <label htmlFor="" className=' mt-2 text-xs'>Subject</label>
+                        <Input placeholder='Subject' type='text' className=' bg-primary text-xs h-[35px]'/>
 
-                        <label htmlFor="" className=' mt-4 text-sm'>Content</label>
-                        <Textarea placeholder='Content' className=' bg-primary border-none'/>
+                        <label htmlFor="" className=' mt-2 text-xs'>Content</label>
+                        <Textarea placeholder='Content' className=' bg-primary border-none text-xs'/>
                       </div>
 
                       
@@ -105,39 +136,29 @@ export default function Emailtable() {
         <Table className=' mt-4'>
         <TableHeader>
             <TableRow>
-            <TableHead className="w-[100px]">Select</TableHead>
+            {/* <TableHead className="w-[100px]">Select</TableHead> */}
             <TableHead>Sender</TableHead>
+            <TableHead>Title</TableHead>
             <TableHead>Message</TableHead>
             </TableRow>
         </TableHeader>
         <TableBody>
-            <TableRow>
-            <TableCell className="font-medium"><Checkbox/></TableCell>
-            <TableCell>Test</TableCell>
+          {list.map((item, index) => (
+            <TableRow key={index}>
+            {/* <TableCell className="font-medium"><Checkbox/></TableCell> */}
+            <TableCell>{item.senderfullname}</TableCell>
+            <TableCell>{item.title}</TableCell>
             <TableCell>
-              <p className=' line-clamp-3'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde nostrum in deleniti ex sequi natus numquam, quibusdam perferendis totam, reprehenderit repudiandae. Dolore voluptate qui iure nobis veritatis eaque a! Saepe?</p>
+              <p className=' line-clamp-3'>{item.content}</p>
             </TableCell>
 
             </TableRow>
+          ))}
+            
         </TableBody>
         </Table>
 
-        <Pagination className=' mt-4'>
-        <PaginationContent>
-            <PaginationItem>
-            <PaginationPrevious href="#" />
-            </PaginationItem>
-            <PaginationItem>
-            <PaginationLink href="#">1</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-            <PaginationEllipsis />
-            </PaginationItem>
-            <PaginationItem>
-            <PaginationNext href="#" />
-            </PaginationItem>
-        </PaginationContent>
-        </Pagination>
+        
       </div>
         
     </div>

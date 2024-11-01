@@ -11,22 +11,22 @@ import {
 import Link from 'next/link'
 import Breadcrumbdb from '@/components/common/Breadcrumb'
 import EmployeeLayout from '@/components/layout/EmployeeLayout'
-import PmLayout from '@/components/layout/PmLayout'
-import Leaves from './Leave'
+import Emailtable from './Emailtable'
+import FinaceLayout from '@/components/layout/FinanceLayout'
 
 
 
 export default function page() {
   return (
-    <PmLayout>
-      <div className=' p-6 top-0 left-0 w-full h-[150px] bg-zinc-800'
+    <FinaceLayout>
+      <div className=' p-6 top-0 left-0 w-full h-[100px] bg-zinc-800'
       style={{backgroundImage: `url('/dbbg.png')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat:"no-repeat"}}
       >
-        <Breadcrumbdb page={'Leave Request / Employee'}/>
+        <Breadcrumbdb page={'Messages'}/>
 
       </div>
-      <Leaves/>
-      
-    </PmLayout>
+      <Emailtable/>
+
+    </FinaceLayout>
   )
 }

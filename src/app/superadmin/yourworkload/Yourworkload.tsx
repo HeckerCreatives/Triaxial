@@ -1,6 +1,16 @@
 "use client"
 import React, { useState } from 'react'
 import { Plus, Delete, Trash, Eye, CircleAlert, CalendarCheck } from 'lucide-react'
+import { Checkbox } from '@/components/ui/checkbox'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,25 +19,44 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-
-
-
-
-
+import Actionbtn from '@/components/common/Actionbutton'
+import Leaveform from '@/components/forms/Leaveform'
+import WDform from '@/components/forms/Wellnessday'
+import Wfhform from '@/components/forms/Wfhform'
 
 
 export default function Yourworkload() {
   const [tab, setTab] = useState('Workload')
+  const [tab2, setTab2] = useState('Leave')
+
 
   return (
-    <div className=' w-full h-full flex flex-col justify-center bg-secondary p-4 text-zinc-100'>
+   <div className=' w-full h-full flex flex-col justify-center bg-secondary p-4 text-zinc-100'>
 
       <div className=' w-full flex items-center justify-between h-auto bg-primary mb-2 p-4 text-xs'>
         <div className=' flex flex-col gap-1'>
           <p className=' text-zinc-400'>Name: <span className=' text-zinc-100 underline'>Name</span></p>
           <p className=' text-zinc-400'>Initial: <span className=' text-zinc-100 underline'>ABC</span></p>
           <p className=' text-zinc-400'>Email: <span className=' text-zinc-100 underline'>test@gmail.com</span></p>
+        </div>
 
+        <div className=' flex flex-col gap-2 bg-primary rounded-sm text-xs'>
+
+          <p>Request :</p>
+          <div className='flex items-center gap-2 bg-primary rounded-sm text-xs'>
+              <Leaveform onClick={() => undefined}>
+                <button onClick={() =>  setTab2('Leave')} className={`text-xs px-3 py-1 bg-red-600  rounded-sm`}>Leave</button>
+              </Leaveform>
+              <WDform onClick={() => undefined}>
+                <button onClick={() =>  setTab2('WD')} className={`text-xs px-3 py-1 bg-red-600  rounded-sm`}>Wellness Day</button>
+              </WDform>
+
+              <Wfhform onClick={() => undefined}>
+                <button onClick={() =>  setTab2('WFH')} className={`text-xs px-3 py-1 bg-red-600  rounded-sm`}>WFH</button>
+              </Wfhform>
+
+          </div>
+            
         </div>
 
         <div className=' flex items-center justify-center gap-4 text-xs bg-secondary p-2 rounded-sm'>
@@ -159,7 +188,7 @@ export default function Yourworkload() {
       </div>
 
       <div className=' w-full flex flex-col max-w-[1920px]'>
-        <div className=' h-[580px] overflow-y-auto flex items-start justify-center bg-zinc-100 w-full max-w-[1920px]'>
+        <div className=' h-full overflow-y-auto flex items-start justify-center bg-zinc-100 w-full max-w-[1920px]'>
         <table className="table-auto w-full border-collapse ">
           <thead className=' bg-secondary h-[103px]'>
             <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
