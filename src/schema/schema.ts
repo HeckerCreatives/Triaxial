@@ -119,7 +119,7 @@ export const createEmployee = z.object ({
     email: z.string().email("Invalid email address"),
     position: z.string().nonempty("Please enter a position"),
     img: any(),
-    password: z.string().nonempty('Please enter a password')
+    password: z.string()
 })
 
 export const createTeam = z.object({

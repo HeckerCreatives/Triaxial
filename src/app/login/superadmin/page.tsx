@@ -23,7 +23,7 @@ export default function Adminlogin() {
     const loginUser = async () => {
         setLoading(true)
         try {
-            const request = axios.get(`${process.env.NEXT_API_URL}/auth/login?username=${username}&password=${password}`,
+            const response = await axios.get(`${process.env.NEXT_API_URL}/auth/login?username=${username}&password=${password}`,
                 {
                     withCredentials: true,
                     headers: {
@@ -32,28 +32,14 @@ export default function Adminlogin() {
                 }
             )
 
-         const response = await toast.promise(request, {
-             loading: 'Log in account....',
-             success: `Successfully loged in`,
-             error: 'Error while logging your account',
-         });
 
-        if (response.data.data.auth === 'user' ){
-            toast.success('Successfully logged in')
-            router.push('/user/dashboard')
-            setLoading(false)
-
-
-        } else if(response.data.data.auth === 'superadmin'){
+      
+        if (response.data.data.auth === 'superadmin'){
             toast.success('Successfully logged in')
             router.push('/superadmin/dashboard')
             setLoading(false)
-        } else if(response.data.data.auth === 'admin'){
-            toast.success('Successfully logged in')
-            router.push('/admin/dashboard')
-            setLoading(false)
         } else {
-            toast.error(response.data.data)
+            toast.error('No credentials found')
             setLoading(false)
 
         }
@@ -102,7 +88,7 @@ export default function Adminlogin() {
       const onSubmit = async (data: LoginSchema) => {
         setLoading(true)
         try {
-            const request = axios.get(`${process.env. NEXT_PUBLIC_API_URL}/auth/login?email=${data.email}&password=${data.password}`,
+            const response = await axios.get(`${process.env. NEXT_PUBLIC_API_URL}/auth/login?email=${data.email}&password=${data.password}`,
                 {
                     withCredentials: true,
                     headers: {
@@ -111,20 +97,18 @@ export default function Adminlogin() {
                 }
             )
 
-         const response = await toast.promise(request, {
-             loading: 'Log in account....',
-             success: `Successfully loged in`,
-             error: 'Error while logging your account',
-         });
-
-        if (response.data.data.auth === 'superadmin' ){
-            reset()
-            router.push('/superadmin/dashboard')
-            setLoading(false)
-        }
+            if (response.data.data.auth === 'superadmin'){
+                toast.success('Successfully logged in')
+                router.push('/superadmin/dashboard')
+                setLoading(false)
+            } else {
+                toast.error('No credentials found')
+                setLoading(false)
+    
+            }
 
 
-            
+        
         } catch (error) {
             setLoading(false)
 

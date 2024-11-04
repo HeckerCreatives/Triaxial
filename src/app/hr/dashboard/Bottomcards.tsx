@@ -75,7 +75,7 @@ export default function Bottomcards() {
                   <div className=' flex flex-col gap-2 w-full'>
                     <h2 className=' uppercase font-semibold text-sm text-red-700'>CURRENT EVENT!</h2>
                     <h2 className=' uppercase font-semibold text-sm'>{item.title}</h2>
-                    <p className=' text-sm text-zinc-400'>{item.start} - {item.end}</p>
+                    <p className=' text-sm text-zinc-400'>{new Date(item.start).toLocaleString()} - {new Date(item.end).toLocaleString()}</p>
                     <p className=' text-zinc-300 text-xs'>Teams:</p>
 
                     <div className=' flex flex-wrap gap-2'>
@@ -104,7 +104,7 @@ export default function Bottomcards() {
                   <div className=' w-full flex flex-col gap-2'>
                     <h2 className=' uppercase font-semibold text-sm text-red-700'>UPCOMING EVENT!</h2>
                     <h2 className=' uppercase font-semibold text-sm'>{item.title}</h2>
-                    <p className=' text-sm text-zinc-400'>{item.start} - {item.end}</p>
+                    <p className=' text-sm text-zinc-400'>{new Date(item.start).toLocaleString()} - {new Date(item.end).toLocaleString()}</p>
                     <p className=' text-zinc-300 text-xs'>Teams:</p>
 
                     <div className=' flex flex-wrap gap-2'>

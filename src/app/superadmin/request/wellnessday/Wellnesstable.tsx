@@ -22,6 +22,7 @@ import {
 import axios from 'axios'
 import Spinner from '@/components/common/Spinner'
 import PaginitionComponent from '@/components/common/Pagination'
+import Approvewdrequest from '@/components/forms/Wdsuperadmin'
 
 type Welnnessday = {
   firstdayofwellnessdaycycle: string
@@ -111,6 +112,7 @@ export default function Wellnesstable() {
             <TableHead>Wellness Day</TableHead>
             <TableHead>Total Number of Working Days</TableHead>
             <TableHead>Total Working Hours During Wellness Day Cycle</TableHead>
+            <TableHead>Action</TableHead>
             </TableRow>
         </TableHeader>
         <TableBody>
@@ -121,47 +123,15 @@ export default function Wellnesstable() {
             <TableCell>{item.user}</TableCell>
             <TableCell>{item.firstdayofwellnessdaycycle}</TableCell>
             <TableCell>{item.requestdate}</TableCell>
-            <TableCell>1</TableCell>
-            <TableCell>1</TableCell>
-            {/* <TableCell className="">
-              <Dialog open={dialog} onOpenChange={setDialog}>
-                  <DialogTrigger>
-                    <button className=' p-2 rounded-sm bg-primary'><Eye size={20}/></button>
-                  </DialogTrigger>
-                  <DialogContent className=' bg-secondary border-none text-zinc-100 grid grid-cols-1 lg:grid-cols-[250px,1fr]'>
-                    <div className=' bg-blue-400 lg:block hidden'
-                    style={{backgroundImage: `url('/bg2.png')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat:"no-repeat"}}
-                    
-                    >
-                      <p className=' p-2 uppercase text-lg font-semibold mt-8 bg-gradient-to-r from-zinc-950 to-zinc-950/10'>Wellness Day Request</p>
-                    </div>
-
-                    <div className=' flex flex-col gap-2 p-4'>
-                      <DialogHeader>
-                      <DialogDescription>
-                      </DialogDescription>
-                      </DialogHeader>
-                    <div className=' flex flex-col '>
-                      <h2 className=' uppercase font-semibold text-sm'>Details</h2>
-                      <div className=' flex flex-col gap-2 mt-4 text-lg'>
-                        <p className=' text-zinc-400'>Request by: <span className=' text-zinc-100'>Test Test</span></p>
-                        <p className=' text-zinc-400'>Start date: <span className=' text-zinc-100'>00/00/00</span></p>
-                        <p className=' text-zinc-400'>End date: <span className=' text-zinc-100'>00/00/00</span></p>
-                      </div>
-
-                    </div>
-                    
-                      <div className=' w-full flex items-end justify-end gap-2 mt-8'>
-                        <ButtonSecondary onClick={() => setDialog(false)}  name={'Close'}/>
-                        <ButtonDanger onClick={() => setDialog(false)} name='Deny'/>
-                        <Button onClick={() => setDialog(false)} name={'Approve'}/>
-                      </div>
-
-                    </div>
-                    
-                  </DialogContent>
-                </Dialog>
-            </TableCell> */}
+            <TableCell></TableCell>
+            <TableCell>0</TableCell>
+            <TableCell>
+            <Approvewdrequest start={item.requestdate} id={item.requestid} >
+                
+                  <button className=' whitespace-nowrap bg-red-700 text-white text-xs p-2 rounded-sm'>Approved / Denied</button>
+               </Approvewdrequest>
+             
+            </TableCell>
 
             </TableRow>
           ))}

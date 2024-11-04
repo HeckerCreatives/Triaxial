@@ -33,7 +33,7 @@ export default function Login() {
     const onSubmit = async (data: LoginSchema) => {
         setLoading(true)
         try {
-            const request = axios.get(`${process.env. NEXT_PUBLIC_API_URL}/auth/login?email=${data.email}&password=${data.password}`,
+            const response = await axios.get(`${process.env. NEXT_PUBLIC_API_URL}/auth/login?email=${data.email}&password=${data.password}`,
                 {
                     withCredentials: true,
                     headers: {
@@ -42,29 +42,30 @@ export default function Login() {
                 }
             )
 
-         const response = await toast.promise(request, {
-             loading: 'Log in account....',
-             success: `Successfully loged in`,
-             error: 'Error while logging your account',
-         });
-
+         
         if (response.data.data.auth === 'employee' ){
             reset()
+            toast.success('Successfully logged in')
             router.push('/employee/dashboard')
             setLoading(false)
         }else if (response.data.data.auth === 'manager'){
             reset()
+            toast.success('Successfully logged in')
             router.push('/pm/dashboard')
             setLoading(false)
         }else if (response.data.data.auth === 'hr'){
             reset()
+            toast.success('Successfully logged in')
             router.push('/hr/dashboard')
             setLoading(false)
         }else if (response.data.data.auth === 'finance'){
             reset()
+            toast.success('Successfully logged in')
             router.push('/finance/dashboard')
             setLoading(false)
         } else{
+            toast.error('No credentials found')
+            setLoading(false)
             
         }
 
@@ -167,10 +168,10 @@ export default function Login() {
 
                      
 
-                         {/* <div className=' p-1 text-sm mt-8 flex items-center justify-center w-fit'>
+                         <div className=' p-1 text-sm mt-8 flex items-center justify-center w-fit'>
                             <a href="/login/superadmin" className=' flex items-center gap-2 text-red-500'>Superadmin? <LogIn size={15}/></a>
 
-                        </div> */}
+                        </div>
                 </div>
                 <div className=' w-full h-full bg-zinc-600 hidden lg:block'
                 style={{backgroundImage: `url('/admin.webp')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat:"no-repeat"}}

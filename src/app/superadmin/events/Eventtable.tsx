@@ -534,11 +534,11 @@ export default function Eventtable() {
           {list.map((item, index) => (
              <TableRow key={index}>
              <TableCell className="font-medium">{item.title}</TableCell>
-             <TableCell className="font-medium">{item.startdate}</TableCell>
-             <TableCell className="font-medium">{item.enddate}</TableCell>
+             <TableCell className="font-medium">{new Date(item.startdate).toLocaleString()}</TableCell>
+             <TableCell className="font-medium">{new Date(item.enddate).toLocaleString()}</TableCell>
              <TableCell className=' '>
              
-                <Dialog>
+              <Dialog>
                 <DialogTrigger><button className=' bg-red-700 p-2 rounded-sm text-white flex items-center gap-2'><Eye size={15}/>View Team</button></DialogTrigger>
                 <DialogContent className=' p-6 bg-secondary text-white border-none'>
                   <DialogHeader>

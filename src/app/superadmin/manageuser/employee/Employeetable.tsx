@@ -92,6 +92,10 @@ type Data = {
   }
 }
 
+type Team = {
+  teamname: string
+}
+
 type Row = { id: string; name: string };
 
 
@@ -633,6 +637,22 @@ console.log(id, employeedata)
 
 const reportingtoValue = watch('reportingto');
 
+//team data
+const [team, setTeam] = useState<Team[]>([])
+  const getTeamname = async ( id: string) => {
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users/viewteamemployees?employeeid=${id}`,{
+      withCredentials: true,
+      headers: {
+        'Content-Type': 'application/json'
+        }
+    })
+  
+    console.log('Team Data',response.data)
+    setTeam(response.data.data.list)
+  
+  }
+
+
 
 
 
@@ -988,7 +1008,7 @@ const reportingtoValue = watch('reportingto');
              <TableCell className="font-medium">{item.name}</TableCell>
              <TableCell className="font-medium flex flex-wrap w-[150px] overflow-hidden">
              <Dialog>
-                <DialogTrigger><button className=' bg-red-700 p-2 rounded-sm text-white flex items-center gap-2'><Eye size={15}/>View Team</button></DialogTrigger>
+                <DialogTrigger><button onClick={() => getTeamname(item.employeeid)} className=' bg-red-700 p-2 rounded-sm text-white flex items-center gap-2'><Eye size={15}/>View Team</button></DialogTrigger>
                 <DialogContent className=' p-6 bg-secondary text-white border-none'>
                   <DialogHeader>
                     <DialogTitle className=' text-red-700'>Team</DialogTitle>
@@ -998,7 +1018,7 @@ const reportingtoValue = watch('reportingto');
                   </DialogHeader>
 
                    <Table className=''>
-                    {slice(item.teamname).length === 0 && (
+                    {team.length === 0 && (
                     <TableCaption>No team</TableCaption>
 
                     )}
@@ -1008,9 +1028,9 @@ const reportingtoValue = watch('reportingto');
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                     {slice(item.teamname).map((item,) => (
+                     {team.map((item,) => (
                         <TableRow key={index}>
-                          <TableCell className="font-medium">{item}</TableCell>
+                          <TableCell className="font-medium">{item.teamname}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -1043,7 +1063,7 @@ const reportingtoValue = watch('reportingto');
                   <div className=' flex flex-col gap-2 p-4'>
                     <DialogHeader>
                     <DialogDescription>
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Incidunt, reprehenderit sequi. Quisquam, libero quam placeat molestias cum est.
+                      L
                     </DialogDescription>
                     </DialogHeader>
                       <form onSubmit={handleSubmit(editEmployee)} className=' flex flex-col '>
