@@ -300,7 +300,7 @@ export default function Wfhformadmin( prop: Props) {
             {loading1 === true && (
               <div className=' spinner2'></div>
             )}
-              Reject</button>
+              Deny</button>
             <button onClick={approved} className=' bg-red-700 text-zinc-100 px-4 py-2 text-xs rounded-sm mt-4 w-auto flex items-center justify-center gap-2'>
             {loading === true && (
               <div className=' spinner2'></div>

@@ -10,9 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-
-import { Plus, Delete, Trash, Eye, Pen } from 'lucide-react'
-import { Checkbox } from '@/components/ui/checkbox'
+import { Plus, Delete, Trash, Eye, Pen, Trash2 } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -21,7 +19,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-
 import { X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -31,7 +28,6 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Command as CommandPrimitive } from "cmdk";
-import { selectTeams } from '@/types/data'
 import axios, { AxiosError } from 'axios'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -40,6 +36,18 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { createEvent, CreateEvent } from '@/schema/schema'
 import Spinner from '@/components/common/Spinner'
 import PaginitionComponent from '@/components/common/Pagination'
+import { formatDateTime } from '@/utils/functions'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 type Team = Record<"teamname" | "teamid", string>;
 
@@ -117,34 +125,35 @@ export default function Eventtable() {
 
 
   //event list
-  // useEffect(() => {
-  //   setLoading(true)
-  //   const timer = setTimeout(() => {
-  //     const getList = async () => {
-  //       const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/events/listevents?page=${currentpage}&limit=10&eventtitlefilter=${search}`,{
-  //         withCredentials: true,
-  //         headers: {
-  //           'Content-Type': 'application/json'
-  //           }
-  //       })
+   useEffect(() => {
+     setLoading(true)
+     const timer = setTimeout(() => {
+       const getList = async () => {
+         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/events/listeventshr?page=${currentpage}&limit=10&eventtitlefilter=${search}`,{
+           withCredentials: true,
+           headers: {
+             'Content-Type': 'application/json'
+             }
+         })
   
-  //       console.log('Event list',response.data)
-  //       setList(response.data.data.eventlist)
-  //       setTotalpage(response.data.data.totalpages)
-  //       setLoading(false)
+         console.log('Event list',response.data)
+         setList(response.data.data.eventlist)
+         setTotalpage(response.data.data.totalpages)
+         setLoading(false)
 
-  //       if(search !== ''){
-  //         setCurrentpage(0)
-  //       }
+         if(search !== ''){
+           setCurrentpage(0)
+         }
        
-  //     }
-  //     getList()
-  //   }, 500)
-  //   return () => clearTimeout(timer)
+       }
+       getList()
+     }, 500)
+     return () => clearTimeout(timer)
     
-  // },[search, currentpage, state])
+   },[search, currentpage, state])
 
-   //create events
+
+   //create 
    const {
     register,
     handleSubmit,
@@ -161,7 +170,7 @@ export default function Eventtable() {
     const selectedIds = selected.map((row) => row.teamid);
     router.push('?state=true')
     try {
-      const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/events/createevents`,{
+      const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/events/createeventshr`,{
           eventtitle: data.eventitle,
           startdate: data.startdate, 
           enddate: data.enddate, 
@@ -233,9 +242,9 @@ export default function Eventtable() {
     const selectedIds = selected.map((row) => row.teamid);
     router.push('?state=true')
     try {
-      const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/events/editevents`,{
+      const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/events/editeventshr`,{
           eventid: id,
-          title: data.eventitle,
+          eventtitle: data.eventitle,
           startdate: data.startdate, 
           enddate: data.enddate, 
           teams: selectedIds
@@ -302,11 +311,80 @@ export default function Eventtable() {
   }
   };
 
+  
+  //delete
+  const deleteEvent = async (id: string) => {
+    setLoading(true)
+    router.push('?state=true')
+    try {
+      const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/events/deleteeventhr`,{
+        eventid: id
+     
+      },
+          {
+              withCredentials: true,
+              headers: {
+              'Content-Type': 'application/json'
+              }
+          }
+      )
+
+    const response = await toast.promise(request, {
+        loading: 'Deleting event....',
+        success: `Successfully deleted`,
+        error: 'Error while deleting event',
+    });
+
+   if(response.data.message === 'success'){
+     router.push('?state=false')
+     setLoading(false)
+
+   }
+
+   console.log(response)
+
+ 
+     
+  } catch (error) {
+      setLoading(false)
+
+       if (axios.isAxiosError(error)) {
+              const axiosError = error as AxiosError<{ message: string, data: string }>;
+              if (axiosError.response && axiosError.response.status === 401) {
+                  toast.error(`${axiosError.response.data.data}`) 
+                  router.push('/')    
+              }
+
+              if (axiosError.response && axiosError.response.status === 400) {
+                  toast.error(`${axiosError.response.data.data}`)     
+                     
+              }
+
+              if (axiosError.response && axiosError.response.status === 402) {
+                  toast.error(`${axiosError.response.data.data}`)          
+                         
+              }
+
+              if (axiosError.response && axiosError.response.status === 403) {
+                  toast.error(`${axiosError.response.data.data}`)              
+                 
+              }
+
+              if (axiosError.response && axiosError.response.status === 404) {
+                  toast.error(`${axiosError.response.data.data}`)             
+              }
+      } 
+     
+  }
+  };
+
+  
+
 
   //team list
   useEffect(() => {
     const getList = async () => {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teams/teamsearchlist?teamname`,{
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teams/listteamhr?teamname`,{
         withCredentials: true,
         headers: {
           'Content-Type': 'application/json'
@@ -314,7 +392,7 @@ export default function Eventtable() {
       })
 
       console.log('Teams list',response.data)
-      setTeams(response.data.data.teamlist)
+      setTeams(response.data.data.teams)
     }
     getList()
   },[])
@@ -324,7 +402,6 @@ export default function Eventtable() {
     setCurrentpage(page)
   }
 
- 
 
 
 
@@ -512,8 +589,8 @@ export default function Eventtable() {
           {list.map((item, index) => (
              <TableRow key={index}>
              <TableCell className="font-medium">{item.title}</TableCell>
-             <TableCell className="font-medium">{item.startdate}</TableCell>
-             <TableCell className="font-medium">{item.enddate}</TableCell>
+             <TableCell className="font-medium">{formatDateTime(item.startdate)}</TableCell>
+             <TableCell className="font-medium">{formatDateTime(item.enddate)}</TableCell>
              <TableCell className=' '>
              
                 <Dialog>
@@ -547,7 +624,7 @@ export default function Eventtable() {
               </Dialog>
  
              </TableCell>
-             <TableCell className="">
+             <TableCell className="  flex items-center gap-2">
                
 
                <Dialog >
@@ -681,6 +758,22 @@ export default function Eventtable() {
                   
                 </DialogContent>
                 </Dialog>
+
+                <AlertDialog>
+                <AlertDialogTrigger><button className=' p-2 bg-red-700 text-white rounded-md'><Trash2 size={15}/></button></AlertDialogTrigger>
+                <AlertDialogContent className=' text-white'>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete the event.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => deleteEvent(item.eventid)} className=' bg-red-600'>Continue</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
 
                
              </TableCell>

@@ -65,6 +65,8 @@ export default function Leaveformadmin( prop: Data) {
 
   const approved = async () => {
     setLoading(true)
+    router.push('?state=true')
+
     try {
       const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}${apiUrl}`,{
       requestid: prop.requestid,
@@ -133,6 +135,8 @@ export default function Leaveformadmin( prop: Data) {
 
   const reject = async () => {
     setLoading1(true)
+    router.push('?state=true')
+
     try {
       const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}${apiUrl}`,{
       requestid: prop.requestid,

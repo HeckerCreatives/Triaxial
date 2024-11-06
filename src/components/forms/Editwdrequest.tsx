@@ -85,7 +85,7 @@ export default function Editwdrequest( prop: Data) {
      
   } catch (error) {
 
-       if (axios.isAxiosError(error)) {
+    if (axios.isAxiosError(error)) {
               const axiosError = error as AxiosError<{ message: string, data: string }>;
               if (axiosError.response && axiosError.response.status === 401) {
                   toast.error(`${axiosError.response.data.data}`) 
@@ -110,7 +110,7 @@ export default function Editwdrequest( prop: Data) {
               if (axiosError.response && axiosError.response.status === 404) {
                   toast.error(`${axiosError.response.data.data}`)             
               }
-      } 
+    } 
      
   }
   };

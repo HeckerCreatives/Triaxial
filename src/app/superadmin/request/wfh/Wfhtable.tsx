@@ -235,7 +235,7 @@ export default function Wfhtable() {
             <SelectContent>
               <SelectItem value="Pending">Pending</SelectItem>
               <SelectItem value="Approved">Approved</SelectItem>
-              <SelectItem value="Denied">Rejected</SelectItem>
+              <SelectItem value="Denied">Denied</SelectItem>
             </SelectContent>
           </Select>
 

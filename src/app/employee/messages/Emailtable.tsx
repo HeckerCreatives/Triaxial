@@ -203,7 +203,7 @@ export default function Emailtable() {
                     </div>
 
                   </div>
-                  <p className=' mt-4 whitespace-pre-line'>{content}</p>
+                  <p className=' mt-4 whitespace-pre-wrap'>{content}</p>
                 </div>
               </DialogContent>
             </Dialog>

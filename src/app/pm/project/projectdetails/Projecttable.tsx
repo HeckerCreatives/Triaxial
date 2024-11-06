@@ -1,68 +1,9 @@
 "use client"
 import React, { useState } from 'react'
-import { Input } from "@/components/ui/input"
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination"
-import { Plus, Delete, Trash, Eye, FileDown, Printer, ReceiptText, FilePlus2, FileCheck, RefreshCw, Filter, Search, Copy, Layers, TriangleAlert } from 'lucide-react'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import { Textarea } from '@/components/ui/textarea'
-import ButtonSecondary from '@/components/common/ButtonSecondary'
-import Button from '@/components/common/Button'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
-import { downloadInvoiceAsPdf, printInvoice } from '@/utils/invoice'
-import { Checkbox } from '@/components/ui/checkbox'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 
 
 export default function Projecttable() {
-  const [dialog, setDialog] = useState(false)
-  const [dialog2, setDialog2] = useState(false)
-  const [dialog3, setDialog3] = useState(false)
-  const [dialog4, setDialog4] = useState(false)
-  const [dialog5, setDialog5] = useState(false)
-  const [dialog6, setDialog6] = useState(false)
+
 
   return (
    <div className=' w-full h-full flex flex-col justify-center bg-secondary p-4 text-zinc-100 mt-[170px]'>

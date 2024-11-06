@@ -19,6 +19,7 @@ import {
 import Leaveform from '@/components/forms/Leaveform'
 import WDform from '@/components/forms/Wellnessday'
 import Wfhform from '@/components/forms/Wfhform'
+import Createprojectcomponent from '@/components/forms/Createprojectcomponent'
 import {
   Select,
   SelectContent,
@@ -27,7 +28,6 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import Legends from '@/components/common/Legends'
-import { getStatus } from '@/utils/functions'
 
 
 const datas = [
@@ -373,6 +373,8 @@ export default function Yourworkload() {
   const [role, setRole] = useState('')
   const [hours, setHours] = useState(0)
   const [status, setStatus] = useState('')
+  const [employeeid, setEmployeeid] = useState('')
+  const [loading, setLoading] = useState(false)
 
 
   const [data, setData] = useState(initialData);
@@ -394,28 +396,63 @@ export default function Yourworkload() {
 // Memoized data to prevent unnecessary re-renders
   const memorizedData = useMemo(() => data, [data]);
 
+  const getStatus = (data: number, leave: boolean, wd: boolean, event: boolean) => {
 
-  // Function to calculate total hours for every 5 days
-  const calculateTotalHours = (dates: DateItem[]) => {
-    const totals: number[] = [];
-    for (let i = 0; i < dates.length; i += 5) {
-      const total = dates.slice(i, i + 5).reduce((sum, dateObj) => sum + dateObj.hours, 0);
-      totals.push(total);
+    const colorData = []
+    if(leave === true){
+      colorData.push('bg-pink-500')
     }
-    return totals;
-  };
+     if(wd === true){
+      colorData.push('bg-violet-300')
+    }
+    if(event === true){
+      colorData.push('bg-fuchsia-400')
+    }
+    if(data === 0){
+     colorData.push('bg-red-500')
+    }
+    if(data === 1){
+      colorData.push('bg-red-500')
+    }
+    if(data === 2){
+      colorData.push('bg-amber-500')
+    }
+    if(data === 3){
+      colorData.push('bg-yellow-500')
+    }
+    if(data === 4){
+      colorData.push('bg-green-500')
+    }
+    if(data === 5){
+      colorData.push('bg-blue-500')
+    }
+    if(data === 6){
+      colorData.push('bg-cyan-300')
+    }
+
+
+    return colorData
+
+   
+  }
+
+  //update workload
+  const updateWorkload = async () => {
+    
+  }
+
 
   return (
    <div className=' w-full h-full flex flex-col justify-center bg-secondary p-4 text-zinc-100'>
 
       <div className=' w-full flex items-center justify-between h-auto bg-primary mb-2 p-4 text-xs'>
-        {/* <div className=' flex flex-col gap-1'>
+        <div className=' flex flex-col gap-1'>
           <p className=' text-zinc-400'>Name: <span className=' text-zinc-100 underline'>Name</span></p>
           <p className=' text-zinc-400'>Initial: <span className=' text-zinc-100 underline'>ABC</span></p>
           <p className=' text-zinc-400'>Email: <span className=' text-zinc-100 underline'>test@gmail.com</span></p>
-        </div> */}
+        </div>
 
-        <div className=' flex flex-col gap-1 bg-primary rounded-sm text-xs'>
+        {/* <div className=' flex flex-col gap-1 bg-primary rounded-sm text-xs'>
 
           <p className=' text-xs'>Request :</p>
           <div className='flex items-center gap-2 bg-primary rounded-sm text-xs'>
@@ -431,12 +468,24 @@ export default function Yourworkload() {
               </Wfhform>
 
           </div>
+
+          <p className=' text-xs mt-2'>Project Component:</p>
+          <div className='flex items-center gap-2 bg-primary rounded-sm text-xs'>
+            <Createprojectcomponent>
+              <button className={`text-xs px-3 py-1 bg-red-600  rounded-sm`}>Create</button>
+
+            </Createprojectcomponent>
+          </div>
             
-        </div>
+        </div> */}
 
         <Legends/>
 
         <div className=' flex flex-col'>
+          {/* <div className=' w-[100px] h-full rounded-sm p-2 bg-red-200 text-xs'>
+            <p className=' text-zinc-900 font-semibold'>Note</p>
+            <p className=' text-zinc-600 text-[.6rem]'>Lorem, ipsum dolor sit amet consectetur.</p>
+          </div> */}
 
           <div className=' flex items-center gap-2 text-xs mt-2'>
             <p>Show:</p>
@@ -526,6 +575,7 @@ export default function Yourworkload() {
                               setDate(dateObj.date);
                               setName(member.employee.fullname);
                               setRole(member.role);
+                              setEmployeeid(member.employee.employeeid)
                           
                             }}
                           >

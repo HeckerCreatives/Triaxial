@@ -7,13 +7,15 @@ export const hr = [
     {name: 'Wellness Day', path: '/hr/wellnessday', icon: <PlusSquare className="h-4 w-4" />},
     {name: 'Events', path: '/hr/events', icon: <CalendarCheck2 className="h-4 w-4" />},
     {name: 'Messages', path: '/hr/messages', icon: <Mail className="h-4 w-4" />},
-    {name: 'Settings', path: '/employee/settings', icon: <Cog className="h-4 w-4" />},
+    {name: 'Settings', path: '/hr/settings', icon: <Cog className="h-4 w-4" />},
 
 ]
 
 export const pm = [
     {name: 'Dashboard', path: '/pm/dashboard', icon: <Home className="h-4 w-4" />},
     {name: ' Your Workload', path: '/pm/yourworkload', icon: <List className="h-4 w-4" />},
+    {name: 'Teams', path: '/pm/team', icon: <Users className="h-4 w-4" />, subpath: []},
+    {name: 'Projects', path: '/pm/projects', icon: <Box className="h-4 w-4" />, subpath: []},
     {name: 'Request', path: '/pm/request', icon: <ArrowRightLeft className="h-4 w-4" />},
     {name: 'Wellness Day', path: '/pm/wellnessday', icon: <PlusSquare className="h-4 w-4" />},
     {name: 'Leave', path: '/pm/leave', icon: <CalendarCheck2 className="h-4 w-4" />},
@@ -43,6 +45,7 @@ export const finance = [
 export const superadmin = [
     {name: 'Dashboard', path: '/superadmin/dashboard', icon: <Home className="h-4 w-4" />, subpath: []},
     {name: 'Your Workload', path: '/superadmin/yourworkload', icon: <List className="h-4 w-4" />, subpath: []},
+   
     {name: 'Scheduling', path: '/superadmin/project', icon: <Box className="h-4 w-4" />, subpath: []},
     {name: 'Invoice', path: '/superadmin/invoice', icon: <ListChecks className="h-4 w-4" />, subpath: []},
     {name: 'Searches', path: '/superadmin/client', icon: <Search className="h-4 w-4" />, subpath: [

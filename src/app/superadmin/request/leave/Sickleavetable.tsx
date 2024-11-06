@@ -31,7 +31,7 @@ import {
 import Leaveformadmin from '@/components/forms/Leaveformadmin'
 import axios, { AxiosError } from 'axios'
 import toast from 'react-hot-toast'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { leaveType } from '@/types/data'
 import PaginitionComponent from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
@@ -71,6 +71,8 @@ export default function Sickleavetable() {
   const [currentpage, setCurrentpage] = useState(0)
   const currentDate = new Date()
   const [status, setStatus] = useState('Pending')
+  const params = useSearchParams()
+  const refresh = params.get('state')
 
 
   console.log(currentDate)
@@ -134,7 +136,7 @@ export default function Sickleavetable() {
   }
     
     
-  },[searchName])
+  },[searchName, refresh])
 
 
   const [leave, setLeave] = useState<Leave[]>([])
@@ -173,7 +175,7 @@ export default function Sickleavetable() {
 
     return () => clearTimeout(timer)
     
-  }, [currentpage, searchName, status]);
+  }, [currentpage, searchName, status, refresh]);
 
   const findType = (id: number) => {
     const find = leaveType.find((item) => item.id === id)
@@ -229,7 +231,7 @@ export default function Sickleavetable() {
       <SelectContent>
         <SelectItem value="Pending">Pending</SelectItem>
         <SelectItem value="Approved">Approved</SelectItem>
-        <SelectItem value="Rejected">Rejected</SelectItem>
+        <SelectItem value="Denied">Denied</SelectItem>
       </SelectContent>
     </Select>
 
@@ -270,8 +272,8 @@ export default function Sickleavetable() {
              <TableCell className={` ${statusColor(item.status)} text-xs`}>{item.status}</TableCell>
              <TableCell>{item.name}</TableCell>
              <TableCell>{findType(item.type)}</TableCell>
-             <TableCell>{item.leavestart}</TableCell>
-             <TableCell>{item.leaveend}</TableCell>
+             <TableCell>{new Date(item.leavestart).toLocaleString()}</TableCell>
+             <TableCell>{new Date(item.leaveend).toLocaleString()}</TableCell>
              <TableCell>{item.totalworkingdays}</TableCell>
              <TableCell>{item.totalpublicholidays}</TableCell>
              <TableCell>{item.wellnessdaycycle === true ? 'Yes' : 'No'}</TableCell>

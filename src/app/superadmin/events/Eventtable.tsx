@@ -10,16 +10,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination"
-import { Plus, Delete, Trash, Eye, Pen } from 'lucide-react'
+
+import { Plus, Delete, Trash, Eye, Pen, Trash2 } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
   Dialog,
@@ -29,16 +21,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import ButtonSecondary from '@/components/common/ButtonSecondary'
-import Button from '@/components/common/Button'
-import ButtonDanger from '@/components/common/ButtonDanger'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -57,6 +39,17 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { createEvent, CreateEvent } from '@/schema/schema'
 import Spinner from '@/components/common/Spinner'
 import PaginitionComponent from '@/components/common/Pagination'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 type Team = Record<"teamname" | "teamid", string>;
 
@@ -79,8 +72,6 @@ _id: string
 export default function Eventtable() {
   const [dialog, setDialog] = useState(false)
   const [dialog2, setDialog2] = useState(false)
-  const [dialog3, setDialog3] = useState(false)
-  const [dialoghover, setDialoghover] = useState(false)
 
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [open, setOpen] = React.useState(false);
@@ -252,7 +243,7 @@ export default function Eventtable() {
     try {
       const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/events/editevents`,{
           eventid: id,
-          title: data.eventitle,
+          eventtitle: data.eventitle,
           startdate: data.startdate, 
           enddate: data.enddate, 
           teams: selectedIds
@@ -319,6 +310,73 @@ export default function Eventtable() {
   }
   };
 
+  //delete
+  const deleteEvent = async (id: string) => {
+    setLoading(true)
+    router.push('?state=true')
+    try {
+      const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/events/deleteevent`,{
+        eventid: id
+     
+      },
+          {
+              withCredentials: true,
+              headers: {
+              'Content-Type': 'application/json'
+              }
+          }
+      )
+
+    const response = await toast.promise(request, {
+        loading: 'Deleting event....',
+        success: `Successfully deleted`,
+        error: 'Error while deleting event',
+    });
+
+   if(response.data.message === 'success'){
+     router.push('?state=false')
+     setLoading(false)
+
+   }
+
+   console.log(response)
+
+ 
+     
+  } catch (error) {
+      setLoading(false)
+
+       if (axios.isAxiosError(error)) {
+              const axiosError = error as AxiosError<{ message: string, data: string }>;
+              if (axiosError.response && axiosError.response.status === 401) {
+                  toast.error(`${axiosError.response.data.data}`) 
+                  router.push('/')    
+              }
+
+              if (axiosError.response && axiosError.response.status === 400) {
+                  toast.error(`${axiosError.response.data.data}`)     
+                     
+              }
+
+              if (axiosError.response && axiosError.response.status === 402) {
+                  toast.error(`${axiosError.response.data.data}`)          
+                         
+              }
+
+              if (axiosError.response && axiosError.response.status === 403) {
+                  toast.error(`${axiosError.response.data.data}`)              
+                 
+              }
+
+              if (axiosError.response && axiosError.response.status === 404) {
+                  toast.error(`${axiosError.response.data.data}`)             
+              }
+      } 
+     
+  }
+  };
+
+
 
   //team list
   useEffect(() => {
@@ -347,6 +405,14 @@ export default function Eventtable() {
   //     setOpen(false)
   //   }
   // },[dialog, dialog2])
+
+  const formatDate = (date: string) => {
+    const newDate = date.split('T')
+
+    return newDate[0]
+  }
+
+  console.log(id)
 
 
 
@@ -569,12 +635,12 @@ export default function Eventtable() {
               </Dialog>
  
              </TableCell>
-             <TableCell className="">
+             <TableCell className=" flex items-center gap-2">
                
 
                <Dialog >
                 <DialogTrigger>
-                <button onClick={() => {setValue('eventitle', item.title), setValue('startdate', item.startdate),setValue('enddate', item.enddate), setSelected(item.teams.map(team => ({ teamname: team.teamname, teamid: team._id }))), setId(item.eventid)}} className=' p-2 rounded-sm bg-red-700 text-white'><Pen size={15}/></button>
+                <button onClick={() => { setId(item.eventid),setValue('eventitle', item.title), setValue('startdate',formatDate(item.startdate)),setValue('enddate', formatDate(item.enddate)), setSelected(item.teams.map(team => ({ teamname: team.teamname, teamid: team._id })))}} className=' p-2 rounded-sm bg-red-700 text-white'><Pen size={15}/></button>
                 </DialogTrigger>
                 <DialogContent className=' bg-secondary border-none text-zinc-100 grid grid-cols-1 lg:grid-cols-[250px,1fr]'>
                   <div className=' bg-blue-400 lg:block hidden'
@@ -703,6 +769,22 @@ export default function Eventtable() {
                   
                 </DialogContent>
                 </Dialog>
+
+                <AlertDialog>
+                <AlertDialogTrigger><button className=' p-2 bg-red-700 text-white rounded-md'><Trash2 size={15}/></button></AlertDialogTrigger>
+                <AlertDialogContent className=' text-white'>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete the event.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => deleteEvent(item.eventid)} className=' bg-red-600'>Continue</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
 
                
              </TableCell>

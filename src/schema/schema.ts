@@ -75,14 +75,14 @@ duringleave: z
 
 export const createProjectSchema = z.object ({
     team: z.string().nonempty("Name is empty"),
-    jobno: z.string().nonempty("Job no is empty"),
     projectname: z.string().nonempty("Project name is empty"),
     client: z.string().nonempty("Client is empty"),
-    others: z.string(),
-    jobmanager: z.string().nonempty("Please select a job manager"),
-    estbudget: z.string().transform((val) => parseFloat(val)).refine((val) => !isNaN(val), { message: "Please enter an estimated budget, must be a number" }),
+})
+
+export const createProjectComponenent = z.object ({
+    jobmanager: z.string(),
+    estbudget: z.number(),
     adminnotes: z.string(),
-    jobcomponent: z.string().nonempty('Job component is empty')
 })
 
 export const projectVariationSchema = z.object ({
@@ -168,6 +168,7 @@ export type LeaveSchema = z.infer<typeof leaveSchema>;
 export type WdSchema = z.infer<typeof wdSchema>;
 export type WfhSchema = z.infer<typeof wfhSchema>;
 export type CreateProjectSchema = z.infer<typeof createProjectSchema>
+export type CreateProjectComponentSchema = z.infer<typeof createProjectComponenent>
 export type VariationSchema = z.infer<typeof projectVariationSchema>
 export type LoginSchema = z.infer<typeof login>
 export type CreateEmployee = z.infer<typeof createEmployee>

@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-     "export": "next build && next export"
+    "export": "next build && next export"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
@@ -40,7 +40,9 @@
     "react-dom": "^18",
     "react-hook-form": "^7.53.0",
     "react-hot-toast": "^2.4.1",
+    "react-spreadsheet": "^0.9.5",
     "recharts": "^2.12.7",
+    "scheduler": "^0.23.2",
     "tailwind-merge": "^2.4.0",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^3.23.8"

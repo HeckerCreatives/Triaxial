@@ -67,8 +67,6 @@ export const selectTeams = [
   { label: "Administration", value: "Administration" },
 ];
 
-
-
 // routes
 
 export const ProjectsSection = [
@@ -162,3 +160,9 @@ export const Employee = [
   { name: "Alexander Brooks", value: "Alexander Brooks" },
   { name: "Julia Jenkins", value: "Julia Jenkins" }
 ]
+
+
+export const months = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
