@@ -32,7 +32,11 @@ import axios, { AxiosError } from 'axios'
 import { env } from 'process'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
-import { months } from '@/types/data'
+import { months, weeks } from '@/types/data'
+import { Pen } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import Editprojectjobmanager from '@/components/forms/Editprojectjobmanager'
+import { Textarea } from '@/components/ui/textarea'
 
 
 const datas = [
@@ -158,6 +162,8 @@ interface GraphItem {
   jobmanager: {
     employeeid: string;
     fullname: string;
+    isManager: boolean;
+    isJobManager: boolean,
   };
   jobcomponent: {
     componentid: string;
@@ -169,6 +175,7 @@ interface GraphItem {
 
 interface Data {
   graph: GraphItem[];
+  // isManager: boolean,
 }
 
 const initialData: Data = {
@@ -180,13 +187,15 @@ const initialData: Data = {
       jobno: 1,
       jobmanager: {
         employeeid: 'id here',
-        fullname: 'Darel Honrejas'
+        fullname: 'Darel Honrejas',
+        isManager: true,
+        isJobManager: false,
       },
       jobcomponent: {
         componentid: 'id here',
-        componentname: 'testing component'
+        componentname: 'testing component' 
       },
-      notes: 'notes here',
+      notes: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi consequuntur optio amet, labore fugiat odio eaque expedita recusandae quae, officia quod atque. Modi fugit exercitationem nulla commodi officiis consequatur perferendis?Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi consequuntur optio amet, labore fugiat odio eaque expedita recusandae quae, officia quod atque. Modi fugit exercitationem nulla commodi officiis consequatur perferendis?', 
       members: [
         {
           role: 'Engineer (Engr.)',
@@ -195,7 +204,7 @@ const initialData: Data = {
             fullname: 'Bien Daniel'
           },
           dates: [
-            { date: '05/11/2024', status: 0, hours: 9, isOnLeave: true, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/11/2024', status: 0, hours: 0, isOnLeave: true, isOnWellnessday: true, isOnEvent: false },
             { date: '05/12/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
             { date: '05/13/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
             { date: '05/14/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
@@ -204,7 +213,8 @@ const initialData: Data = {
             { date: '05/17/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
             { date: '05/18/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
             { date: '05/19/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/20/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false }
+            { date: '05/20/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
+         
           ]
         },
         {
@@ -274,7 +284,107 @@ const initialData: Data = {
       jobno: 1,
       jobmanager: {
         employeeid: 'id here',
-        fullname: 'Team 2'
+        fullname: 'Team 2',
+        isManager: false,
+        isJobManager: true,
+
+      },
+      jobcomponent: {
+        componentid: 'id here',
+        componentname: 'testing component'
+      },
+      notes: 'notes here',
+      members: [
+        {
+          role: 'Engineer (Engr.)',
+          employee: {
+            employeeid: 'id here',
+            fullname: 'Bien Daniel'
+          },
+          dates: [
+            { date: '05/11/2024', status: 0, hours: 9, isOnLeave: true, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/12/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
+            { date: '05/13/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
+            { date: '05/14/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/15/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
+            { date: '05/16/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/17/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
+            { date: '05/18/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
+            { date: '05/19/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/20/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false }
+          ]
+        },
+        {
+          role: "Engineer Reviewer (Engr. Revr.)",
+          employee: {
+              employeeid: "id here",
+              fullname: "Bien Daniel"
+          },
+          dates: [
+            { date: '05/11/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/12/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
+            { date: '05/13/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
+            { date: '05/14/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/15/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
+            { date: '05/16/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/17/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
+            { date: '05/18/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
+            { date: '05/19/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/20/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false }
+          ]
+      },
+      {
+          role: "Drafter (Drft.)",
+          employee: {
+              employeeid: "id here",
+              fullname: "Joshua De Guzman"
+          },
+          dates: [
+            { date: '05/11/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/12/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
+            { date: '05/13/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
+            { date: '05/14/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/15/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
+            { date: '05/16/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/17/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
+            { date: '05/18/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
+            { date: '05/19/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/20/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false }
+          ]
+      },
+      {
+          role: "Drafter Reviewer (Drft. Revr.)",
+          employee: {
+              employeeid: "id here",
+              fullname: "Jomarie Luistro"
+          },
+          dates: [
+            { date: '05/11/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/12/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
+            { date: '05/13/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
+            { date: '05/14/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/15/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
+            { date: '05/16/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/17/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
+            { date: '05/18/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
+            { date: '05/19/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/20/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false }
+          ]
+      },
+       
+      ]
+    },
+    {
+      teamname: 'team 3',
+      projectname: 'project test',
+      clientname: 'client test',
+      jobno: 1,
+      jobmanager: {
+        employeeid: 'id here',
+        fullname: 'Team 2',
+        isManager: true,
+        isJobManager: true,
+
       },
       jobcomponent: {
         componentid: 'id here',
@@ -361,7 +471,9 @@ const initialData: Data = {
        
       ]
     }
-  ]
+
+  ],
+  // isManager: true,
 };
 
 
@@ -379,14 +491,17 @@ export default function Yourworkload() {
   const [hours, setHours] = useState(0)
   const [status, setStatus] = useState('')
   const [employeeid, setEmployeeid] = useState('')
+  const [jobmanager, setJobmanager] = useState(false)
   const [loading, setLoading] = useState(false)
+
+
   const router = useRouter()
 
 
   const [data, setData] = useState(initialData);
 
   // Function to update status of a specific date
-  const updateStatus = (memberIndex: number, dateIndex: number, newStatus: number,updatedHours: number, graphIndex: number) => {
+  const updateStatus = (memberIndex: number, dateIndex: number, newStatus: number,updatedHours: number, graphIndex: number,) => {
     console.log(newStatus)
     setData(prevData => {
       const newData = { ...prevData };
@@ -402,21 +517,24 @@ export default function Yourworkload() {
 // Memoized data to prevent unnecessary re-renders
   const memorizedData = useMemo(() => data, [data]);
 
-  const getStatus = (data: number, leave: boolean, wd: boolean, event: boolean) => {
+  const getStatus = (data: number, leave: boolean, wd: boolean, event: boolean, hours: number) => {
 
     const colorData = []
     if(leave === true){
-      colorData.push('bg-pink-500')
-    }
-     if(wd === true){
       colorData.push('bg-violet-300')
     }
-    if(event === true){
+     if(wd === true){
       colorData.push('bg-fuchsia-400')
     }
-    if(data === 0){
-     colorData.push('bg-red-500')
+    if(hours > 8){
+      colorData.push('bg-pink-500')
     }
+    // if(event === true){
+    //   colorData.push('bg-fuchsia-400')
+    // }
+    // if(data === 0){
+    //  colorData.push('bg-white')
+    // }
     if(data === 1){
       colorData.push('bg-red-500')
     }
@@ -424,7 +542,7 @@ export default function Yourworkload() {
       colorData.push('bg-amber-500')
     }
     if(data === 3){
-      colorData.push('bg-yellow-500')
+      colorData.push('bg-yellow-300')
     }
     if(data === 4){
       colorData.push('bg-green-500')
@@ -433,8 +551,10 @@ export default function Yourworkload() {
       colorData.push('bg-blue-500')
     }
     if(data === 6){
-      colorData.push('bg-cyan-300')
+      colorData.push('bg-cyan-400')
     }
+
+    console.log(colorData)
 
 
     return colorData
@@ -489,16 +609,30 @@ export default function Yourworkload() {
     }
   }
 
+  console.log(leaveStatus)
+
+  const position = (jobManager: boolean, manager: boolean) => {
+    if(jobManager && manager === true){
+      return 'Project & Job Manager'
+    }else if(jobManager === false && manager === true){
+      return 'Project Manager'
+    }else if(jobManager === true && manager === false){
+      return 'Job Manager'
+    }else{
+      return 'Your not allowed to edit this project'
+    }
+  }
+
 
   return (
    <div className=' w-full h-full flex flex-col justify-center bg-secondary p-4 text-zinc-100'>
 
       <div className=' w-full flex items-center justify-between h-auto bg-primary mb-2 p-4 text-xs'>
-        <div className=' flex flex-col gap-1'>
+        {/* <div className=' flex flex-col gap-1'>
           <p className=' text-zinc-400'>Name: <span className=' text-zinc-100 underline'>Name</span></p>
           <p className=' text-zinc-400'>Initial: <span className=' text-zinc-100 underline'>ABC</span></p>
           <p className=' text-zinc-400'>Email: <span className=' text-zinc-100 underline'>test@gmail.com</span></p>
-        </div>
+        </div> */}
 
         <div className=' flex flex-col gap-1 bg-primary rounded-sm text-xs'>
 
@@ -516,14 +650,6 @@ export default function Yourworkload() {
               </Wfhform>
 
           </div>
-
-          <p className=' text-xs mt-2'>Project Component:</p>
-          <div className='flex items-center gap-2 bg-primary rounded-sm text-xs'>
-            <Createprojectcomponent>
-              <button className={`text-xs px-3 py-1 bg-red-600  rounded-sm`}>Create</button>
-
-            </Createprojectcomponent>
-          </div>
             
         </div>
 
@@ -535,17 +661,21 @@ export default function Yourworkload() {
             <p className=' text-zinc-600 text-[.6rem]'>Lorem, ipsum dolor sit amet consectetur.</p>
           </div> */}
 
-          <div className=' flex items-center gap-2 text-xs mt-2'>
-            <p>Show:</p>
-            <DropdownMenu>
-            <DropdownMenuTrigger className=' bg-red-700 px-4 py-1 rounded-sm text-zinc-100'>Select</DropdownMenuTrigger>
-            <DropdownMenuContent className=' bg-secondary border-none text-zinc-100 text-[.5rem]'>
-              {months.map((item, index) => (
-                <DropdownMenuItem key={index}>{item}</DropdownMenuItem>
+          <div className=' flex flex-col items-center gap-2 text-xs mt-2'>
+            <p className=' text-xs'>Filter by week:</p>
+            <Select >
+              <SelectTrigger className="w-[120px] bg-secondary text-xs">
+                <SelectValue placeholder="Select" />
+              </SelectTrigger>
+              <SelectContent className=' bg-primary text-xs border-zinc-600 text-white '>
+              {weeks.map((item, index) => (
+                <SelectItem key={index} value={item}>{item}</SelectItem>
               ))}
-             
-            </DropdownMenuContent>
-          </DropdownMenu>
+               
+              </SelectContent>
+            </Select>
+
+           
 
           </div>
         </div>
@@ -559,23 +689,24 @@ export default function Yourworkload() {
             <thead className=' bg-secondary h-[100px]'>
 
               <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
-                <th className=' w-[80px] font-normal'>Team</th>
-                <th className=' font-normal w-[80px]'>Job No.</th>
-                <th className=' font-normal w-[80px]'>Client</th>
-                <th className=' font-normal w-[80px]'>Project Name</th>
-                <th className=' font-normal w-[80px]'>Job Mgr.</th>
-                <th className=' font-normal w-[80px]'>Job Component</th>
-                <th className=' w-[80px] font-normal'>Members</th>
-                <th className=' font-normal w-[80px]'>Role</th>
-                <th className=' font-normal w-[80px]'>Notes</th>
+                <th className=' w-[20px] font-normal'>Action</th>
+                <th className=' w-[50px] font-normal'>Team</th>
+                <th className=' font-normal w-[50px]'>Job No.</th>
+                <th className=' font-normal w-[50px]'>Client</th>
+                <th className=' font-normal w-[70px]'>Project Name</th>
+                <th className=' font-normal w-[70px]'>Job Mgr.</th>
+                <th className=' font-normal w-[70px]'>Job Component</th>
+                <th className=' w-[70px] font-normal'>Members</th>
+                <th className=' font-normal w-[70px]'>Role</th>
+                <th className=' font-normal w-[70px]'>Notes</th>
                 {memorizedData.graph[0].members[0].dates?.map((dateObj, index) => (
                   <>
-                    <th key={index} className='font-normal w-[20px] border-[1px] border-zinc-700'>
-                      <p className=' rotate-90'>{dateObj.date}</p>
+                    <th key={index} className=' relative font-normal w-[30px] border-[1px] border-zinc-700'>
+                      <p className=' absolute rotate-90'>{dateObj.date}</p>
                     </th>
                     {/* Insert a "Total" column every 5 days */}
                     {(index + 1) % 5 === 0 && (
-                      <th key={`total-${index}`} className='font-normal w-[40px] border-[1px] border-zinc-700'>
+                      <th key={`total-${index}`} className='font-normal w-[30px] border-[1px] border-zinc-700'>
                         <p className='rotate-90'>Total Hours</p>
                       </th>
                     )}
@@ -590,6 +721,143 @@ export default function Yourworkload() {
             {memorizedData.graph.map((graphItem, graphIndex) =>
               graphItem.members.map((member, memberIndex) => (
                 <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
+                    <td className="text-center text-white flex items-center justify-center h-[40px] w-[30px]">
+                     
+
+                      <Dialog>
+                          <DialogTrigger>
+                              {memberIndex === 0 && (<button className=' p-1 bg-red-600 rounded-sm'><Pen size={12}/></button>)}
+                          </DialogTrigger>
+                          <DialogContent className=' max-w-[600px] bg-secondary border-none p-6 text-white'>
+                            <DialogHeader>
+                              <DialogTitle>Edit Project <span className=' text-xs text-zinc-400'>({position(graphItem.jobmanager.isJobManager, graphItem.jobmanager.isManager)})</span></DialogTitle>
+                              <DialogDescription className={` ${graphItem.jobmanager.isManager === true ? 'text-white' : ' text-red-500'}`}>
+                                {/* {graphItem.jobmanager.isManager === true ? 'Your the project manager of this project, you are allowed to edit this project' : ' Your are not the project manager of this project, you are not allowed to edit this project'} */}
+                                
+                              </DialogDescription>
+                            </DialogHeader>
+
+                            {(graphItem.jobmanager.isManager === true && graphItem.jobmanager.isJobManager === false ) && (
+                              <div className=' flex flex-col w-full gap-2 text-xs'>
+                                <label htmlFor="">Client</label>
+                                <Select>
+                                  <SelectTrigger className="w-full bg-primary">
+                                    <SelectValue placeholder="Client" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="light">Light</SelectItem>
+                                    <SelectItem value="dark">Dark</SelectItem>
+                                    <SelectItem value="system">System</SelectItem>
+                                  </SelectContent>
+                                </Select>
+
+                                <label htmlFor="">Project Name</label>
+                                <Input type='text' className=' text-xs h-[35px] bg-primary' placeholder='Project Name' />
+
+                                <label htmlFor="">Job Manager</label>
+                                <Select>
+                                  <SelectTrigger className="w-full bg-primary">
+                                    <SelectValue placeholder="Job Manager" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="light">Light</SelectItem>
+                                    <SelectItem value="dark">Dark</SelectItem>
+                                    <SelectItem value="system">System</SelectItem>
+                                  </SelectContent>
+                                </Select>
+
+                                
+                              </div>
+                            )}
+
+                            {(graphItem.jobmanager.isJobManager === true && graphItem.jobmanager.isManager === false ) && (
+                              <div className=' flex flex-col w-full gap-2 text-xs'>
+                              
+                                <label htmlFor="">Engineer (Engr.)</label>
+                                <Input type='text' className=' text-xs h-[35px] bg-primary' placeholder='Engineer (Engr.)' />
+
+                                <label htmlFor="">Engineer Reviewer (Engr. Revr.)</label>
+                                <Input type='text' className=' text-xs h-[35px] bg-primary' placeholder='Engineer Reviewer (Engr. Revr.)' />
+
+                                <label htmlFor="">Drafter (Drft.)</label>
+                                <Input type='text' className=' text-xs h-[35px] bg-primary' placeholder='Drafter (Drft.)' />
+
+                                <label htmlFor="">Drafter Reviewer (Drft. Revr.)	</label>
+                                <Input type='text' className=' text-xs h-[35px] bg-primary' placeholder='Drafter Reviewer (Drft. Revr.)	' />
+
+                                <label htmlFor="">Notes</label>
+                                <Textarea className=' text-xs h-[35px] bg-primary' placeholder='Notes' />
+                              
+
+                            </div>
+                            )}
+
+                            {(graphItem.jobmanager.isJobManager === true && graphItem.jobmanager.isManager === true) && (
+                              <>
+                               <div className=' flex flex-col w-full gap-2 text-xs'>
+                                <label htmlFor="">Client</label>
+                                <Select>
+                                  <SelectTrigger className="w-full bg-primary">
+                                    <SelectValue placeholder="Client" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="light">Light</SelectItem>
+                                    <SelectItem value="dark">Dark</SelectItem>
+                                    <SelectItem value="system">System</SelectItem>
+                                  </SelectContent>
+                                </Select>
+
+                                <label htmlFor="">Project Name</label>
+                                <Input type='text' className=' text-xs h-[35px] bg-primary' placeholder='Project Name' />
+
+                                <label htmlFor="">Job Manager</label>
+                                <Select>
+                                  <SelectTrigger className="w-full bg-primary">
+                                    <SelectValue placeholder="Job Manager" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="light">Light</SelectItem>
+                                    <SelectItem value="dark">Dark</SelectItem>
+                                    <SelectItem value="system">System</SelectItem>
+                                  </SelectContent>
+                                </Select>
+
+                                
+
+                              </div>
+
+                              <div className=' flex flex-col w-full gap-2 text-xs'>
+                                  <label htmlFor="">Engineer (Engr.)</label>
+                                  <Input type='text' className=' text-xs h-[35px] bg-primary' placeholder='Engineer (Engr.)' />
+
+                                  <label htmlFor="">Engineer Reviewer (Engr. Revr.)</label>
+                                  <Input type='text' className=' text-xs h-[35px] bg-primary' placeholder='Engineer Reviewer (Engr. Revr.)' />
+
+                                  <label htmlFor="">Drafter (Drft.)</label>
+                                  <Input type='text' className=' text-xs h-[35px] bg-primary' placeholder='Drafter (Drft.)' />
+
+                                  <label htmlFor="">Drafter Reviewer (Drft. Revr.)	</label>
+                                  <Input type='text' className=' text-xs h-[35px] bg-primary' placeholder='Drafter Reviewer (Drft. Revr.)	' />
+
+                                  <label htmlFor="">Notes</label>
+                                  <Textarea className=' text-xs h-[35px] bg-primary' placeholder='Notes' />
+                                  
+
+                              </div>
+                              </>
+                            )}
+
+                            {(graphItem.jobmanager.isJobManager !== false || graphItem.jobmanager.isManager !== false) && (
+                              <div className=' w-full flex items-end justify-end mt-4 text-xs'>
+                                <button className=' bg-red-600 px-4 py-2 rounded-md w-fit'>Save</button>
+                              </div>
+                            )}
+                              
+                            
+                          </DialogContent>
+                        </Dialog>
+                     
+                      </td>
                     <td className="text-center text-red-600">{memberIndex === 0 && graphItem.teamname}</td>
                     <td className="text-center">{memberIndex === 0 && graphItem.jobno}</td>
                     <td className="text-center">{memberIndex === 0 && graphItem.clientname}</td>
@@ -600,8 +868,22 @@ export default function Yourworkload() {
                 
                   
                   <td className="text-center">{member.employee.fullname}</td>
-                  <td className="text-center">{member.role}</td>
-                  <td className="text-center">{graphItem.notes}</td>
+                  <td className="text-center text-[.5rem]">{member.role}</td>
+                  <td className="text-center">
+                    <Dialog>
+                      <DialogTrigger>{graphItem.notes.slice(0, 25)} ...</DialogTrigger>
+                      <DialogContent className=' bg-secondary p-6 border-none max-w-[600px] text-white'>
+                        <DialogHeader>
+                          <DialogTitle>Notes</DialogTitle>
+                          <DialogDescription>
+                            
+                          </DialogDescription>
+                        </DialogHeader>
+                        <p className=' text-xs text-zinc-400'>{graphItem.notes}</p>
+                      </DialogContent>
+                    </Dialog>
+
+                    </td>
                   {member.dates?.map((dateObj, dateIndex) => {
                       // Calculate sum every 5 days
                       const startIndex = Math.floor(dateIndex / 5) * 5;
@@ -614,7 +896,7 @@ export default function Yourworkload() {
                         <>
                           <td 
                             key={dateIndex} 
-                            className="relative text-center overflow-hidden bg-primary cursor-pointer"
+                            className="relative text-center overflow-hidden bg-white cursor-pointer border-[1px]"
                             onClick={() => {
                               setDialog(true);
                               setIndex(dateIndex);
@@ -622,15 +904,17 @@ export default function Yourworkload() {
                               setMemberIndex(memberIndex);
                               setTeamIndex(graphIndex);
                               setWdstatus(dateObj.isOnWellnessday);
+                              setLeavestatus(dateObj.isOnLeave)
                               setDate(dateObj.date);
                               setName(member.employee.fullname);
                               setRole(member.role);
                               setEmployeeid(member.employee.employeeid)
+                              setJobmanager(graphItem.jobmanager.isJobManager)
                           
                             }}
                           >
                             <div className='flex absolute top-0 w-full h-[40px] text-center'>
-                              {getStatus(dateObj.status, dateObj.isOnLeave, dateObj.isOnWellnessday, dateObj.isOnEvent).map((item, index) => (
+                              {getStatus(dateObj.status, dateObj.isOnLeave, dateObj.isOnWellnessday, dateObj.isOnEvent, dateObj.hours).map((item, index) => (
                                 <div className={`w-full ${item}`} key={index}></div>
                               ))}
                             </div>
@@ -639,7 +923,7 @@ export default function Yourworkload() {
 
                           {/* Insert Total every 5 days */}
                           {(dateIndex + 1) % 5 === 0 && (
-                            <th key={`total-${dateIndex}`} className='font-normal w-[40px] border-[1px] border-zinc-700'>
+                            <th key={`total-${dateIndex}`} className='font-normal w-[40px] bg-primary border-[1px] border-zinc-700'>
                               <p className=''>{totalHours}</p> {/* Display the sum of hours for every 5 days */}
                             </th>
                           )}
@@ -670,7 +954,7 @@ export default function Yourworkload() {
                         <p className=' text-zinc-400'>Wellness day:{wdStatus === true ? 'Yes' : 'No'}</p>
                       </div>
 
-                    <Select value={status} onValueChange={setStatus}>
+                    <Select disabled={jobmanager === true ? false : true} value={status} onValueChange={setStatus}>
                       <SelectTrigger className="w-[180px] text-xs bg-primary">
                         <SelectValue placeholder="Select Status" />
                       </SelectTrigger>
@@ -690,14 +974,18 @@ export default function Yourworkload() {
                   { wdStatus !== true && (
                     <div className=' flex flex-col gap-2 text-xs'>
                       <label htmlFor="">Hours Rendered</label>
-                      <input type="number" value={hours} onChange={(e) => setHours(e.target.valueAsNumber)} placeholder='Hours' id="" className=' bg-primary p-2 rounded-md text-xs' />
+                      <input disabled={jobmanager === true ? false : true} type="number" value={hours} onChange={(e) => setHours(e.target.valueAsNumber)} placeholder='Hours' id="" className=' bg-primary p-2 rounded-md text-xs' />
                       
                     </div>
                   )}
 
                       <div className=' w-full flex items-end justify-end mt-4'>
-                        <button onClick={() => updateStatus(memberIndex, index, parseInt(status), hours, teamIndex )} className=' px-4 py-2 bg-red-600 text-xs text-white rounded-md'>Save</button>
+                        <button disabled={jobmanager === true ? false : true} onClick={() => updateStatus(memberIndex, index, parseInt(status), hours, teamIndex )} className=' px-4 py-2 bg-red-600 text-xs text-white rounded-md'>Save</button>
                       </div>
+
+                      {jobmanager === false && (
+                        <p className=' text-red-500 text-xs'>You are not allowed to edit the workload, only the job manager have access to do that.</p>
+                      )}
 
                  
                  

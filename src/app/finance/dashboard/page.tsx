@@ -16,17 +16,7 @@ export default function page() {
       >
         <Breadcrumbdb page={''}/>
 
-        <div className=' w-full flex items-center justify-center'>
-          <div className=' w-fit p-2 flex flex-wrap items-center justify-center gap-2 bg-secondary rounded-sm'>
-            {/* <button onClick={() => setTab('Show All')} className={`text-[.6rem]  p-2 text-zinc-100 rounded-md ${tab === 'Show All' && 'bg-red-700'} `}>Show All</button> */}
-            {Tabs.map((item, index) => (
-              <button onClick={() => setTab(item.name)} className={`text-[.6rem]  p-2 text-zinc-100 rounded-md ${tab === item.name && 'bg-red-700'} `}>{item.name}</button>
-
-            ))}
-
-          </div>
-        </div>
-        
+       
       </div>
         <Bottomcards/>
     </FinanceLayout>

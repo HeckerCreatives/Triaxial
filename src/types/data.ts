@@ -166,3 +166,5 @@ export const months = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
 ];
+
+export const weeks = Array.from({ length: 24 }, (_, i) => `Week ${i + 1}`);

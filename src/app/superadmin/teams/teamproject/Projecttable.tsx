@@ -203,7 +203,7 @@ export default function Projecttable() {
                   </TooltipProvider>
               </Viewproject>
 
-              <Editprojectform onClick={() => undefined}>
+              {/* <Editprojectform>
                 <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger><button className=' p-2 bg-secondary rounded-md'><Pen size={15}/></button></TooltipTrigger>
@@ -212,7 +212,7 @@ export default function Projecttable() {
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
-              </Editprojectform>
+              </Editprojectform> */}
 
               <Copyprojectform onClick={() => undefined}>
                 <TooltipProvider>

@@ -11,6 +11,7 @@ import {
 import Autoplay from "embla-carousel-autoplay"
 import axios from 'axios'
 import { Events } from '@/types/types'
+import Yourworkload from './Yourworkload'
 
 
 export default function Bottomcards() {
@@ -49,83 +50,12 @@ export default function Bottomcards() {
       <div className=' h-[550px] overflow-y-auto overflow-x-auto flex items-start justify-center bg-zinc-100 w-full max-w-[1920px]'>
 
         <div className=' w-full'>
-          <table className="table-auto w-full border-collapse ">
-          <thead className=' bg-secondary h-[102px]'>
-            <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
-              <th className='border-[1px] border-zinc-700 w-[80px] font-normal'>Name</th>
-              <th className=' border-[1px] border-zinc-700 font-normal w-[80px]'>Initial</th>
-              <th className=' border-[1px] border-zinc-700 font-normal w-[80px]'>Resource</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Array.from({ length: 30 }).map((_, index) => (
-              <tr key={index} className={index % 2 === 0 ? '' : ' bg-red-100'}>
-                <td className=" h-[20px] "></td>
-                <td className=" h-[20px] "></td>
-                <td className=" h-[20px] "></td>
-              </tr>
-            ))}
-          
-        </tbody>
-        </table>
+         <Yourworkload/>
         </div>
-
-
-        {Array.from({ length: 8 }).map((_, index) => (
-            <div className=' flex flex-col bg-secondary text-[.6rem] text-white'>
-              <div className=' w-full py-2 border-[1px] border-zinc-700 flex items-center justify-center'>
-                <p className=' whitespace-nowrap'>Current Week</p>
-              </div>
-              <div className=' flex items-center'>
-                <div className=' border-[1px] border-zinc-600 h-[70px] w-[23px] flex items-center justify-center'>
-                  <p className=' rotate-90'>00/00/00</p>
-                </div>
-                <div className=' border-[1px] border-zinc-600 h-[70px] w-[23px] flex items-center justify-center'>
-                  <p className=' rotate-90'>00/00/00</p>
-                </div>
-                <div className=' border-[1px] border-zinc-600 h-[70px] w-[23px] flex items-center justify-center'>
-                  <p className=' rotate-90'>00/00/00</p>
-                </div>
-
-                <div className=' border-[1px] border-zinc-600 h-[70px] w-[23px] flex items-center justify-center'>
-                  <p className=' rotate-90'>00/00/00</p>
-                </div>
-
-                <div className=' border-[1px] border-zinc-600 h-[70px] w-[23px] flex items-center justify-center'>
-                  <p className=' rotate-90'>00/00/00</p>
-                </div>
-
-                <div className=' border-[1px] border-zinc-600 h-[70px] w-[23px] flex items-center justify-center'>
-                  <p className=' rotate-90 text-red-300'>Total</p>
-                </div>
-              </div>
-              {Array.from({ length: 30 }).map((_, index) => (
-                  <div className=' flex items-center bg-white'>
-                    <div className=' border-[.5px] border-zinc-600 h-[20px] w-[23px] flex items-center justify-center'>
-                    </div>
-                    <div className=' border-[1px] border-zinc-600 h-[20px] w-[23px] flex items-center justify-center'>
-                    </div>
-                    <div className=' border-[1px] border-zinc-600 h-[20px] w-[23px] flex items-center justify-center'>
-                    </div>
-
-                    <div className=' border-[1px] border-zinc-600 h-[20px] w-[23px] flex items-center justify-center'>
-                    </div>
-
-                    <div className=' border-[1px] border-zinc-600 h-[20px] w-[23px] flex items-center justify-center'>
-                    </div>
-
-                    <div className=' border-[1px] border-zinc-600 h-[20px] w-[23px] flex items-center justify-center'>
-                    </div>
-                  </div>
-                ))}
-            </div>   
-        ))}
-     
-
       </div>
        
 
-         <div className=' bg-secondary absolute bottom-0 text-zinc-100 w-full grid grid-cols-1 lg:grid-cols-2 gap-4 max-w-[1920px] p-4'>
+         <div className=' bg-secondary absolute z-30 bottom-0 text-zinc-100 w-full grid grid-cols-1 lg:grid-cols-2 gap-4 max-w-[1920px] p-4'>
           <div className=' w-full h-full flex-flex-col'>
             <p className=' text-xs'>Showing 1/73 of 73 Entries</p>
             <p className=' text-xs mt-4'>Legend:</p>

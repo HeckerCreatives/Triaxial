@@ -1,5 +1,5 @@
 " use client"
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from '../ui/input'
 import { Label } from "@/components/ui/label"
-import { Textarea } from '../ui/textarea'
 import {
   Select,
   SelectContent,
@@ -18,158 +17,266 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod"
-
+import { useForm } from 'react-hook-form'
+import { createProjectSchema, CreateProjectSchema } from '@/schema/schema'
+import { zodResolver } from '@hookform/resolvers/zod'
+import axios, { AxiosError } from 'axios'
+import toast from 'react-hot-toast'
+import { useRouter } from 'next/navigation'
+import { formatDate } from '@/utils/functions'
 
 
 interface Data {
-    // open: boolean
-    // onOpenChange: boolean
-    onClick: () => void
-    // name: string
-    // type: string
-    // start: Date
-    // end: Date
-    // details: string
-    // wd
+    
      children?: React.ReactNode;
-
+     projectid: string
+    team: string
+    projectname: string
+    startdate: string
+    deadlinedate: string
 }
 
 
+type Team = {
+  manager: string
+teamid: string
+teamleader: string
+teamname: string
+}
+
 export default function Editprojectform( prop: Data) {
   const [dialog, setDialog] = useState(false)
+  const [jobno, setJobno] = useState('')
+  const [client, setClient] = useState('')
+  const [pm, setPm] = useState('')
+  const router = useRouter()
+  const [team, setTeam] = useState<Team[]>([])
+  const [loading, setLoading] = useState(false)
+  const findteam = team.find((item) => item.teamname === prop.team)
+  const [selectedTeam, setSelectedTeam] = useState(findteam?.teamid || '');
+
+ 
+  useEffect(() => {
+    reset()
+  },[dialog])
+
+
+  //team list
+  useEffect(() => {
+  
+    const timer = setTimeout(() => {
+      const getList = async () => {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teams/managerlistownteam?teamnamefilter&page=0&limit=10`,{
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json'
+            }
+        })
+  
+        console.log('team list',response.data)
+        setTeam(response.data.data.teams)
+      
+       
+      }
+      getList()
+    },500)
+    return () => clearTimeout(timer)
+    
+    
+  },[])
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    trigger,
+    watch,
+    formState: { errors },
+  } = useForm<CreateProjectSchema>({
+    resolver: zodResolver(createProjectSchema),
+    defaultValues:{
+      team: findteam?.teamid,
+      projectname: prop.projectname,
+      start: formatDate(prop.startdate),
+      end: formatDate(prop.deadlinedate)
+    }
+  });
+
+  const editProject = async (data: CreateProjectSchema) => {
+    router.push('?state=true')
+    setLoading(true)
+    try {
+      const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/projects/editproject`,{
+    
+          projectid: prop.projectid,
+          team: data.team, // teamid
+          projectname: data.projectname,
+          startdate: data.start,
+          deadlinedate: data.end
+
+      }, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json'
+          }
+      })
+
+      const response = await toast.promise(request, {
+        loading: 'Updating project....',
+        success: `Successfully updated`,
+        error: 'Error while updating the project',
+    });
+
+    if(response.data.message === 'success'){
+      reset()
+      setDialog(false)
+      router.push('?state=false')
+      setLoading(false)
+ 
+    }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError<{ message: string, data: string }>;
+        if (axiosError.response && axiosError.response.status === 401) {
+            toast.error(`${axiosError.response.data.data}`) 
+            router.push('/')    
+        }
+
+        if (axiosError.response && axiosError.response.status === 400) {
+            toast.error(`${axiosError.response.data.data}`)     
+               
+        }
+
+        if (axiosError.response && axiosError.response.status === 402) {
+            toast.error(`${axiosError.response.data.data}`)          
+                   
+        }
+
+        if (axiosError.response && axiosError.response.status === 403) {
+            toast.error(`${axiosError.response.data.data}`)              
+           
+        }
+
+        if (axiosError.response && axiosError.response.status === 404) {
+            toast.error(`${axiosError.response.data.data}`)             
+        }
+      } 
+    }
+  };
+
+  console.log(selectedTeam, errors)
+
+  // Watch team value to synchronize with Select component
+const teamValue = watch("team");
+
+// Set default value for team when component mounts
+useEffect(() => {
+  if (findteam?.teamid) {
+    setValue('team', findteam.teamid);
+  }
+}, [findteam, setValue]);
+
+
+
+  
   return (
-    <Dialog >
+    <Dialog open={dialog} onOpenChange={setDialog} >
     <DialogTrigger>
        {prop.children}
     </DialogTrigger>
     <DialogContent className=' max-h-[90%] overflow-y-auto'>
-      <form className=' w-full p-4 flex flex-col gap-4'>
-        <p className=' text-sm uppercase font-semibold text-red-700 flex items-center gap-2'><span className=' bg-red-700 px-4 py-1 text-zinc-100 text-xs'>Edit</span>Project Details</p>
+      <form className=' w-full p-4 flex flex-col gap-4' onSubmit={handleSubmit(editProject)}>
+        <p className=' text-sm uppercase font-semibold text-red-700 flex items-center gap-2'><span className=' bg-red-700 px-4 py-1 text-zinc-100 text-xs'>Edit</span>Project</p>
         <div className=' w-full flex flex-col gap-1'>
-          <label htmlFor="" className=' text-xs text-zinc-700'>Team</label>
-          <Input type='text' className=' text-xs h-[35px] bg-zinc-200' placeholder='Team'/>
+        <Label className=' mt-2 text-black font-bold'>Project Details</Label>
 
-          <Accordion type="single" collapsible>
-            <AccordionItem value="item-1">
-                <AccordionTrigger className=' text-xs p-2 bg-zinc-300 rounded-sm font-semibold'>Job Details</AccordionTrigger>
-                <AccordionContent>
-                <div className=' bg-zinc-200 flex flex-col p-2'>
+          <label htmlFor="" className=' text-xs text-zinc-700 mt-4'>Team</label>
+       
+          <Select 
+          value={watch('team')} 
+          onValueChange={(value) => setValue('team', value)} // Update form state
+          {...register('team')}
+          >
+            <SelectTrigger className="text-xs h-[35px] bg-zinc-200"  value={selectedTeam}>
+              <SelectValue placeholder="Select Team" className="text-black"  />
+            </SelectTrigger>
+            <SelectContent className="text-xs">
+              {team.map((item) => (
+                <SelectItem key={item.teamid} value={item.teamid}>
+                  {item.teamname}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+           {errors.team && <p className=' text-[.6em] text-red-500'>{errors.team.message}</p>}
+
+           <div className=' bg-zinc-200 flex flex-col p-2'>
                   {/* <Label className=' font-semibold'>Job Details</Label> */}
 
-                  <div className=' flex items-center gap-4 mt-2'>
-                    <div className=' w-full'>
-                      <Label className=' mt-2 text-zinc-500'>Job no <span className=' text-red-700'>*</span></Label>
-                      <Input type='text' className=' text-xs h-[35px] bg-white' placeholder='Job no.'/>
-                    </div>
+                  <div className=' flex items-start gap-4 '>
+                    
 
                     <div className=' w-full'>
-                      <Label className=' mt-2 text-zinc-500'>Project Name <span className=' text-red-700'>*</span></Label>
-                      <Input type='text' className=' text-xs h-[35px] bg-white' placeholder='Project name'/>
-                    </div>
+                      <Label className=' text-zinc-500'>Project Name <span className=' text-red-700'>*</span></Label>
+                      <Input value={watch('projectname')} type='text' className=' text-xs h-[35px] bg-white' placeholder='Project name' {...register('projectname')}/>
+                      {errors.projectname && <p className=' text-[.6em] text-red-500'>{errors.projectname.message}</p>}
 
-                  </div>
-
-                  <div className=' flex items-center gap-4 mt-2'>
-                    <div className=' w-full'>
-                      <Label className=' mt-2 text-zinc-500'>Client<span className=' text-red-700'>*</span></Label>
-                      <Select>
-                      <SelectTrigger className=" text-xs h-[35px] bg-white">
-                        <SelectValue placeholder="Select Client" className=' text-black' />
-                      </SelectTrigger>
-                      <SelectContent className=' text-xs'>
-                        <SelectItem value="light">Client</SelectItem>
-                        <SelectItem value="dark">Client</SelectItem>
-                      </SelectContent>
-                    </Select>
 
                     </div>
 
-                    <div className=' w-full'>
-                      <Label className=' mt-2 text-zinc-500'>If other please input the Client Name</Label>
-                      <Input type='text' className=' text-xs h-[35px] bg-white' placeholder='Name'/>
-                    </div>
-
-                  </div>
-
-                
-
-                
-                </div>
-                </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-
-          <Accordion type="single" collapsible>
-            <AccordionItem value="item-1">
-                <AccordionTrigger className=' text-xs p-2 bg-zinc-300 rounded-sm font-semibold'>Component Details</AccordionTrigger>
-                <AccordionContent>
-                <div className=' bg-zinc-200 flex flex-col p-2'>
-                  {/* <Label className=' font-semibold'>Component Details</Label> */}
-
-                  <div className=' flex items-center gap-4 mt-2'>
-                    <div className=' w-full'>
-                      <Label className=' mt-2 text-zinc-500'>Job Manager<span className=' text-red-700'>*</span></Label>
-                      <Select>
+                   
+                      <div className=' w-full'>
+                        <Label className=' text-zinc-500'>Client<span className=' text-red-700'>*</span></Label>
+                        <Select>
                         <SelectTrigger className=" text-xs h-[35px] bg-white">
-                          <SelectValue placeholder="Select Job Manager" className=' text-black' />
+                          <SelectValue placeholder="Select Client" className=' text-black'  />
                         </SelectTrigger>
                         <SelectContent className=' text-xs'>
-                          <SelectItem value="light">Manager</SelectItem>
-                          <SelectItem value="dark">Manager</SelectItem>
+                          <SelectItem value="light">Client</SelectItem>
+                          <SelectItem value="dark">Client</SelectItem>
                         </SelectContent>
                       </Select>
-                    </div>
+                        {/* {errors.client && <p className=' text-[.6em] text-red-500'>{errors.client.message}</p>} */}
+
+                      </div>
 
                   </div>
 
-                  <Label className=' font-semibold mt-4'>Job Component Budget</Label>
-                  <p className=' bg-red-100 text-xs text-zinc-500 p-2 w-fit mt-2'>Note, you can only edit this once!</p>
-
-                  <Select >
-                        <SelectTrigger className=" text-xs h-[35px] bg-white mt-2">
-                          <SelectValue placeholder="Type" className=' text-black' />
-                        </SelectTrigger>
-                        <SelectContent className=' text-xs' >
-                          <SelectItem value="light">Rates</SelectItem>
-                          <SelectItem value="dark">Lump sum</SelectItem>
-                        </SelectContent>
-                      </Select>
-
-
-                  <div className=' flex items-center gap-4 mt-2'>
+                  <div className=' flex items-start gap-4 '>
                     
-                    <div className=' w-full'>
-                      <Label className=' mt-2 text-zinc-500'>Estimated Budget $ <span className=' text-red-700'>*</span></Label>
-                      <Input type='number' className=' text-xs h-[35px] bg-white' placeholder='0'/>
-                    </div>
 
                     <div className=' w-full'>
-                      <Label className=' mt-2 text-zinc-500'>Job Component<span className=' text-red-700'>*</span></Label>
-                      <Input type='number' className=' text-xs h-[35px] bg-white' placeholder='Please input here'/>
+                      <Label className=' text-zinc-500'>Start Date <span className=' text-red-700'>*</span></Label>
+                      <Input value={watch('start')} type='date' className=' text-xs h-[35px] bg-white' placeholder='Project name' {...register('start')}/>
+                      {errors.start && <p className=' text-[.6em] text-red-500'>{errors.start.message}</p>}
+
+
                     </div>
+
+                   
+                      <div className=' w-full'>
+                        <Label className=' text-zinc-500'>End date<span className=' text-red-700'>*</span></Label>
+                        <Input type='date' className=' text-xs h-[35px] bg-white' placeholder='Project name' {...register('end')}/>
+                        {errors.end && <p className=' text-[.6em] text-red-500'>{errors.end.message}</p>}
+
+                      </div>
 
                   </div>
 
-                
+                  
+          </div>
 
-                
-                </div>
-                </AccordionContent>
-            </AccordionItem>
-            </Accordion>
-
-
-          <Label className=' mt-2 text-zinc-500'>Admin Notes: </Label>
-          <Textarea placeholder='Please input text here' className=' text-xs bg-zinc-200'/>
+          <Label className=' text-zinc-500 mt-4'>Project Component</Label>
+            <Select>
+            <SelectTrigger className=" text-xs h-[35px] bg-zinc-200">
+              <SelectValue placeholder="Select" className=' text-black'  />
+            </SelectTrigger>
+            <SelectContent className=' text-xs'>
+              <SelectItem value="light">Component1</SelectItem>
+              <SelectItem value="dark">Component2</SelectItem>
+            </SelectContent>
+          </Select>
 
 
          

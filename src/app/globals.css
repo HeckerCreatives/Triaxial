@@ -209,3 +209,23 @@
   50%   {transform:scaleY(-1) rotate(0deg)}
   100%  {transform:scaleY(-1) rotate(-135deg)}
 }
+
+
+/* Target the entire scrollbar */
+::-webkit-scrollbar {
+  width: 8px;              /* Width of the scrollbar */
+  height: 6px;             /* Height for horizontal scrollbars */
+}
+
+/* Background of the scrollbar track */
+::-webkit-scrollbar-track {
+  background: #f0f0f0;     /* Color of the track */
+  border-radius: 0px;     /* Rounded corners */
+}
+
+/* Scrollbar handle (thumb) */
+::-webkit-scrollbar-thumb {
+  background-color: #585858;  /* Color of the thumb */
+  border-radius: 0px;     /* Rounded corners */
+
+}

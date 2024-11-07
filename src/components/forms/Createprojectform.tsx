@@ -40,12 +40,21 @@ interface Data {
 }
 
 
+type Team = {
+  manager: string
+teamid: string
+teamleader: string
+teamname: string
+}
+
 export default function Createprojectform( prop: Data) {
   const [dialog, setDialog] = useState(false)
   const [jobno, setJobno] = useState('')
   const [client, setClient] = useState('')
   const [pm, setPm] = useState('')
   const router = useRouter()
+  const [team, setTeam] = useState<Team[]>([])
+  const [loading, setLoading] = useState(false)
 
   const {
     register,
@@ -59,8 +68,15 @@ export default function Createprojectform( prop: Data) {
   });
 
   const createProject = async (data: CreateProjectSchema) => {
+    router.push('?state=true')
+    setLoading(true)
     try {
-      const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}`,{
+      const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/projects/createproject`,{
+     
+          team: data.team, // teamid
+          projectname: data.projectname,
+          startdate: data.start,
+          deadlinedate: data.end
 
       }, {
         withCredentials: true,
@@ -70,10 +86,18 @@ export default function Createprojectform( prop: Data) {
       })
 
       const response = await toast.promise(request, {
-        loading: 'Updating workload....',
-        success: `Successfully updated`,
-        error: 'Error while updating the workload',
+        loading: 'Creating project....',
+        success: `Successfully created`,
+        error: 'Error while creating the project',
     });
+
+    if(response.data.message === 'success'){
+      reset()
+      setDialog(false)
+      router.push('?state=false')
+      setLoading(false)
+ 
+    }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError<{ message: string, data: string }>;
@@ -109,11 +133,37 @@ export default function Createprojectform( prop: Data) {
   },[dialog])
 
 
-  const handleSelectChange = (value: string) => {
-    setClient(value);
-    setValue('client', value);
-    trigger('client')
-  };
+  // const handleSelectChange = (value: string) => {
+  //   setClient(value);
+  //   setValue('client', value);
+  //   trigger('client')
+  // };
+
+  //team list
+  useEffect(() => {
+  
+    const timer = setTimeout(() => {
+      const getList = async () => {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teams/managerlistownteam?teamnamefilter&page=0&limit=10`,{
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json'
+            }
+        })
+  
+        console.log('team list',response.data)
+        setTeam(response.data.data.teams)
+      
+       
+      }
+      getList()
+    },500)
+    return () => clearTimeout(timer)
+    
+    
+  },[])
+
+  console.log(errors)
 
 
 
@@ -130,7 +180,19 @@ export default function Createprojectform( prop: Data) {
         <Label className=' mt-2 text-black font-bold'>Project Details</Label>
 
           <label htmlFor="" className=' text-xs text-zinc-700 mt-4'>Team</label>
-          <Input type='text' className=' text-xs h-[35px] bg-zinc-200' placeholder='Team' {...register('team')}/>
+          {/* <Input type='text' className=' text-xs h-[35px] bg-zinc-200' placeholder='Team' {...register('team')}/> */}
+          <Select onValueChange={(value) => setValue('team', value)}>
+            <SelectTrigger className=" text-xs h-[35px] bg-zinc-200">
+              <SelectValue placeholder="Select Team" className=' text-black'  />
+            </SelectTrigger>
+            <SelectContent className=' text-xs'>
+              {team.map((item, index) => (
+                <SelectItem key={item.teamid} value={item.teamid}>{item.teamname}</SelectItem>
+              ))}
+              
+              
+            </SelectContent>
+          </Select>
            {errors.team && <p className=' text-[.6em] text-red-500'>{errors.team.message}</p>}
 
            <div className=' bg-zinc-200 flex flex-col p-2'>
@@ -150,7 +212,7 @@ export default function Createprojectform( prop: Data) {
                    
                       <div className=' w-full'>
                         <Label className=' text-zinc-500'>Client<span className=' text-red-700'>*</span></Label>
-                        <Select value={client} onValueChange={handleSelectChange}>
+                        <Select>
                         <SelectTrigger className=" text-xs h-[35px] bg-white">
                           <SelectValue placeholder="Select Client" className=' text-black'  />
                         </SelectTrigger>
@@ -159,7 +221,28 @@ export default function Createprojectform( prop: Data) {
                           <SelectItem value="dark">Client</SelectItem>
                         </SelectContent>
                       </Select>
-                        {errors.client && <p className=' text-[.6em] text-red-500'>{errors.client.message}</p>}
+                        {/* {errors.client && <p className=' text-[.6em] text-red-500'>{errors.client.message}</p>} */}
+
+                      </div>
+
+                  </div>
+
+                  <div className=' flex items-start gap-4 '>
+                    
+
+                    <div className=' w-full'>
+                      <Label className=' text-zinc-500'>Start Date <span className=' text-red-700'>*</span></Label>
+                      <Input type='date' className=' text-xs h-[35px] bg-white' placeholder='Project name' {...register('start')}/>
+                      {errors.start && <p className=' text-[.6em] text-red-500'>{errors.start.message}</p>}
+
+
+                    </div>
+
+                   
+                      <div className=' w-full'>
+                        <Label className=' text-zinc-500'>End date<span className=' text-red-700'>*</span></Label>
+                        <Input type='date' className=' text-xs h-[35px] bg-white' placeholder='Project name' {...register('end')}/>
+                        {errors.end && <p className=' text-[.6em] text-red-500'>{errors.end.message}</p>}
 
                       </div>
 
@@ -169,7 +252,7 @@ export default function Createprojectform( prop: Data) {
           </div>
 
           <Label className=' text-zinc-500 mt-4'>Project Component</Label>
-            <Select value={client} onValueChange={handleSelectChange}>
+            <Select>
             <SelectTrigger className=" text-xs h-[35px] bg-zinc-200">
               <SelectValue placeholder="Select" className=' text-black'  />
             </SelectTrigger>

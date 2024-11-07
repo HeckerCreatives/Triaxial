@@ -74,11 +74,11 @@ const initialData: Data = {
             fullname: 'Bien Daniel'
           },
           dates: [
-            { date: '05/11/2024', status: 0, hours: 9, isOnLeave: true, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/12/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/13/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/14/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/15/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
+            { date: '05/11/2024', status: 0, hours: 0, isOnLeave: true, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/12/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
+            { date: '05/13/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
+            { date: '05/14/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/15/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
             { date: '05/16/2024', status: 0, hours: 0, isOnLeave: true, isOnWellnessday: false, isOnEvent: true },
             { date: '05/17/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
             { date: '05/18/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
@@ -175,21 +175,24 @@ export default function Indiviualworkloads() {
 // Memoized data to prevent unnecessary re-renders
   const memorizedData = useMemo(() => data, [data]);
 
-  const getStatus = (data: number, leave: boolean, wd: boolean, event: boolean) => {
+  const getStatus = (data: number, leave: boolean, wd: boolean, event: boolean, hours: number) => {
 
     const colorData = []
     if(leave === true){
-      colorData.push('bg-pink-500')
-    }
-     if(wd === true){
       colorData.push('bg-violet-300')
     }
-    if(event === true){
+     if(wd === true){
       colorData.push('bg-fuchsia-400')
     }
-    if(data === 0){
-     colorData.push('bg-red-500')
+    if(hours > 8){
+      colorData.push('bg-pink-500')
     }
+    // if(event === true){
+    //   colorData.push('bg-fuchsia-400')
+    // }
+    // if(data === 0){
+    //  colorData.push('bg-white')
+    // }
     if(data === 1){
       colorData.push('bg-red-500')
     }
@@ -197,7 +200,7 @@ export default function Indiviualworkloads() {
       colorData.push('bg-amber-500')
     }
     if(data === 3){
-      colorData.push('bg-yellow-500')
+      colorData.push('bg-yellow-300')
     }
     if(data === 4){
       colorData.push('bg-green-500')
@@ -206,10 +209,11 @@ export default function Indiviualworkloads() {
       colorData.push('bg-blue-500')
     }
     if(data === 6){
-      colorData.push('bg-cyan-300')
+      colorData.push('bg-cyan-400')
     }
 
-    console.log('Color', colorData, leave, wd, event)
+    console.log(colorData)
+
 
     return colorData
 
@@ -403,7 +407,7 @@ export default function Indiviualworkloads() {
                         <>
                           <td 
                             key={dateIndex} 
-                            className="relative text-center overflow-hidden bg-primary"
+                            className="relative text-center overflow-hidden bg-white"
                             onClick={() => {
                               setDialog(true);
                               setIndex(dateIndex);
@@ -412,11 +416,11 @@ export default function Indiviualworkloads() {
                             }}
                           >
                             <div className='flex absolute top-0 w-full h-[40px] text-center'>
-                              {getStatus(dateObj.status, dateObj.isOnLeave, dateObj.isOnWellnessday, dateObj.isOnEvent).map((item, index) => (
+                              {getStatus(dateObj.status, dateObj.isOnLeave, dateObj.isOnWellnessday, dateObj.isOnEvent, dateObj.hours).map((item, index) => (
                                 <div className={`w-full ${item}`} key={index}></div>
                               ))}
                             </div>
-                            <p className='relative text-black font-bold text-xs z-30'>{dateObj.hours}</p>
+                            <p className='relative text-black font-bold text-xs z-30'>{dateObj.isOnWellnessday !== true && dateObj.hours}</p>
                           </td>
 
                           {/* Insert Total every 5 days */}

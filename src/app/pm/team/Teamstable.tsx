@@ -752,7 +752,7 @@ export default function Teamstable() {
             <TableHead className="">Project Manager</TableHead>
             <TableHead className="">Team Leader</TableHead>
             <TableHead>Total Project</TableHead>
-            <TableHead className="">Projects</TableHead>
+            {/* <TableHead className="">Projects</TableHead> */}
             <TableHead className="">Individual Workloads</TableHead>
             <TableHead className="">Invoice Projection</TableHead>
             {/* <TableHead className="">Due on</TableHead> */}
@@ -772,9 +772,9 @@ export default function Teamstable() {
             <TableCell className="font-medium">{item.manager}</TableCell>
             <TableCell>{item.teamleader}</TableCell>
             <TableCell>1</TableCell>
-            <TableCell>
+            {/* <TableCell>
                 <Viewbtn disabled={false} name='View' onClick={() => router.push('/pm/graph/teamprojects')}/>
-            </TableCell>
+            </TableCell> */}
             <TableCell>
                 <Viewbtn disabled={false} name='View' onClick={() => router.push('/pm/graph/individualmemberworkload')}/>
             </TableCell>

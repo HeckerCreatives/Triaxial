@@ -39,103 +39,6 @@ import Editprojectjobmanager from '@/components/forms/Editprojectjobmanager'
 import { Textarea } from '@/components/ui/textarea'
 
 
-const datas = [
-  [{ value: "Vanilla" }, { value: "Chocolate" }],
-  [{ value: "Strawberry" }, { value: "Cookies" }],
-];
-
-const data = {
-  graph: [
-      {
-          teamname: "team test",
-          projectname: "project test",
-          clientname: "client test",
-          jobno: 1,
-          jobmanager: {
-              employeeid: "id here",
-              fullname: "Darel Honrejas"
-          },
-          jobcomponent: {
-              componentid: "id here",
-              componentname: "testing component"
-          },
-          notes: "notes here",
-          members: [
-              {
-                  role: "Engineer (Engr.)",
-                  employee: {
-                      employeeid: "id here",
-                      fullname: "Bien Daniel"
-                  },
-                  dates: [
-                      {
-                          date: "05/11/2024",
-                          status: 0 ,
-                          hours: 9,
-                          isOnLeave: false,
-                          isOnWellnessday: false,
-                          isOnEvent: false
-                      },
-                      {
-                          date: "05/12/2024",
-                          status: 0 ,
-                          hours: 9,
-                          isOnLeave: false,
-                          isOnWellnessday: false,
-                          isOnEvent: false
-                      },
-                      {
-                          date: "05/13/2024",
-                          status: 0 ,
-                          hours: 9,
-                          isOnLeave: false,
-                          isOnWellnessday: false,
-                          isOnEvent: false
-                      },
-                      {
-                          date: "05/14/2024",
-                          status: 0 ,
-                          hours: 9,
-                          isOnLeave: false,
-                          isOnWellnessday: false,
-                          isOnEvent: false
-                      },
-                      {
-                          date: "05/15/2024",
-                          status: 0,
-                          hours: 9,
-                          isOnLeave: false,
-                          isOnWellnessday: false,
-                          isOnEvent: false
-                      }
-                  ]
-              },
-              {
-                  role: "Engineer Reviewer (Engr. Revr.)",
-                  employee: {
-                      employeeid: "id here",
-                      fullname: "Bien Daniel"
-                  }
-              },
-              {
-                  role: "Drafter (Drft.)",
-                  employee: {
-                      employeeid: "id here",
-                      fullname: "Joshua De Guzman"
-                  }
-              },
-              {
-                  role: "Drafter Reviewer (Drft. Revr.)",
-                  employee: {
-                      employeeid: "id here",
-                      fullname: "Jomarie Luistro"
-                  }
-              },
-          ]
-      }
-  ]
-}
-
 interface DateItem {
   date: string;
   status: number;
@@ -214,7 +117,17 @@ const initialData: Data = {
             { date: '05/18/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
             { date: '05/19/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
             { date: '05/20/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-         
+            { date: '05/11/2024', status: 0, hours: 0, isOnLeave: true, isOnWellnessday: true, isOnEvent: false },
+            { date: '05/12/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
+            { date: '05/13/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
+            { date: '05/14/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/15/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
+            { date: '05/16/2024', status: 0, hours: 0, isOnLeave: true, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/17/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
+            { date: '05/18/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
+            { date: '05/19/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/20/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
+           
           ]
         },
         {
@@ -286,6 +199,103 @@ const initialData: Data = {
         employeeid: 'id here',
         fullname: 'Team 2',
         isManager: false,
+        isJobManager: true,
+
+      },
+      jobcomponent: {
+        componentid: 'id here',
+        componentname: 'testing component'
+      },
+      notes: 'notes here',
+      members: [
+        {
+          role: 'Engineer (Engr.)',
+          employee: {
+            employeeid: 'id here',
+            fullname: 'Bien Daniel'
+          },
+          dates: [
+            { date: '05/11/2024', status: 0, hours: 9, isOnLeave: true, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/12/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
+            { date: '05/13/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
+            { date: '05/14/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/15/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
+            { date: '05/16/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/17/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
+            { date: '05/18/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
+            { date: '05/19/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/20/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false }
+          ]
+        },
+        {
+          role: "Engineer Reviewer (Engr. Revr.)",
+          employee: {
+              employeeid: "id here",
+              fullname: "Bien Daniel"
+          },
+          dates: [
+            { date: '05/11/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/12/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
+            { date: '05/13/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
+            { date: '05/14/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/15/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
+            { date: '05/16/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/17/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
+            { date: '05/18/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
+            { date: '05/19/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/20/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false }
+          ]
+      },
+      {
+          role: "Drafter (Drft.)",
+          employee: {
+              employeeid: "id here",
+              fullname: "Joshua De Guzman"
+          },
+          dates: [
+            { date: '05/11/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/12/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
+            { date: '05/13/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
+            { date: '05/14/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/15/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
+            { date: '05/16/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/17/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
+            { date: '05/18/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
+            { date: '05/19/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/20/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false }
+          ]
+      },
+      {
+          role: "Drafter Reviewer (Drft. Revr.)",
+          employee: {
+              employeeid: "id here",
+              fullname: "Jomarie Luistro"
+          },
+          dates: [
+            { date: '05/11/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/12/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
+            { date: '05/13/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
+            { date: '05/14/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/15/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
+            { date: '05/16/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/17/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
+            { date: '05/18/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
+            { date: '05/19/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
+            { date: '05/20/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false }
+          ]
+      },
+       
+      ]
+    },
+    {
+      teamname: 'team 3',
+      projectname: 'project test',
+      clientname: 'client test',
+      jobno: 1,
+      jobmanager: {
+        employeeid: 'id here',
+        fullname: 'Team 2',
+        isManager: true,
         isJobManager: true,
 
       },
@@ -636,19 +646,12 @@ export default function Yourworkload() {
 
         <div className=' flex flex-col gap-1 bg-primary rounded-sm text-xs'>
 
-          <p className=' text-xs'>Request :</p>
+          <p className=' text-xs mt-2'>Project Component:</p>
           <div className='flex items-center gap-2 bg-primary rounded-sm text-xs'>
-              <Leaveform onClick={() => undefined}>
-                <button onClick={() =>  setTab2('Leave')} className={`text-xs px-3 py-1 bg-red-600  rounded-sm`}>Leave</button>
-              </Leaveform>
-              <WDform onClick={() => undefined}>
-                <button onClick={() =>  setTab2('WD')} className={`text-xs px-3 py-1 bg-red-600  rounded-sm`}>Wellness Day</button>
-              </WDform>
+            <Createprojectcomponent>
+              <button className={`text-xs px-3 py-1 bg-red-600  rounded-sm`}>Create</button>
 
-              <Wfhform onClick={() => undefined}>
-                <button onClick={() =>  setTab2('WFH')} className={`text-xs px-3 py-1 bg-red-600  rounded-sm`}>WFH</button>
-              </Wfhform>
-
+            </Createprojectcomponent>
           </div>
             
         </div>
@@ -661,6 +664,7 @@ export default function Yourworkload() {
             <p className=' text-zinc-600 text-[.6rem]'>Lorem, ipsum dolor sit amet consectetur.</p>
           </div> */}
 
+          <div className=' flex items-center gap-2 text-xs mt-2'>
           <div className=' flex flex-col items-center gap-2 text-xs mt-2'>
             <p className=' text-xs'>Filter by week:</p>
             <Select >
@@ -676,6 +680,8 @@ export default function Yourworkload() {
             </Select>
 
            
+
+          </div>
 
           </div>
         </div>
@@ -699,22 +705,8 @@ export default function Yourworkload() {
                 <th className=' w-[70px] font-normal'>Members</th>
                 <th className=' font-normal w-[70px]'>Role</th>
                 <th className=' font-normal w-[70px]'>Notes</th>
-                {memorizedData.graph[0].members[0].dates?.map((dateObj, index) => (
-                  <>
-                    <th key={index} className=' relative font-normal w-[30px] border-[1px] border-zinc-700'>
-                      <p className=' absolute rotate-90'>{dateObj.date}</p>
-                    </th>
-                    {/* Insert a "Total" column every 5 days */}
-                    {(index + 1) % 5 === 0 && (
-                      <th key={`total-${index}`} className='font-normal w-[30px] border-[1px] border-zinc-700'>
-                        <p className='rotate-90'>Total Hours</p>
-                      </th>
-                    )}
-                  </>
-                ))}
-                
 
-                
+              
               </tr>
             </thead>
             <tbody>
@@ -722,7 +714,9 @@ export default function Yourworkload() {
               graphItem.members.map((member, memberIndex) => (
                 <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
                     <td className="text-center text-white flex items-center justify-center h-[40px] w-[30px]">
-                     
+                      {/* <Editprojectjobmanager isJobmanager={graphItem.jobmanager.isJobManager} isManager={graphItem.jobmanager.isManager} teamindex={graphIndex}>
+                        {memberIndex === 0 && (<button className=' p-1 bg-red-600 rounded-sm'><Pen size={12}/></button>)}
+                      </Editprojectjobmanager> */}
 
                       <Dialog>
                           <DialogTrigger>
@@ -865,8 +859,6 @@ export default function Yourworkload() {
                     <td className="text-center">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
                     <td className="text-center">{memberIndex === 0 && graphItem.jobcomponent.componentname}</td>
         
-                
-                  
                   <td className="text-center">{member.employee.fullname}</td>
                   <td className="text-center text-[.5rem]">{member.role}</td>
                   <td className="text-center">
@@ -884,58 +876,95 @@ export default function Yourworkload() {
                     </Dialog>
 
                     </td>
-                  {member.dates?.map((dateObj, dateIndex) => {
-                      // Calculate sum every 5 days
-                      const startIndex = Math.floor(dateIndex / 5) * 5;
-                      const endIndex = startIndex + 5;
-
-                      // Sum the hours for the current set of 5 days
-                      const totalHours = member.dates?.slice(startIndex, endIndex).reduce((acc, date) => acc + date.hours, 0);
-
-                      return (
-                        <>
-                          <td 
-                            key={dateIndex} 
-                            className="relative text-center overflow-hidden bg-white cursor-pointer border-[1px]"
-                            onClick={() => {
-                              setDialog(true);
-                              setIndex(dateIndex);
-                              setHours(dateObj.hours);
-                              setMemberIndex(memberIndex);
-                              setTeamIndex(graphIndex);
-                              setWdstatus(dateObj.isOnWellnessday);
-                              setLeavestatus(dateObj.isOnLeave)
-                              setDate(dateObj.date);
-                              setName(member.employee.fullname);
-                              setRole(member.role);
-                              setEmployeeid(member.employee.employeeid)
-                              setJobmanager(graphItem.jobmanager.isJobManager)
-                          
-                            }}
-                          >
-                            <div className='flex absolute top-0 w-full h-[40px] text-center'>
-                              {getStatus(dateObj.status, dateObj.isOnLeave, dateObj.isOnWellnessday, dateObj.isOnEvent, dateObj.hours).map((item, index) => (
-                                <div className={`w-full ${item}`} key={index}></div>
-                              ))}
-                            </div>
-                            <p className='relative text-black font-bold text-xs z-30'>{dateObj.isOnWellnessday !== true && dateObj.hours}</p>
-                          </td>
-
-                          {/* Insert Total every 5 days */}
-                          {(dateIndex + 1) % 5 === 0 && (
-                            <th key={`total-${dateIndex}`} className='font-normal w-[40px] bg-primary border-[1px] border-zinc-700'>
-                              <p className=''>{totalHours}</p> {/* Display the sum of hours for every 5 days */}
-                            </th>
-                          )}
-                        </>
-                      );
-                    })}
+                
 
                 </tr>
               ))
             )}
           </tbody>
           </table>
+
+          <div className=' overflow-x-auto w-[1100px]'>
+            <table className="table-auto w-[1300px] border-collapse ">
+              <thead className=' w-[800px] bg-secondary h-[100px]'>
+                <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
+                
+                  {memorizedData.graph[0].members[0].dates?.map((dateObj, index) => (
+                    <>
+                      <th key={index} className=' relative font-normal w-[30px] border-[1px] border-zinc-700'>
+                        <p className=' absolute rotate-90'>{dateObj.date}</p>
+                      </th>
+                      {(index + 1) % 5 === 0 && (
+                        <th key={`total-${index}`} className='font-normal w-[30px] border-[1px] border-zinc-700'>
+                          <p className='rotate-90'>Total Hours</p>
+                        </th>
+                      )}
+                    </>
+                  ))}
+                
+                  
+                </tr>
+              </thead>
+              <tbody>
+              {memorizedData.graph.map((graphItem, graphIndex) =>
+                graphItem.members.map((member, memberIndex) => (
+                  <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[41px] border-[1px] border-zinc-600">
+                    
+                    {member.dates?.map((dateObj, dateIndex) => {
+                        // Calculate sum every 5 days
+                        const startIndex = Math.floor(dateIndex / 5) * 5;
+                        const endIndex = startIndex + 5;
+
+                        // Sum the hours for the current set of 5 days
+                        const totalHours = member.dates?.slice(startIndex, endIndex).reduce((acc, date) => acc + date.hours, 0);
+
+                        return (
+                          <>
+                            <td 
+                              key={dateIndex} 
+                              className="relative text-center overflow-hidden bg-white cursor-pointer border-[1px]"
+                              onClick={() => {
+                                setDialog(true);
+                                setIndex(dateIndex);
+                                setHours(dateObj.hours);
+                                setMemberIndex(memberIndex);
+                                setTeamIndex(graphIndex);
+                                setWdstatus(dateObj.isOnWellnessday);
+                                setLeavestatus(dateObj.isOnLeave)
+                                setDate(dateObj.date);
+                                setName(member.employee.fullname);
+                                setRole(member.role);
+                                setEmployeeid(member.employee.employeeid)
+                                setJobmanager(graphItem.jobmanager.isJobManager)
+                            
+                              }}
+                            >
+                              <div className='flex absolute top-0 w-full h-[40px] text-center'>
+                                {getStatus(dateObj.status, dateObj.isOnLeave, dateObj.isOnWellnessday, dateObj.isOnEvent, dateObj.hours).map((item, index) => (
+                                  <div className={`w-full ${item}`} key={index}></div>
+                                ))}
+                              </div>
+                              <p className='relative text-black font-bold text-xs z-30'>{dateObj.isOnWellnessday !== true && dateObj.hours}</p>
+                            </td>
+
+                            {/* Insert Total every 5 days */}
+                            {(dateIndex + 1) % 5 === 0 && (
+                              <th key={`total-${dateIndex}`} className='font-normal w-[40px] bg-primary border-[1px] border-zinc-700'>
+                                <p className=''>{totalHours}</p> {/* Display the sum of hours for every 5 days */}
+                              </th>
+                            )}
+                          </>
+                        );
+                      })}
+
+                  </tr>
+                ))
+              )}
+            </tbody>
+            </table>
+          </div>
+
+          
 
           <Dialog open={dialog} onOpenChange={setDialog}>
                   <DialogContent className=' p-8 bg-secondary border-none text-white'>
