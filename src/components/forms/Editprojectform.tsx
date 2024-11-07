@@ -27,7 +27,7 @@ import { formatDate } from '@/utils/functions'
 
 
 interface Data {
-    
+  
      children?: React.ReactNode;
      projectid: string
     team: string
@@ -36,12 +36,25 @@ interface Data {
     deadlinedate: string
 }
 
-
 type Team = {
   manager: string
 teamid: string
 teamleader: string
 teamname: string
+}
+
+type Project = {
+  deadlinedate: string
+invoiced: string
+projecid: string
+projectname: string
+startdate: string
+status: string
+team: {
+  teamid: string
+  teamname: string
+}
+
 }
 
 export default function Editprojectform( prop: Data) {
@@ -54,6 +67,7 @@ export default function Editprojectform( prop: Data) {
   const [loading, setLoading] = useState(false)
   const findteam = team.find((item) => item.teamname === prop.team)
   const [selectedTeam, setSelectedTeam] = useState(findteam?.teamid || '');
+  const [project, setProject] = useState<Project>()
 
  
   useEffect(() => {
@@ -96,8 +110,8 @@ export default function Editprojectform( prop: Data) {
   } = useForm<CreateProjectSchema>({
     resolver: zodResolver(createProjectSchema),
     defaultValues:{
-      team: findteam?.teamid,
-      projectname: prop.projectname,
+      team: project?.team.teamid,
+      projectname: project?.projectname,
       start: formatDate(prop.startdate),
       end: formatDate(prop.deadlinedate)
     }
@@ -176,6 +190,60 @@ useEffect(() => {
     setValue('team', findteam.teamid);
   }
 }, [findteam, setValue]);
+
+useEffect(() => {
+  try {
+    const timer = setTimeout(() => {
+      const getList = async () => {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/projects/viewprojectdetails?projectid=${prop.projectid}`,{
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json'
+            }
+        })
+    
+        console.log('project data',response.data)
+        setProject(response.data.data.projectdata)
+      
+      
+      }
+      getList()
+    }, 500)
+    return () => clearTimeout(timer)
+} catch (error) {
+   
+
+     if (axios.isAxiosError(error)) {
+            const axiosError = error as AxiosError<{ message: string, data: string }>;
+            if (axiosError.response && axiosError.response.status === 401) {
+                toast.error(`${axiosError.response.data.data}`)
+                router.push('/')   
+            }
+
+            if (axiosError.response && axiosError.response.status === 400) {
+                toast.error(`${axiosError.response.data.data}`)     
+                   
+            }
+
+            if (axiosError.response && axiosError.response.status === 402) {
+                toast.error(`${axiosError.response.data.data}`)          
+                       
+            }
+
+            if (axiosError.response && axiosError.response.status === 403) {
+                toast.error(`${axiosError.response.data.data}`)              
+               
+            }
+
+            if (axiosError.response && axiosError.response.status === 404) {
+                toast.error(`${axiosError.response.data.data}`)             
+            }
+    } 
+   
+}
+  
+  
+},[])
 
 
 
@@ -267,7 +335,7 @@ useEffect(() => {
                   
           </div>
 
-          <Label className=' text-zinc-500 mt-4'>Project Component</Label>
+          {/* <Label className=' text-zinc-500 mt-4'>Project Component</Label>
             <Select>
             <SelectTrigger className=" text-xs h-[35px] bg-zinc-200">
               <SelectValue placeholder="Select" className=' text-black'  />
@@ -276,7 +344,7 @@ useEffect(() => {
               <SelectItem value="light">Component1</SelectItem>
               <SelectItem value="dark">Component2</SelectItem>
             </SelectContent>
-          </Select>
+          </Select> */}
 
 
          

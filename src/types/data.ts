@@ -168,3 +168,18 @@ export const months = [
 ];
 
 export const weeks = Array.from({ length: 24 }, (_, i) => `Week ${i + 1}`);
+
+
+export const resources = [
+  'Civil', 'Structural', 'Drafter', 'Hydraulic', 'Remedial', 'Admin'
+]
+
+export const statusData = [
+  {id: '1' , name: 'Due on'},
+  {id: '2' , name: '25%'},
+  {id: '3' , name: '50%'},
+  {id: '4' , name: '75%'},
+  {id: '5' , name: '100%'},
+  {id: '6' , name: 'CNST PH.'},
+
+]

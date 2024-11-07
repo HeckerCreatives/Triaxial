@@ -1,5 +1,5 @@
 "use client"
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -19,7 +19,6 @@ import {
 import Leaveform from '@/components/forms/Leaveform'
 import WDform from '@/components/forms/Wellnessday'
 import Wfhform from '@/components/forms/Wfhform'
-import Createprojectcomponent from '@/components/forms/Createprojectcomponent'
 import {
   Select,
   SelectContent,
@@ -31,12 +30,15 @@ import Legends from '@/components/common/Legends'
 import axios, { AxiosError } from 'axios'
 import { env } from 'process'
 import toast from 'react-hot-toast'
-import { useRouter } from 'next/navigation'
-import { months, weeks } from '@/types/data'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { months, statusData, weeks } from '@/types/data'
 import { Pen } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import Editprojectjobmanager from '@/components/forms/Editprojectjobmanager'
 import { Textarea } from '@/components/ui/textarea'
+import Createprojectcomponent from './Createprojectcomponent'
+import { Graph } from '@/types/types'
+import { formatDate, formatDateTime } from '@/utils/functions'
 
 
 interface DateItem {
@@ -81,410 +83,7 @@ interface Data {
   // isManager: boolean,
 }
 
-const initialData: Data = {
-  graph: [
-    {
-      teamname: 'team test',
-      projectname: 'project test',
-      clientname: 'client test',
-      jobno: 1,
-      jobmanager: {
-        employeeid: 'id here',
-        fullname: 'Darel Honrejas',
-        isManager: true,
-        isJobManager: false,
-      },
-      jobcomponent: {
-        componentid: 'id here',
-        componentname: 'testing component' 
-      },
-      notes: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi consequuntur optio amet, labore fugiat odio eaque expedita recusandae quae, officia quod atque. Modi fugit exercitationem nulla commodi officiis consequatur perferendis?Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi consequuntur optio amet, labore fugiat odio eaque expedita recusandae quae, officia quod atque. Modi fugit exercitationem nulla commodi officiis consequatur perferendis?', 
-      members: [
-        {
-          role: 'Engineer (Engr.)',
-          employee: {
-            employeeid: 'id here',
-            fullname: 'Bien Daniel'
-          },
-          dates: [
-            { date: '05/11/2024', status: 0, hours: 0, isOnLeave: true, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/12/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/13/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/14/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/15/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/16/2024', status: 0, hours: 0, isOnLeave: true, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/17/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/18/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/19/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/20/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/11/2024', status: 0, hours: 0, isOnLeave: true, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/12/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/13/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/14/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/15/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/16/2024', status: 0, hours: 0, isOnLeave: true, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/17/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/18/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/19/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/20/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-           
-          ]
-        },
-        {
-          role: "Engineer Reviewer (Engr. Revr.)",
-          employee: {
-              employeeid: "id here",
-              fullname: "Bien Daniel"
-          },
-          dates: [
-            { date: '05/11/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/12/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/13/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/14/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/15/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/16/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/17/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/18/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/19/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/20/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false }
-          ]
-      },
-      {
-          role: "Drafter (Drft.)",
-          employee: {
-              employeeid: "id here",
-              fullname: "Joshua De Guzman"
-          },
-          dates: [
-            { date: '05/11/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/12/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/13/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/14/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/15/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/16/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/17/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/18/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/19/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/20/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false }
-          ]
-      },
-      {
-          role: "Drafter Reviewer (Drft. Revr.)",
-          employee: {
-              employeeid: "id here",
-              fullname: "Jomarie Luistro"
-          },
-          dates: [
-            { date: '05/11/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/12/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/13/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/14/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/15/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/16/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/17/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/18/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/19/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/20/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false }
-          ]
-      },
-       
-      ]
-    },
-    {
-      teamname: 'team 2',
-      projectname: 'project test',
-      clientname: 'client test',
-      jobno: 1,
-      jobmanager: {
-        employeeid: 'id here',
-        fullname: 'Team 2',
-        isManager: false,
-        isJobManager: true,
-
-      },
-      jobcomponent: {
-        componentid: 'id here',
-        componentname: 'testing component'
-      },
-      notes: 'notes here',
-      members: [
-        {
-          role: 'Engineer (Engr.)',
-          employee: {
-            employeeid: 'id here',
-            fullname: 'Bien Daniel'
-          },
-          dates: [
-            { date: '05/11/2024', status: 0, hours: 9, isOnLeave: true, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/12/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/13/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/14/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/15/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/16/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/17/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/18/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/19/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/20/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false }
-          ]
-        },
-        {
-          role: "Engineer Reviewer (Engr. Revr.)",
-          employee: {
-              employeeid: "id here",
-              fullname: "Bien Daniel"
-          },
-          dates: [
-            { date: '05/11/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/12/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/13/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/14/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/15/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/16/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/17/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/18/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/19/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/20/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false }
-          ]
-      },
-      {
-          role: "Drafter (Drft.)",
-          employee: {
-              employeeid: "id here",
-              fullname: "Joshua De Guzman"
-          },
-          dates: [
-            { date: '05/11/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/12/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/13/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/14/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/15/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/16/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/17/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/18/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/19/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/20/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false }
-          ]
-      },
-      {
-          role: "Drafter Reviewer (Drft. Revr.)",
-          employee: {
-              employeeid: "id here",
-              fullname: "Jomarie Luistro"
-          },
-          dates: [
-            { date: '05/11/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/12/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/13/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/14/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/15/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/16/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/17/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/18/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/19/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/20/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false }
-          ]
-      },
-       
-      ]
-    },
-    {
-      teamname: 'team 3',
-      projectname: 'project test',
-      clientname: 'client test',
-      jobno: 1,
-      jobmanager: {
-        employeeid: 'id here',
-        fullname: 'Team 2',
-        isManager: true,
-        isJobManager: true,
-
-      },
-      jobcomponent: {
-        componentid: 'id here',
-        componentname: 'testing component'
-      },
-      notes: 'notes here',
-      members: [
-        {
-          role: 'Engineer (Engr.)',
-          employee: {
-            employeeid: 'id here',
-            fullname: 'Bien Daniel'
-          },
-          dates: [
-            { date: '05/11/2024', status: 0, hours: 9, isOnLeave: true, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/12/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/13/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/14/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/15/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/16/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/17/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/18/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/19/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/20/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false }
-          ]
-        },
-        {
-          role: "Engineer Reviewer (Engr. Revr.)",
-          employee: {
-              employeeid: "id here",
-              fullname: "Bien Daniel"
-          },
-          dates: [
-            { date: '05/11/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/12/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/13/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/14/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/15/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/16/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/17/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/18/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/19/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/20/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false }
-          ]
-      },
-      {
-          role: "Drafter (Drft.)",
-          employee: {
-              employeeid: "id here",
-              fullname: "Joshua De Guzman"
-          },
-          dates: [
-            { date: '05/11/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/12/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/13/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/14/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/15/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/16/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/17/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/18/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/19/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/20/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false }
-          ]
-      },
-      {
-          role: "Drafter Reviewer (Drft. Revr.)",
-          employee: {
-              employeeid: "id here",
-              fullname: "Jomarie Luistro"
-          },
-          dates: [
-            { date: '05/11/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/12/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/13/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/14/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/15/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/16/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/17/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/18/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/19/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/20/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false }
-          ]
-      },
-       
-      ]
-    },
-    {
-      teamname: 'team 3',
-      projectname: 'project test',
-      clientname: 'client test',
-      jobno: 1,
-      jobmanager: {
-        employeeid: 'id here',
-        fullname: 'Team 2',
-        isManager: true,
-        isJobManager: true,
-
-      },
-      jobcomponent: {
-        componentid: 'id here',
-        componentname: 'testing component'
-      },
-      notes: 'notes here',
-      members: [
-        {
-          role: 'Engineer (Engr.)',
-          employee: {
-            employeeid: 'id here',
-            fullname: 'Bien Daniel'
-          },
-          dates: [
-            { date: '05/11/2024', status: 0, hours: 9, isOnLeave: true, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/12/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/13/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/14/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/15/2024', status: 0, hours: 9, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/16/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/17/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/18/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/19/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/20/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false }
-          ]
-        },
-        {
-          role: "Engineer Reviewer (Engr. Revr.)",
-          employee: {
-              employeeid: "id here",
-              fullname: "Bien Daniel"
-          },
-          dates: [
-            { date: '05/11/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/12/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/13/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/14/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/15/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/16/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/17/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/18/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/19/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/20/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false }
-          ]
-      },
-      {
-          role: "Drafter (Drft.)",
-          employee: {
-              employeeid: "id here",
-              fullname: "Joshua De Guzman"
-          },
-          dates: [
-            { date: '05/11/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/12/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/13/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/14/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/15/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/16/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/17/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/18/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/19/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/20/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false }
-          ]
-      },
-      {
-          role: "Drafter Reviewer (Drft. Revr.)",
-          employee: {
-              employeeid: "id here",
-              fullname: "Jomarie Luistro"
-          },
-          dates: [
-            { date: '05/11/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/12/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/13/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/14/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/15/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/16/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/17/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false },
-            { date: '05/18/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: false },
-            { date: '05/19/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: false, isOnEvent: true },
-            { date: '05/20/2024', status: 0, hours: 0, isOnLeave: false, isOnWellnessday: true, isOnEvent: false }
-          ]
-      },
-       
-      ]
-    }
-
-  ],
-  // isManager: true,
-};
+type Row = { id: string; name: string };
 
 
 export default function Yourworkload() {
@@ -501,31 +100,55 @@ export default function Yourworkload() {
   const [hours, setHours] = useState(0)
   const [status, setStatus] = useState('')
   const [employeeid, setEmployeeid] = useState('')
+  const [projectid, setProjectid] = useState('')
   const [jobmanager, setJobmanager] = useState(false)
   const [loading, setLoading] = useState(false)
+  const params = useSearchParams()
+  const id = params.get('projectid')
+  const refresh = params.get('state')
+  const [addStatus, setAddstatus] = useState([])
 
 
   const router = useRouter()
 
+  //selected status
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
-  const [data, setData] = useState(initialData);
-
-  // Function to update status of a specific date
-  const updateStatus = (memberIndex: number, dateIndex: number, newStatus: number,updatedHours: number, graphIndex: number,) => {
-    console.log(newStatus)
-    setData(prevData => {
-      const newData = { ...prevData };
-      const selectedMember = newData.graph[teamIndex].members[memberIndex];
-      if (selectedMember.dates && selectedMember.dates[dateIndex]) {
-        selectedMember.dates[dateIndex].status = newStatus;
-        selectedMember.dates[dateIndex].hours = updatedHours;
+  const handleSelectRow = (id: string) => {
+    setSelectedRows((prevSelectedRows) => {
+      const isSelected = prevSelectedRows.includes(id);
+  
+      if (isSelected) {
+        // Deselect: Remove the id from the array
+        return prevSelectedRows.filter((rowId) => rowId !== id);
+      } else {
+        // Select: Add the id to the array
+        return [...prevSelectedRows, id];
       }
-      return newData;
     });
   };
 
+  console.log(selectedRows)
+
+
+
+
+  // Function to update status of a specific date
+  // const updateStatus = (memberIndex: number, dateIndex: number, newStatus: number,updatedHours: number, graphIndex: number,) => {
+  //   console.log(newStatus)
+  //   setData(prevData => {
+  //     const newData = { ...prevData };
+  //     const selectedMember = newData.graph[teamIndex].members[memberIndex];
+  //     if (selectedMember.dates && selectedMember.dates[dateIndex]) {
+  //       selectedMember.dates[dateIndex].status = newStatus;
+  //       selectedMember.dates[dateIndex].hours = updatedHours;
+  //     }
+  //     return newData;
+  //   });
+  // };
+
 // Memoized data to prevent unnecessary re-renders
-  const memorizedData = useMemo(() => data, [data]);
+  // const memorizedData = useMemo(() => data, [data]);
 
   const getStatus = (data: number, leave: boolean, wd: boolean, event: boolean, hours: number) => {
 
@@ -572,11 +195,29 @@ export default function Yourworkload() {
    
   }
 
+  const getList = async () => {
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/listjobcomponent?projectid=${id}`,{
+      withCredentials: true,
+      headers: {
+        'Content-Type': 'application/json'
+        }
+    })
+
+  
+    setList(response.data.data)
+  
+  }
+
   //update workload
   const updateWorkload = async () => {
+  
     try {
-      const request = axios.post(`${env.NEXT_PUBLIC_API_URL}`,{
-
+      const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/editstatushours`,{
+        projectid:  projectid,
+        employeeid: employeeid,
+        date: date,
+        status: selectedRows,
+        hours: hours
       }, {
         withCredentials: true,
         headers: {
@@ -589,6 +230,12 @@ export default function Yourworkload() {
         success: `Successfully updated`,
         error: 'Error while updating the workload',
     });
+
+    if(response.data.message === 'success'){
+      getList()
+      setDialog(false)
+      setSelectedRows([])
+    }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError<{ message: string, data: string }>;
@@ -633,6 +280,118 @@ export default function Yourworkload() {
     }
   }
 
+  const [list, setList] = useState<Graph[]>([])
+  useEffect(() => {
+    try {
+      const timer = setTimeout(() => {
+        const getList = async () => {
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/listjobcomponent?projectid=${id}`,{
+            withCredentials: true,
+            headers: {
+              'Content-Type': 'application/json'
+              }
+          })
+      
+        
+          setList(response.data.data)
+        
+        }
+        getList()
+      }, 500)
+      return () => clearTimeout(timer)
+  } catch (error) {
+     
+  
+       if (axios.isAxiosError(error)) {
+              const axiosError = error as AxiosError<{ message: string, data: string }>;
+              if (axiosError.response && axiosError.response.status === 401) {
+                  toast.error(`${axiosError.response.data.data}`)
+                  router.push('/')   
+              }
+  
+              if (axiosError.response && axiosError.response.status === 400) {
+                  toast.error(`${axiosError.response.data.data}`)     
+                     
+              }
+  
+              if (axiosError.response && axiosError.response.status === 402) {
+                  toast.error(`${axiosError.response.data.data}`)          
+                         
+              }
+  
+              if (axiosError.response && axiosError.response.status === 403) {
+                  toast.error(`${axiosError.response.data.data}`)              
+                 
+              }
+  
+              if (axiosError.response && axiosError.response.status === 404) {
+                  toast.error(`${axiosError.response.data.data}`)             
+              }
+      } 
+     
+  }
+    
+    
+  },[refresh])
+
+
+  const isDateInRange = (dateToCheck: string, startDate: string, endDate: string): boolean => {
+    const checkDate = new Date(dateToCheck);
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    checkDate.setHours(0, 0, 0, 0);
+    start.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
+
+
+  
+    // Check if the dateToCheck is between or equal to startDate and endDate
+    return checkDate >= start && checkDate <= end;
+  }
+
+  const statusColor = (data: string[], date: string, leaveStart: string, leaveEnd: string, eventStart: string, eventEnd: string, wddate: string) => {
+    const colorData: string[] = [];
+
+    const isLeaveInRange = isDateInRange(date, leaveStart, leaveEnd);
+    const isEventInRange = isDateInRange(date, eventStart, eventEnd);
+
+
+    if(data.includes('1')){
+      colorData.push('bg-red-500')
+    }
+    if(data.includes('2')){
+      colorData.push('bg-amber-500')
+    }
+    if(data.includes('3')){
+      colorData.push('bg-yellow-300')
+    }
+    if(data.includes('4')){
+      colorData.push('bg-green-500')
+    }
+    if(data.includes('5')){
+      colorData.push('bg-blue-500')
+    }
+    if(data.includes('6')){
+      colorData.push('bg-cyan-400')
+    }
+
+    if(isLeaveInRange == true){
+      colorData.push('bg-violet-300')
+    }
+
+    if(isEventInRange == true){
+      colorData.push('bg-gray-300')
+    }
+
+
+  
+    return colorData; // Return the colorData array
+  }
+
+  
+
+
 
   return (
    <div className=' w-full h-full flex flex-col justify-center bg-secondary p-4 text-zinc-100'>
@@ -650,7 +409,6 @@ export default function Yourworkload() {
           <div className='flex items-center gap-2 bg-primary rounded-sm text-xs'>
             <Createprojectcomponent>
               <button className={`text-xs px-3 py-1 bg-red-600  rounded-sm`}>Create</button>
-
             </Createprojectcomponent>
           </div>
             
@@ -710,7 +468,7 @@ export default function Yourworkload() {
               </tr>
             </thead>
             <tbody>
-            {memorizedData.graph.map((graphItem, graphIndex) =>
+            {list.map((graphItem, graphIndex) =>
               graphItem.members.map((member, memberIndex) => (
                 <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
                     <td className="text-center text-white flex items-center justify-center h-[40px] w-[30px]">
@@ -854,16 +612,16 @@ export default function Yourworkload() {
                       </td>
                     <td className="text-center text-red-600">{memberIndex === 0 && graphItem.teamname}</td>
                     <td className="text-center">{memberIndex === 0 && graphItem.jobno}</td>
-                    <td className="text-center">{memberIndex === 0 && graphItem.clientname}</td>
-                    <td className="text-center">{memberIndex === 0 && graphItem.projectname}</td>
+                    <td className="text-center">{memberIndex === 0 && graphItem.clientname.name}</td>
+                    <td className="text-center">{memberIndex === 0 && graphItem.projectname.name}</td>
                     <td className="text-center">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
-                    <td className="text-center">{memberIndex === 0 && graphItem.jobcomponent.componentname}</td>
+                    <td className="text-center">{memberIndex === 0 && graphItem.jobcomponent}</td>
         
                   <td className="text-center">{member.employee.fullname}</td>
                   <td className="text-center text-[.5rem]">{member.role}</td>
                   <td className="text-center">
                     <Dialog>
-                      <DialogTrigger>{graphItem.notes.slice(0, 25)} ...</DialogTrigger>
+                      <DialogTrigger>{member.notes.slice(0, 25) || ''} ...</DialogTrigger>
                       <DialogContent className=' bg-secondary p-6 border-none max-w-[600px] text-white'>
                         <DialogHeader>
                           <DialogTitle>Notes</DialogTitle>
@@ -871,7 +629,7 @@ export default function Yourworkload() {
                             
                           </DialogDescription>
                         </DialogHeader>
-                        <p className=' text-xs text-zinc-400'>{graphItem.notes}</p>
+                        <p className=' text-xs text-zinc-400'>{member.notes}</p>
                       </DialogContent>
                     </Dialog>
 
@@ -885,14 +643,14 @@ export default function Yourworkload() {
           </table>
 
           <div className=' overflow-x-auto w-[1100px]'>
-            <table className="table-auto w-[1300px] border-collapse ">
+            <table className="table-auto w-[700px] border-collapse ">
               <thead className=' w-[800px] bg-secondary h-[100px]'>
                 <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
                 
-                  {memorizedData.graph[0].members[0].dates?.map((dateObj, index) => (
+                  {list[0]?.allDates.map((dateObj, index) => (
                     <>
-                      <th key={index} className=' relative font-normal w-[30px] border-[1px] border-zinc-700'>
-                        <p className=' absolute rotate-90'>{dateObj.date}</p>
+                      <th key={index} className=' relative font-normal w-[60px] border-[1px] border-zinc-700'>
+                        <p className=' absolute top-12 rotate-90'>{formatDate(dateObj)}</p>
                       </th>
                       {(index + 1) % 5 === 0 && (
                         <th key={`total-${index}`} className='font-normal w-[30px] border-[1px] border-zinc-700'>
@@ -906,11 +664,14 @@ export default function Yourworkload() {
                 </tr>
               </thead>
               <tbody>
-              {memorizedData.graph.map((graphItem, graphIndex) =>
-                graphItem.members.map((member, memberIndex) => (
-                  <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[41px] border-[1px] border-zinc-600">
-                    
-                    {member.dates?.map((dateObj, dateIndex) => {
+              {list.map((graphItem, graphIndex) =>
+                  graphItem.members.map((member, memberIndex) => (
+                    <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[41px] border-[1px] border-zinc-600">
+                      
+                      {list[0]?.allDates.map((dateObj, dateIndex) => {
+                        // Find the corresponding date in member.dates
+                        const memberDate = member.dates?.find(date => formatDate(date.date) === formatDate(dateObj));
+                        
                         // Calculate sum every 5 days
                         const startIndex = Math.floor(dateIndex / 5) * 5;
                         const endIndex = startIndex + 5;
@@ -924,31 +685,46 @@ export default function Yourworkload() {
                               key={dateIndex} 
                               className="relative text-center overflow-hidden bg-white cursor-pointer border-[1px]"
                               onClick={() => {
-                                setDialog(true);
-                                setIndex(dateIndex);
-                                setHours(dateObj.hours);
-                                setMemberIndex(memberIndex);
-                                setTeamIndex(graphIndex);
-                                setWdstatus(dateObj.isOnWellnessday);
-                                setLeavestatus(dateObj.isOnLeave)
-                                setDate(dateObj.date);
-                                setName(member.employee.fullname);
-                                setRole(member.role);
-                                setEmployeeid(member.employee.employeeid)
-                                setJobmanager(graphItem.jobmanager.isJobManager)
-                            
-                              }}
+                             
+                                  setDialog(true);
+                                  // setHours(memberDate.hours);
+                                  setDate(dateObj);
+                                  setProjectid(graphItem.projectname.projectid);
+                                  setName(member.employee.fullname);
+                                  setEmployeeid(member.employee.employeeid);
+                                  setHours(memberDate?.hours || 0)
+                                  setAddstatus(memberDate?.status || [])
+        
+                                }
+                              }
                             >
-                              <div className='flex absolute top-0 w-full h-[40px] text-center'>
-                                {getStatus(dateObj.status, dateObj.isOnLeave, dateObj.isOnWellnessday, dateObj.isOnEvent, dateObj.hours).map((item, index) => (
-                                  <div className={`w-full ${item}`} key={index}></div>
+                              <div className=' w-full h-[40px] absolute flex top-0 '>
+                                {statusColor(
+                                  memberDate?.status || [],
+                                  dateObj,
+                                  member.leaveDates.length !== 0 ? member.leaveDates[0]?.startdate : '', 
+                                  member.leaveDates.length !== 0 ? member.leaveDates[0]?.enddate : '', 
+                                  member.eventDates.length !== 0 ? member.eventDates[0]?.startdate : '', 
+                                  member.eventDates.length !== 0 ? member.eventDates[0]?.enddate : '', 
+                                  member.wellnessDates[0]?.startdate || ''
+                                ).map((item, index) => (
+                                  <div key={index} className={`w-full h-[40px] ${item}`}>
+
+                                  </div>
+
                                 ))}
+
                               </div>
-                              <p className='relative text-black font-bold text-xs z-30'>{dateObj.isOnWellnessday !== true && dateObj.hours}</p>
+                              <p>{member.leaveDates[0]?.startdate}</p>
+                              {/* Render the hours if the date exists, otherwise initialize with 0 */}
+                              <p className='relative text-black font-bold text-xs z-30'>
+                                {memberDate ? memberDate.hours : 0}
+                              </p>
                             </td>
 
                             {/* Insert Total every 5 days */}
                             {(dateIndex + 1) % 5 === 0 && (
+
                               <th key={`total-${dateIndex}`} className='font-normal w-[40px] bg-primary border-[1px] border-zinc-700'>
                                 <p className=''>{totalHours}</p> {/* Display the sum of hours for every 5 days */}
                               </th>
@@ -956,10 +732,9 @@ export default function Yourworkload() {
                           </>
                         );
                       })}
-
-                  </tr>
-                ))
-              )}
+                    </tr>
+                  ))
+                )}
             </tbody>
             </table>
           </div>
@@ -983,7 +758,7 @@ export default function Yourworkload() {
                         <p className=' text-zinc-400'>Wellness day:{wdStatus === true ? 'Yes' : 'No'}</p>
                       </div>
 
-                    <Select disabled={jobmanager === true ? false : true} value={status} onValueChange={setStatus}>
+                    {/* <Select value={status} onValueChange={setStatus}>
                       <SelectTrigger className="w-[180px] text-xs bg-primary">
                         <SelectValue placeholder="Select Status" />
                       </SelectTrigger>
@@ -995,27 +770,40 @@ export default function Yourworkload() {
                         <SelectItem value="5">100 %</SelectItem>
                         <SelectItem value="6">CNST PH.</SelectItem>
                       </SelectContent>
-                    </Select>
+                    </Select> */}
+
+                    <label htmlFor="" className=' text-xs'>Select Status</label>
+
+                    <div className='w-full flex items-center gap-6'>
+                        {statusData.map((item) => (
+                          <div key={item.id} className='flex items-center gap-1 text-xs'>
+                            <input
+                              value={item.id}
+                              type="checkbox"
+                              checked={selectedRows.includes(item.id)}
+                              onChange={() => handleSelectRow(item.id)}
+                            />
+                            <p className=' p-1'>{item.name}</p>
+                          </div>
+                        ))}
+                      </div>
 
 
                   </div>
 
-                  { wdStatus !== true && (
+               
                     <div className=' flex flex-col gap-2 text-xs'>
                       <label htmlFor="">Hours Rendered</label>
-                      <input disabled={jobmanager === true ? false : true} type="number" value={hours} onChange={(e) => setHours(e.target.valueAsNumber)} placeholder='Hours' id="" className=' bg-primary p-2 rounded-md text-xs' />
+                      <input  type="number" value={hours} onChange={(e) => setHours(e.target.valueAsNumber)} placeholder='Hours' id="" className=' bg-primary p-2 rounded-md text-xs' />
                       
                     </div>
-                  )}
+           
 
                       <div className=' w-full flex items-end justify-end mt-4'>
-                        <button disabled={jobmanager === true ? false : true} onClick={() => updateStatus(memberIndex, index, parseInt(status), hours, teamIndex )} className=' px-4 py-2 bg-red-600 text-xs text-white rounded-md'>Save</button>
+                        <button onClick={() => updateWorkload()} className=' px-4 py-2 bg-red-600 text-xs text-white rounded-md'>Save</button>
                       </div>
 
-                      {jobmanager === false && (
-                        <p className=' text-red-500 text-xs'>You are not allowed to edit the workload, only the job manager have access to do that.</p>
-                      )}
-
+                    
                  
                  
                   </DialogContent>

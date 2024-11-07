@@ -87,6 +87,7 @@ export default function Projecttable() {
   const [search, setSearch] = useState('')
   const params = useSearchParams()
   const refresh = params.get('state')
+  const id = params.get('projectid')
 
   useEffect(() => {
     setLoading(true)
@@ -219,7 +220,7 @@ export default function Projecttable() {
             <TableCell>{item.projectname}</TableCell>
             <TableCell className=""></TableCell>
             <TableCell className="">
-              <a href='/pm/graph/jobcomponent' className=' w-fit bg-red-700 rounded-sm p-1 text-white flex items-center gap-2'>Job Component<Eye size={15}/></a>
+              <a href={`/pm/graph/jobcomponent?projectid=${item._id}`} className=' w-fit bg-red-700 rounded-sm p-1 text-white flex items-center gap-2'>Job Component<Eye size={15}/></a>
               </TableCell>
             <TableCell className="">{item.invoiced}</TableCell>
             <TableCell className=""></TableCell>

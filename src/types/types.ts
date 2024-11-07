@@ -57,9 +57,53 @@ export type Wfhemployee = {
 
 
 //superadmin
-
+ 
 export type Team = {
     teamname: string
     teamid: string
   }
 //end superadmin
+
+
+type Dates = {
+    date: string
+    hours: number, 
+    status:[], 
+    _id: string
+}
+
+type Request = {
+    enddate: string
+startdate: string
+}
+
+
+ type Members = {
+    dates: Dates[]
+employee: {employeeid: string,fullname: string}
+eventDates: Request[]
+leaveDates: Request[]
+notes: string
+role: string
+wellnessDates: Request[]
+_id: string
+ }
+
+ type Project = {
+    name: string
+projectid: string
+ }
+
+export type Graph = {
+    allDates: []
+clientname: 
+{clientid: string, name: string}
+componentid: string
+jobcomponent: string
+jobmanager: {employeeid: string, fullname: string, isManager: boolean, isJobManager: boolean}
+jobno: string
+members: Members[]
+projectname: Project
+teamname:string
+_id:string
+}

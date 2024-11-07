@@ -120,6 +120,7 @@ export const createEmployee = z.object ({
     reportingto: z.string().nonempty('Please enter a contact no.'),
     email: z.string().email("Invalid email address"),
     position: z.string().nonempty("Please enter a position"),
+    resource: z.string().nonempty("Please select a resource"),
     img: any(),
     password: z.string()
 })

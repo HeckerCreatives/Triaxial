@@ -29,6 +29,7 @@ export const pm = [
 export const employee = [
     {name: 'Dashboard', path: '/employee/dashboard', icon: <Home className="h-4 w-4" />},
     {name: ' Your Workload', path: '/employee/yourworkload', icon: <List className="h-4 w-4" />},
+    {name: 'Projects', path: '/employee/projects', icon: <Box className="h-4 w-4" />, subpath: []},
     {name: 'Request', path: '/employee/request', icon: <ArrowRightLeft className="h-4 w-4" />},
     {name: 'Messages', path: '/employee/messages', icon: <Mail className="h-4 w-4" />},
     {name: 'Settings', path: '/employee/settings', icon: <Cog className="h-4 w-4" />},

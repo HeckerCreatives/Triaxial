@@ -38,7 +38,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { ProjectsSection, selectTeams, Teams } from '@/types/data'
+import { ProjectsSection, resources, selectTeams, Teams } from '@/types/data'
 import { X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -76,6 +76,7 @@ type Employee = {
   reportingto:  string
   email: string
   dateCreated: string
+  resource: string
 }
 
 type Data = {
@@ -85,6 +86,7 @@ type Data = {
   lastname:string 
   initial: string
   contactno: string
+  resource: string
   reportingto: {
       employeeid: string
       firstname: string
@@ -119,6 +121,7 @@ export default function Employeetable() {
   const [currentpage, setCurrentpage] = useState(0)
   const [employeedata, setEmployeedata] = useState<Data>()
   const [id, setEmployeeid] = useState('')
+  const [resource, setResource] = useState('')
 
 
 
@@ -173,6 +176,7 @@ export default function Employeetable() {
       reportingto:  employeedata?.reportingto.employeeid || '',
       contactno:  employeedata?.contactno || '',
       team: 'Team',
+      resource: resource
     },
   });
 
@@ -193,7 +197,8 @@ const onSubmit = async (data: CreateEmployee) => {
           lastname: data.lasttname,
           contactnumber: data.contactno,
           reportingto: data.reportingto, // employee id
-          position: data.position.toLocaleLowerCase() // employee, manager, hr, finance
+          position: data.position.toLocaleLowerCase(), // employee, manager, hr, finance
+          resource: data.resource
          },
              {
                  withCredentials: true,
@@ -267,7 +272,8 @@ const editEmployee = async (data: CreateEmployee) => {
         lastname: data.lasttname,
         contactnumber: data.contactno,
         reportingto: data.reportingto, // employee id
-        position: data.position.toLocaleLowerCase() // employee, manager, hr, finance
+        position: data.position.toLocaleLowerCase(), // employee, manager, hr, finance
+        resource: data.resource
        },
            {
                withCredentials: true,
@@ -652,6 +658,8 @@ const [team, setTeam] = useState<Team[]>([])
   
   }
 
+  console.log(resource)
+
 
 
 
@@ -762,13 +770,28 @@ const [team, setTeam] = useState<Team[]>([])
                             <Input placeholder='Position' value={'Employee'} type='text' className=' bg-primary text-xs h-[35px]' {...register('position')}/>
                             {errors.position && <p className=' text-[.6em] text-red-500'>{errors.position.message}</p>}
 
+                            <label htmlFor="" className=' mt-2 text-xs'>Resource *</label>
+                            <Select onValueChange={(value) => setValue('resource', value)} {...register('resource')}>
+                              <SelectTrigger className="w-full text-xs h-[35px] bg-primary ">
+                                <SelectValue placeholder="Select" />
+                              </SelectTrigger>
+                              <SelectContent className=' text-xs'>
+                                {resources.map((item, index) => (
+                                <SelectItem key={index} value={item}>{item}</SelectItem>
 
-                            <div className=' w-full bg-primary flex flex-col items-center mt-2 p-2'>
+                                ))}
+                              
+                              </SelectContent>
+                            </Select>
+                            {errors.resource && <p className=' text-[.6em] text-red-500'>{errors.resource.message}</p>}
+
+
+                            {/* <div className=' w-full bg-primary flex flex-col items-center mt-2 p-2'>
                               <div className=' w-20 aspect-square bg-secondary'>
 
                               </div>
                               <input type="file"  accept="image/*" className=' text-[.5em] mt-2 bg-secondary' placeholder='Select Image' {...register('img')} />
-                            </div>
+                            </div> */}
                           
                           </div>
                         </div>
@@ -986,11 +1009,12 @@ const [team, setTeam] = useState<Team[]>([])
             <TableHead>Team</TableHead>
             <TableHead>Position</TableHead>
             <TableHead>Initial</TableHead>
+            <TableHead>Resource</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Reporting to</TableHead>
             <TableHead >Date Created</TableHead>
             <TableHead >Status</TableHead>
-            <TableHead >Individual Workload</TableHead>
+            {/* <TableHead >Individual Workload</TableHead> */}
             <TableHead >Action</TableHead>
 
             </TableRow>
@@ -1041,16 +1065,17 @@ const [team, setTeam] = useState<Team[]>([])
         
              <TableCell className="font-medium uppercase">{item.auth}</TableCell>
              <TableCell className="font-medium uppercase">{item.initial}</TableCell>
+             <TableCell className="font-medium">{item.resource}</TableCell>
              <TableCell className="font-medium">{item.email}</TableCell>
              <TableCell className="font-medium">{item.reportingto}</TableCell>
              <TableCell className="">{new Date(item.dateCreated).toLocaleString()}</TableCell>
              <TableCell className={` uppercase font-medium ${item.status === 'active' ? 'text-green-400' : 'text-red-500'}`}>{item.status}</TableCell>
-             <TableCell className="font-medium"><Viewbtn name={'View'} onClick={() => router.push(`/superadmin/individualworkload?employeeid=${item.employeeid}`)} disabled={false}/></TableCell>
+             {/* <TableCell className="font-medium"><Viewbtn name={'View'} onClick={() => router.push(`/superadmin/individualworkload?employeeid=${item.employeeid}`)} disabled={false}/></TableCell> */}
              <TableCell className="font-medium">
 
              <Dialog open={dialog4} onOpenChange={setDialog4}>
                 <DialogTrigger>
-                  <button onClick={() => setEmployeeid(item.employeeid)} className=' bg-red-700 text-xs px-6 py-2 rounded-sm flex items-center gap-1 text-white'><Pen size={15}/>Edit</button>
+                  <button onClick={() => {setEmployeeid(item.employeeid), setResource(item.resource)}} className=' bg-red-700 text-xs px-6 py-2 rounded-sm flex items-center gap-1 text-white'><Pen size={15}/>Edit</button>
                 </DialogTrigger>
                 <DialogContent className=' bg-secondary border-none text-zinc-100 grid grid-cols-1 lg:grid-cols-[250px,1fr]'>
                   <div className=' bg-blue-400 lg:block hidden'
@@ -1063,7 +1088,7 @@ const [team, setTeam] = useState<Team[]>([])
                   <div className=' flex flex-col gap-2 p-4'>
                     <DialogHeader>
                     <DialogDescription>
-                      L
+                      
                     </DialogDescription>
                     </DialogHeader>
                       <form onSubmit={handleSubmit(editEmployee)} className=' flex flex-col '>
@@ -1122,25 +1147,27 @@ const [team, setTeam] = useState<Team[]>([])
                             {errors.password && <p className=' text-[.6em] text-red-500'>{errors.password.message}</p>}
 
 
-                            {/* <label htmlFor="" className=' mt-2 text-xs'>Team *</label>
-                            <Select onValueChange={(value) => setValue('team', value)} {...register('team')}>
-                              <SelectTrigger className="w-full text-xs h-[35px] bg-primary">
-                                <SelectValue placeholder="Select" />
-                              </SelectTrigger>
-                              <SelectContent className=' text-xs'>
-                                {Teams.map((item, index) => (
-                                <SelectItem key={index} value={item.name}>{item.name}</SelectItem>
-
-                                ))}
-                              
-                              </SelectContent>
-                            </Select>
-                            {errors.team && <p className=' text-[.6em] text-red-500'>{errors.team.message}</p>} */}
+                          
 
 
                             <label htmlFor="" className=' mt-2 text-xs'>Position *</label>
                             <Input placeholder='Position' value={'Employee'} type='text' className=' bg-primary text-xs h-[35px]' {...register('position')}/>
                             {errors.position && <p className=' text-[.6em] text-red-500'>{errors.position.message}</p>}
+
+                            <label htmlFor="" className=' mt-2 text-xs'>Resource *</label>
+                            <Select value={resource} onValueChange={(value) => {setValue('resource', value), setResource(value)}} {...register('resource')}>
+                              <SelectTrigger className="w-full text-xs h-[35px] bg-primary ">
+                                <SelectValue placeholder="Select" />
+                              </SelectTrigger>
+                              <SelectContent className=' text-xs'>
+                                {resources.map((item, index) => (
+                                <SelectItem key={index} value={item}>{item}</SelectItem>
+
+                                ))}
+                              
+                              </SelectContent>
+                            </Select>
+                            {errors.resource && <p className=' text-[.6em] text-red-500'>{errors.resource.message}</p>}
 
 
                             {/* <div className=' w-full bg-primary flex flex-col items-center mt-2 p-2'>

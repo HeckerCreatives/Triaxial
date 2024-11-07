@@ -96,6 +96,15 @@ export default function Legends() {
 
             </div>
 
+            <div className=' flex items-center gap-2'>
+              <div className=' bg-gray-400'>
+              <p className=' text-[.7em] text-black font-semibold px-1'>Events</p>
+
+              </div>
+
+
+            </div>
+
 
           </div>
 
