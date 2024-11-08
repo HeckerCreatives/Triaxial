@@ -969,7 +969,7 @@ export default function Yourworkload() {
                                   <div className={`w-full ${item}`} key={index}></div>
                                 ))}
                               </div>
-                              <p className='relative text-black font-bold text-xs z-30'>{dateObj.isOnWellnessday !== true && dateObj.hours}</p>
+                              <p className='relative text-black font-bold text-xs z-20'>{dateObj.isOnWellnessday !== true && dateObj.hours}</p>
                             </td>
 
                             {/* Insert Total every 5 days */}

@@ -349,24 +349,24 @@ export default function Teamstable() {
     
   },[state, searchteam, currentpage])
 
-  useEffect(() => {
-    setLoading(true)
-      const getList = async () => {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teams/teamsearchlistmanager?teamname`,{
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'application/json'
-            }
-        })
+  // useEffect(() => {
+  //   setLoading(true)
+  //     const getList = async () => {
+  //       const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teams/teamsearchlistmanager?teamname`,{
+  //         withCredentials: true,
+  //         headers: {
+  //           'Content-Type': 'application/json'
+  //           }
+  //       })
   
-        console.log('team search',response.data)
+  //       console.log('team search',response.data)
        
-        setLoading(false)
+  //       setLoading(false)
        
-      }
-      getList()
+  //     }
+  //     getList()
     
-  },[])
+  // },[])
 
   //paginition
   const handlePageChange = (page: number) => {
@@ -390,7 +390,6 @@ export default function Teamstable() {
       });
   };
   
-  console.log('Selected Teams',selectedRows)
 
 
   //delete
@@ -468,24 +467,24 @@ export default function Teamstable() {
   }
 
   //team data
-  useEffect(() => {
-      const getData = async () => {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teams/teamdatamanager?teamid=${teamid}`,{
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'application/json'
-            }
-        })
+  // useEffect(() => {
+  //     const getData = async () => {
+  //       const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teams/teamdatamanager?teamid=${teamid}`,{
+  //         withCredentials: true,
+  //         headers: {
+  //           'Content-Type': 'application/json'
+  //           }
+  //       })
   
-        console.log('team data',response.data)
-        setTeamdata(response.data.data)
+  //       console.log('team data',response.data)
+  //       setTeamdata(response.data.data)
        
-        setLoading(false)
+  //       setLoading(false)
        
-      }
-      getData()
+  //     }
+  //     getData()
     
-  },[teamid])
+  // },[teamid])
 
 
    // Dynamically reset the form based on teamid

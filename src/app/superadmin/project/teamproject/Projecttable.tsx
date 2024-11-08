@@ -234,7 +234,7 @@ export default function Projecttable() {
             <TableCell className="">00/00/00</TableCell>
             <TableCell className=" flex items-center gap-2">
 
-              <Editprojectform projectid={''} team={''} projectname={''} startdate={''} deadlinedate={''}>
+              {/* <Editprojectform projectid={''} team={''} projectname={''} startdate={''} deadlinedate={''}>
                 <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger><button className=' p-2 bg-secondary rounded-md'><Eye size={15}/></button></TooltipTrigger>
@@ -243,7 +243,7 @@ export default function Projecttable() {
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
-              </Editprojectform>
+              </Editprojectform> */}
 
               <Copyprojectform onClick={() => undefined}>
                 <TooltipProvider>

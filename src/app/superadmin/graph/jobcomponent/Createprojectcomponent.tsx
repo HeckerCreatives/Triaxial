@@ -23,10 +23,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { useForm } from 'react-hook-form'
-import { createProjectComponenent, CreateProjectComponentSchema, createProjectSchema, CreateProjectSchema } from '@/schema/schema'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { number } from 'zod'
 import toast from 'react-hot-toast'
 import axios, { AxiosError } from 'axios'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -47,7 +43,7 @@ interface FormData {
     jobmanager: string;
     budgettype: string;
     estimatedbudget: string;
-    jobcomponentname: string
+    jobcomponent: string
     jobno: string
     members: Member[]
 }
@@ -75,7 +71,7 @@ export default function Createprojectcomponent( prop: Data) {
   const id = params.get('projectid')
   const [isValidated, setIsvalidated] = useState(false)
 
-  const [formData, setFormData] = useState<FormData[]>([{ jobmanager: '',jobno: '', budgettype: '', estimatedbudget: '', jobcomponentname: '', members: [
+  const [formData, setFormData] = useState<FormData[]>([{ jobmanager: '',jobno: '', budgettype: '', estimatedbudget: '', jobcomponent: '', members: [
                 {
                     employeeid: "",
                     role: "Engnr."
@@ -108,7 +104,7 @@ export default function Createprojectcomponent( prop: Data) {
     }
   
     // Add a new form if validation passes
-    setFormData([...formData, { jobmanager: '',jobno: '', budgettype: '', estimatedbudget: '', jobcomponentname: '' , members: [
+    setFormData([...formData, { jobmanager: '',jobno: '', budgettype: '', estimatedbudget: '', jobcomponent: '' , members: [
       {
           employeeid: "6723819e92ce23277a217af9",
           role: "Engnr."
@@ -199,7 +195,7 @@ export default function Createprojectcomponent( prop: Data) {
         form.jobmanager.trim() !== '' &&
         form.budgettype.trim() !== '' &&
         form.estimatedbudget.trim() !== '' &&
-        form.jobcomponentname.trim() !== '' &&
+        form.jobcomponent.trim() !== '' &&
         form.jobno.trim() !== '';
       
       // Check if members array is not empty
@@ -236,7 +232,7 @@ export default function Createprojectcomponent( prop: Data) {
       });
 
       if(response.data.message === 'success'){
-        setFormData([{ jobmanager: '',jobno: '', budgettype: '', estimatedbudget: '', jobcomponentname: '', members: [
+        setFormData([{ jobmanager: '',jobno: '', budgettype: '', estimatedbudget: '', jobcomponent: '', members: [
           {
               employeeid: "",
               role: "Engnr."
@@ -448,8 +444,8 @@ export default function Createprojectcomponent( prop: Data) {
                             type="text"
                             className="text-xs h-[35px] bg-white"
                             placeholder="Job Component Name"
-                            value={item.jobcomponentname}
-                            onChange={(e) => handleChange(index, 'jobcomponentname', e.target.value)}
+                            value={item.jobcomponent}
+                            onChange={(e) => handleChange(index, 'jobcomponent', e.target.value)}
                         />
 
                         <Label className="mt-2 text-zinc-500">Job no.</Label>

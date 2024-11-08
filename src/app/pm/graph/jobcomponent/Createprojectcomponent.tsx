@@ -23,10 +23,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { useForm } from 'react-hook-form'
-import { createProjectComponenent, CreateProjectComponentSchema, createProjectSchema, CreateProjectSchema } from '@/schema/schema'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { number } from 'zod'
 import toast from 'react-hot-toast'
 import axios, { AxiosError } from 'axios'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -44,11 +40,11 @@ type Member = {
 };
 
 interface FormData {
-    jobManager: string;
-    budgetType: string;
-    estBudget: string;
-    jobcomponentname: string
-    jobNo: string
+    jobmanager: string;
+    budgettype: string;
+    estimatedbudget: string;
+    jobcomponent: string
+    jobno: string
     members: Member[]
 }
 
@@ -75,7 +71,7 @@ export default function Createprojectcomponent( prop: Data) {
   const id = params.get('projectid')
   const [isValidated, setIsvalidated] = useState(false)
 
-  const [formData, setFormData] = useState<FormData[]>([{ jobManager: '',jobNo: '', budgetType: '', estBudget: '', jobcomponentname: '', members: [
+  const [formData, setFormData] = useState<FormData[]>([{ jobmanager: '',jobno: '', budgettype: '', estimatedbudget: '', jobcomponent: '', members: [
                 {
                     employeeid: "",
                     role: "Engnr."
@@ -108,7 +104,7 @@ export default function Createprojectcomponent( prop: Data) {
     }
   
     // Add a new form if validation passes
-    setFormData([...formData, { jobManager: '',jobNo: '', budgetType: '', estBudget: '', jobcomponentname: '' , members: [
+    setFormData([...formData, { jobmanager: '',jobno: '', budgettype: '', estimatedbudget: '', jobcomponent: '' , members: [
       {
           employeeid: "6723819e92ce23277a217af9",
           role: "Engnr."
@@ -193,14 +189,16 @@ export default function Createprojectcomponent( prop: Data) {
   //create job component
   const createProjectcomponent = async () => {
 
+
+
     const isFormDataComplete = (form: FormData) => {
       // Check if all main fields are filled
       const mainFieldsFilled = 
-        form.jobManager.trim() !== '' &&
-        form.budgetType.trim() !== '' &&
-        form.estBudget.trim() !== '' &&
-        form.jobcomponentname.trim() !== '' &&
-        form.jobNo.trim() !== '';
+        form.jobmanager.trim() !== '' &&
+        form.budgettype.trim() !== '' &&
+        form.estimatedbudget.trim() !== '' &&
+        form.jobcomponent.trim() !== '' &&
+        form.jobno.trim() !== '';
       
       // Check if members array is not empty
       const membersFilled = form.members.length > 0;
@@ -236,7 +234,7 @@ export default function Createprojectcomponent( prop: Data) {
       });
 
       if(response.data.message === 'success'){
-        setFormData([{ jobManager: '',jobNo: '', budgetType: '', estBudget: '', jobcomponentname: '', members: [
+        setFormData([{ jobmanager: '',jobno: '', budgettype: '', estimatedbudget: '', jobcomponent: '', members: [
           {
               employeeid: "",
               role: "Engnr."
@@ -255,6 +253,7 @@ export default function Createprojectcomponent( prop: Data) {
           }
         ] }])
         setDialog(false)
+        window.location.reload()
 
       }
       } catch (error) {
@@ -448,8 +447,8 @@ export default function Createprojectcomponent( prop: Data) {
                             type="text"
                             className="text-xs h-[35px] bg-white"
                             placeholder="Job Component Name"
-                            value={item.jobcomponentname}
-                            onChange={(e) => handleChange(index, 'jobcomponentname', e.target.value)}
+                            value={item.jobcomponent}
+                            onChange={(e) => handleChange(index, 'jobcomponent', e.target.value)}
                         />
 
                         <Label className="mt-2 text-zinc-500">Job no.</Label>
@@ -457,19 +456,19 @@ export default function Createprojectcomponent( prop: Data) {
                             type="text"
                             className="text-xs h-[35px] bg-white"
                             placeholder="Job no."
-                            value={item.jobNo}
-                            onChange={(e) => handleChange(index, 'jobNo', e.target.value)}
+                            value={item.jobno}
+                            onChange={(e) => handleChange(index, 'jobno', e.target.value)}
                         />
                         <Label className="mt-2 text-zinc-500">Job Manager</Label>
                         <Select
-                            value={item.jobManager}
-                            onValueChange={(value) => handleChange(index, 'jobManager', value)}
+                            value={item.jobmanager}
+                            onValueChange={(value) => handleChange(index, 'jobmanager', value)}
                         >
                             <SelectTrigger className="text-xs h-[35px] bg-white">
                             <SelectValue placeholder="Select Job Manager" className="text-black" />
                             </SelectTrigger>
                             <SelectContent className="text-xs">
-                              {manager.map((item, index) => (
+                              {employee.map((item, index) => (
                                 <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
                               ))}
                             </SelectContent>
@@ -478,8 +477,8 @@ export default function Createprojectcomponent( prop: Data) {
 
                         <Label className="font-semibold mt-4">Job Component Budget</Label>
                         <Select
-                            value={item.budgetType}
-                            onValueChange={(value) => handleChange(index, 'budgetType', value)}
+                            value={item.budgettype}
+                            onValueChange={(value) => handleChange(index, 'budgettype', value)}
                         >
                             <SelectTrigger className="text-xs h-[35px] bg-white mt-2">
                             <SelectValue placeholder="Type" className="text-black" />
@@ -561,8 +560,8 @@ export default function Createprojectcomponent( prop: Data) {
                             type="number"
                             className="text-xs h-[35px] bg-white"
                             placeholder="0"
-                            value={item.estBudget}
-                            onChange={(e) => handleChange(index, 'estBudget', e.target.value)}
+                            value={item.estimatedbudget}
+                            onChange={(e) => handleChange(index, 'estimatedbudget', e.target.value)}
                         />
 
                         </div>

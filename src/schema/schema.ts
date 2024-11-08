@@ -79,6 +79,7 @@ export const createProjectSchema = z.object ({
     // client: z.string().nonempty("Client is empty"),
     start: z.string().nonempty("Start date is empty"),
     end: z.string().nonempty("End date is empty"),
+    client: z.string().nonempty("Please select a client"),
 })
 
 export const createProjectComponenent = z.object ({
@@ -166,6 +167,13 @@ export const changepassword = z
     message: "Passwords don't match",
     path: ['confirmpassword'], // Error will appear under confirmpassword field
   });
+
+
+export const editProjectComponentAsManager = z.object({
+    client: z.string(),
+    projectname: z.string(),
+    jobmanager: z.string(),
+})
 
 export type LeaveSchema = z.infer<typeof leaveSchema>;
 export type WdSchema = z.infer<typeof wdSchema>;

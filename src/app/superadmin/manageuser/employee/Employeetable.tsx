@@ -591,6 +591,7 @@ const banEmployee = async () => {
 
 //employe data
  useEffect(() => {
+  if(id !== ''){
     const getData = async () => {
       const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users/viewemployeedata?employeeid=${id}`,{
         withCredentials: true,
@@ -605,6 +606,8 @@ const banEmployee = async () => {
     
     }
     getData()
+  }
+   
 
  },[id])
 

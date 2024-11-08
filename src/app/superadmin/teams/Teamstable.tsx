@@ -441,7 +441,6 @@ export default function Teamstable() {
       });
   };
   
-  console.log('Selected Teams',selectedRows)
 
 
   //delete
@@ -519,7 +518,8 @@ export default function Teamstable() {
   }
 
   //team data
-  useEffect(() => {
+   useEffect(() => {
+    if(teamid !== '') {
       const getData = async () => {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teams/teamdata?teamid=${teamid}`,{
           withCredentials: true,
@@ -527,16 +527,17 @@ export default function Teamstable() {
             'Content-Type': 'application/json'
             }
         })
-  
+ 
         console.log('team data',response.data)
         setTeamdata(response.data.data)
-       
+      
         setLoading(false)
-       
+      
       }
       getData()
-    
-  },[teamid])
+    }
+      
+   },[teamid])
 
 
    // Dynamically reset the form based on teamid

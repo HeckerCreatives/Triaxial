@@ -34,6 +34,7 @@ interface Data {
     projectname: string
     startdate: string
     deadlinedate: string
+    client: string
 }
 
 type Team = {
@@ -54,13 +55,16 @@ team: {
   teamid: string
   teamname: string
 }
+}
 
+type Client = {
+  clientname: string
+clientid: string
 }
 
 export default function Editprojectform( prop: Data) {
   const [dialog, setDialog] = useState(false)
   const [jobno, setJobno] = useState('')
-  const [client, setClient] = useState('')
   const [pm, setPm] = useState('')
   const router = useRouter()
   const [team, setTeam] = useState<Team[]>([])
@@ -68,6 +72,12 @@ export default function Editprojectform( prop: Data) {
   const findteam = team.find((item) => item.teamname === prop.team)
   const [selectedTeam, setSelectedTeam] = useState(findteam?.teamid || '');
   const [project, setProject] = useState<Project>()
+  const [client, setClient] = useState<Client[]>([])
+
+  const selectedClient =  client.find((item) => item.clientname === prop.client)
+
+
+
 
  
   useEffect(() => {
@@ -77,7 +87,6 @@ export default function Editprojectform( prop: Data) {
 
   //team list
   useEffect(() => {
-  
     const timer = setTimeout(() => {
       const getList = async () => {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teams/managerlistownteam?teamnamefilter&page=0&limit=10`,{
@@ -86,10 +95,8 @@ export default function Editprojectform( prop: Data) {
             'Content-Type': 'application/json'
             }
         })
-  
-        console.log('team list',response.data)
+
         setTeam(response.data.data.teams)
-      
        
       }
       getList()
@@ -111,9 +118,10 @@ export default function Editprojectform( prop: Data) {
     resolver: zodResolver(createProjectSchema),
     defaultValues:{
       team: project?.team.teamid,
-      projectname: project?.projectname,
+      projectname: prop.projectname,
       start: formatDate(prop.startdate),
-      end: formatDate(prop.deadlinedate)
+      end: formatDate(prop.deadlinedate),
+      client: selectedClient?.clientid,
     }
   });
 
@@ -179,71 +187,29 @@ export default function Editprojectform( prop: Data) {
     }
   };
 
-  console.log(selectedTeam, errors)
-
-  // Watch team value to synchronize with Select component
-const teamValue = watch("team");
-
-// Set default value for team when component mounts
-useEffect(() => {
-  if (findteam?.teamid) {
-    setValue('team', findteam.teamid);
-  }
-}, [findteam, setValue]);
-
-useEffect(() => {
-  try {
+  //client list
+  useEffect(() => {
+  
     const timer = setTimeout(() => {
       const getList = async () => {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/projects/viewprojectdetails?projectid=${prop.projectid}`,{
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/clients/clientlistallmanager?clientname`,{
           withCredentials: true,
           headers: {
             'Content-Type': 'application/json'
             }
         })
+  
+        setClient(response.data.data.clients)
     
-        console.log('project data',response.data)
-        setProject(response.data.data.projectdata)
-      
-      
       }
       getList()
-    }, 500)
+    },500)
     return () => clearTimeout(timer)
-} catch (error) {
-   
+    
+    
+  },[])
 
-     if (axios.isAxiosError(error)) {
-            const axiosError = error as AxiosError<{ message: string, data: string }>;
-            if (axiosError.response && axiosError.response.status === 401) {
-                toast.error(`${axiosError.response.data.data}`)
-                router.push('/')   
-            }
 
-            if (axiosError.response && axiosError.response.status === 400) {
-                toast.error(`${axiosError.response.data.data}`)     
-                   
-            }
-
-            if (axiosError.response && axiosError.response.status === 402) {
-                toast.error(`${axiosError.response.data.data}`)          
-                       
-            }
-
-            if (axiosError.response && axiosError.response.status === 403) {
-                toast.error(`${axiosError.response.data.data}`)              
-               
-            }
-
-            if (axiosError.response && axiosError.response.status === 404) {
-                toast.error(`${axiosError.response.data.data}`)             
-            }
-    } 
-   
-}
-  
-  
-},[])
 
 
 
@@ -296,16 +262,18 @@ useEffect(() => {
                    
                       <div className=' w-full'>
                         <Label className=' text-zinc-500'>Client<span className=' text-red-700'>*</span></Label>
-                        <Select>
+                        <Select value={selectedClient?.clientid} onValueChange={(value) => setValue('client', value)} {...register('client')}>
                         <SelectTrigger className=" text-xs h-[35px] bg-white">
                           <SelectValue placeholder="Select Client" className=' text-black'  />
                         </SelectTrigger>
                         <SelectContent className=' text-xs'>
-                          <SelectItem value="light">Client</SelectItem>
-                          <SelectItem value="dark">Client</SelectItem>
+                          {client.map((item, index) => (
+                            <SelectItem key={item.clientid} value={item.clientid}>{item.clientname}</SelectItem>
+                          ))}
+                       
                         </SelectContent>
                       </Select>
-                        {/* {errors.client && <p className=' text-[.6em] text-red-500'>{errors.client.message}</p>} */}
+                        {errors.client && <p className=' text-[.6em] text-red-500'>{errors.client.message}</p>}
 
                       </div>
 

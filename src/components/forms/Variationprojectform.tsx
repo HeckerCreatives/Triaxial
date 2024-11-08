@@ -74,8 +74,6 @@ export default function Variationprojectform( prop: Data) {
     reset()
   },[dialog])
 
-  console.log(errors)
-
   const handleSelectClient = (value: string) => {
     setClient(value);
     setValue('client', value);

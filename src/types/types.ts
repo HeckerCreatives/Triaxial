@@ -77,15 +77,20 @@ type Request = {
 startdate: string
 }
 
+type Leavedates = {
+    leaveend: string
+leavestart: string
+}
 
- type Members = {
+
+export  type Members = {
     dates: Dates[]
 employee: {employeeid: string,fullname: string}
 eventDates: Request[]
-leaveDates: Request[]
+leaveDates: Leavedates[]
 notes: string
 role: string
-wellnessDates: Request[]
+wellnessDates: string[]
 _id: string
  }
 

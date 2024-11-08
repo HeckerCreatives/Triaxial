@@ -101,7 +101,7 @@ export default function Emailtable() {
 
       <div className=' w-full flex flex-col max-w-[1520px]'>
         <div className=' flex md:flex-row flex-col items-center justify-between gap-4'>
-            <div className=' flex  items-center gap-4'>
+            {/* <div className=' flex  items-center gap-4'>
                 <Dialog open={dialog} onOpenChange={setDialog}>
                 <DialogTrigger>
                   <button className=' bg-red-700 text-xs px-6 py-2 rounded-sm flex items-center gap-1'><Plus size={15}/>Create</button>
@@ -146,7 +146,7 @@ export default function Emailtable() {
                 </DialogContent>
                 </Dialog>
 
-            </div>
+            </div> */}
             
         </div>
 

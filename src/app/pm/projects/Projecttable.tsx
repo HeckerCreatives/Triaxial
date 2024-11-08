@@ -10,16 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination"
-import { Plus, Delete, Trash, Eye, FileDown, Printer, ReceiptText, FilePlus2, FileCheck, RefreshCw, Filter, Search, Copy, Layers, TriangleAlert, Pen } from 'lucide-react'
+import {  Eye, FileDown, ReceiptText, FilePlus2, FileCheck, Search, Copy, Layers, TriangleAlert, Pen } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -29,29 +20,16 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Textarea } from '@/components/ui/textarea'
-import ButtonSecondary from '@/components/common/ButtonSecondary'
-import Button from '@/components/common/Button'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { downloadInvoiceAsPdf, printInvoice } from '@/utils/invoice'
 import { Checkbox } from '@/components/ui/checkbox'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import Createprojectform from '@/components/forms/Createprojectform'
 import Editprojectform from '@/components/forms/Editprojectform'
-import Copyprojectform from '@/components/forms/Copyprojectform'
 import Variationprojectform from '@/components/forms/Variationprojectform'
-import Viewproject from '@/components/forms/Viewproject'
 import axios from 'axios'
 import { formatDateTime } from '@/utils/functions'
 import PaginitionComponent from '@/components/common/Pagination'
@@ -69,15 +47,13 @@ startdate: string
 status: string
 teamname: string
 updatedAt: string
+client: string
 _id: string
 }
 
 export default function Projecttable() {
   const [dialog, setDialog] = useState(false)
   const [dialog2, setDialog2] = useState(false)
-  const [dialog3, setDialog3] = useState(false)
-  const [dialog4, setDialog4] = useState(false)
-  const [dialog5, setDialog5] = useState(false)
   const [dialog6, setDialog6] = useState(false)
   const [loading, setLoading] = useState(false)
 
@@ -99,8 +75,6 @@ export default function Projecttable() {
             'Content-Type': 'application/json'
             }
         })
-  
-        console.log('project list',response.data)
         setList(response.data.data.projectlist)
         setTotalpage(response.data.data.totalpages)
         setLoading(false)
@@ -120,8 +94,6 @@ export default function Projecttable() {
         'Content-Type': 'application/json'
         }
     })
-
-    console.log('project list',response.data)
     setList(response.data.data.projectlist)
     setTotalpage(response.data.data.totalpages)
     setLoading(false)
@@ -144,41 +116,6 @@ export default function Projecttable() {
           <Createprojectform onClick={() => undefined}>
             <button className=' bg-red-700 p-2 rounded-sm text-zinc-100'><FilePlus2 size={15}/></button>
           </Createprojectform>
-
-          
-
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger onClick={getList}>
-                <button className=' bg-red-700 p-2 rounded-sm text-zinc-100'><RefreshCw size={15}/></button>
-              </TooltipTrigger>
-              <TooltipContent className=' bg-secondary text-zinc-100 border-zinc-700'>
-                <p>Refresh</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-
-          <DropdownMenu>
-          <DropdownMenuTrigger>
-            <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <button className=' bg-red-700 p-2 rounded-sm text-zinc-100'><Filter size={15}/></button>
-              </TooltipTrigger>
-              <TooltipContent className=' bg-secondary text-zinc-100 border-zinc-700'>
-                <p>Filter</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className=' bg-secondary border-zinc-600 text-zinc-100'>
-            <DropdownMenuLabel>Filter</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Mangager 1</DropdownMenuItem>
-            <DropdownMenuItem>Mangager 2</DropdownMenuItem>
-            <DropdownMenuItem>Mangager 3</DropdownMenuItem>
-          </DropdownMenuContent>
-          </DropdownMenu>
 
         </div>
 
@@ -206,7 +143,6 @@ export default function Projecttable() {
             <TableHead className="">Job Component</TableHead>
             <TableHead className="">% Invoiced</TableHead>
             <TableHead className="">Est. $</TableHead>
-            <TableHead className="">Type</TableHead>
             <TableHead className="">Status</TableHead>
             <TableHead className="">Start</TableHead>
             <TableHead className="">Deadline</TableHead>
@@ -218,30 +154,19 @@ export default function Projecttable() {
             <TableRow key={index}>
             <TableCell className="font-medium"><Checkbox/></TableCell>
             <TableCell>{item.projectname}</TableCell>
-            <TableCell className=""></TableCell>
+            <TableCell>{item.client}</TableCell>
             <TableCell className="">
               <a href={`/pm/graph/jobcomponent?projectid=${item._id}`} className=' w-fit bg-red-700 rounded-sm p-1 text-white flex items-center gap-2'>Job Component<Eye size={15}/></a>
               </TableCell>
             <TableCell className="">{item.invoiced}</TableCell>
-            <TableCell className=""></TableCell>
             <TableCell className=""></TableCell>
             <TableCell className="">{item.status}</TableCell>
             <TableCell className="">{formatDateTime(item.startdate)}</TableCell>
             <TableCell className="">{formatDateTime(item.deadlinedate)}</TableCell>
             <TableCell className=" flex items-center gap-2">
 
-              {/* <Viewproject onClick={() => undefined}>
-                <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger><button className=' p-2 bg-secondary rounded-md'><Eye size={15}/></button></TooltipTrigger>
-                      <TooltipContent>
-                        <p className=' text-xs'>View</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-              </Viewproject> */}
 
-              <Editprojectform projectid={item._id} team={item.teamname} projectname={item.projectname} startdate={item.startdate} deadlinedate={item.deadlinedate} >
+              <Editprojectform projectid={item._id} team={item.teamname} projectname={item.projectname} startdate={item.startdate} deadlinedate={item.deadlinedate} client={item.client} >
                 <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger><button className=' p-2 bg-secondary rounded-md'><Pen size={15}/></button></TooltipTrigger>
@@ -251,17 +176,6 @@ export default function Projecttable() {
                     </Tooltip>
                   </TooltipProvider>
               </Editprojectform>
-
-              {/* <Copyprojectform onClick={() => undefined}>
-                <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger><button className=' p-2 bg-secondary rounded-md'><Copy size={15}/></button></TooltipTrigger>
-                      <TooltipContent>
-                        <p className=' text-xs'>Copy Project</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-              </Copyprojectform> */}
 
               <Variationprojectform onClick={() => undefined}>
                 <TooltipProvider>

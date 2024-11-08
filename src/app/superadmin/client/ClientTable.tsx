@@ -451,19 +451,24 @@ export default function ClientTable() {
 
   //client data
   useEffect(() => {
-    const getData = async () => {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/clients/getclientdata?clientid=${clientid}`,{
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json'
-          }
-      })
-
-      console.log('Client Data',response.data)
-      setClientdata(response.data.data)
+    if(clientid !== '') {
+      const getData = async () => {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/clients/getclientdata?clientid=${clientid}`,{
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json'
+            }
+        })
+  
+        console.log('Client Data',response.data)
+        setClientdata(response.data.data)
+      }
+      getData()
     }
-    getData()
+    
   },[clientid])
+
+  console.log('client id',clientid)
 
 
   // Update form values when clientid or clientdata changes
@@ -636,7 +641,7 @@ export default function ClientTable() {
 
             <Dialog open={dialog3} onOpenChange={setDialog3}>
                 <DialogTrigger>
-                  <button onClick={() => {setClientid(item.teamid), setSelected(item.teams.map(team => ({ teamname: team.teamname, teamid: team._id })))}} className=' bg-red-700 text-xs px-6 py-2 rounded-sm flex items-center gap-1 text-white'><Pen size={15}/>Edit</button>
+                  <button onClick={() => {setClientid(item.teamid)}} className=' bg-red-700 text-xs px-6 py-2 rounded-sm flex items-center gap-1 text-white'><Pen size={15}/>Edit</button>
                 </DialogTrigger>
                 <DialogContent className=' bg-secondary border-none text-zinc-100 grid grid-cols-1 lg:grid-cols-[250px,1fr]'>
                   <div className=' bg-blue-400 lg:block hidden'

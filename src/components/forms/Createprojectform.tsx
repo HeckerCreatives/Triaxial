@@ -47,10 +47,15 @@ teamleader: string
 teamname: string
 }
 
+type Client = {
+  clientname: string
+clientid: string
+}
+
 export default function Createprojectform( prop: Data) {
   const [dialog, setDialog] = useState(false)
   const [jobno, setJobno] = useState('')
-  const [client, setClient] = useState('')
+  const [client, setClient] = useState<Client[]>([])
   const [pm, setPm] = useState('')
   const router = useRouter()
   const [team, setTeam] = useState<Team[]>([])
@@ -76,7 +81,8 @@ export default function Createprojectform( prop: Data) {
           team: data.team, // teamid
           projectname: data.projectname,
           startdate: data.start,
-          deadlinedate: data.end
+          deadlinedate: data.end,
+          client: data.client
 
       }, {
         withCredentials: true,
@@ -133,12 +139,6 @@ export default function Createprojectform( prop: Data) {
   },[dialog])
 
 
-  // const handleSelectChange = (value: string) => {
-  //   setClient(value);
-  //   setValue('client', value);
-  //   trigger('client')
-  // };
-
   //team list
   useEffect(() => {
   
@@ -163,7 +163,29 @@ export default function Createprojectform( prop: Data) {
     
   },[])
 
-  console.log(errors)
+  //team list
+  useEffect(() => {
+  
+    const timer = setTimeout(() => {
+      const getList = async () => {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/clients/clientlistallmanager?clientname`,{
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json'
+            }
+        })
+  
+        console.log('Client list',response.data)
+        setClient(response.data.data.clients)
+    
+      }
+      getList()
+    },500)
+    return () => clearTimeout(timer)
+    
+    
+  },[])
+
 
 
 
@@ -212,16 +234,18 @@ export default function Createprojectform( prop: Data) {
                    
                       <div className=' w-full'>
                         <Label className=' text-zinc-500'>Client<span className=' text-red-700'>*</span></Label>
-                        <Select>
+                        <Select onValueChange={(value) => setValue('client', value)} {...register('client')}>
                         <SelectTrigger className=" text-xs h-[35px] bg-white">
                           <SelectValue placeholder="Select Client" className=' text-black'  />
                         </SelectTrigger>
                         <SelectContent className=' text-xs'>
-                          <SelectItem value="light">Client</SelectItem>
-                          <SelectItem value="dark">Client</SelectItem>
+                          {client.map((item, index) => (
+                          <SelectItem key={item.clientid} value={item.clientid}>{item.clientname}</SelectItem>
+
+                          ))}
                         </SelectContent>
                       </Select>
-                        {/* {errors.client && <p className=' text-[.6em] text-red-500'>{errors.client.message}</p>} */}
+                        {errors.client && <p className=' text-[.6em] text-red-500'>{errors.client.message}</p>}
 
                       </div>
 
@@ -251,7 +275,7 @@ export default function Createprojectform( prop: Data) {
                   
           </div>
 
-          <Label className=' text-zinc-500 mt-4'>Project Component</Label>
+          {/* <Label className=' text-zinc-500 mt-4'>Project Component</Label>
             <Select>
             <SelectTrigger className=" text-xs h-[35px] bg-zinc-200">
               <SelectValue placeholder="Select" className=' text-black'  />
@@ -260,7 +284,7 @@ export default function Createprojectform( prop: Data) {
               <SelectItem value="light">Component1</SelectItem>
               <SelectItem value="dark">Component2</SelectItem>
             </SelectContent>
-          </Select>
+          </Select> */}
 
 
          
