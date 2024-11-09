@@ -76,10 +76,11 @@ duringleave: z
 export const createProjectSchema = z.object ({
     team: z.string().nonempty("Team is empty"),
     projectname: z.string().nonempty("Project name is empty"),
-    // client: z.string().nonempty("Client is empty"),
+    client: z.string().nonempty("Client is empty"),
     start: z.string().nonempty("Start date is empty"),
     end: z.string().nonempty("End date is empty"),
-    client: z.string().nonempty("Please select a client"),
+    jobno: z.string().nonempty("Job no is empty"),
+
 })
 
 export const createProjectComponenent = z.object ({

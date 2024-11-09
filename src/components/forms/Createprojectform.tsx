@@ -39,7 +39,6 @@ interface Data {
 
 }
 
-
 type Team = {
   manager: string
 teamid: string
@@ -56,7 +55,6 @@ export default function Createprojectform( prop: Data) {
   const [dialog, setDialog] = useState(false)
   const [jobno, setJobno] = useState('')
   const [client, setClient] = useState<Client[]>([])
-  const [pm, setPm] = useState('')
   const router = useRouter()
   const [team, setTeam] = useState<Team[]>([])
   const [loading, setLoading] = useState(false)
@@ -82,7 +80,8 @@ export default function Createprojectform( prop: Data) {
           projectname: data.projectname,
           startdate: data.start,
           deadlinedate: data.end,
-          client: data.client
+          client: data.client,
+          jobno: data.jobno,
 
       }, {
         withCredentials: true,
@@ -94,7 +93,7 @@ export default function Createprojectform( prop: Data) {
       const response = await toast.promise(request, {
         loading: 'Creating project....',
         success: `Successfully created`,
-        error: 'Error while creating the project',
+        error: 'Error while creating project',
     });
 
     if(response.data.message === 'success'){
@@ -163,9 +162,8 @@ export default function Createprojectform( prop: Data) {
     
   },[])
 
-  //team list
+  //client list
   useEffect(() => {
-  
     const timer = setTimeout(() => {
       const getList = async () => {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/clients/clientlistallmanager?clientname`,{
@@ -185,6 +183,9 @@ export default function Createprojectform( prop: Data) {
     
     
   },[])
+
+
+
 
 
 
@@ -217,9 +218,14 @@ export default function Createprojectform( prop: Data) {
           </Select>
            {errors.team && <p className=' text-[.6em] text-red-500'>{errors.team.message}</p>}
 
-           <div className=' bg-zinc-200 flex flex-col p-2'>
-                  {/* <Label className=' font-semibold'>Job Details</Label> */}
+           
+           <label htmlFor="" className=' text-xs'>Job no</label>
+          <Input type='text' className=' text-xs h-[35px] bg-zinc-200' placeholder='Job no' {...register('jobno')}/>
+          {errors.jobno && <p className=' text-[.6em] text-red-500'>{errors.jobno.message}</p>}
 
+
+           <div className=' bg-zinc-200 rounded-sm flex flex-col p-2'>
+             
                   <div className=' flex items-start gap-4 '>
                     
 

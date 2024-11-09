@@ -466,285 +466,338 @@ export default function Yourworkload() {
 
     console.log('Members',data)
 
-    setEngr(role1?.employee.employeeid || '')
-    setEngrrvr(role2?.employee.employeeid || '')
-    setDrf(role3?.employee.employeeid || '')
-    setDrfrvr(role4?.employee.employeeid || '')
+    setEngr(role1?.employee._id || '')
+    setEngrrvr(role2?.employee._id || '')
+    setDrf(role3?.employee._id || '')
+    setDrfrvr(role4?.employee._id || '')
    
   }
 
 
   return (
-   <div className=' w-full h-full flex flex-col justify-center bg-secondary p-4 text-zinc-100'>
+    <div className=' w-full h-full flex flex-col justify-center bg-secondary p-4 text-zinc-100'>
 
-      <div className=' w-full flex items-center justify-between h-auto bg-primary mb-2 p-4 text-xs'>
+    <div className=' w-full flex items-center justify-between h-auto bg-primary mb-2 p-4 text-xs'>
 
-        <Legends/>
+      <div className=' flex gap-12'>
+        
+        <div className=' flex flex-col gap-1 bg-primary p-2'>
+          <p className=' text-sm font-semibold'>Project Details</p>
+          <p className=' text-xs text-zinc-400'>Project Name: <span className=' text-red-500'>{list[0]?.projectname.name}</span></p>
+          <p className=' text-xs text-zinc-400'>Client: <span className=' text-red-500'>{list[0]?.clientname.name}</span></p>
+          <p className=' text-xs text-zinc-400'>Team: <span className=' text-red-500'>{list[0]?.teamname}</span></p>
+          <p className=' text-xs text-zinc-400'>Job no.: <span className=' text-red-500'>{list[0]?.jobno}</span></p>
+        </div>
+
+       
 
       </div>
 
-      <div className=' h-full w-full flex flex-col max-w-[1920px]'>
-        <div className=' h-full overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
-          {list.length !== 0 ? (
-            <>
-            <table className="table-auto w-full border-collapse ">
-            <thead className=' bg-secondary h-[100px]'>
 
-              <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
-                <th className=' w-[20px] font-normal'>Action</th>
-                <th className=' w-[50px] font-normal'>Team</th>
-                <th className=' font-normal w-[50px]'>Job No.</th>
-                <th className=' font-normal w-[50px]'>Client</th>
-                <th className=' font-normal w-[70px]'>Project Name</th>
-                <th className=' font-normal w-[70px]'>Job Mgr.</th>
-                <th className=' font-normal w-[70px]'>Job Component</th>
-                <th className=' w-[70px] font-normal'>Members</th>
-                <th className=' font-normal w-[70px]'>Role</th>
-                <th className=' font-normal w-[70px]'>Notes</th>
+      <Legends/>
 
-              
-              </tr>
-            </thead>
-            <tbody>
-            {list.map((graphItem, graphIndex) =>
-              graphItem.members.map((member, memberIndex) => (
-                <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
-                    <td className="text-center text-white flex items-center justify-center h-[40px] w-[30px]">
-               
+    </div>
+
+    <div className=' h-full w-full flex flex-col max-w-[1920px]'>
+      <div className=' h-full overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
+        {list.length !== 0 ? (
+          <>
+          <table className="table-auto w-[800px] border-collapse ">
+          <thead className=' bg-secondary h-[100px]'>
+
+            <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
+              <th className=' w-[20px] font-normal'>Action</th>
+              <th className=' font-normal w-[70px]'>Job Mgr.</th>
+              <th className=' font-normal w-[70px]'>Job Component</th>
+              <th className=' w-[70px] font-normal'>Members</th>
+              <th className=' font-normal w-[70px]'>Role</th>
+              <th className=' font-normal w-[70px]'>Notes</th>
+
+            
+            </tr>
+          </thead>
+          <tbody>
+          {list.map((graphItem, graphIndex) =>
+            graphItem.members.map((member, memberIndex) => (
+              <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
+                  <td className="text-center text-white flex items-center justify-center h-[40px] w-[30px]">
+
                     <Dialog open={dialog2} onOpenChange={setDialog2}>
-                          <DialogTrigger>
-                              {memberIndex === 0 && (<button onClick={() => {findMember(graphItem.members), setNotes(graphItem.members[0].notes), setIsjobmanager(graphItem.jobmanager.isJobManager)}} className=' p-1 bg-red-600 rounded-sm'><Pen size={12}/></button>)}
-                          </DialogTrigger>
-                          <DialogContent className=' max-w-[600px] bg-secondary border-none p-6 text-white'>
-                            <DialogHeader>
-                              <DialogTitle>Edit Project {isJobmanager ?  <span className=' text-xs text-zinc-400'>( As {position(graphItem.jobmanager.isJobManager, graphItem.jobmanager.isManager)})</span> : <span className=' text-sm text-red-500'>You are not allowed to update this component</span> }</DialogTitle>
-                              <DialogDescription className={` ${graphItem.jobmanager.isManager === true ? 'text-white' : ' text-red-500'}`}>
-                                {/* {graphItem.jobmanager.isManager === true ? 'Your the project manager of this project, you are allowed to edit this project' : ' Your are not the project manager of this project, you are not allowed to edit this project'} */}
-                                
-                              </DialogDescription>
-                            </DialogHeader>
-
-                            {isJobmanager === true  && (
-                              <div className=' flex flex-col w-full gap-2 text-xs'>
+                        <DialogTrigger>
+                            {memberIndex === 0 && (<button onClick={() => {findMember(graphItem.members), setNotes(graphItem.members[0].notes)}} className=' p-1 bg-red-600 rounded-sm'><Pen size={12}/></button>)}
+                        </DialogTrigger>
+                        <DialogContent className=' max-w-[600px] bg-secondary border-none p-6 text-white'>
+                          <DialogHeader>
+                            <DialogTitle>Edit Project <span className=' text-xs text-zinc-400'>( As {position(graphItem.jobmanager.isJobManager, graphItem.jobmanager.isManager)})</span></DialogTitle>
+                            <DialogDescription className={` ${graphItem.jobmanager.isManager === true ? 'text-white' : ' text-red-500'}`}>
+                              {/* {graphItem.jobmanager.isManager === true ? 'Your the project manager of this project, you are allowed to edit this project' : ' Your are not the project manager of this project, you are not allowed to edit this project'} */}
                               
-                              <div className=' flex flex-col w-full gap-2 text-xs'>
-
-                                  <label htmlFor="">Engineer (Engr.)</label>
-                                    <Select value={engr} onValueChange={(setEngr)}>
-                                          <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
-                                          <SelectValue placeholder="Select" className="text-black" />
-                                          </SelectTrigger>
-                                          <SelectContent className="text-xs">
-                                            {employee.map((item, index) => (
-                                            <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
-
-                                            ))}
-                                          
-                                          </SelectContent>
-                                  </Select>
-
-                                  <label htmlFor="">Engineer Reviewer (Engr. Revr.)</label>
-                                  <Select value={engrrvr} onValueChange={(setEngrrvr)}>
-                                          <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
-                                          <SelectValue placeholder="Select" className="text-black" />
-                                          </SelectTrigger>
-                                          <SelectContent className="text-xs">
-                                            {employee.map((item, index) => (
-                                            <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
-
-                                            ))}
-                                          
-                                          </SelectContent>
-                                  </Select>
-
-                                  <label htmlFor="">Drafter (Drft.)</label>
-                                  <Select value={drf} onValueChange={(setDrf)}>
-                                          <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
-                                          <SelectValue placeholder="Select" className="text-black" />
-                                          </SelectTrigger>
-                                          <SelectContent className="text-xs">
-                                            {employee.map((item, index) => (
-                                            <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
-
-                                            ))}
-                                          
-                                          </SelectContent>
-                                  </Select>
-
-                                  <label htmlFor="">Drafter Reviewer (Drft. Revr.)	</label>
-                                  <Select value={drfrvr} onValueChange={(setDrfrvr)}>
-                                          <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
-                                          <SelectValue placeholder="Select" className="text-black" />
-                                          </SelectTrigger>
-                                          <SelectContent className="text-xs">
-                                            {employee.map((item, index) => (
-                                            <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
-
-                                            ))}
-                                          
-                                          </SelectContent>
-                                  </Select>
-
-                                  <label htmlFor="">Notes</label>
-                                  <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} className=' text-xs h-[35px] bg-primary' placeholder='Notes' />
-
-                                  <div className=' w-full flex items-end justify-end mt-4 text-xs'>
-                                    <button onClick={() => updateJobComponenAsJobManager(graphItem._id)} className=' bg-red-600 px-4 py-2 rounded-md w-fit'>Save</button>
-                                  </div>
+                            </DialogDescription>
+                          </DialogHeader>
 
 
-                                  </div>
-                              
+
+                          {(graphItem.jobmanager.isJobManager === true && graphItem.jobmanager.isManager === false ) && (
+                            <div className=' flex flex-col w-full gap-2 text-xs'>
+                            
+                            <div className=' flex flex-col w-full gap-2 text-xs'>
+
+                            <label htmlFor="">Engineer (Engr.)</label>
+                              <Select value={engr} onValueChange={(setEngr)}>
+                                    <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
+                                    <SelectValue placeholder="Select" className="text-black" />
+                                    </SelectTrigger>
+                                    <SelectContent className="text-xs">
+                                      {employee.map((item, index) => (
+                                      <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
+
+                                      ))}
+                                    
+                                    </SelectContent>
+                            </Select>
+
+                            <label htmlFor="">Engineer Reviewer (Engr. Revr.)</label>
+                            <Select value={engrrvr} onValueChange={(setEngrrvr)}>
+                                    <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
+                                    <SelectValue placeholder="Select" className="text-black" />
+                                    </SelectTrigger>
+                                    <SelectContent className="text-xs">
+                                      {employee.map((item, index) => (
+                                      <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
+
+                                      ))}
+                                    
+                                    </SelectContent>
+                            </Select>
+
+                            <label htmlFor="">Drafter (Drft.)</label>
+                            <Select value={drf} onValueChange={(setDrf)}>
+                                    <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
+                                    <SelectValue placeholder="Select" className="text-black" />
+                                    </SelectTrigger>
+                                    <SelectContent className="text-xs">
+                                      {employee.map((item, index) => (
+                                      <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
+
+                                      ))}
+                                    
+                                    </SelectContent>
+                            </Select>
+
+                            <label htmlFor="">Drafter Reviewer (Drft. Revr.)	</label>
+                            <Select value={drfrvr} onValueChange={(setDrfrvr)}>
+                                    <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
+                                    <SelectValue placeholder="Select" className="text-black" />
+                                    </SelectTrigger>
+                                    <SelectContent className="text-xs">
+                                      {employee.map((item, index) => (
+                                      <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
+
+                                      ))}
+                                    
+                                    </SelectContent>
+                            </Select>
+
+                            <label htmlFor="">Notes</label>
+                            <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} className=' text-xs h-[35px] bg-primary' placeholder='Notes' />
+
+                              <div className=' w-full flex items-end justify-end mt-4 text-xs'>
+                                <button onClick={() => updateJobComponenAsJobManager(graphItem._id)} className=' bg-red-600 px-4 py-2 rounded-md w-fit'>Save</button>
+                              </div>
+
                             </div>
-                            )}
 
-                          
-                            
-                          </DialogContent>
-                        </Dialog>
+                          </div>
+                          )}
 
-                     
-                      </td>
-                    <td className="text-center text-red-600">{memberIndex === 0 && graphItem.teamname}</td>
-                    <td className="text-center">{memberIndex === 0 && graphItem.jobno}</td>
-                    <td className="text-center">{memberIndex === 0 && graphItem.clientname.name}</td>
-                    <td className="text-center">{memberIndex === 0 && graphItem.projectname.name}</td>
-                    <td className="text-center">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
-                    <td className="text-center">{memberIndex === 0 && graphItem.jobcomponent}</td>
-        
-                  <td className="text-center">{member.employee.fullname}</td>
-                  <td className="text-center text-[.5rem]">{member.role}</td>
-                  <td className="text-center">
-                    <Dialog>
-                      <DialogTrigger>{member.notes.slice(0, 25) || ''} ...</DialogTrigger>
-                      <DialogContent className=' bg-secondary p-6 border-none max-w-[600px] text-white'>
-                        <DialogHeader>
-                          <DialogTitle>Notes</DialogTitle>
-                          <DialogDescription>
-                            
-                          </DialogDescription>
-                        </DialogHeader>
-                        <p className=' text-xs text-zinc-400'>{member.notes}</p>
-                      </DialogContent>
-                    </Dialog>
-
-                    </td>
-                
-
-                </tr>
-              ))
-            )}
-          </tbody>
-            </table>
-
-            <div className=' overflow-x-auto w-[1100px]'>
-              <table className="table-auto w-[700px] border-collapse ">
-                <thead className=' w-[800px] bg-secondary h-[100px]'>
-                  <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
-                  
-                    {list[0]?.allDates.map((dateObj, index) => (
-                      <>
-                        <th key={index} className=' relative font-normal px-1 border-[1px] border-zinc-700'>
 
                        
-                          <p className=' whitespace-nowrap rotate-90'>{formatDate(dateObj)}</p>
-                        </th>
-                        {(index + 1) % 5 === 0 && (
-                          <th key={`total-${index}`} className='font-normal px-1 w-[30px] border-[1px] border-zinc-700'>
-                            <p className='rotate-90'>Total Hours</p>
-                          </th>
-                        )}
-                      </>
-                    ))}
-                  
-                    
-                  </tr>
-                </thead>
-                <tbody>
-                {list.map((graphItem, graphIndex) =>
-                    graphItem.members.map((member, memberIndex) => (
-                      <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[41px] border-[1px] border-zinc-600">
-                        
-                        {list[0]?.allDates.map((dateObj, dateIndex) => {
-                          // Find the corresponding date in member.dates
-                          const memberDate = member.dates?.find(date => formatDate(date.date) === formatDate(dateObj));
-                          
-                          // Calculate sum every 5 days
-                          const startIndex = Math.floor(dateIndex / 5) * 5;
-                          const endIndex = startIndex + 5;
-
-                          // Sum the hours for the current set of 5 days
-                          const totalHours = member.dates?.slice(startIndex, endIndex).reduce((acc, date) => acc + date.hours, 0);
-
-                          return (
-                            <>
-                              <td 
-                                key={dateIndex} 
-                                className="relative text-center overflow-hidden bg-white cursor-pointer border-[1px]"
-                                onClick={() => {
-                              
-                                    setDialog(true);
-                                    // setHours(memberDate.hours);
-                                    setDate(dateObj);
-                                    setProjectid(graphItem._id);
-                                    setName(member.employee.fullname);
-                                    setEmployeeid(member.employee.employeeid);
-                                    setHours(memberDate?.hours || 0)
-                                    setAddstatus(memberDate?.status || [])
-                                    setSelectedRows(memberDate?.status || [])
-                                    setLeavestatus(isDateInRange(dateObj,member.leaveDates[0]?.leavestart,member.leaveDates[0]?.leaveend))
-                                    setEvent(isDateInRange(dateObj,member.eventDates[0]?.startdate,member.eventDates[0]?.enddate))
-                                    wdStatusChecker(member.wellnessDates[0], dateObj)
-                                    setIsjobmanager(graphItem.jobmanager.isJobManager)
-                                    setRole(member.role)
-          
-                                  }
-                                }
-                              >
-                                <div className=' w-full h-[40px] absolute flex top-0 '>
-                                  {statusColor(
-                                    memberDate?.status || [],
-                                    dateObj,
-                                    member.leaveDates.length !== 0 ? member.leaveDates[0]?.leavestart : '', 
-                                    member.leaveDates.length !== 0 ? member.leaveDates[0]?.leaveend : '', 
-                                    member.eventDates.length !== 0 ? member.eventDates[0]?.startdate : '', 
-                                    member.eventDates.length !== 0 ? member.eventDates[0]?.enddate : '', 
-                                    member.wellnessDates[0],
-                                    memberDate?.hours || 0,
-                                  ).map((item, index) => (
-                                    <div key={index} className={`w-full h-[40px] ${item}`}>
-
-                                    </div>
-
-                                  ))}
-
-                                </div>
                             
-                                {/* Render the hours if the date exists, otherwise initialize with 0 */}
-                                <p className='relative text-black font-bold text-xs z-30'>
-                                  {memberDate ? memberDate.hours : '-'}
-                                </p>
-                              </td>
+                          
+                        </DialogContent>
+                    </Dialog>
+                   
+                    </td>
+                  <td className="text-center">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
+                  <td className="text-center">{memberIndex === 0 && graphItem.jobcomponent}</td>
+      
+                <td className="text-center">{member.employee.fullname}</td>
+                <td className="text-center text-[.5rem]">{member.role}</td>
+                <td className="text-center">
+                  <Dialog>
+                    <DialogTrigger>{member.notes.slice(0, 25) || ''} ...</DialogTrigger>
+                    <DialogContent className=' bg-secondary p-6 border-none max-w-[600px] text-white'>
+                      <DialogHeader>
+                        <DialogTitle>Notes</DialogTitle>
+                        <DialogDescription>
+                          
+                        </DialogDescription>
+                      </DialogHeader>
+                      <p className=' text-xs text-zinc-400'>{member.notes}</p>
+                    </DialogContent>
+                  </Dialog>
 
-                              {/* Insert Total every 5 days */}
-                              {(dateIndex + 1) % 5 === 0 && (
+                  </td>
+              
 
-                                <th key={`total-${dateIndex}`} className='font-normal w-[40px] bg-primary border-[1px] border-zinc-700'>
-                                  <p className=''>{totalHours}</p> {/* Display the sum of hours for every 5 days */}
-                                </th>
+              </tr>
+            ))
+          )}
+        </tbody>
+          </table>
+
+          <div className=' overflow-x-auto'>
+            <table className="table-auto border-collapse ">
+              <thead className=' w-[800px] bg-secondary h-[100px]'>
+                <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
+                
+                {list[0]?.allDates
+                .filter((dateObj) => {
+                  const day = new Date(dateObj).getDay();
+                  return day >= 1 && day <= 5; // Filter to include only Monday through Friday
+                })
+                .map((dateObj, index) => {
+                  const day = new Date(dateObj).getDay();
+                  const isFriday = day === 5;
+
+                  return (
+                    <React.Fragment key={index}>
+                      <th className="relative font-normal border-[1px] border-zinc-700">
+                        <p className="whitespace-nowrap rotate-90">{formatDate(dateObj)}</p>
+                      </th>
+                      {isFriday && (
+                        <th className="font-normal px-1 border-[1px] border-zinc-700">
+                          <p className="rotate-90">Total Hours</p>
+                        </th>
+                      )}
+                    </React.Fragment>
+                  );
+                })}
+
+                  
+                </tr>
+              </thead>
+              <tbody>
+              {list.map((graphItem, graphIndex) =>
+                  graphItem.members.map((member, memberIndex) => (
+                    <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[41px] border-[1px] border-zinc-600">
+                      
+                
+                      {list[0]?.allDates
+                      .filter((dateObj) => {
+                        const day = new Date(dateObj).getDay();
+                        return day >= 1 && day <= 5; // Filter to include only Monday through Friday
+                      })
+                      .map((dateObj, index) => {
+                        const day = new Date(dateObj).getDay();
+                        const isFriday = day === 5;
+                        const memberDate = member.dates?.find((date) => formatDate(date.date) === formatDate(dateObj));
+
+                         
+                        const totalHoursForWeek = list[0]?.allDates
+                          .filter((dateObj) => {
+                            const day = new Date(dateObj).getDay();
+                            return day >= 1 && day <= 5; // Only include Monday to Friday
+                          })
+                          .reduce<{ weeklyTotals: number[]; currentWeekTotal: number }>((accumulated, dateObj, index, array) => {
+                            const day = new Date(dateObj).getDay();
+                            const memberDate = member.dates?.find((date) => formatDate(date.date) === formatDate(dateObj));
+                            const hoursForDay = memberDate?.hours || 0;
+
+                            // Add current day's hours
+                            accumulated.currentWeekTotal += hoursForDay;
+
+                            // Reset total on Friday
+                            if (day === 5 || index === array.length - 1) { // On Friday or last day of the range
+                              accumulated.weeklyTotals.push(accumulated.currentWeekTotal);
+                              accumulated.currentWeekTotal = 0; // Reset total for next week
+                            }
+
+                            return accumulated;
+                          }, { weeklyTotals: [], currentWeekTotal: 0 }).weeklyTotals;
+
+                      
+
+                      
+                        
+                        return (
+                          <React.Fragment key={index}>
+                            <td 
+                              key={index} 
+                              className="relative text-center overflow-hidden bg-white cursor-pointer border-[1px]"
+                              onClick={() => {
+                            
+                                  setDialog(true);
+                                  // setHours(memberDate.hours);
+                                  setDate(dateObj);
+                                  setProjectid(graphItem._id);
+                                  setName(member.employee.fullname);
+                                  setEmployeeid(member.employee._id);
+                                  setHours(memberDate?.hours || 0)
+                                  setAddstatus(memberDate?.status || [])
+                                  setSelectedRows(memberDate?.status || [])
+                                  setLeavestatus(isDateInRange(dateObj,member.leaveDates[0]?.leavestart,member.leaveDates[0]?.leaveend))
+                                  setEvent(isDateInRange(dateObj,member.eventDates[0]?.startdate,member.eventDates[0]?.enddate))
+                                  wdStatusChecker(member.wellnessDates[0], dateObj)
+                                  setIsjobmanager(graphItem.jobmanager.isJobManager)
+                                
+                                  setRole(member.role)
+        
+                                }
+                              }
+                            >
+                              <div className=' w-full h-[40px] absolute flex top-0 '>
+                                {statusColor(
+                                  memberDate?.status || [],
+                                  dateObj,
+                                  member.leaveDates.length !== 0 ? member.leaveDates[0]?.leavestart : '', 
+                                  member.leaveDates.length !== 0 ? member.leaveDates[0]?.leaveend : '', 
+                                  member.eventDates.length !== 0 ? member.eventDates[0]?.startdate : '', 
+                                  member.eventDates.length !== 0 ? member.eventDates[0]?.enddate : '', 
+                                  member.wellnessDates[0],
+                                  memberDate?.hours || 0,
+                                ).map((item, index) => (
+                                  <div key={index} className={`w-full h-[40px] ${item}`}>
+
+                                  </div>
+
+                                ))}
+
+                              </div>
+                          
+                              <p className='relative text-black font-bold text-xs z-30'>
+                                {memberDate ? memberDate.hours : '-'}
+                              </p>
+                            </td>
+
+                           
+                            {isFriday && totalHoursForWeek.length > 0 && (
+                                <td
+                                  key={`total-${index}`}
+                                  className="text-center font-normal w-[40px] bg-primary border-[1px] border-zinc-700"
+                                >
+                                  <p className="text-center">
+                                  {totalHoursForWeek[Math.floor(index / 5)]} {/* Display the week's total on Friday */}
+                                  </p>
+                                </td>
                               )}
-                            </>
-                          );
-                        })}
-                      </tr>
-                    ))
-                  )}
-              </tbody>
-              </table>
-            </div>
+                          </React.Fragment>
+                        );
+                      })}
 
-            {isJobmanager === true &&  (
-              <Dialog open={dialog} onOpenChange={setDialog}>
+                    </tr>
+                  ))
+                )}
+
+
+            </tbody>
+            </table>
+          </div>
+
+          
+
+         {isJobmanager === true && (
+           <Dialog open={dialog} onOpenChange={setDialog}>
                   <DialogContent className=' p-8 bg-secondary border-none text-white'>
                     <DialogHeader>
                       <DialogTitle>Update workload ({name} <span className=' text-xs text-red-500'>({role})</span> at {formatDate(date)})</DialogTitle>
@@ -804,28 +857,27 @@ export default function Yourworkload() {
                 
                 
                   </DialogContent>
-              </Dialog>
-            )}
-            
-            
-            </>
-          ) : (
-            <div className=' w-full h-full flex items-center justify-center'>
-              <p className=' text-xs text-zinc-400'>No job component's yet under this project, please create one to see the workload!</p>
-
-            </div>
-          )}
+          </Dialog>
+         )}
           
+          </>
+        ) : (
+          <div className=' w-full h-full flex items-center justify-center'>
+            <p className=' text-xs text-zinc-400'>No job component's yet under this project, please create one to see the workload!</p>
 
-          
-
-        </div>
-       
+          </div>
+        )}
         
+
+        
+
       </div>
-
-    
-        
+     
+      
     </div>
+
+  
+      
+  </div>
   )
 }

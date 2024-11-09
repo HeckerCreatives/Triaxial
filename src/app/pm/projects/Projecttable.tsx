@@ -49,6 +49,7 @@ teamname: string
 updatedAt: string
 client: string
 _id: string
+jobno: string
 }
 
 export default function Projecttable() {
@@ -138,6 +139,7 @@ export default function Projecttable() {
         <TableHeader>
             <TableRow>
             <TableHead className="">Select</TableHead>
+            <TableHead>Job no</TableHead>
             <TableHead>Project Name</TableHead>
             <TableHead>Client</TableHead>
             <TableHead className="">Job Component</TableHead>
@@ -153,6 +155,7 @@ export default function Projecttable() {
           {list.map((item, index) => (
             <TableRow key={index}>
             <TableCell className="font-medium"><Checkbox/></TableCell>
+            <TableCell>{item.jobno}</TableCell>
             <TableCell>{item.projectname}</TableCell>
             <TableCell>{item.client}</TableCell>
             <TableCell className="">
@@ -166,7 +169,7 @@ export default function Projecttable() {
             <TableCell className=" flex items-center gap-2">
 
 
-              <Editprojectform projectid={item._id} team={item.teamname} projectname={item.projectname} startdate={item.startdate} deadlinedate={item.deadlinedate} client={item.client} >
+              <Editprojectform projectid={item._id} team={item.teamname} projectname={item.projectname} startdate={item.startdate} deadlinedate={item.deadlinedate} client={item.client} jobno={item.jobno} >
                 <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger><button className=' p-2 bg-secondary rounded-md'><Pen size={15}/></button></TooltipTrigger>

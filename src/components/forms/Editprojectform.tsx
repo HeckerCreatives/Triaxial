@@ -35,6 +35,7 @@ interface Data {
     startdate: string
     deadlinedate: string
     client: string
+    jobno: string
 }
 
 type Team = {
@@ -68,16 +69,12 @@ export default function Editprojectform( prop: Data) {
   const [pm, setPm] = useState('')
   const router = useRouter()
   const [team, setTeam] = useState<Team[]>([])
+  const [currentTeam, setCurrentTeam] = useState('')
+  const [currentClient, setCurrentClient] = useState('')
   const [loading, setLoading] = useState(false)
-  const findteam = team.find((item) => item.teamname === prop.team)
-  const [selectedTeam, setSelectedTeam] = useState(findteam?.teamid || '');
+  const [selectedTeam, setSelectedTeam] = useState('');
   const [project, setProject] = useState<Project>()
   const [client, setClient] = useState<Client[]>([])
-
-  const selectedClient =  client.find((item) => item.clientname === prop.client)
-
-
-
 
  
   useEffect(() => {
@@ -87,7 +84,6 @@ export default function Editprojectform( prop: Data) {
 
   //team list
   useEffect(() => {
-    const timer = setTimeout(() => {
       const getList = async () => {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teams/managerlistownteam?teamnamefilter&page=0&limit=10`,{
           withCredentials: true,
@@ -96,13 +92,15 @@ export default function Editprojectform( prop: Data) {
             }
         })
 
-        setTeam(response.data.data.teams)
-       
+         const teams: Team[] = response.data.data.teams;
+         const findteam = teams.find((item) => item.teamname === prop.team)
+         setCurrentTeam(findteam?.teamid || '')
+         setTeam(response.data.data.teams)
+        
+      
       }
       getList()
-    },500)
-    return () => clearTimeout(timer)
-    
+
     
   },[])
 
@@ -117,11 +115,10 @@ export default function Editprojectform( prop: Data) {
   } = useForm<CreateProjectSchema>({
     resolver: zodResolver(createProjectSchema),
     defaultValues:{
-      team: project?.team.teamid,
       projectname: prop.projectname,
       start: formatDate(prop.startdate),
       end: formatDate(prop.deadlinedate),
-      client: selectedClient?.clientid,
+      jobno: prop.jobno,
     }
   });
 
@@ -135,7 +132,9 @@ export default function Editprojectform( prop: Data) {
           team: data.team, // teamid
           projectname: data.projectname,
           startdate: data.start,
-          deadlinedate: data.end
+          deadlinedate: data.end,
+          clientid: data.client,
+          jobno: data.jobno
 
       }, {
         withCredentials: true,
@@ -198,7 +197,9 @@ export default function Editprojectform( prop: Data) {
             'Content-Type': 'application/json'
             }
         })
-  
+        const teams: Client[] = response.data.data.clients;
+        const findclient = teams.find((item) => item.clientname === prop.client)
+        setCurrentClient(findclient?.clientid || '')
         setClient(response.data.data.clients)
     
       }
@@ -209,6 +210,20 @@ export default function Editprojectform( prop: Data) {
     
   },[])
 
+
+  useEffect(() => {
+    if (currentTeam && currentClient) {
+      reset({
+        team: String(currentTeam),
+        client: String(currentClient),
+        projectname: prop.projectname,
+        start: formatDate(prop.startdate),
+        end: formatDate(prop.deadlinedate),
+        jobno: prop.jobno,
+
+      });
+    }
+  }, [currentTeam, currentClient, prop.projectname, prop.startdate, prop.deadlinedate, reset]);
 
 
 
@@ -228,11 +243,10 @@ export default function Editprojectform( prop: Data) {
           <label htmlFor="" className=' text-xs text-zinc-700 mt-4'>Team</label>
        
           <Select 
-          value={watch('team')} 
-          onValueChange={(value) => setValue('team', value)} // Update form state
-          {...register('team')}
+          value={currentTeam} 
+          onValueChange={(value) => (setValue('team', value), setCurrentTeam(value))}
           >
-            <SelectTrigger className="text-xs h-[35px] bg-zinc-200"  value={selectedTeam}>
+            <SelectTrigger className="text-xs h-[35px] bg-zinc-200" >
               <SelectValue placeholder="Select Team" className="text-black"  />
             </SelectTrigger>
             <SelectContent className="text-xs">
@@ -244,6 +258,10 @@ export default function Editprojectform( prop: Data) {
             </SelectContent>
           </Select>
            {errors.team && <p className=' text-[.6em] text-red-500'>{errors.team.message}</p>}
+
+           <label htmlFor="" className=' text-xs'>Job no</label>
+          <Input type='text' className=' text-xs h-[35px] bg-zinc-200' placeholder='Job no' {...register('jobno')}/>
+          {errors.jobno && <p className=' text-[.6em] text-red-500'>{errors.jobno.message}</p>}
 
            <div className=' bg-zinc-200 flex flex-col p-2'>
                   {/* <Label className=' font-semibold'>Job Details</Label> */}
@@ -262,17 +280,22 @@ export default function Editprojectform( prop: Data) {
                    
                       <div className=' w-full'>
                         <Label className=' text-zinc-500'>Client<span className=' text-red-700'>*</span></Label>
-                        <Select value={selectedClient?.clientid} onValueChange={(value) => setValue('client', value)} {...register('client')}>
-                        <SelectTrigger className=" text-xs h-[35px] bg-white">
-                          <SelectValue placeholder="Select Client" className=' text-black'  />
-                        </SelectTrigger>
-                        <SelectContent className=' text-xs'>
-                          {client.map((item, index) => (
-                            <SelectItem key={item.clientid} value={item.clientid}>{item.clientname}</SelectItem>
-                          ))}
-                       
-                        </SelectContent>
-                      </Select>
+                        <Select 
+                          value={currentClient} 
+                          onValueChange={(value) => (setValue('client', value), setCurrentClient(value))} // Update form state
+                          {...register('client')}
+                          >
+                            <SelectTrigger className="text-xs h-[35px] bg-white"  value={selectedTeam}>
+                              <SelectValue placeholder="Select Team" className="text-black"  />
+                            </SelectTrigger>
+                            <SelectContent className="text-xs">
+                              {client.map((item) => (
+                                <SelectItem key={item.clientid} value={item.clientid}>
+                                  {item.clientname}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         {errors.client && <p className=' text-[.6em] text-red-500'>{errors.client.message}</p>}
 
                       </div>
