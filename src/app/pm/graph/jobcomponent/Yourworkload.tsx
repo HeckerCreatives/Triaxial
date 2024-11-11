@@ -71,6 +71,7 @@ export default function Yourworkload() {
   const [wdStatus, setWdstatus] = useState(false)
   const [event, setEvent] = useState(false)
   const [isJobmamager, setIsjobmanager] = useState(true) 
+  const [isMamager, setIsmanager] = useState(true) 
   const [employee, setEmployee] = useState<Employee[]>([])
   const [client, setClient] = useState<Client[]>([])
   const [projects, setProjects] = useState<Project[]>([])
@@ -265,7 +266,6 @@ export default function Yourworkload() {
     const isLeaveInRange = isDateInRange(date, leaveStart, leaveEnd);
     const isEventInRange = isDateInRange(date, eventStart, eventEnd);
 
-
     if(data.includes('1')){
       colorData.push('bg-red-500')
     }
@@ -401,8 +401,6 @@ export default function Yourworkload() {
             'Content-Type': 'application/json'
             }
         })
-  
-        console.log('Project list',response.data)
         setProjects(response.data.data.projectlist)
     
       }
@@ -685,7 +683,7 @@ export default function Yourworkload() {
         <div className=' h-full overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
           {list.length !== 0 ? (
             <>
-            <table className="table-auto w-[700px] border-collapse ">
+            <table className="table-auto w-[800px] border-collapse ">
             <thead className=' bg-secondary h-[100px]'>
 
               <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
@@ -707,7 +705,7 @@ export default function Yourworkload() {
 
                       <Dialog open={dialog2} onOpenChange={setDialog2}>
                           <DialogTrigger>
-                              {memberIndex === 0 && (<button onClick={() => {setProjectname(graphItem.projectname.projectid), setJobmanager(graphItem.jobmanager.employeeid), setJobno(graphItem.jobno), findMember(graphItem.members), setNotes(graphItem.members[0].notes)}} className=' p-1 bg-red-600 rounded-sm'><Pen size={12}/></button>)}
+                              {memberIndex === 0 && (<button onClick={() => {setProjectname(graphItem.projectname.projectid), setJobmanager(graphItem.jobmanager.employeeid), setJobno(graphItem.jobno), findMember(graphItem.members), setNotes(graphItem.members[0].notes), setIsmanager(graphItem.jobmanager.isManager),setIsjobmanager(graphItem.jobmanager.isJobManager)}} className=' p-1 bg-red-600 rounded-sm'><Pen size={12}/></button>)}
                           </DialogTrigger>
                           <DialogContent className=' max-w-[600px] bg-secondary border-none p-6 text-white'>
                             <DialogHeader>
@@ -718,7 +716,7 @@ export default function Yourworkload() {
                               </DialogDescription>
                             </DialogHeader>
 
-                            {(graphItem.jobmanager.isManager === true && graphItem.jobmanager.isJobManager === false ) && (
+                            {(isMamager === true && isJobmamager=== false ) && (
                               <div className=' flex flex-col w-full gap-2 text-xs'>
 
 
@@ -761,7 +759,7 @@ export default function Yourworkload() {
                             )}
 
 
-                            {(graphItem.jobmanager.isJobManager === true && graphItem.jobmanager.isManager === false ) && (
+                            {(isJobmamager === true && isMamager === false ) && (
                               <div className=' flex flex-col w-full gap-2 text-xs'>
                               
                               <div className=' flex flex-col w-full gap-2 text-xs'>
@@ -834,7 +832,7 @@ export default function Yourworkload() {
                             </div>
                             )}
 
-                            {(graphItem.jobmanager.isJobManager === true && graphItem.jobmanager.isManager === true) && (
+                            {(isJobmamager === true && isMamager === true) && (
                               <>
                                <div className=' flex flex-col w-full gap-2 text-xs'>
                                  <label htmlFor="">Project Name</label>
@@ -943,8 +941,6 @@ export default function Yourworkload() {
                             )} 
 
                          
-                              
-                            
                           </DialogContent>
                       </Dialog>
                      
@@ -1046,10 +1042,7 @@ export default function Yourworkload() {
 
                               return accumulated;
                             }, { weeklyTotals: [], currentWeekTotal: 0 }).weeklyTotals;
-
-                        
-
-                        
+   
                           
                           return (
                             <React.Fragment key={index}>
@@ -1083,8 +1076,8 @@ export default function Yourworkload() {
                                     dateObj,
                                     member.leaveDates.length !== 0 ? member.leaveDates[0]?.leavestart : '', 
                                     member.leaveDates.length !== 0 ? member.leaveDates[0]?.leaveend : '', 
-                                    member.eventDates.length !== 0 ? member.eventDates[0]?.startdate : '', 
-                                    member.eventDates.length !== 0 ? member.eventDates[0]?.enddate : '', 
+                                    member.eventDates.length !== 0 ? member.eventDates[0].startdate : '', 
+                                    member.eventDates.length !== 0 ? member.eventDates[0].enddate : '', 
                                     member.wellnessDates[0],
                                     memberDate?.hours || 0,
                                   ).map((item, index) => (
@@ -1127,7 +1120,7 @@ export default function Yourworkload() {
 
             
 
-           {isJobmamager === true && (
+           {isJobmamager === true ? (
              <Dialog open={dialog} onOpenChange={setDialog}>
                     <DialogContent className=' p-8 bg-secondary border-none text-white'>
                       <DialogHeader>
@@ -1188,6 +1181,20 @@ export default function Yourworkload() {
                   
                   
                     </DialogContent>
+            </Dialog>
+           ): (
+            <Dialog open={dialog} onOpenChange={setDialog}>
+              <DialogContent className=' p-8 bg-secondary border-none text-white'>
+                      <DialogHeader>
+                        <DialogTitle>Update workload ({name} <span className=' text-xs text-red-500'>({role})</span> at {formatDate(date)})</DialogTitle>
+                        <DialogDescription>
+                         
+                        </DialogDescription>
+                      </DialogHeader>
+
+                      <p className=' text-lg text-red-500'>Only job manager can update a workload!</p>
+                    
+              </DialogContent>
             </Dialog>
            )}
             

@@ -1,14 +1,43 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Breadcrumbdb from '@/components/common/Breadcrumb'
 import PmLayout from '@/components/layout/PmLayout'
 import Pmcards from './Pmcard'
 import { Pmtopcards } from './Pmtopcards'
 import { Tabs, Teams } from '@/types/data'
+import axios from 'axios'
+import { Team } from '@/types/types'
+import { useRouter } from 'next/navigation'
+
+type Teams = {
+  teamid: string
+teamname: string
+}
 
 
 export default function page() {
-  const [tab, setTab] = useState('Show All')
+  const [teams, setTeams] = useState<Teams[]>([])
+  const active = teams[0]
+  const [tab, setTab] = useState('')
+  const router = useRouter()
+
+  useEffect(() => {
+    const getTeams = async () => {
+      try {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teams/managersearchteam`,{
+          withCredentials: true
+        })
+
+        setTeams(response.data.data)
+        setTab(response.data.data[0].teamid)
+        router.push(`?team=${response.data.data[0].teamid}`)
+      } catch (error) {
+        
+      }
+    }
+    getTeams()
+   
+  },[])
 
   return (
     <PmLayout>
@@ -19,10 +48,9 @@ export default function page() {
 
         <div className=' w-full flex items-center justify-center'>
           <div className=' w-fit p-2 flex flex-wrap items-center justify-center gap-2 bg-secondary rounded-sm'>
-            <button onClick={() => setTab('Show All')} className={`text-[.6rem]  p-2 text-zinc-100 rounded-md ${tab === 'Show All' && 'bg-red-700'} `}>Show All</button>
-
-            {Teams.map((item, index) => (
-              <button onClick={() => setTab(item.name)} className={`text-[.6rem]  p-2 text-zinc-100 rounded-md ${tab === item.name && 'bg-red-700'} `}>{item.name}</button>
+       
+            {teams.map((item, index) => (
+              <button onClick={() => {setTab(item.teamid), router.push(`?team=${item.teamid}`)}} className={`text-[.6rem]  p-2 text-zinc-100 rounded-md ${tab === item.teamid && 'bg-red-700'} `}>{item.teamname}</button>
 
             ))}
 

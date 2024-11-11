@@ -6,13 +6,14 @@ import Bottomcards from './Bottomcards'
 import { Tabs, Teams } from '@/types/data'
 import axios from 'axios'
 import { Team } from '@/types/types'
+import { useRouter } from 'next/navigation'
 
 
 export default function page() {
   const [teams, setTeams] = useState<Team[]>([])
   const active = teams[0]
-  const [tab, setTab] = useState('Show All')
-
+  const [tab, setTab] = useState('')
+  const router = useRouter()
 
   //team list
   useEffect(() => {
@@ -26,6 +27,8 @@ export default function page() {
 
       console.log('Teams list',response.data)
       setTeams(response.data.data.teamlist)
+      setTab(response.data.data.teamlist[0].teamid)
+      router.push(`?team=${response.data.data.teamlist[0].teamid}`)
       // setTab(response.data.data.teamlist[0].teamid)
     }
     getList()
@@ -40,10 +43,9 @@ export default function page() {
 
         <div className=' w-full flex items-center justify-center'>
           <div className=' w-fit p-2 flex flex-wrap items-center justify-center gap-2 bg-secondary rounded-sm'>
-            <button onClick={() => setTab('Show All')} className={`text-[.6rem]  p-2 text-zinc-100 rounded-md ${tab === 'Show All' && 'bg-red-700'} `}>Show All</button>
-
+          
             {teams.map((item, index) => (
-              <button onClick={() => setTab(item.teamid)} className={`text-[.6rem]  p-2 text-zinc-100 rounded-md ${tab === item.teamid && 'bg-red-700'} `}>{item.teamname}</button>
+              <button onClick={() => {setTab(item.teamid), router.push(`?team=${item.teamid}`)}} className={`text-[.6rem]  p-2 text-zinc-100 rounded-md ${tab === item.teamid && 'bg-red-700'} `}>{item.teamname}</button>
 
             ))}
 

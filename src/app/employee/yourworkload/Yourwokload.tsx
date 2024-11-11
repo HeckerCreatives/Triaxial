@@ -10,8 +10,6 @@ import {
 } from "@/components/ui/dialog"
 import Legends from '@/components/common/Legends'
 import axios, { AxiosError } from 'axios'
-import { env } from 'process'
-import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
 import { Workload } from '@/types/types'
 import { formatDate } from '@/utils/functions'
@@ -24,34 +22,10 @@ import Wfhform from '@/components/forms/Wfhform'
 
 
 export default function Yourworkload() {
-  const [dialog, setDialog] = useState(false)
-
-  const [wdStatus, setWdstatus] = useState(false)
-  const [leaveStatus, setLeavestatus] = useState(false)
-  const [date, setDate] = useState('')
-  const [name, setName] = useState('')
-  const [role, setRole] = useState('')
-  const [hours, setHours] = useState(0)
   const [dateFilter, setDateFilter] = useState('')
   const [list, setList] = useState<Workload[]>([])
   const [dates, setDates] = useState<string[]>([])
-
-
   const router = useRouter()
-
-
-
-  const position = (jobManager: boolean, manager: boolean) => {
-    if(jobManager && manager === true){
-      return 'Project & Job Manager'
-    }else if(jobManager === false && manager === true){
-      return 'Project Manager'
-    }else if(jobManager === true && manager === false){
-      return 'Job Manager'
-    }else{
-      return 'Your not allowed to edit this project'
-    }
-  }
 
   useEffect(() => {
     const getWorkload = async () => {
@@ -60,7 +34,6 @@ export default function Yourworkload() {
           withCredentials: true
         })
 
-        console.log(response.data.data)
         setList(response.data.data.yourworkload)
         setDates(response.data.data.alldates)
       } catch (error) {
@@ -158,6 +131,7 @@ export default function Yourworkload() {
           <thead className=' bg-secondary h-[100px]'>
 
             <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
+              <th className=' font-normal w-[70px]'>Job No.</th>
               <th className=' font-normal w-[70px]'>Job Mgr.</th>
               <th className=' font-normal w-[70px]'>Job Component</th>
               <th className=' w-[70px] font-normal'>Members</th>
@@ -172,6 +146,7 @@ export default function Yourworkload() {
             graphItem.members.map((member, memberIndex) => (
               <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
                  
+                  <td className="text-center text-red-500">{memberIndex === 0 && graphItem.jobno}</td>
                   <td className="text-center">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
                   <td className="text-center">{memberIndex === 0 && graphItem.jobcomponent}</td>
       
@@ -289,7 +264,7 @@ export default function Yourworkload() {
           </>
         ) : (
           <div className=' w-full h-full flex items-center justify-center'>
-            <p className=' text-xs text-zinc-400'>No job component's yet under this project, please create one to see the workload!</p>
+            <p className=' text-xs text-zinc-400'>No data.</p>
 
           </div>
         )}

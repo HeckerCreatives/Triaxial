@@ -3,14 +3,7 @@ import React, { useState } from 'react'
 import Link from "next/link"
 import {
   CircleUser,
-  Home,
-  Menu, ArrowRightLeft, Mail,
-  List,
-  Calendar,
-  ListCheck, Box,
-  User,
-  CalendarCheck,
-  UsersRound
+  Menu, 
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -23,14 +16,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
-import { ToastSuccess } from '../common/Toast'
-import { ProjectsFinance } from '@/types/data'
 import { motion } from 'framer-motion'
 import axios from 'axios'
 import toast from 'react-hot-toast'
@@ -72,7 +57,6 @@ export default function FinaceLayout({
     }
   }
 
-  console.log(path)
   return (
       <div className="flex min-h-screen w-full overflow-hidden">
         <motion.div 

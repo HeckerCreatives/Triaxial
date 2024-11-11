@@ -17,7 +17,7 @@ export default function page() {
         <Breadcrumbdb page={'Settings'}/>
       </div>
 
-      <div className=' w-full p-12'>
+      <div className=' w-full h-full bg-secondary p-12'>
        <Changepassworduser/>
       </div>
     </SuperadminLayout>

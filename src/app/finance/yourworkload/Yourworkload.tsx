@@ -154,7 +154,7 @@ export default function Yourworkload() {
       <div className=' h-full overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
         {list.length !== 0 ? (
           <>
-          <table className="table-auto w-[800px] border-collapse ">
+          <table className="table-auto w-[600px] border-collapse ">
           <thead className=' bg-secondary h-[100px]'>
 
             <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
@@ -289,7 +289,7 @@ export default function Yourworkload() {
           </>
         ) : (
           <div className=' w-full h-full flex items-center justify-center'>
-            <p className=' text-xs text-zinc-400'>No job component's yet under this project, please create one to see the workload!</p>
+            <p className=' text-xs text-zinc-400'>No data.</p>
 
           </div>
         )}

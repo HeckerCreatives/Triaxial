@@ -123,39 +123,7 @@ export default function Employeetable() {
   const [id, setEmployeeid] = useState('')
   const [resource, setResource] = useState('')
 
-
-
-  const handleUnselect = React.useCallback((member: Teams) => {
-    setSelected((prev) => prev.filter((s) => s.value !== member.value));
-  }, []);
-
-  const handleKeyDown = React.useCallback(
-    (e: React.KeyboardEvent<HTMLDivElement>) => {
-      const input = inputRef.current;
-      if (input) {
-        if (e.key === "Delete" || e.key === "Backspace") {
-          if (input.value === "") {
-            setSelected((prev) => {
-              const newSelected = [...prev];
-              newSelected.pop();
-              return newSelected;
-            });
-          }
-        }
-        // This is not a default behaviour of the <input /> field
-        if (e.key === "Escape") {
-          input.blur();
-        }
-      }
-    },
-    []
-  );
-
-  const selectables = selectTeams.filter(
-    (member) => !selected.includes(member)
-  );
-
-  // console.log(selectables, selected, inputValue);
+  const findResource = resources.find((item) => item === employeedata?.resource )
 
 
   //create employee
@@ -169,6 +137,7 @@ export default function Employeetable() {
   } = useForm<CreateEmployee>({
     resolver: zodResolver(createEmployee),
     defaultValues: {
+      resource: findResource,
       firstname:  employeedata?.firstname  || '',
       lasttname:  employeedata?.lastname || '',
       initial:  employeedata?.initial || '',
@@ -176,11 +145,9 @@ export default function Employeetable() {
       reportingto:  employeedata?.reportingto.employeeid || '',
       contactno:  employeedata?.contactno || '',
       team: 'Team',
-      resource: resource
     },
   });
 
-  console.log('Errors',errors)
 
 
 const onSubmit = async (data: CreateEmployee) => {
@@ -408,7 +375,6 @@ useEffect(() => {
         }
     })
 
-    console.log('Managers',response.data)
     setReportto(response.data.data.managerlist)
   
   }
@@ -502,8 +468,6 @@ const handleSelectRow = (id: string, name: string) => {
     }
   });
 };
-
-console.log('Rows',selectedRows)
 
 //paginition
 const handlePageChange = (page: number) => {
@@ -603,7 +567,6 @@ const banEmployee = async () => {
       console.log('Data',response.data)
       setEmployeedata(response.data.data)
     
-    
     }
     getData()
   }
@@ -642,9 +605,8 @@ useEffect(() => {
   }
 },[dialog4])
 
-console.log(id, employeedata)
 
-const reportingtoValue = watch('reportingto');
+
 
 //team data
 const [team, setTeam] = useState<Team[]>([])
@@ -661,8 +623,25 @@ const [team, setTeam] = useState<Team[]>([])
   
   }
 
-  console.log(resource)
 
+const reportingtoValue = watch('reportingto');
+const resourceValue = watch('resource');
+
+useEffect(() => {
+  if (findResource) {
+    reset({
+      resource: findResource,
+      firstname:  employeedata?.firstname  || '',
+      lasttname:  employeedata?.lastname || '',
+      initial:  employeedata?.initial || '',
+      email:  employeedata?.email || '',
+      reportingto:  employeedata?.reportingto.employeeid || '',
+      contactno:  employeedata?.contactno || '',
+      team: 'Team',
+
+    });
+  }
+}, [employeedata, findResource, reset]);
 
 
 
@@ -1126,13 +1105,13 @@ const [team, setTeam] = useState<Team[]>([])
                           <div className=' flex flex-col gap-1'>
 
                           <label htmlFor="" className=' mt-2 text-xs'>Reporting to *</label>
-                            <Select value={reportingtoValue} onValueChange={(value) => setValue('reportingto', 'Team')} {...register('reportingto')}>
+                            <Select value={reportingtoValue} onValueChange={(value) => setValue('reportingto', value)} {...register('reportingto')}>
                               <SelectTrigger className="w-full text-xs h-[35px] bg-primary">
                                 <SelectValue placeholder="Select" />
                               </SelectTrigger>
                               <SelectContent className=' text-xs'>
                                
-                                {Object.values(reportto).map((item, index) => (
+                                {reportto.map((item, index) => (
                                 <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
 
                                 ))}
@@ -1158,7 +1137,7 @@ const [team, setTeam] = useState<Team[]>([])
                             {errors.position && <p className=' text-[.6em] text-red-500'>{errors.position.message}</p>}
 
                             <label htmlFor="" className=' mt-2 text-xs'>Resource *</label>
-                            <Select value={resource} onValueChange={(value) => {setValue('resource', value), setResource(value)}} {...register('resource')}>
+                            <Select value={resourceValue} onValueChange={(value) => {setValue('resource', value)}} {...register('resource')}>
                               <SelectTrigger className="w-full text-xs h-[35px] bg-primary ">
                                 <SelectValue placeholder="Select" />
                               </SelectTrigger>

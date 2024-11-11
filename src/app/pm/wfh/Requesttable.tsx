@@ -78,7 +78,7 @@ export default function Requesttable() {
   useEffect(() => {
     const timer = setTimeout(() => {
       const getList = async () => {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/wfh/listwfhrequestmanager?statusfilter=${status}&fullnamefilter&page=${currentpage}&limit=10`,{
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/wfh/listwfhrequestmanager?statusfilter=${status}&fullnamefilter=${searchName}&page=${currentpage}&limit=10`,{
           withCredentials: true,
           headers: {
             'Content-Type': 'application/json'
@@ -92,7 +92,7 @@ export default function Requesttable() {
       getList()
     }, 500)
     return () => clearTimeout(timer)
-  },[refresh, currentpage, status])
+  },[refresh, currentpage, status, searchName])
 
 
   //paginition
@@ -136,10 +136,10 @@ export default function Requesttable() {
 
         </div>
 
-          <div className=' flex items-center gap-2'>
-              <Input value={searchName} onChange={(e) => setSearchName(e.target.value)} placeholder='Search' type='text' className=' bg-primary h-[35px] text-zinc-100'/>
-              <button className=' bg-red-700 px-8 py-2 rounded-sm text-xs'>Search</button>
-          </div>
+          <div className=' flex flex-col gap-1'>
+                <label htmlFor="" className=' text-xs'>Search</label>
+                <Input value={searchName} placeholder='Search name (clear the input to reset)' onChange={(e) => setSearchName(e.target.value)} type='text' className=' w-[300px] bg-primary text-zinc-100 text-xs h-[35px]'/>
+            </div>
           
         </div>
 

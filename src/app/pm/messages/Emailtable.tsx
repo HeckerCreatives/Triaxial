@@ -11,7 +11,6 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Plus, Delete, Trash, Eye } from 'lucide-react'
-import { Checkbox } from '@/components/ui/checkbox'
 import {
   Dialog,
   DialogContent,
@@ -101,7 +100,7 @@ export default function Emailtable() {
 
       <div className=' w-full flex flex-col max-w-[1520px]'>
         <div className=' flex md:flex-row flex-col items-center justify-between gap-4'>
-            <div className=' flex  items-center gap-4'>
+            {/* <div className=' flex  items-center gap-4'>
                 <Dialog open={dialog} onOpenChange={setDialog}>
                 <DialogTrigger>
                   <button className=' bg-red-700 text-xs px-6 py-2 rounded-sm flex items-center gap-1'><Plus size={15}/>Create</button>
@@ -146,7 +145,7 @@ export default function Emailtable() {
                 </DialogContent>
                 </Dialog>
 
-            </div>
+            </div> */}
             
         </div>
 
@@ -162,7 +161,7 @@ export default function Emailtable() {
           )}
         <TableHeader>
             <TableRow>
-            {/* <TableHead className="w-[100px]">Select</TableHead> */}
+       
             <TableHead>Sender</TableHead>
             <TableHead>Title</TableHead>
             <TableHead>Message</TableHead>
@@ -184,11 +183,11 @@ export default function Emailtable() {
              
             </DialogTrigger>
               <DialogContent className=' max-w-[600px] p-6 bg-secondary border-none text-white'>
-                {/* <DialogHeader>
+                <DialogHeader>
                   <DialogTitle></DialogTitle>
                   <DialogDescription>
                   </DialogDescription>
-                </DialogHeader> */}
+                </DialogHeader>
 
                 <div className=' flex flex-col gap-4 w-full'>
                   <p className=' text-lg font-semibold'>{title}</p>

@@ -10,22 +10,17 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from '../ui/input'
 import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Textarea } from '../ui/textarea'
-import { Checkbox } from '../ui/checkbox'
 import { Bell, Plus } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { wdSchema, WdSchema } from '@/schema/schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { boolean } from 'zod'
-import { formatDate } from '@/utils/functions'
 import axios, { AxiosError } from 'axios'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
 
 
 interface Data {
- 
      children?: React.ReactNode;
      start: string
      id: string
@@ -79,8 +74,6 @@ export default function Editwdrequest( prop: Data) {
 
    }
 
-   console.log(response)
-
  
      
   } catch (error) {
@@ -114,10 +107,6 @@ export default function Editwdrequest( prop: Data) {
      
   }
   };
-
-
-  console.log(prop)
-
   
   return (
     <Dialog open={dialog} onOpenChange={setDialog}>

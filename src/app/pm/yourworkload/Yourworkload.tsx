@@ -53,6 +53,7 @@ export default function Yourworkload() {
     }
   }
 
+  //dates
   useEffect(() => {
     const getWorkload = async () => {
       try {
@@ -60,7 +61,6 @@ export default function Yourworkload() {
           withCredentials: true
         })
 
-        console.log(response.data.data)
         setList(response.data.data.yourworkload)
         setDates(response.data.data.alldates)
       } catch (error) {
@@ -289,7 +289,7 @@ export default function Yourworkload() {
           </>
         ) : (
           <div className=' w-full h-full flex items-center justify-center'>
-            <p className=' text-xs text-zinc-400'>No job component's yet under this project, please create one to see the workload!</p>
+            <p className=' text-xs text-zinc-400'>No data.</p>
 
           </div>
         )}

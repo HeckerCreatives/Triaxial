@@ -122,4 +122,5 @@ export type Workload = {
     projectname:  string
     jobcomponent: string
     members: Members[]
+    jobno: string
 }

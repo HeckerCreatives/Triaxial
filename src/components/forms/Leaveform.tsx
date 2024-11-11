@@ -74,8 +74,6 @@ export default function Leaveform( prop: Data) {
     const { declaration, ...filteredData } = data;
     setLoading(true)
     router.push('?state=true')
-
-
     try {
       const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/leave/requestleave`,{
       leavetype: data.type, // 0 to total number of types
@@ -182,8 +180,6 @@ export default function Leaveform( prop: Data) {
     setValue('totalhoursonleave', hoursonleave)
 }, [workingDays, setValue, hoursonleave, wd]);
 
-
-  console.log(errors, hoursonleave)
   
 
   

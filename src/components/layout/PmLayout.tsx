@@ -10,7 +10,6 @@ import {
   UsersRound,
   Box
 } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -22,14 +21,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
-import { ToastSuccess } from '../common/Toast'
-import { ProjectsPm, ProjectsSection } from '@/types/data'
 import { motion } from 'framer-motion'
 import axios from 'axios'
 import toast from 'react-hot-toast'
@@ -71,7 +62,6 @@ export default function PmLayout({
     }
   }
 
-  console.log(path)
   return (
       <div className="flex min-h-screen w-full overflow-hidden">
         <motion.div 
@@ -92,6 +82,7 @@ export default function PmLayout({
               <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
                 {pm.map((item, index) => (
                   <Link
+                  key={index}
                   href={item.path}
                   className={` ${path.includes(item.path) ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
                 >
@@ -132,6 +123,7 @@ export default function PmLayout({
                 <nav className="grid gap-2 text-lg font-medium">
                 {pm.map((item, index) => (
                   <Link
+                  key={index}
                   href={item.path}
                   className={` ${path.includes(item.path) ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
                 >

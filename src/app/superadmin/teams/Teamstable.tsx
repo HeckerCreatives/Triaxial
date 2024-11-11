@@ -811,9 +811,9 @@ export default function Teamstable() {
             <TableHead className="">Team Leader</TableHead>
             <TableHead>Total Project</TableHead>
             <TableHead className="">Projects</TableHead>
-            <TableHead className="">Individual Workloads</TableHead>
+            {/* <TableHead className="">Individual Workloads</TableHead>
             <TableHead className="">Invoice Projection</TableHead>
-            <TableHead className="">Due on</TableHead>
+            <TableHead className="">Due on</TableHead> */}
             <TableHead className="">Action</TableHead>
             </TableRow>
         </TableHeader>
@@ -833,7 +833,7 @@ export default function Teamstable() {
             <TableCell>
                 <Viewbtn disabled={false} name='View' onClick={() => router.push('/superadmin/teams/teamproject')}/>
             </TableCell>
-            <TableCell>
+            {/* <TableCell>
                 <Viewbtn disabled={false} name='View' onClick={() => router.push('?active=members')}/>
             </TableCell>
             <TableCell>
@@ -842,7 +842,7 @@ export default function Teamstable() {
 
             <TableCell>
                 <Viewbtn disabled={false} name='View' onClick={() => router.push('?active=due on')}/>
-            </TableCell>
+            </TableCell> */}
 
             <TableCell>
                

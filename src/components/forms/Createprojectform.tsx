@@ -150,7 +150,6 @@ export default function Createprojectform( prop: Data) {
             }
         })
   
-        console.log('team list',response.data)
         setTeam(response.data.data.teams)
       
        
@@ -173,7 +172,6 @@ export default function Createprojectform( prop: Data) {
             }
         })
   
-        console.log('Client list',response.data)
         setClient(response.data.data.clients)
     
       }

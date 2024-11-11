@@ -152,6 +152,25 @@ export default function Eventtable() {
     
   },[search, currentpage, state])
 
+  const getList = async () => {
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/events/listevents?page=${currentpage}&limit=10&eventtitlefilter=${search}`,{
+      withCredentials: true,
+      headers: {
+        'Content-Type': 'application/json'
+        }
+    })
+
+    console.log('Event list',response.data)
+    setList(response.data.data.eventlist)
+    setTotalpage(response.data.data.totalpages)
+    setLoading(false)
+
+    if(search !== ''){
+      setCurrentpage(0)
+    }
+   
+  }
+
    //create events
    const {
     register,
@@ -336,12 +355,10 @@ export default function Eventtable() {
    if(response.data.message === 'success'){
      router.push('?state=false')
      setLoading(false)
+     getList()
 
    }
 
-   console.log(response)
-
- 
      
   } catch (error) {
       setLoading(false)

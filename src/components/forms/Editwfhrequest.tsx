@@ -175,13 +175,10 @@ export default function Editwfhrequest( prop: Data) {
      return workingDays;
  }
  
-
- 
    const workingDays = totalWorkingDays() - holidays;
    const hoursonleave = ((totalWorkingDays() - holidays) * hours) - onLeave
 
 
- console.log(errors)
  
  
 

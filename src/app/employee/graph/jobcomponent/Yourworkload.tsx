@@ -522,100 +522,121 @@ export default function Yourworkload() {
               <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
                   <td className="text-center text-white flex items-center justify-center h-[40px] w-[30px]">
 
-                    <Dialog open={dialog2} onOpenChange={setDialog2}>
+                    {isJobmanager === true ? (
+                      <Dialog open={dialog2} onOpenChange={setDialog2}>
+                      <DialogTrigger>
+                          {memberIndex === 0 && (<button onClick={() => {findMember(graphItem.members), setNotes(graphItem.members[0].notes), setIsjobmanager(graphItem.jobmanager.isJobManager)}} className=' p-1 bg-red-600 rounded-sm'><Pen size={12}/></button>)}
+                      </DialogTrigger>
+                      <DialogContent className=' max-w-[600px] bg-secondary border-none p-6 text-white'>
+                        <DialogHeader>
+                          <DialogTitle>Edit Project <span className=' text-xs text-zinc-400'>( As {position(graphItem.jobmanager.isJobManager, graphItem.jobmanager.isManager)})</span></DialogTitle>
+                          <DialogDescription className={` ${graphItem.jobmanager.isManager === true ? 'text-white' : ' text-red-500'}`}>
+                            {/* {graphItem.jobmanager.isManager === true ? 'Your the project manager of this project, you are allowed to edit this project' : ' Your are not the project manager of this project, you are not allowed to edit this project'} */}
+                            
+                          </DialogDescription>
+                        </DialogHeader>
+
+
+
+                        {isJobmanager === true && (
+                          <div className=' flex flex-col w-full gap-2 text-xs'>
+                          
+                          <div className=' flex flex-col w-full gap-2 text-xs'>
+
+                          <label htmlFor="">Engineer (Engr.)</label>
+                            <Select value={engr} onValueChange={(setEngr)}>
+                                  <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
+                                  <SelectValue placeholder="Select" className="text-black" />
+                                  </SelectTrigger>
+                                  <SelectContent className="text-xs">
+                                    {employee.map((item, index) => (
+                                    <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
+
+                                    ))}
+                                  
+                                  </SelectContent>
+                          </Select>
+
+                          <label htmlFor="">Engineer Reviewer (Engr. Revr.)</label>
+                          <Select value={engrrvr} onValueChange={(setEngrrvr)}>
+                                  <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
+                                  <SelectValue placeholder="Select" className="text-black" />
+                                  </SelectTrigger>
+                                  <SelectContent className="text-xs">
+                                    {employee.map((item, index) => (
+                                    <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
+
+                                    ))}
+                                  
+                                  </SelectContent>
+                          </Select>
+
+                          <label htmlFor="">Drafter (Drft.)</label>
+                          <Select value={drf} onValueChange={(setDrf)}>
+                                  <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
+                                  <SelectValue placeholder="Select" className="text-black" />
+                                  </SelectTrigger>
+                                  <SelectContent className="text-xs">
+                                    {employee.map((item, index) => (
+                                    <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
+
+                                    ))}
+                                  
+                                  </SelectContent>
+                          </Select>
+
+                          <label htmlFor="">Drafter Reviewer (Drft. Revr.)	</label>
+                          <Select value={drfrvr} onValueChange={(setDrfrvr)}>
+                                  <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
+                                  <SelectValue placeholder="Select" className="text-black" />
+                                  </SelectTrigger>
+                                  <SelectContent className="text-xs">
+                                    {employee.map((item, index) => (
+                                    <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
+
+                                    ))}
+                                  
+                                  </SelectContent>
+                          </Select>
+
+                          <label htmlFor="">Notes</label>
+                          <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} className=' text-xs h-[35px] bg-primary' placeholder='Notes' />
+
+                            <div className=' w-full flex items-end justify-end mt-4 text-xs'>
+                              <button onClick={() => updateJobComponenAsJobManager(graphItem._id)} className=' bg-red-600 px-4 py-2 rounded-md w-fit'>Save</button>
+                            </div>
+
+                          </div>
+
+                        </div>
+                        )}
+
+
+                     
+                          
+                        
+                      </DialogContent>
+                      </Dialog>
+                    ): (
+                      <Dialog open={dialog2} onOpenChange={setDialog2}>
                         <DialogTrigger>
-                            {memberIndex === 0 && (<button onClick={() => {findMember(graphItem.members), setNotes(graphItem.members[0].notes)}} className=' p-1 bg-red-600 rounded-sm'><Pen size={12}/></button>)}
+                            {memberIndex === 0 && (<button onClick={() => {findMember(graphItem.members), setNotes(graphItem.members[0].notes), setIsjobmanager(graphItem.jobmanager.isJobManager)}} className=' p-1 bg-red-600 rounded-sm'><Pen size={12}/></button>)}
                         </DialogTrigger>
                         <DialogContent className=' max-w-[600px] bg-secondary border-none p-6 text-white'>
                           <DialogHeader>
-                            <DialogTitle>Edit Project <span className=' text-xs text-zinc-400'>( As {position(graphItem.jobmanager.isJobManager, graphItem.jobmanager.isManager)})</span></DialogTitle>
+                            <DialogTitle>Edit Project</DialogTitle>
                             <DialogDescription className={` ${graphItem.jobmanager.isManager === true ? 'text-white' : ' text-red-500'}`}>
                               {/* {graphItem.jobmanager.isManager === true ? 'Your the project manager of this project, you are allowed to edit this project' : ' Your are not the project manager of this project, you are not allowed to edit this project'} */}
                               
                             </DialogDescription>
                           </DialogHeader>
+                          <p className=' text-lg text-red-500'>You are not allowed to edit this job component!</p>
 
-
-
-                          {(graphItem.jobmanager.isJobManager === true && graphItem.jobmanager.isManager === false ) && (
-                            <div className=' flex flex-col w-full gap-2 text-xs'>
-                            
-                            <div className=' flex flex-col w-full gap-2 text-xs'>
-
-                            <label htmlFor="">Engineer (Engr.)</label>
-                              <Select value={engr} onValueChange={(setEngr)}>
-                                    <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
-                                    <SelectValue placeholder="Select" className="text-black" />
-                                    </SelectTrigger>
-                                    <SelectContent className="text-xs">
-                                      {employee.map((item, index) => (
-                                      <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
-
-                                      ))}
-                                    
-                                    </SelectContent>
-                            </Select>
-
-                            <label htmlFor="">Engineer Reviewer (Engr. Revr.)</label>
-                            <Select value={engrrvr} onValueChange={(setEngrrvr)}>
-                                    <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
-                                    <SelectValue placeholder="Select" className="text-black" />
-                                    </SelectTrigger>
-                                    <SelectContent className="text-xs">
-                                      {employee.map((item, index) => (
-                                      <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
-
-                                      ))}
-                                    
-                                    </SelectContent>
-                            </Select>
-
-                            <label htmlFor="">Drafter (Drft.)</label>
-                            <Select value={drf} onValueChange={(setDrf)}>
-                                    <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
-                                    <SelectValue placeholder="Select" className="text-black" />
-                                    </SelectTrigger>
-                                    <SelectContent className="text-xs">
-                                      {employee.map((item, index) => (
-                                      <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
-
-                                      ))}
-                                    
-                                    </SelectContent>
-                            </Select>
-
-                            <label htmlFor="">Drafter Reviewer (Drft. Revr.)	</label>
-                            <Select value={drfrvr} onValueChange={(setDrfrvr)}>
-                                    <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
-                                    <SelectValue placeholder="Select" className="text-black" />
-                                    </SelectTrigger>
-                                    <SelectContent className="text-xs">
-                                      {employee.map((item, index) => (
-                                      <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
-
-                                      ))}
-                                    
-                                    </SelectContent>
-                            </Select>
-
-                            <label htmlFor="">Notes</label>
-                            <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} className=' text-xs h-[35px] bg-primary' placeholder='Notes' />
-
-                              <div className=' w-full flex items-end justify-end mt-4 text-xs'>
-                                <button onClick={() => updateJobComponenAsJobManager(graphItem._id)} className=' bg-red-600 px-4 py-2 rounded-md w-fit'>Save</button>
-                              </div>
-
-                            </div>
-
-                          </div>
-                          )}
-
-
-                       
-                            
-                          
                         </DialogContent>
                     </Dialog>
+                    )}
+
+                    
                    
                     </td>
                   <td className="text-center">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
@@ -796,7 +817,7 @@ export default function Yourworkload() {
 
           
 
-         {isJobmanager === true && (
+         {isJobmanager === true ? (
            <Dialog open={dialog} onOpenChange={setDialog}>
                   <DialogContent className=' p-8 bg-secondary border-none text-white'>
                     <DialogHeader>
@@ -858,6 +879,20 @@ export default function Yourworkload() {
                 
                   </DialogContent>
           </Dialog>
+         ): (
+          <Dialog open={dialog} onOpenChange={setDialog}>
+              <DialogContent className=' p-8 bg-secondary border-none text-white'>
+                      <DialogHeader>
+                        <DialogTitle>Update workload ({name} <span className=' text-xs text-red-500'>({role})</span> at {formatDate(date)})</DialogTitle>
+                        <DialogDescription>
+                         
+                        </DialogDescription>
+                      </DialogHeader>
+
+                      <p className=' text-lg text-red-500'>Only job manager can update a workload!</p>
+                    
+              </DialogContent>
+            </Dialog>
          )}
           
           </>

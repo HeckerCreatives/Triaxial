@@ -18,7 +18,6 @@ export default function Bottomcards() {
   const [list, setList] = useState<Events[]>([])
   const [upcoming, setUpcoming] = useState<Events[]>([])
 
-
   //event list
   useEffect(() => {
 
@@ -31,7 +30,6 @@ export default function Bottomcards() {
             }
         })
   
-        console.log('Event list',response.data)
         setList(response.data.data.current)
         setUpcoming(response.data.data.upcoming)
      

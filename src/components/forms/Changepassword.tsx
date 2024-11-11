@@ -92,12 +92,12 @@ export default function Changepassworduser() {
   
   return (
    
-        <form onSubmit={handleSubmit(changePasswordUser)} className=' flex flex-col gap-2 max-w-[400px] w-full bg-secondary h-auto rounded-md p-8 text-white text-xs'>
+        <form onSubmit={handleSubmit(changePasswordUser)} className=' flex flex-col gap-2 max-w-[400px] w-full bg-primary h-auto rounded-md p-8 text-white text-xs'>
           <p className='text-sm font-semibold'>Change Password</p>
 
           <label htmlFor="" className=' mt-6'>Current password</label>
             <div className=' relative w-full'>
-                <Input type={showc} className=' text-xs h-[35px] bg-primary' placeholder='Current password' {...register('cpassword')} />
+                <Input type={showc} className=' text-xs h-[35px] bg-secondary' placeholder='Current password' {...register('cpassword')} />
                     {showc === 'password' ? 
                     (
                     <p onClick={() => setShowc('text')} className=' absolute right-1 top-[6px] bg-slate-300 p-1 rounded-sm text-black cursor-pointer'><EyeOff size={15}/></p>
@@ -111,7 +111,7 @@ export default function Changepassworduser() {
           <label htmlFor="" className=''>New password</label>
 
             <div className=' relative w-full'>
-                <Input type={shownew} className=' text-xs h-[35px] bg-primary' placeholder='New password' {...register('newpassword')} />
+                <Input type={shownew} className=' text-xs h-[35px] bg-secondary' placeholder='New password' {...register('newpassword')} />
                     {shownew === 'password' ? 
                     (
                     <p onClick={() => setShownew('text')} className=' absolute right-1 top-[6px] bg-slate-300 p-1 rounded-sm text-black cursor-pointer'><EyeOff size={15}/></p>
@@ -124,7 +124,7 @@ export default function Changepassworduser() {
 
                 <label htmlFor="" className=' text-zinc-300 '>Confirm password</label>
                 <div className=' relative w-full'>
-                <Input type={showconfirm} className=' text-xs h-[35px] bg-primary' placeholder='Confirm password' {...register('confirmpassword')} />
+                <Input type={showconfirm} className=' text-xs h-[35px] bg-secondary' placeholder='Confirm password' {...register('confirmpassword')} />
 
                     {showconfirm === 'password' ? 
                         (

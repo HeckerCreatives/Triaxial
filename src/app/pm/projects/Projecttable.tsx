@@ -35,6 +35,7 @@ import { formatDateTime } from '@/utils/functions'
 import PaginitionComponent from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
 import { useSearchParams } from 'next/navigation'
+import Projectstatusform from '@/components/forms/Projectstatusform'
 
 
 type Project = {
@@ -106,6 +107,16 @@ export default function Projecttable() {
     setCurrentpage(page)
   }
 
+  const statusColor = (data: string) => {
+    if(data === 'On-going'){
+      return 'text-blue-500'
+    } else if(data === 'Complete'){
+      return 'text-green-500'
+    } else{
+      return 'text-red-500'
+    }
+  }
+
   return (
    <div className=' w-full h-full flex justify-center bg-secondary p-6 text-zinc-100'>
 
@@ -163,7 +174,7 @@ export default function Projecttable() {
               </TableCell>
             <TableCell className="">{item.invoiced}</TableCell>
             <TableCell className=""></TableCell>
-            <TableCell className="">{item.status}</TableCell>
+            <TableCell className={`${statusColor(item.status)}`}>{item.status}</TableCell>
             <TableCell className="">{formatDateTime(item.startdate)}</TableCell>
             <TableCell className="">{formatDateTime(item.deadlinedate)}</TableCell>
             <TableCell className=" flex items-center gap-2">
@@ -190,9 +201,6 @@ export default function Projecttable() {
                     </Tooltip>
                   </TooltipProvider>
               </Variationprojectform>
-
-            
-             
 
               <Dialog open={dialog2} onOpenChange={setDialog2}>
                     <DialogTrigger>
@@ -279,80 +287,7 @@ export default function Projecttable() {
                     </DialogContent>
               </Dialog>
 
-              <Dialog open={dialog6} onOpenChange={setDialog6}>
-                    <DialogTrigger>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger><button className=' p-2 bg-secondary rounded-md'><FileCheck size={15}/></button></TooltipTrigger>
-                          <TooltipContent>
-                            <p className=' text-xs'>Complete Project</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </DialogTrigger>
-                    <DialogContent className=' bg-white border-none w-[95%] md:w-full max-w-[600px]'>
-                    <div id='invoice-container' className=" bg-white px-6 py-8 w-full  mx-auto">
-                      <p className=' text-lg font-semibold'>Complete Project</p>
-                      <p className=' text-sm text-zinc-500'>You're about to delete the Component of a Project in this Workload.This will be removed permanently on this Tab and will be transfered to Invoice Spreadsheet.</p>
-                      <p className=' text-sm text-zinc-500 flex items-center gap-1'><TriangleAlert size={20} color='red'/>This execution is<span className=' bg-red-100'>IRREVERSIBLE</span>.</p>
-                      <p className=' text-sm text-zinc-500 flex items-center gap-1'><TriangleAlert size={20} color='red'/>Please check information below and proceed with caution.</p>
-                      <hr className=" my-2"/>
-
-                      <div className=' w-[70%]'>
-                      <div className=' w-full grid grid-cols-2'>
-                        <div className=' w-full flex flex-col gap-1'>
-                          <p className=' text-sm font-semibold'>Team Name</p>
-                          <p className=' text-sm font-semibold'>Job Manager</p>
-                          <p className=' text-sm font-semibold'>Job Number</p>
-                          <p className=' text-sm font-semibold'>Client Name</p>
-                          <p className=' text-sm font-semibold'>Project Name</p>
-                          <p className=' text-sm font-semibold'>Job Component</p>
-                          <p className=' text-sm font-semibold'>Component Budget</p>
-                          <p className=' text-sm font-semibold'>Current %Invoice</p>
-                          <p className=' text-sm font-semibold'>Complete %Invoice</p>
-                          <p className=' text-sm font-semibold'>This claim %Invoice</p>
-                          <p className=' text-sm font-semibold'>This claim amount</p>
-                          <p className=' text-sm font-semibold'>Admin Notes</p>
-
-                        </div>
-
-                        <div className=' w-full flex flex-col gap-1'>
-                          <p className=' text-sm '>:  Team Name</p>
-                          <p className=' text-sm '>:  Job Manager</p>
-                          <p className=' text-sm '>:  Job Number</p>
-                          <p className=' text-sm '>:  Client Name</p>
-                          <p className=' text-sm '>:  Project Name</p>
-                          <p className=' text-sm '>:  Job Component</p>
-                          <p className=' text-sm '>:  Component Budget</p>
-                          <p className=' text-sm '>:  Current %Invoice</p>
-                          <p className=' text-sm '>:  Complete %Invoice</p>
-                          <p className=' text-sm '>:  This claim %Invoice</p>
-                          <p className=' text-sm '>:  This claim amount</p>
-                          <p className=' text-sm '>:  Admin Notes</p>
-
-                        </div>
-
-                      </div>
-
-                      </div>
-
-                      <hr className=' my-2' />
-                      <p className=' text-xs text-zinc-500'>Please insert instructions or comments for the Invoicer.*Please input here.</p>
-                      <Textarea placeholder='Please input here' className=' bg-zinc-200'/>
-
-                      <p className=' font-semibold text-sm mt-4'>Note: An email notification will be sent to the Job Manager and Invoicing.Would you like to continue?</p>
-                      
-                    </div>
-
-                    
-
-                      <div className=' flex items-center justify-end gap-2 px-4 pb-4'>
-                          <button onClick={() => setDialog6(false)} className=' text-xs flex items-center gap-2 bg-primary px-4 py-2 text-zinc-100 rounded-sm'>No</button>
-                          <button className=' text-xs flex items-center gap-2 bg-purple-600 px-4 py-2 text-zinc-100 rounded-sm'>Yes</button>
-                      </div>
-                      
-                    </DialogContent>
-              </Dialog>
+              <Projectstatusform deadlinedate={item.deadlinedate} invoiced={item.invoiced} managerName={item.managerName} projectname={item.projectname} startdate={item.startdate} status={item.status} teamname={item.teamname} client={item.client} _id={item._id} jobno={item.jobno}/>
 
               
             </TableCell>

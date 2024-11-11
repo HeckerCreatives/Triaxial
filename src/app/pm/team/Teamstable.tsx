@@ -24,13 +24,6 @@ import PaginitionComponent from '@/components/common/Pagination'
 
 type Members = Record<"name" | "employeeid", string>;
 
-
-type Managers = {
-  employeeid: string
-  name: string
-}
-
-
 type Team = {
   manager: string
 teamid: string
@@ -38,7 +31,6 @@ teamleader: string
 teamname: string
 }
 
-type Row = { id: string; name: string };
 
 type TeamData = {
   teamid: string
@@ -62,17 +54,10 @@ type TeamData = {
 }
 
 export default function Teamstable() {
-  const [dialog, setDialog] = useState(false)
-  const [dialog2, setDialog2] = useState(false)
-  const [dialog3, setDialog3] = useState(false)
   const router = useRouter()
   const search = useSearchParams()
   const tab = search.get('active')
 
-  const inputRef = React.useRef<HTMLInputElement>(null);
-  const [open, setOpen] = React.useState(false);
-  const [selected, setSelected] = React.useState<Members[]>([]);
-  const [inputValue, setInputValue] = React.useState("");
   const [loading, setLoading] = useState(false)
   const [employee, setEmployee] = useState<Members[]>([])
   const state = search.get('state')
@@ -80,39 +65,6 @@ export default function Teamstable() {
   const [currentpage, setCurrentpage] = useState(0)
   const [teamdata, setTeamdata] = useState<TeamData>()
   const [teamid, setTeamid] = useState('')
-
-
-  const handleUnselect = React.useCallback((member: Members) => {
-    setSelected((prev) => prev.filter((s) => s.employeeid !== member.employeeid));
-  }, []);
-
-  const handleKeyDown = React.useCallback(
-    (e: React.KeyboardEvent<HTMLDivElement>) => {
-      const input = inputRef.current;
-      if (input) {
-        if (e.key === "Delete" || e.key === "Backspace") {
-          if (input.value === "") {
-            setSelected((prev) => {
-              const newSelected = [...prev];
-              newSelected.pop();
-              return newSelected;
-            });
-          }
-        }
-        // This is not a default behaviour of the <input /> field
-        if (e.key === "Escape") {
-          input.blur();
-        }
-      }
-    },
-    []
-  );
-
-  const selectables = employee.filter(
-    (member) => !selected.includes(member)
-  );
-
-  console.log(selected);
 
 
   //create team
@@ -134,194 +86,6 @@ export default function Teamstable() {
     },
   });
 
-  console.log(errors)
-  const onSubmit = async (data: CreateTeam) => {
-    setLoading(true)
-    console.log(data)
-    router.push('?state=true')
-    const selectedIds = selected.map((row) => row.employeeid);
-    
-     try {
-         const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/teams/createteam`,{
-          teamname: data.teamname,
-          directorpartner: data.directorpartner,
-          teamleader: data.teamleader,
-          associate: data.associate,
-          managerid: data.manager, // employeeid
-          members: selectedIds // employeeids
-         },
-             {
-                 withCredentials: true,
-                 headers: {
-                 'Content-Type': 'application/json'
-                 }
-             }
-         )
-
-      const response = await toast.promise(request, {
-          loading: 'Creating team ....',
-          success: `Team successfully created`,
-          error: 'Error while creating the team',
-      });
-
-      if(response.data.message === 'success'){
-        reset()
-        setDialog(false)
-        router.push('?state=false')
-        setLoading(false)
-        setSelected([])
-      }
-
-      console.log(response)
-
-    
-        
-     } catch (error) {
-         setLoading(false)
-
-          if (axios.isAxiosError(error)) {
-                 const axiosError = error as AxiosError<{ message: string, data: string }>;
-                 if (axiosError.response && axiosError.response.status === 401) {
-                     toast.error(`${axiosError.response.data.data}`) 
-                     router.push('/')    
-                 }
-
-                 if (axiosError.response && axiosError.response.status === 400) {
-                     toast.error(`${axiosError.response.data.data}`)     
-                        
-                 }
-
-                 if (axiosError.response && axiosError.response.status === 402) {
-                     toast.error(`${axiosError.response.data.data}`)          
-                            
-                 }
-
-                 if (axiosError.response && axiosError.response.status === 403) {
-                     toast.error(`${axiosError.response.data.data}`)              
-                    
-                 }
-
-                 if (axiosError.response && axiosError.response.status === 404) {
-                     toast.error(`${axiosError.response.data.data}`)             
-                 }
-         } 
-        
-     }
-  };
-
-  const editTeam = async (data: CreateTeam) => {
-    setLoading(true)
-    console.log(data)
-    router.push('?state=true')
-    const selectedIds = selected.map((row) => row.employeeid);
-    
-     try {
-         const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/teams/editteam`,{
-          teamid: teamid ,
-          teamname: data.teamname,
-          directorpartner: data.directorpartner,
-          teamleader: data.teamleader,
-          associate: data.associate,
-          manager: data.manager,
-          members: selectedIds // employeeids
-         },
-             {
-                 withCredentials: true,
-                 headers: {
-                 'Content-Type': 'application/json'
-                 }
-             }
-         )
-
-      const response = await toast.promise(request, {
-          loading: 'Editing team ....',
-          success: `Team edited sucessfully`,
-          error: 'Error while editing the team',
-      });
-
-      if(response.data.message === 'success'){
-        reset()
-        setDialog3(false)
-        router.push('?state=false')
-        setLoading(false)
-        setSelected([])
-      }
-
-      console.log(response)
-
-    
-        
-     } catch (error) {
-         setLoading(false)
-
-          if (axios.isAxiosError(error)) {
-                 const axiosError = error as AxiosError<{ message: string, data: string }>;
-                 if (axiosError.response && axiosError.response.status === 401) {
-                     toast.error(`${axiosError.response.data.data}`) 
-                     router.push('/')    
-                 }
-
-                 if (axiosError.response && axiosError.response.status === 400) {
-                     toast.error(`${axiosError.response.data.data}`)     
-                        
-                 }
-
-                 if (axiosError.response && axiosError.response.status === 402) {
-                     toast.error(`${axiosError.response.data.data}`)          
-                            
-                 }
-
-                 if (axiosError.response && axiosError.response.status === 403) {
-                     toast.error(`${axiosError.response.data.data}`)              
-                    
-                 }
-
-                 if (axiosError.response && axiosError.response.status === 404) {
-                     toast.error(`${axiosError.response.data.data}`)             
-                 }
-         } 
-        
-     }
-  };
-
-
-  //manager list
-  const [managers, setManagers] = useState<Managers[]>([])
-  // useEffect(() => {
-  //   const getList = async () => {
-  //     const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users/managerlist`,{
-  //       withCredentials: true,
-  //       headers: {
-  //         'Content-Type': 'application/json'
-  //         }
-  //     })
-
-  //     console.log('Managers',response.data)
-  //     setManagers(response.data.data.managerlist)
-    
-  //   }
-  //   getList()
-    
-  // },[])
-
-  //employee list
-  // useEffect(() => {
-  //   const getList = async () => {
-  //     const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users/employeesearchlist`,{
-  //       withCredentials: true,
-  //       headers: {
-  //         'Content-Type': 'application/json'
-  //         }
-  //     })
-
-  //     console.log('Employee',response.data)
-  //     setEmployee(response.data.data.employeelist)
-     
-  //   }
-  //   getList()
-    
-  // },[])
-
   //team list
   const [searchteam, setSearchteam] = useState('')
   const [teamlist, setTeamlist] = useState<Team[]>([])
@@ -336,7 +100,6 @@ export default function Teamstable() {
             }
         })
   
-        console.log('team list',response.data)
         setTeamlist(response.data.data.teams)
         setTotalpage(response.data.data.totalpages)
         setLoading(false)
@@ -349,143 +112,11 @@ export default function Teamstable() {
     
   },[state, searchteam, currentpage])
 
-  // useEffect(() => {
-  //   setLoading(true)
-  //     const getList = async () => {
-  //       const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teams/teamsearchlistmanager?teamname`,{
-  //         withCredentials: true,
-  //         headers: {
-  //           'Content-Type': 'application/json'
-  //           }
-  //       })
-  
-  //       console.log('team search',response.data)
-       
-  //       setLoading(false)
-       
-  //     }
-  //     getList()
-    
-  // },[])
 
   //paginition
   const handlePageChange = (page: number) => {
     setCurrentpage(page)
   }
-
-  //select row
-  const [selectedRows, setSelectedRows] = useState<Row[]>([]);
-  const handleSelectRow = (id: string, name: string) => {
-      setSelectedRows((prevSelectedRows) => {
-        // Check if the row is already selected by its id
-        const isSelected = prevSelectedRows.some((row) => row.id === id);
-  
-        if (isSelected) {
-          // Remove the row object from the array if it is already selected (deselect)
-          return prevSelectedRows.filter((row) => row.id !== id);
-        } else {
-          // Add the new row object to the array (select)
-          return [...prevSelectedRows, { id, name }];
-        }
-      });
-  };
-  
-
-
-  //delete
-  const deleteTeam = async () => {
-    setLoading(true)
-    router.push('?state=true')
-    const selectedIds = selectedRows.map((row) => row.id);
-
-    if(selectedIds.length === 0){
-      toast.error(`Please select a team to proceed`)  
-      setLoading(false)
-
-    } else{
-      try {
-        const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/teams/deleteteams`,{
-          teamId: selectedIds
-        },
-            {
-                withCredentials: true,
-                headers: {
-                'Content-Type': 'application/json'
-                }
-            }
-        )
-  
-    const response = await toast.promise(request, {
-        loading: 'Deleting team....',
-        success: `Deleted successfully`,
-        error: 'Error while deleting team',
-    });
-  
-    if(response.data.message === 'success'){
-      
-      setDialog2(false)
-      setSelectedRows([])
-      router.push('?state=false')
-      setLoading(false)
-    }
-  
-    console.log(response)
-  
-  
-      
-      } catch (error) {
-        setLoading(false)
-          if (axios.isAxiosError(error)) {
-                  const axiosError = error as AxiosError<{ message: string, data: string }>;
-                  if (axiosError.response && axiosError.response.status === 401) {
-                      toast.error(`${axiosError.response.data.data}`)     
-                  }
-    
-                  if (axiosError.response && axiosError.response.status === 400) {
-                      toast.error(`${axiosError.response.data.data}`)     
-                        
-                  }
-    
-                  if (axiosError.response && axiosError.response.status === 402) {
-                      toast.error(`${axiosError.response.data.data}`)          
-                            
-                  }
-    
-                  if (axiosError.response && axiosError.response.status === 403) {
-                      toast.error(`${axiosError.response.data.data}`)              
-                    
-                  }
-    
-                  if (axiosError.response && axiosError.response.status === 404) {
-                      toast.error(`${axiosError.response.data.data}`)             
-                  }
-          } 
-        
-      }
-    }
-  
-  }
-
-  //team data
-  // useEffect(() => {
-  //     const getData = async () => {
-  //       const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teams/teamdatamanager?teamid=${teamid}`,{
-  //         withCredentials: true,
-  //         headers: {
-  //           'Content-Type': 'application/json'
-  //           }
-  //       })
-  
-  //       console.log('team data',response.data)
-  //       setTeamdata(response.data.data)
-       
-  //       setLoading(false)
-       
-  //     }
-  //     getData()
-    
-  // },[teamid])
-
 
    // Dynamically reset the form based on teamid
    useEffect(() => {
@@ -510,29 +141,6 @@ export default function Teamstable() {
     }
   }, [teamid, teamdata, reset]);
 
-  useEffect(() => {
-    if(dialog3 === false){
-      setTeamid('')
-    }
-  },[dialog3])
-
-  const managerValue = watch('manager');
-  const leaderValue = watch('teamleader');
-
-  useEffect(() => {
-    if (teamdata) {
-      setSelected(
-        teamdata.members.map(member => ({
-          name: member.fullname,
-          employeeid: member.memberid
-        }))
-      );
-    }
-  }, [teamdata]);
-
-  useEffect(() => {
-    setSelected([])
-  },[dialog, dialog3, dialog2])
 
   return (
     <>
