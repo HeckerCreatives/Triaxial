@@ -216,9 +216,10 @@ export default function Sickleavetable() {
 
           </div>
 
-            <div className=' flex items-center gap-2'>
-                <Input value={searchName} onChange={(e) => setSearchName(e.target.value)} placeholder='Search' type='text' className=' bg-primary h-[35px] text-zinc-100'/>
-                <button className=' bg-red-700 px-8 py-2 rounded-sm text-xs'>Search</button>
+            <div className=' flex flex-col gap-1'>
+                <label htmlFor="" className=' text-xs'>Search</label>
+                <Input value={searchName} placeholder='Search client name (clear the input to reset)' onChange={(e) => setSearchName(e.target.value)} type='text' className=' w-[300px] bg-primary text-zinc-100 text-xs h-[35px]'/>
+               
             </div>
             
         </div>

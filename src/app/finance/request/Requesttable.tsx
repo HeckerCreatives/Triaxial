@@ -148,8 +148,6 @@ export default function Requesttable() {
   }
   };
 
-
-
   //paginition
   const handlePageChange = (page: number) => {
     setCurrentpage(page)
@@ -161,7 +159,25 @@ export default function Requesttable() {
     <div className=' w-full h-full flex justify-center bg-secondary p-6 text-zinc-100'>
 
       <div className=' w-full max-w-[1520px] flex flex-col'>
-        <div className=' flex md:flex-row flex-col items-center justify-between gap-4'>
+        <div className=' flex flex-col items-start gap-8'>
+          <div className=' flex flex-col gap-2'>
+            <p className=' text-xs'>Request :</p>
+            <div className='flex items-center gap-2 rounded-sm text-xs'>
+                <Leaveform onClick={() => undefined}>
+                  <button className={`text-xs px-3 py-1 bg-red-600  rounded-sm`}>Leave</button>
+                </Leaveform>
+                <WDform onClick={() => undefined}>
+                  <button className={`text-xs px-3 py-1 bg-red-600  rounded-sm`}>Wellness Day</button>
+                </WDform>
+
+                <Wfhform onClick={() => undefined}>
+                  <button className={`text-xs px-3 py-1 bg-red-600  rounded-sm`}>WFH</button>
+                </Wfhform>
+
+            </div>
+          </div>
+         
+
             <div className=' flex flex-col gap-8'>
 
               <div className=' flex gap-4'>

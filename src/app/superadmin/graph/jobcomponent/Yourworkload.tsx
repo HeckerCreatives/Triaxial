@@ -16,14 +16,21 @@ import { Graph } from '@/types/types'
 import { formatDate, formatDateTime } from '@/utils/functions'
 
 
-interface DateItem {
-  date: string;
-  status: number;
-  hours: number;
-  isOnLeave: boolean;
-  isOnWellnessday: boolean;
-  isOnEvent: boolean;
+type Event = {
+  startdate: string
+  enddate: string
 }
+
+type Wellnessday = {
+  startdate: string
+  enddate: string
+}
+
+type Leave = {
+  leavestart: string
+  leaveend: string
+}
+
 
 export default function Yourworkload() {
   const params = useSearchParams()
@@ -115,12 +122,24 @@ export default function Yourworkload() {
     return checkDate >= start && checkDate <= end;
   }
 
-  const statusColor = (data: string[], date: string, leaveStart: string, leaveEnd: string, eventStart: string, eventEnd: string, wddate: string, hours: number) => {
+  const statusColor = (data: string[], date: string, leaveStart: string, leaveEnd: string, eventStart: string, eventEnd: string, wddate: string, hours: number, eventDates: Event[], leaveDates: Leave[], wellnessDates: string[]) => {
     const colorData: string[] = [];
 
     const isLeaveInRange = isDateInRange(date, leaveStart, leaveEnd);
     const isEventInRange = isDateInRange(date, eventStart, eventEnd);
 
+    const isWithinAnyEventDate = eventDates.some((item) =>
+      isDateInRange(date, item.startdate, item.enddate)
+    );
+
+    const isWithinAnyLeaveDate = leaveDates.some((item) =>
+      isDateInRange(date, item.leavestart, item.leaveend)
+    );
+
+     // Check if the date is in wellnessDates
+  const isWellnessDate = wellnessDates.some(
+    (wellnessDate) => wellnessDate === date
+  );;
 
     if(data.includes('1')){
       colorData.push('bg-red-500')
@@ -140,17 +159,17 @@ export default function Yourworkload() {
     if(data.includes('6')){
       colorData.push('bg-cyan-400')
     }
-    if(isLeaveInRange == true){
+    if(isWithinAnyLeaveDate){
       colorData.push('bg-violet-300')
     }
-    if(isEventInRange == true){
+    if(isWithinAnyEventDate){
       colorData.push('bg-gray-300')
     }
     if(hours > 8){
       colorData.push('bg-pink-500')
     }
 
-    if(date === wddate){
+    if(isWellnessDate){
       colorData.push('bg-fuchsia-400')
     }
 
@@ -338,6 +357,9 @@ export default function Yourworkload() {
                                   member.eventDates.length !== 0 ? member.eventDates[0]?.enddate : '', 
                                   member.wellnessDates[0],
                                   memberDate?.hours || 0,
+                                  member.eventDates,
+                                  member.leaveDates,
+                                  member.wellnessDates
                                 ).map((item, index) => (
                                   <div key={index} className={`w-full h-[40px] ${item}`}>
 

@@ -53,7 +53,7 @@ export default function Yourworkload() {
     getList()
   },[filter, getTeamid])
 
-  const statusData = ( hours: any, wd: boolean, event: boolean) => {
+  const statusData = ( hours: any, wd: boolean, event: boolean, leave: boolean) => {
     const data = []
 
     if(hours <= 2){
@@ -73,15 +73,33 @@ export default function Yourworkload() {
     }
 
     if(hours > 8){
-      data.push('bg-teal-500')
+      data.push('bg-green-500')
     }
 
     if(wd === true){
+      data.push('bg-violet-500')
+    }
+    if(hours < 40){
+      data.push('bg-cyan-500')
+    }
+
+    if(hours > 40){
       data.push('bg-indigo-500')
+    }
+
+    if(event === true){
+      data.push('bg-gray-400')
+
+    }
+
+    if(leave === true){
+      data.push('bg-pink-500')
+
     }
 
     return data
   }
+
 
 
   return (
@@ -154,6 +172,7 @@ export default function Yourworkload() {
                     const hours = dateData ? dateData.totalhoursofjobcomponents : '-';
                     const isEventDay = dateData ? dateData.eventDay : false;
                     const isWd = dateData ? dateData.wellnessDay : false;
+                    const isLeave = dateData ? dateData.leave : false;
 
                     // Calculate sum every 5 days
                     const startIndex = Math.floor(dateIndex / 5) * 5;
@@ -169,7 +188,7 @@ export default function Yourworkload() {
                           className="relative text-center overflow-hidden bg-white border-[1px]"
                         >
                           <div className='flex absolute top-0 w-full h-[40px] text-center'>
-                            {statusData(hours, isWd, isEventDay).map((item, index) => (
+                            {statusData(hours, isWd, isEventDay, isLeave).map((item, index) => (
                               <div key={index} className={`w-full h-full ${item}`}>
 
                               </div>
@@ -180,7 +199,7 @@ export default function Yourworkload() {
                         </td>
                         {(dateIndex + 1) % 5 === 0 && (
                           <th key={`total-${dateIndex}`} className='font-normal w-[40px] bg-primary border-[1px] border-zinc-700'>
-                            <p className={` ${totalHours < 40 ? ' text-cyan-500' : 'text-indigo-500'}`}>{totalHours}</p> {/* Display the sum of hours for every 5 days */}
+                            <p className={` text-white`}>{totalHours}</p> {/* Display the sum of hours for every 5 days */}
                           </th>
                         )}
                       </>

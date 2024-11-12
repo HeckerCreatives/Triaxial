@@ -124,3 +124,30 @@ export type Workload = {
     members: Members[]
     jobno: string
 }
+
+type TeamManager = {
+    employeeid: string
+fullname: string
+resources: string
+role: string
+}
+
+type Memberteam = {
+    employeeid: string
+fullname: string
+resources: string
+role: string
+}
+
+type Teamleader = {
+    employeeid: string
+fullname: string
+resources: string
+role: string
+}
+
+export type TeamMembers = {
+    manager: TeamManager
+    members: Memberteam[]
+    teamleader: Teamleader
+}

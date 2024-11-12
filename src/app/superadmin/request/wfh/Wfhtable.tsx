@@ -10,25 +10,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination"
-import { Plus, Delete, Trash, Eye } from 'lucide-react'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import Leaveformadmin from '@/components/forms/Leaveformadmin'
 import axios, { AxiosError } from 'axios'
 import toast from 'react-hot-toast'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -44,26 +25,6 @@ import {
 } from "@/components/ui/select"
 import Wfhformadmin from '@/components/forms/Wfhformadmin'
 
-
-type Wfh = {
-  employeeid: string
-  requestid:string
-  startdate: string
-  enddate: string
-  totalworkingdays: number
-  totalholidays: number
-  totalworkinghours:  number
-  wellnessdaycycle: true,
-  hoursofleave:  number
-  reason: string
-  comments: string
-  createdAt: string
-  status: string
-  manager: string
-  employeename: string
-  
-}
-
 type Wfhlist = {
   requestid: string
   userid: string
@@ -77,8 +38,6 @@ type Wfhlist = {
   status: string
   
 }
-
-
 
 export default function Wfhtable() {
   const [dialog, setDialog] = useState(false)
@@ -241,9 +200,9 @@ export default function Wfhtable() {
 
           </div>
 
-            <div className=' flex items-center gap-2'>
-                <Input value={searchName} onChange={(e) => setSearchName(e.target.value)} placeholder='Search' type='text' className=' bg-primary h-[35px] text-zinc-100'/>
-                <button className=' bg-red-700 px-8 py-2 rounded-sm text-xs'>Search</button>
+            <div className=' flex flex-col gap-1'>
+                <label htmlFor="" className=' text-xs'>Search</label>
+                <Input value={searchName} placeholder='Search client name (clear the input to reset)' onChange={(e) => setSearchName(e.target.value)} type='text' className=' w-[300px] bg-primary text-zinc-100 text-xs h-[35px]'/>
             </div>
             
         </div>

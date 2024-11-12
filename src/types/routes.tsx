@@ -2,7 +2,7 @@ import { ArrowRightLeft, Box, CalendarCheck2, Cog, Home, HomeIcon, Key, List, Li
 
 export const hr = [
     {name: 'Dashboard', path: '/hr/dashboard', icon: <Home className="h-4 w-4" />},
-    {name: ' Your Workload', path: '/hr/yourworkload', icon: <List className="h-4 w-4" />},
+    // {name: ' Your Workload', path: '/hr/yourworkload', icon: <List className="h-4 w-4" />},
     {name: 'Request', path: '/hr/request', icon: <ArrowRightLeft className="h-4 w-4" />},
     {name: 'Wellness Day', path: '/hr/wellnessday', icon: <PlusSquare className="h-4 w-4" />},
     {name: 'Events', path: '/hr/events', icon: <CalendarCheck2 className="h-4 w-4" />},
@@ -37,7 +37,7 @@ export const employee = [
 
 export const finance = [
     {name: 'Dashboard', path: '/finance/dashboard', icon: <Home className="h-4 w-4" />},
-    {name: ' Your Workload', path: '/finance/yourworkload', icon: <List className="h-4 w-4" />},
+    // {name: ' Your Workload', path: '/finance/yourworkload', icon: <List className="h-4 w-4" />},
     {name: 'Request', path: '/finance/request', icon: <ArrowRightLeft className="h-4 w-4" />},
     {name: 'Messages', path: '/finance/messages', icon: <Mail className="h-4 w-4" />},
     {name: 'Settings', path: '/finance/settings', icon: <Cog className="h-4 w-4" />},

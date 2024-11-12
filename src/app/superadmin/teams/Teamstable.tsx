@@ -71,7 +71,6 @@ import {
 } from "@/components/ui/select"
 import Spinner from '@/components/common/Spinner'
 import PaginitionComponent from '@/components/common/Pagination'
-import Authcheck from '@/utils/Authcheck'
 
 type Members = Record<"name" | "employeeid", string>;
 
@@ -587,6 +586,21 @@ export default function Teamstable() {
     setSelected([])
   },[dialog, dialog3, dialog2])
 
+  useEffect(() => {
+    const getProjects = async () => {
+      try {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/projects/saprojectlist?searchproject=Project 1`,{
+          withCredentials: true
+        })
+
+        console.log('get projects',response.data)
+      } catch (error) {
+        
+      }
+    }
+    getProjects()
+  })
+
   return (
     <>
     {tab === null && (
@@ -811,8 +825,8 @@ export default function Teamstable() {
             <TableHead className="">Team Leader</TableHead>
             <TableHead>Total Project</TableHead>
             <TableHead className="">Projects</TableHead>
-            {/* <TableHead className="">Individual Workloads</TableHead>
-            <TableHead className="">Invoice Projection</TableHead>
+            <TableHead className="">Individual Workloads</TableHead>
+            {/* <TableHead className="">Invoice Projection</TableHead>
             <TableHead className="">Due on</TableHead> */}
             <TableHead className="">Action</TableHead>
             </TableRow>
@@ -831,12 +845,12 @@ export default function Teamstable() {
             <TableCell>{item.teamleader}</TableCell>
             <TableCell>1</TableCell>
             <TableCell>
-                <Viewbtn disabled={false} name='View' onClick={() => router.push('/superadmin/teams/teamproject')}/>
-            </TableCell>
-            {/* <TableCell>
-                <Viewbtn disabled={false} name='View' onClick={() => router.push('?active=members')}/>
+              <Viewbtn disabled={false} name='View' onClick={() => router.push(`/superadmin/teams/teamproject?teamid=${item.teamid}`)}/>
             </TableCell>
             <TableCell>
+              <Viewbtn disabled={false} name='View' onClick={() => router.push(`/superadmin/graph/teammembers?teamid=${item.teamid}`)}/>
+            </TableCell>
+            {/* <TableCell>
                 <Viewbtn disabled={true} name='View' onClick={() => router.push('?active=members')}/>
             </TableCell>
 

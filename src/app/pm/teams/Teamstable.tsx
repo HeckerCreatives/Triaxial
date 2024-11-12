@@ -25,6 +25,15 @@ import Teammembers from './Teammembers'
 import Indiviualworkloads from './Individualworkloads'
 import Dueon from './Dueon'
 import Viewbtn from '@/components/common/Viewbtn'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
 
 
 
@@ -42,79 +51,13 @@ export default function Teamstable() {
 
   return (
     <>
-    {tab === null && (
+   
       <div className=' w-full h-full flex justify-center bg-secondary p-6 text-zinc-100'>
 
       <div className=' w-full flex flex-col max-w-[1520px]'>
         <div className=' flex md:flex-row flex-col items-center justify-between gap-4'>
             <div className=' flex  items-center gap-4'>
-              {/* <Dialog open={dialog} onOpenChange={setDialog}>
-                <DialogTrigger>
-                  <button className=' bg-primary px-6 py-2 rounded-sm flex items-center gap-1 text-xs'><Plus size={15}/>Create</button>
-                </DialogTrigger>
-                <DialogContent className=' bg-secondary border-none text-zinc-100 grid grid-cols-1 lg:grid-cols-[250px,1fr]'>
-                  <div className=' bg-blue-400 lg:block hidden'
-                  style={{backgroundImage: `url('/bg2.png')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat:"no-repeat"}}
-                  
-                  >
-                    <p className=' p-2 uppercase text-lg font-semibold mt-8 bg-gradient-to-r from-zinc-950 to-zinc-950/10'>Create team</p>
-                  </div>
-
-                  <div className=' flex flex-col gap-2 p-4'>
-                    <DialogHeader>
-                    <DialogDescription>
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Incidunt, reprehenderit sequi. Quisquam, libero quam placeat molestias cum est.
-                    </DialogDescription>
-                    </DialogHeader>
-                  <form action="" className=' flex flex-col '>
-                      <div className=' flex flex-col'>
-                        <label htmlFor="" className=' mt-2 text-xs'>Team name</label>
-                        <Input placeholder='Team Name' type='text' className=' bg-primary text-xs'/>
-
-                        <label htmlFor="" className=' mt-2 text-xs'>Director Partner</label>
-                        <Input placeholder='Director Partner' type='text' className=' bg-primary text-xs'/>
-
-                        <label htmlFor="" className=' mt-2 text-xs'>Associate</label>
-                        <Input placeholder='Associate' type='text' className=' bg-primary text-xs'/>
-
-                        <label htmlFor="" className=' mt-2 text-xs'>Manager</label>
-                        <Input placeholder='Manager' type='text' className=' bg-primary text-xs'/>
-
-                        <label htmlFor="" className=' mt-2 text-xs'>Members</label>
-                        <Textarea placeholder='Members' className=' bg-primary text-xs'/>
-
-                      </div>
-
-                  </form>
-                  
-                    <div className=' w-full flex items-end justify-end gap-2 mt-8'>
-                      <ButtonSecondary onClick={() => setDialog(false)}  name={'Cancel'}/>
-                      <Button onClick={() => setDialog(false)} name={'Save'}/>
-                    </div>
-
-                  </div>
-                  
-                </DialogContent>
-              </Dialog>
-
-                <AlertDialog>
-                <AlertDialogTrigger>
-                  <button className=' bg-red-600 px-6 py-2 rounded-sm flex items-center gap-1 text-xs'><Trash size={15}/>Delete</button>
-                </AlertDialogTrigger>
-                <AlertDialogContent className=' bg-secondary text-zinc-100'>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This action cannot be undone. This will permanently delete your account
-                      and remove your data from our servers.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel className=' hover:bg-primary hover:text-zinc-100'>Cancel</AlertDialogCancel>
-                    <AlertDialogAction className=' bg-purple-600 hover:bg-purple-700'>Continue</AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-                </AlertDialog> */}
+             
             </div>
 
             <div className=' flex items-center gap-4'>
@@ -145,12 +88,24 @@ export default function Teamstable() {
             <TableCell>Test</TableCell>
             <TableCell>1</TableCell>
             <TableCell>
-                <Viewbtn disabled={false} name='View' onClick={() => undefined}/>
-            </TableCell>
-            <TableCell>
-                <Viewbtn disabled={false} name='View' onClick={() => router.push('?active=members')}/>
+            <Dialog>
+                <DialogTrigger>Open</DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Are you absolutely sure?</DialogTitle>
+                    <DialogDescription>
+                      This action cannot be undone. This will permanently delete your account
+                      and remove your data from our servers.
+                    </DialogDescription>
+                  </DialogHeader>
+                </DialogContent>
+              </Dialog>
 
             </TableCell>
+            {/* <TableCell>
+                <Viewbtn disabled={false} name='View' onClick={() => router.push('?active=members')}/>
+
+            </TableCell> */}
 
             <TableCell>
                 <Viewbtn disabled={false} name='View' onClick={() => router.push('?active=due on')}/>
@@ -180,9 +135,9 @@ export default function Teamstable() {
       </div>
         
     </div>
-    )}
+ 
 
-    {tab === 'members' && (
+    {/* {tab === 'members' && (
       <Teammembers/>
     )}
 
@@ -192,7 +147,7 @@ export default function Teamstable() {
 
     {tab === 'due on' && (
       <Dueon/>
-    )}
+    )} */}
     </>
     
   )

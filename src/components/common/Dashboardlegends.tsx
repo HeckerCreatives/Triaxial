@@ -70,6 +70,13 @@ export default function Dashboardlegends() {
 
 
         </div>
+
+        <div className=' flex items-center gap-2'>
+          <div className=' h-4 aspect-square bg-gray-400'></div>
+          <p className=' text-xs text-zinc-400'>Events</p>
+
+
+        </div>
       </div>
 
     </div>

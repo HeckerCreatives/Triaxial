@@ -10,8 +10,6 @@ import {
 } from "@/components/ui/dialog"
 import Legends from '@/components/common/Legends'
 import axios, { AxiosError } from 'axios'
-import { env } from 'process'
-import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
 import { Workload } from '@/types/types'
 import { formatDate } from '@/utils/functions'
@@ -20,40 +18,27 @@ import WDform from '@/components/forms/Wellnessday'
 import Wfhform from '@/components/forms/Wfhform'
 
 
+type Event = {
+  startdate: string
+  enddate: string
+}
 
+type Wellnessday = {
+  startdate: string
+  enddate: string
+}
 
+type Leave = {
+  leavestart: string
+  leaveend: string
+}
 
 export default function Yourworkload() {
-  const [dialog, setDialog] = useState(false)
-
-  const [wdStatus, setWdstatus] = useState(false)
-  const [leaveStatus, setLeavestatus] = useState(false)
-  const [date, setDate] = useState('')
-  const [name, setName] = useState('')
-  const [role, setRole] = useState('')
-  const [hours, setHours] = useState(0)
   const [dateFilter, setDateFilter] = useState('')
   const [list, setList] = useState<Workload[]>([])
   const [dates, setDates] = useState<string[]>([])
-
-
   const router = useRouter()
 
-
-
-  const position = (jobManager: boolean, manager: boolean) => {
-    if(jobManager && manager === true){
-      return 'Project & Job Manager'
-    }else if(jobManager === false && manager === true){
-      return 'Project Manager'
-    }else if(jobManager === true && manager === false){
-      return 'Job Manager'
-    }else{
-      return 'Your not allowed to edit this project'
-    }
-  }
-
-  //dates
   useEffect(() => {
     const getWorkload = async () => {
       try {
@@ -87,9 +72,23 @@ export default function Yourworkload() {
     return checkDate >= start && checkDate <= end;
   }
 
-  const statusColor = (data: string[], date: string, hours: number) => {
+  const statusColor = (data: string[], date: string, hours: number, eventStart: string, eventEnd: string, eventDates: Event[], leaveDates: Leave[], wellnessDates: string[]) => {
     const colorData: string[] = [];
 
+    const isWithinAnyEventDate = eventDates.some((item) =>
+      isDateInRange(date, item.startdate, item.enddate)
+    );
+
+    const isWithinAnyLeaveDate = leaveDates.some((item) =>
+      isDateInRange(date, item.leavestart, item.leaveend)
+    );
+
+     // Check if the date is in wellnessDates
+  const isWellnessDate = wellnessDates.some(
+    (wellnessDate) => formatDate(wellnessDate) === date
+  );;
+
+    console.log(isWellnessDate, wellnessDates, date)
 
     if(data.includes('1')){
       colorData.push('bg-red-500')
@@ -109,9 +108,17 @@ export default function Yourworkload() {
     if(data.includes('6')){
       colorData.push('bg-cyan-400')
     }
- 
     if(hours > 8){
       colorData.push('bg-pink-500')
+    }
+    if(isWithinAnyEventDate){
+      colorData.push('bg-gray-400')
+    }
+    if(isWithinAnyLeaveDate){
+      colorData.push('bg-violet-400')
+    }
+    if(isWellnessDate){
+      colorData.push('bg-fuchsia-500')
     }
 
     return colorData; 
@@ -158,6 +165,7 @@ export default function Yourworkload() {
           <thead className=' bg-secondary h-[100px]'>
 
             <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
+              <th className=' font-normal w-[70px]'>Job No.</th>
               <th className=' font-normal w-[70px]'>Job Mgr.</th>
               <th className=' font-normal w-[70px]'>Job Component</th>
               <th className=' w-[70px] font-normal'>Members</th>
@@ -172,6 +180,7 @@ export default function Yourworkload() {
             graphItem.members.map((member, memberIndex) => (
               <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
                  
+                  <td className="text-center text-red-500">{memberIndex === 0 && graphItem.jobno}</td>
                   <td className="text-center">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
                   <td className="text-center">{memberIndex === 0 && graphItem.jobcomponent}</td>
       
@@ -253,6 +262,11 @@ export default function Yourworkload() {
                                   memberDate?.status || [],
                                   dateObj,
                                   memberDate?.hours || 0,
+                                  member.eventDates[0].startdate || '',
+                                  member.eventDates[0].enddate || '',
+                                  member.eventDates,
+                                  member.leaveDates,
+                                  member.wellnessDates
                                 ).map((item, idx) => (
                                   <div key={idx} className={`w-full h-[40px] ${item}`} />
                                 ))}

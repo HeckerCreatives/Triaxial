@@ -28,14 +28,6 @@ import { Graph, Members } from '@/types/types'
 import { formatDate } from '@/utils/functions'
 import { any } from 'zod'
 
-interface DateItem {
-  date: string;
-  status: number;
-  hours: number;
-  isOnLeave: boolean;
-  isOnWellnessday: boolean;
-  isOnEvent: boolean;
-}
 
 type Employee = {
   employeeid: string,
@@ -50,6 +42,21 @@ clientid: string
 type Project = {
   projectid: string
   projectname: string
+}
+
+type Event = {
+  startdate: string
+  enddate: string
+}
+
+type Wellnessday = {
+  startdate: string
+  enddate: string
+}
+
+type Leave = {
+  leavestart: string
+  leaveend: string
 }
 
 
@@ -260,11 +267,24 @@ export default function Yourworkload() {
     return checkDate >= start && checkDate <= end;
   }
 
-  const statusColor = (data: string[], date: string, leaveStart: string, leaveEnd: string, eventStart: string, eventEnd: string, wddate: string, hours: number) => {
+  const statusColor = (data: string[], date: string, leaveStart: string, leaveEnd: string, eventStart: string, eventEnd: string, wddate: string, hours: number, eventDates: Event[], leaveDates: Leave[], wellnessDates: string[]) => {
     const colorData: string[] = [];
 
     const isLeaveInRange = isDateInRange(date, leaveStart, leaveEnd);
     const isEventInRange = isDateInRange(date, eventStart, eventEnd);
+
+    const isWithinAnyEventDate = eventDates.some((item) =>
+      isDateInRange(date, item.startdate, item.enddate)
+    );
+
+    const isWithinAnyLeaveDate = leaveDates.some((item) =>
+      isDateInRange(date, item.leavestart, item.leaveend)
+    );
+
+     // Check if the date is in wellnessDates
+  const isWellnessDate = wellnessDates.some(
+    (wellnessDate) => wellnessDate === date
+  );;
 
     if(data.includes('1')){
       colorData.push('bg-red-500')
@@ -284,35 +304,40 @@ export default function Yourworkload() {
     if(data.includes('6')){
       colorData.push('bg-cyan-400')
     }
-    if(isLeaveInRange == true){
+    if(isWithinAnyLeaveDate){
       colorData.push('bg-violet-300')
     }
-    if(isEventInRange == true){
+    if(isWithinAnyEventDate){
       colorData.push('bg-gray-300')
     }
     if(hours > 8){
       colorData.push('bg-pink-500')
     }
 
-    if(date === wddate){
+    if(isWellnessDate){
       colorData.push('bg-fuchsia-400')
     }
 
     return colorData; 
   }
 
-  const wdStatusChecker = (wddate: string, date: string) => {
-    console.log('wd',wddate, date)
-    if(wddate === date){
+  const wdStatusChecker = (wddate: string[], date: string, eventDates: Event[]) => {
+
+    const isWellnessDate = wddate.includes(date)
+
+    const isWithinAnyEventDate = eventDates.some((item) =>
+      isDateInRange(date, item.startdate, item.enddate)
+    );
+   
+    if(isWellnessDate){
       setWdstatus(true)
-    } else if (wddate === undefined){
-      setWdstatus(false)
-    } else {
+    } else if(isWithinAnyEventDate){
+      setWdstatus(true)
+    }else {
       setWdstatus(false)
     }
    
   }
-
 
   //employee list
   useEffect(() => {
@@ -1062,7 +1087,7 @@ export default function Yourworkload() {
                                     setSelectedRows(memberDate?.status || [])
                                     setLeavestatus(isDateInRange(dateObj,member.leaveDates[0]?.leavestart,member.leaveDates[0]?.leaveend))
                                     setEvent(isDateInRange(dateObj,member.eventDates[0]?.startdate,member.eventDates[0]?.enddate))
-                                    wdStatusChecker(member.wellnessDates[0], dateObj)
+                                    wdStatusChecker(member.wellnessDates, dateObj, member.eventDates)
                                     setIsjobmanager(graphItem.jobmanager.isJobManager)
                                   
                                     setRole(member.role)
@@ -1080,6 +1105,9 @@ export default function Yourworkload() {
                                     member.eventDates.length !== 0 ? member.eventDates[0].enddate : '', 
                                     member.wellnessDates[0],
                                     memberDate?.hours || 0,
+                                    member.eventDates,
+                                    member.leaveDates,
+                                    member.wellnessDates
                                   ).map((item, index) => (
                                     <div key={index} className={`w-full h-[40px] ${item}`}>
 
@@ -1131,14 +1159,14 @@ export default function Yourworkload() {
                       </DialogHeader>
                       <div className=' w-full flex flex-col gap-2'>
 
-                        <p>Employee is on:</p>
+                        {/* <p>Employee is on:</p>
 
                         <div className=' text-xs flex flex-col gap-1 rounded-sm'>
                         
                           <p className=' text-zinc-400 flex items-center gap-2'>Leave:{leaveStatus === true ? <Check size={12} color='green'/> : <X size={12} color='red'/>}</p>
                           <p className=' text-zinc-400 flex items-center gap-2'>Wellness day:{wdStatus === true ? <Check size={12} color='green'/> : <X size={12} color='red'/>}</p>
                           <p className=' text-zinc-400 flex items-center gap-2'>Event:{event === true ? <Check size={12} color='green'/> : <X size={12} color='red'/>}</p>
-                        </div>
+                        </div> */}
 
                     
 
@@ -1160,7 +1188,7 @@ export default function Yourworkload() {
                         </div>
 
 
-                    </div>
+                      </div>
 
                 
                       <div className=' flex flex-col gap-2 text-xs'>

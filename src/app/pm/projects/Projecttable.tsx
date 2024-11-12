@@ -131,10 +131,11 @@ export default function Projecttable() {
 
         </div>
 
-        <div className=' flex items-center gap-2'>
-                <Input value={search} onChange={(e) => setSearch(e.target.value)} type='text' placeholder='Search' className=' text-sm bg-primary text-zinc-100'/>
-                  <button className=' text-sm px-4 h-[40px] rounded-sm bg-red-700 flex items-center gap-1'><Search size={15}/>Search</button>
-              </div>
+          <div className=' flex flex-col gap-1'>
+            <label htmlFor="" className=' text-xs'>Search</label>
+            <Input value={search} placeholder='Search client name (clear the input to reset)' onChange={(e) => setSearch(e.target.value)} type='text' className=' w-[300px] bg-primary text-zinc-100 text-xs h-[35px]'/>
+          </div>
+
         </div>
 
         <Table className=' mt-4'>
@@ -191,7 +192,7 @@ export default function Projecttable() {
                   </TooltipProvider>
               </Editprojectform>
 
-              <Variationprojectform onClick={() => undefined}>
+              {/* <Variationprojectform onClick={() => undefined}>
                 <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger><button className=' p-2 bg-secondary rounded-md'><Layers size={15}/></button></TooltipTrigger>
@@ -285,7 +286,7 @@ export default function Projecttable() {
                       </div>
                       
                     </DialogContent>
-              </Dialog>
+              </Dialog> */}
 
               <Projectstatusform deadlinedate={item.deadlinedate} invoiced={item.invoiced} managerName={item.managerName} projectname={item.projectname} startdate={item.startdate} status={item.status} teamname={item.teamname} client={item.client} _id={item._id} jobno={item.jobno}/>
 

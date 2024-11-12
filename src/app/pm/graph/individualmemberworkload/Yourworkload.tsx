@@ -235,7 +235,7 @@ export default function Indiviualworkloads() {
   
   
   return (
-    <div className=' w-full h-full flex flex-col justify-center bg-secondary text-zinc-100 '>
+    <div className=' w-full h-full flex flex-col justify-center bg-secondary text-zinc-100 p-4 '>
 
       <div className=' w-full flex items-end gap-8 h-auto bg-primary mb-2 p-4 text-xs'>
         <div className=' w-auto flex flex-col gap-1'>

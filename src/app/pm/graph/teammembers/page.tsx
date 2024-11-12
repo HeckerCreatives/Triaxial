@@ -1,8 +1,7 @@
 import Breadcrumbdb from '@/components/common/Breadcrumb'
 import React from 'react'
 import PmLayout from '@/components/layout/PmLayout'
-import Yourworkload from './Yourworkload'
-import Indiviualworkloads from './Yourworkload'
+import Memberstable from './Memberstable'
 
 export default function page() {
   return (
@@ -11,9 +10,9 @@ export default function page() {
       style={{backgroundImage: `url('/dbbg.png')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat:"no-repeat"}}
       
       >
-        <Breadcrumbdb page={'Team / Members / Workload'}/>
+        <Breadcrumbdb page={'Team / Members'}/>
       </div>
-      <Indiviualworkloads/>
+      <Memberstable/>
     </PmLayout>
   )
 }

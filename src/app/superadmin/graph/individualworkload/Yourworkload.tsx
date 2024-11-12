@@ -1,5 +1,6 @@
-"use client"
+'use client'
 import React, { useEffect, useMemo, useState } from 'react'
+import Spreadsheet from 'react-spreadsheet';
 import {
   Dialog,
   DialogContent,
@@ -8,15 +9,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import Legends from '@/components/common/Legends'
-import axios, { AxiosError } from 'axios'
-import { useRouter } from 'next/navigation'
-import { Workload } from '@/types/types'
-import { formatDate } from '@/utils/functions'
-import Leaveform from '@/components/forms/Leaveform'
-import WDform from '@/components/forms/Wellnessday'
-import Wfhform from '@/components/forms/Wfhform'
-
+import axios from 'axios';
+import { useSearchParams } from 'next/navigation';
+import { Workload } from '@/types/types';
+import { formatDate } from '@/utils/functions';
+import Legends from '@/components/common/Legends';
 
 type Event = {
   startdate: string
@@ -33,30 +30,14 @@ type Leave = {
   leaveend: string
 }
 
-export default function Yourworkload() {
-  const [dateFilter, setDateFilter] = useState('')
+export default function Indiviualworkloads() {
+  const params = useSearchParams()
+  const id = params.get('employeeid')
   const [list, setList] = useState<Workload[]>([])
   const [dates, setDates] = useState<string[]>([])
-  const router = useRouter()
+  const [dateFilter, setDateFilter] = useState('')
 
-  useEffect(() => {
-    const getWorkload = async () => {
-      try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/yourworkload?filterDate=${dateFilter}`,{
-          withCredentials: true
-        })
 
-        setList(response.data.data.yourworkload)
-        setDates(response.data.data.alldates)
-      } catch (error) {
-        
-      }
-    }
-    getWorkload()
-   
-  },[dateFilter])
-
-  
   const isDateInRange = (dateToCheck: string, startDate: string, endDate: string): boolean => {
     const checkDate = new Date(dateToCheck);
     const start = new Date(startDate);
@@ -88,6 +69,7 @@ export default function Yourworkload() {
     (wellnessDate) => formatDate(wellnessDate) === date
   );;
 
+    console.log(isWellnessDate, wellnessDates, date)
 
     if(data.includes('1')){
       colorData.push('bg-red-500')
@@ -125,46 +107,60 @@ export default function Yourworkload() {
 
 
 
+
+
+  useEffect(() => {
+    const getMembers = async () => {
+      try {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/individualworkloadsuperadmin?employeeid=${id}&filterDate=${dateFilter}`,{
+          withCredentials: true
+        })
+
+        console.log('Memberts',response.data)
+        setList(response.data.data.yourworkload)
+        setDates(response.data.data.alldates)
+        setList
+      } catch (error) {
+        
+      }
+    }
+    getMembers()
+  },[id, dateFilter])
+
+
+  
+  
   return (
-    <div className=' w-full h-full flex flex-col justify-center bg-secondary p-4 text-zinc-100'>
+    <div className=' w-full h-full flex flex-col justify-center bg-secondary text-zinc-100 p-4'>
 
-    <div className=' w-full flex items-center justify-between h-auto bg-primary mb-2 p-4 text-xs'>
-    <div className=' flex flex-col gap-1 bg-primary rounded-sm text-xs'>
-        <p className=' text-xs'>Request :</p>
-        <div className='flex items-center gap-2 bg-primary rounded-sm text-xs'>
-            <Leaveform onClick={() => undefined}>
-              <button className={`text-xs px-3 py-1 bg-red-600  rounded-sm`}>Leave</button>
-            </Leaveform>
-            <WDform onClick={() => undefined}>
-              <button className={`text-xs px-3 py-1 bg-red-600  rounded-sm`}>Wellness Day</button>
-            </WDform>
-
-            <Wfhform onClick={() => undefined}>
-              <button className={`text-xs px-3 py-1 bg-red-600  rounded-sm`}>WFH</button>
-            </Wfhform>
+      <div className=' w-full flex justify-between items-end gap-8 h-auto bg-primary mb-2 p-4 text-xs'>
+        <div className=' w-auto flex flex-col gap-1'>
+          <p className=' text-zinc-400'>Project Name: <span className=' text-red-500 underline'>{list.length !== 0 ? list[0].projectname : ''}</span></p>
+          <p className=' text-zinc-400'>Employee Name: <span className=' text-red-500 underline'>{list.length !== 0 ? list[0].members[0].employee.fullname : ''}</span></p>
+          <p className=' text-zinc-400'>Manager Name: <span className=' text-red-500 underline'>{list.length !== 0 ? list[0].jobmanager.fullname : ''}</span></p>
+          {/* <p className=' text-zinc-400'>Client Name: <span className=' text-zinc-100 underline'>test@gmail.com</span></p> */}
 
         </div>
-          
+
+        <Legends/>
+
+        <div className=' flex flex-col gap-2'>
+          <p>Filter by dates</p>
+          <input value={dateFilter} onChange={(e) => setDateFilter(e.target.value)} type="date" className=' text-white bg-secondary p-2 rounded-md' />
+
         </div>
-      <Legends/>
 
-      <div className=' flex flex-col gap-2'>
-        <p>Filter by dates</p>
-        <input value={dateFilter} onChange={(e) => setDateFilter(e.target.value)} type="date" className=' text-white bg-secondary p-2 rounded-md' />
-
+      
       </div>
 
-    </div>
-
-    <div className=' h-full w-full flex flex-col max-w-[1920px]'>
-      <div className=' h-full overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
+      <div className=' h-full w-full flex flex-col max-w-[1920px]'>
+        <div className=' h-full overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
         {list.length !== 0 ? (
           <>
           <table className="table-auto w-[800px] border-collapse ">
           <thead className=' bg-secondary h-[100px]'>
 
             <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
-              <th className=' font-normal w-[70px]'>Job No.</th>
               <th className=' font-normal w-[70px]'>Job Mgr.</th>
               <th className=' font-normal w-[70px]'>Job Component</th>
               <th className=' w-[70px] font-normal'>Members</th>
@@ -179,7 +175,6 @@ export default function Yourworkload() {
             graphItem.members.map((member, memberIndex) => (
               <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
                  
-                  <td className="text-center text-red-500">{memberIndex === 0 && graphItem.jobno}</td>
                   <td className="text-center">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
                   <td className="text-center">{memberIndex === 0 && graphItem.jobcomponent}</td>
       
@@ -306,17 +301,17 @@ export default function Yourworkload() {
 
           </div>
         )}
-        
 
-        
+          
 
+        </div>
+       
+        
       </div>
-     
-      
-    </div>
 
-  
       
-  </div>
+        
+    </div>
   )
 }
+
