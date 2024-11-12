@@ -112,9 +112,8 @@ export default function Yourworkload() {
             {list.map((graphItem, graphIndex) =>
             
                 <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[42px] border-[1px] border-zinc-600">
-                          
-                    <td className="text-center text-red-600">{graphItem.initial}</td>
                     <td className="text-center">{graphItem.name}</td>
+                    <td className="text-center">{graphItem.initial}</td>
                     <td className="text-center">{graphItem.resource}</td>
                   
         
