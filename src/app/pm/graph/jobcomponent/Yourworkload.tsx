@@ -20,13 +20,14 @@ import axios, { AxiosError } from 'axios'
 import toast from 'react-hot-toast'
 import { useRouter, useSearchParams } from 'next/navigation'
 import {statusData} from '@/types/data'
-import { Check, OctagonAlert, Pen, X } from 'lucide-react'
+import { Check, File, OctagonAlert, Pen, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import Createprojectcomponent from './Createprojectcomponent'
 import { Graph, Members } from '@/types/types'
 import { formatDate } from '@/utils/functions'
 import { any } from 'zod'
+import Invoice from '@/components/forms/Invoice'
 
 
 type Employee = {
@@ -670,6 +671,9 @@ export default function Yourworkload() {
    
   }
 
+  const url = new URL(window.location.href);
+
+
 
   return (
    <div className=' w-full h-full flex flex-col justify-center bg-secondary p-4 text-zinc-100'>
@@ -712,7 +716,7 @@ export default function Yourworkload() {
             <thead className=' bg-secondary h-[100px]'>
 
               <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
-                <th className=' w-[20px] font-normal'>Action</th>
+                <th className=' w-[60px] font-normal'>Action</th>
                 <th className=' font-normal w-[70px]'>Job Mgr.</th>
                 <th className=' font-normal w-[70px]'>Job Component</th>
                 <th className=' w-[70px] font-normal'>Members</th>
@@ -726,7 +730,7 @@ export default function Yourworkload() {
             {list.map((graphItem, graphIndex) =>
               graphItem.members.map((member, memberIndex) => (
                 <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
-                    <td className="text-center text-white flex items-center justify-center h-[40px] w-[30px]">
+                    <td className="text-center text-white flex items-center justify-center gap-2 h-[40px] w-[60px]">
 
                       <Dialog open={dialog2} onOpenChange={setDialog2}>
                           <DialogTrigger>
@@ -968,7 +972,29 @@ export default function Yourworkload() {
                          
                           </DialogContent>
                       </Dialog>
-                     
+
+                      {(memberIndex === 0 && graphItem.jobmanager.isJobManager === true) && (
+                        <Invoice 
+                          projectname={graphItem.projectname.name} 
+                          jobno={graphItem.jobno} 
+                          notes={graphItem.members[0].notes} 
+                          jobcname={graphItem.jobcomponent} 
+                          budgettype={graphItem.budgettype} 
+                          estimatedbudget={graphItem.estimatedbudget} 
+                          jobcid={graphItem.componentid} 
+                          isJobmanager={graphItem.jobmanager.isJobManager}
+                        >
+                        
+                            <button onClick={() => {
+                              setIsjobmanager(graphItem.jobmanager.isJobManager);
+                              url.searchParams.set("jobcid", graphItem.componentid);
+                              router.push(url.toString());
+                            }} className='p-1 bg-red-600 rounded-sm'>
+                              <File size={12}/>
+                            </button>
+                        </Invoice>
+                      )}
+                                  
                       </td>
                     <td className="text-center">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
                     <td className="text-center">{memberIndex === 0 && graphItem.jobcomponent}</td>

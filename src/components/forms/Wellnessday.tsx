@@ -155,29 +155,27 @@ export default function WDform( prop: Data) {
 
             </div>
 
-            <div className=' w-full'> 
+            {/* <div className=' w-full'> 
               <Label className=' mt-2 text-zinc-500'>This will be your Wellness Day:</Label>
               <Input type='date' className=' text-xs h-[35px] bg-zinc-200' placeholder='Name' />
 
-            </div>
+            </div> */}
 
           </div>
 
-          <div className=' w-full flex items-center gap-2 mt-4'>
+          {/* <div className=' w-full flex items-center gap-2 mt-4'>
             <div className=' w-full'>
               <Label className=' text-zinc-500'>Total Number Of Working Days:</Label>
             < Input type='number' className=' text-xs h-[35px] bg-zinc-200' placeholder='0' />
-              {/* {errors.totalworkingdays && <p className=' text-[.6em] text-red-500'>{errors.totalworkingdays.message}</p>} */}
 
             </div>
 
             <div className=' w-full'>
               <Label className=' text-zinc-500'>Total Working Hours During Wellness Day Cycle:</Label>
             < Input type='number' className=' text-xs h-[35px] bg-zinc-200' placeholder='0' />
-              {/* {errors.totalhoursduring && <p className=' text-[.6em] text-red-500'>{errors.totalhoursduring.message}</p>} */}
 
             </div>
-          </div>
+          </div> */}
 
 
           <p className=' text-xs text-zinc-500 mt-4'>Note: <span className=' text-red-500'>*</span><span className=' italic'>- Required</span></p>

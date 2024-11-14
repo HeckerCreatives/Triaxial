@@ -262,8 +262,8 @@ export default function Yourworkload() {
                                   memberDate?.status || [],
                                   dateObj,
                                   memberDate?.hours || 0,
-                                  member.eventDates[0].startdate || '',
-                                  member.eventDates[0].enddate || '',
+                                  member.eventDates[0]?.startdate || '',
+                                  member.eventDates[0]?.enddate || '',
                                   member.eventDates,
                                   member.leaveDates,
                                   member.wellnessDates

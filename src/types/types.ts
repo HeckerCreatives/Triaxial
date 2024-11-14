@@ -111,6 +111,8 @@ members: Members[]
 projectname: Project
 teamname:string
 _id:string
+budgettype: string
+estimatedbudget: number
 }
 
 
@@ -150,4 +152,13 @@ export type TeamMembers = {
     manager: TeamManager
     members: Memberteam[]
     teamleader: Teamleader
+}
+
+export type financeInvoice = {
+    currentinvoice: string
+invoiceamount: string
+invoiceid: string
+jobcomponent: {name: string, jobmanager: string, budgettype: string, budget: number, jobno: string}
+newinvoice: number
+status: string
 }

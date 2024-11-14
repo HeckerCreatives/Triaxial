@@ -40,9 +40,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import ButtonSecondary from '@/components/common/ButtonSecondary'
-import Button from '@/components/common/Button'
-import { Textarea } from '@/components/ui/textarea'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Teammembers from './Teammembers'
 import Indiviualworkloads from './Individualworkloads'
@@ -93,8 +90,14 @@ type Row = { id: string; name: string };
 type TeamData = {
   teamid: string
   teamname: string
-  directorpartner: string
-  associate: string
+  directorpartner: {
+            fullname: string
+            dpid: string
+        },
+  associate: {
+    fullname: string
+    associateid: string
+        },
   manager: {
       fullname: string
       managerid: string
@@ -178,8 +181,8 @@ export default function Teamstable() {
     defaultValues: {
       teamname: teamid !== '' ? teamdata?.teamname : '',
       teamleader: teamid !== '' ? teamdata?.teamleader.teamleaderid : '',
-      associate: teamid !== '' ? teamdata?.associate : '',
-      directorpartner: teamid !== '' ? teamdata?.directorpartner : '',
+      associate: teamid !== '' ? teamdata?.associate.associateid : '',
+      directorpartner: teamid !== '' ? teamdata?.directorpartner.dpid : '',
       manager: teamid !== '' ? teamdata?.manager.managerid : '',
     },
   });
@@ -546,8 +549,8 @@ export default function Teamstable() {
       reset({
         teamname: teamdata?.teamname || '',
         teamleader: teamdata?.teamleader?.teamleaderid || '',
-        associate: teamdata?.associate || '',
-        directorpartner: teamdata?.directorpartner || '',
+        associate: teamdata?.associate.associateid || '',
+        directorpartner: teamdata?.directorpartner.dpid || '',
         manager: teamdata?.manager?.managerid || '',
       });
     } else {
@@ -570,6 +573,8 @@ export default function Teamstable() {
 
   const managerValue = watch('manager');
   const leaderValue = watch('teamleader');
+  const asociateValue = watch('associate');
+  const dpValue = watch('directorpartner');
 
   useEffect(() => {
     if (teamdata) {
@@ -584,6 +589,7 @@ export default function Teamstable() {
 
   useEffect(() => {
     setSelected([])
+    reset()
   },[dialog, dialog3, dialog2])
 
   useEffect(() => {
@@ -635,12 +641,34 @@ export default function Teamstable() {
 
 
                           <label htmlFor="" className=' mt-2 text-xs'>Director Partner</label>
-                          <Input placeholder='Director Partner' type='text' className=' bg-primary text-xs' {...register('directorpartner')}/>
+                          <Select onValueChange={(value) => setValue('directorpartner', value)} {...register('directorpartner')}>
+                              <SelectTrigger className="w-full text-xs h-[35px] bg-primary">
+                                <SelectValue placeholder="Select" />
+                              </SelectTrigger>
+                              <SelectContent className=' text-xs'>
+                               
+                                {Object.values(managers).map((item, index) => (
+                                  <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
+                                ))}
+                              
+                              </SelectContent>
+                          </Select>
                           {errors.directorpartner && <p className=' text-[.6em] text-red-500'>{errors.directorpartner.message}</p>}
 
 
                           <label htmlFor="" className=' mt-2 text-xs'>Associate</label>
-                          <Input placeholder='Associate' type='text' className=' bg-primary text-xs' {...register('associate')}/>
+                          <Select onValueChange={(value) => setValue('associate', value)} {...register('associate')}>
+                              <SelectTrigger className="w-full text-xs h-[35px] bg-primary">
+                                <SelectValue placeholder="Select" />
+                              </SelectTrigger>
+                              <SelectContent className=' text-xs'>
+                                
+                                {Object.values(managers).map((item, index) => (
+                                  <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
+                                ))}
+                              
+                              </SelectContent>
+                          </Select>
                           {errors.associate && <p className=' text-[.6em] text-red-500'>{errors.associate.message}</p>}
 
 
@@ -657,7 +685,7 @@ export default function Teamstable() {
                                 ))}
                               
                               </SelectContent>
-                            </Select>
+                          </Select>
                           {errors.manager && <p className=' text-[.6em] text-red-500'>{errors.manager.message}</p>}
 
                           <label htmlFor="" className=' mt-2 text-xs'>Team Leader</label>
@@ -885,12 +913,34 @@ export default function Teamstable() {
 
 
                           <label htmlFor="" className=' mt-2 text-xs'>Director Partner</label>
-                          <Input placeholder='Director Partner' type='text' className=' bg-primary text-xs' {...register('directorpartner')}/>
+                          <Select value={dpValue} onValueChange={(value) => setValue('directorpartner', value)} {...register('directorpartner')}>
+                              <SelectTrigger className="w-full text-xs h-[35px] bg-primary">
+                                <SelectValue placeholder="Select" />
+                              </SelectTrigger>
+                              <SelectContent className=' text-xs'>
+                               
+                                {Object.values(managers).map((item, index) => (
+                                  <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
+                                ))}
+                              
+                              </SelectContent>
+                          </Select>
                           {errors.directorpartner && <p className=' text-[.6em] text-red-500'>{errors.directorpartner.message}</p>}
 
 
                           <label htmlFor="" className=' mt-2 text-xs'>Associate</label>
-                          <Input placeholder='Associate' type='text' className=' bg-primary text-xs' {...register('associate')}/>
+                          <Select value={asociateValue} onValueChange={(value) => setValue('associate', value)} {...register('associate')}>
+                              <SelectTrigger className="w-full text-xs h-[35px] bg-primary">
+                                <SelectValue placeholder="Select" />
+                              </SelectTrigger>
+                              <SelectContent className=' text-xs'>
+                                
+                                {Object.values(managers).map((item, index) => (
+                                  <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
+                                ))}
+                              
+                              </SelectContent>
+                          </Select>
                           {errors.associate && <p className=' text-[.6em] text-red-500'>{errors.associate.message}</p>}
 
 

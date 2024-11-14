@@ -1,4 +1,4 @@
-import { ArrowRightLeft, Box, CalendarCheck2, Cog, Home, HomeIcon, Key, List, ListChecks, Mail, PlusSquare, Search, User, Users } from "lucide-react";
+import { ArrowRightLeft, Box, CalendarCheck2, Cog, File, Home, HomeIcon, Key, List, ListChecks, Mail, PlusSquare, Search, User, Users } from "lucide-react";
 
 export const hr = [
     {name: 'Dashboard', path: '/hr/dashboard', icon: <Home className="h-4 w-4" />},
@@ -16,6 +16,7 @@ export const pm = [
     {name: ' Your Workload', path: '/pm/yourworkload', icon: <List className="h-4 w-4" />},
     {name: 'Teams', path: '/pm/team', icon: <Users className="h-4 w-4" />, subpath: []},
     {name: 'Projects', path: '/pm/projects', icon: <Box className="h-4 w-4" />, subpath: []},
+    {name: 'Invoice Projection', path: '/pm/invoiceprojection/list', icon: <File className="h-4 w-4" />, subpath: []},
     {name: 'Request', path: '/pm/request', icon: <ArrowRightLeft className="h-4 w-4" />},
     {name: 'Wellness Day', path: '/pm/wellnessday', icon: <PlusSquare className="h-4 w-4" />},
     {name: 'Leave', path: '/pm/leave', icon: <CalendarCheck2 className="h-4 w-4" />},
@@ -30,6 +31,7 @@ export const employee = [
     {name: 'Dashboard', path: '/employee/dashboard', icon: <Home className="h-4 w-4" />},
     {name: ' Your Workload', path: '/employee/yourworkload', icon: <List className="h-4 w-4" />},
     {name: 'Projects', path: '/employee/projects', icon: <Box className="h-4 w-4" />, subpath: []},
+    {name: 'Invoice Projection', path: '/employee/invoiceprojection/list', icon: <File className="h-4 w-4" />, subpath: []},
     {name: 'Request', path: '/employee/request', icon: <ArrowRightLeft className="h-4 w-4" />},
     {name: 'Messages', path: '/employee/messages', icon: <Mail className="h-4 w-4" />},
     {name: 'Settings', path: '/employee/settings', icon: <Cog className="h-4 w-4" />},
@@ -38,6 +40,7 @@ export const employee = [
 export const finance = [
     {name: 'Dashboard', path: '/finance/dashboard', icon: <Home className="h-4 w-4" />},
     // {name: ' Your Workload', path: '/finance/yourworkload', icon: <List className="h-4 w-4" />},
+    {name: 'Invoice Request', path: '/finance/invoice', icon: <File className="h-4 w-4" />},
     {name: 'Request', path: '/finance/request', icon: <ArrowRightLeft className="h-4 w-4" />},
     {name: 'Messages', path: '/finance/messages', icon: <Mail className="h-4 w-4" />},
     {name: 'Settings', path: '/finance/settings', icon: <Cog className="h-4 w-4" />},
@@ -48,6 +51,7 @@ export const superadmin = [
     // {name: 'Your Workload', path: '/superadmin/yourworkload', icon: <List className="h-4 w-4" />, subpath: []},
    
     {name: 'Projects', path: '/superadmin/projects', icon: <Box className="h-4 w-4" />, subpath: []},
+    {name: 'Project Invoice', path: '/superadmin/projectinvoice/list', icon: <File className="h-4 w-4" />, subpath: []},
     {name: 'Invoice', path: '/superadmin/invoice', icon: <ListChecks className="h-4 w-4" />, subpath: []},
     {name: 'Searches', path: '/superadmin/client', icon: <Search className="h-4 w-4" />, subpath: [
         {name: 'Clients', path: '/superadmin/client'},

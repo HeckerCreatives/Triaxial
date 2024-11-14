@@ -130,7 +130,7 @@ export const createEmployee = z.object ({
 export const createTeam = z.object({
     teamname: z.string().nonempty('Please enter a team name'),
     directorpartner: z.string().nonempty('Please enter a director partner'),
-    associate: z.string().nonempty('Please enter a associate'),
+    associate: z.string(),
     manager: z.string().nonempty('Please enter a manager'),
     teamleader: z.string().nonempty('Please enter a team leader'),
 })

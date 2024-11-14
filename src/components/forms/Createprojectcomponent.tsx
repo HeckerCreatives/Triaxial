@@ -176,7 +176,6 @@ export default function Createprojectcomponent( prop: Data) {
     });
   };
   
-  
   useEffect(() => {
     function generateJobNumber() {
       const prefix = "TX";
