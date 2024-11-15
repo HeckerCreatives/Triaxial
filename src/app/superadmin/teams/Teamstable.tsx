@@ -165,7 +165,6 @@ export default function Teamstable() {
     (member) => !selected.includes(member)
   );
 
-  console.log(selected);
 
 
   //create team
@@ -187,10 +186,8 @@ export default function Teamstable() {
     },
   });
 
-  console.log(errors)
   const onSubmit = async (data: CreateTeam) => {
     setLoading(true)
-    console.log(data)
     router.push('?state=true')
     const selectedIds = selected.map((row) => row.employeeid);
     
@@ -225,9 +222,6 @@ export default function Teamstable() {
         setSelected([])
       }
 
-      console.log(response)
-
-    
         
      } catch (error) {
          setLoading(false)
@@ -264,7 +258,6 @@ export default function Teamstable() {
 
   const editTeam = async (data: CreateTeam) => {
     setLoading(true)
-    console.log(data)
     router.push('?state=true')
     const selectedIds = selected.map((row) => row.employeeid);
     
@@ -300,10 +293,6 @@ export default function Teamstable() {
         setSelected([])
       }
 
-      console.log(response)
-
-    
-        
      } catch (error) {
          setLoading(false)
 
@@ -349,7 +338,6 @@ export default function Teamstable() {
           }
       })
 
-      console.log('Managers',response.data)
       setManagers(response.data.data.managerlist)
     
     }
@@ -367,7 +355,6 @@ export default function Teamstable() {
           }
       })
 
-      console.log('Employee',response.data)
       setEmployee(response.data.data.employeelist)
      
     }
@@ -389,7 +376,6 @@ export default function Teamstable() {
             }
         })
   
-        console.log('team list',response.data)
         setTeamlist(response.data.data.teams)
         setTotalpage(response.data.data.totalpages)
         setLoading(false)
@@ -412,7 +398,6 @@ export default function Teamstable() {
             }
         })
   
-        console.log('team search',response.data)
        
         setLoading(false)
        
@@ -482,10 +467,6 @@ export default function Teamstable() {
       setLoading(false)
     }
   
-    console.log(response)
-  
-  
-      
       } catch (error) {
         setLoading(false)
           if (axios.isAxiosError(error)) {
@@ -530,7 +511,6 @@ export default function Teamstable() {
             }
         })
  
-        console.log('team data',response.data)
         setTeamdata(response.data.data)
       
         setLoading(false)
@@ -599,7 +579,6 @@ export default function Teamstable() {
           withCredentials: true
         })
 
-        console.log('get projects',response.data)
       } catch (error) {
         
       }

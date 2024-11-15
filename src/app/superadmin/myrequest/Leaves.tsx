@@ -123,10 +123,6 @@ export default function Leaves() {
 
    }
 
-   console.log(response)
-
- 
-     
   } catch (error) {
       setLoading(false)
 

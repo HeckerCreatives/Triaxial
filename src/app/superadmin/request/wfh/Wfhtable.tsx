@@ -50,9 +50,6 @@ export default function Wfhtable() {
   const params = useSearchParams()
   const refresh = params.get('state')
 
-
-  console.log(currentDate)
-
   //list
   const [searchName, setSearchName] = useState('')
   const [list, setList]= useState([])
@@ -68,7 +65,6 @@ export default function Wfhtable() {
               }
           })
       
-          console.log('Leave list',response.data)
           setList(response.data.data.wfhlist)
           // setTotalpage(response.data.data.totalpages)
           setLoading(false)
@@ -160,7 +156,6 @@ export default function Wfhtable() {
   }
 
 
-  console.log(leave)
 
   //paginition
   const handlePageChange = (page: number) => {

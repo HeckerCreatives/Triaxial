@@ -20,6 +20,7 @@ import { motion } from 'framer-motion'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 import { finance } from '@/types/routes'
+import Authcheck from '@/utils/Authcheck'
 
 
 export default function FinaceLayout({
@@ -56,6 +57,9 @@ export default function FinaceLayout({
       
     }
   }
+
+  //auth checker
+  Authcheck()
 
   return (
       <div className="flex min-h-screen w-full overflow-hidden">

@@ -67,7 +67,6 @@ export default function Variationprojectform( prop: Data) {
   });
 
   const onSubmit = (data: VariationSchema) => {
-    console.log(data); // Handle form submission
   };
 
   useEffect(() => {

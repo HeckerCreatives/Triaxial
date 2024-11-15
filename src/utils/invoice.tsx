@@ -6,7 +6,6 @@ export const downloadInvoiceAsPdf = async () => {
     const invoiceElement = document.getElementById("invoice-container");
 
     if (!invoiceElement) {
-      console.error("Invoice element not found!");
       return;
     }
 
@@ -40,7 +39,6 @@ export const printInvoice = () => {
     const invoiceElement = document.getElementById("invoice-container");
 
     if (!invoiceElement) {
-      console.error("Invoice element not found!");
       return;
     }
 

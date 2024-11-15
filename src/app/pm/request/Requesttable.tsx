@@ -112,10 +112,6 @@ export default function Requesttable() {
 
    }
 
-   console.log(response)
-
- 
-     
   } catch (error) {
 
        if (axios.isAxiosError(error)) {

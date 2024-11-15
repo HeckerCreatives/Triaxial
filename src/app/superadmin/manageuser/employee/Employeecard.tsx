@@ -24,7 +24,6 @@ export default function Employeecard() {
         withCredentials: true
       })
   
-      console.log(response.data)
       setStats(response.data.data.stats)
     }
     getStats()

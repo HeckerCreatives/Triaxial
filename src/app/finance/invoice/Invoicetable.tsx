@@ -113,8 +113,6 @@ export default function Invoicetable() {
 
    }
 
-   console.log(response)
-
  
      
   } catch (error) {

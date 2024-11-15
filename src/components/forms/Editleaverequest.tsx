@@ -126,10 +126,6 @@ export default function Editleaverequest( prop: Data) {
 
    }
 
-   console.log(response)
-
- 
-     
   } catch (error) {
       setLoading(false)
 

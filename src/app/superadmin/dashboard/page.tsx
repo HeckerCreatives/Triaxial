@@ -3,7 +3,6 @@ import SuperadminLayout from '@/components/layout/SuperadminLayout'
 import React, { useEffect, useState } from 'react'
 import Breadcrumbdb from '@/components/common/Breadcrumb'
 import Bottomcards from './Bottomcards'
-import { Tabs, Teams } from '@/types/data'
 import axios from 'axios'
 import { Team } from '@/types/types'
 import { useRouter } from 'next/navigation'
@@ -25,7 +24,6 @@ export default function page() {
           }
       })
 
-      console.log('Teams list',response.data)
       setTeams(response.data.data.teamlist)
       setTab(response.data.data.teamlist[0].teamid)
       router.push(`?team=${response.data.data.teamlist[0].teamid}`)
@@ -45,7 +43,7 @@ export default function page() {
           <div className=' w-fit p-2 flex flex-wrap items-center justify-center gap-2 bg-secondary rounded-sm'>
           
             {teams.map((item, index) => (
-              <button onClick={() => {setTab(item.teamid), router.push(`?team=${item.teamid}`)}} className={`text-[.6rem]  p-2 text-zinc-100 rounded-md ${tab === item.teamid && 'bg-red-700'} `}>{item.teamname}</button>
+              <button key={index} onClick={() => {setTab(item.teamid), router.push(`?team=${item.teamid}`)}} className={`text-[.6rem]  p-2 text-zinc-100 rounded-md ${tab === item.teamid && 'bg-red-700'} `}>{item.teamname}</button>
 
             ))}
 
@@ -53,7 +51,6 @@ export default function page() {
         </div>
         
       </div>
-        {/* <Dashboardcards/> */}
         <Bottomcards/>
     </SuperadminLayout>
   )

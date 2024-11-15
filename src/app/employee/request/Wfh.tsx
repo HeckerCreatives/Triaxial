@@ -122,9 +122,6 @@ export default function Wfh() {
 
    }
 
-   console.log(response)
-
- 
      
   } catch (error) {
       setLoading(false)

@@ -10,15 +10,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination"
 import axios from 'axios'
 import Spinner from '@/components/common/Spinner'
 import PaginitionComponent from '@/components/common/Pagination'
@@ -53,7 +44,6 @@ export default function Wellnesstable() {
             }
         })
   
-        console.log('Wellness day',response.data)
         setList(response.data.data.requestlist)
         setTotalpage(response.data.data.totalpages)
         setLoading(false)

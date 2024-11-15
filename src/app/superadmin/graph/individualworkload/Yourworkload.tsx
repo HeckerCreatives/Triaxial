@@ -69,8 +69,6 @@ export default function Indiviualworkloads() {
     (wellnessDate) => formatDate(wellnessDate) === date
   );;
 
-    console.log(isWellnessDate, wellnessDates, date)
-
     if(data.includes('1')){
       colorData.push('bg-red-500')
     }
@@ -116,7 +114,6 @@ export default function Indiviualworkloads() {
           withCredentials: true
         })
 
-        console.log('Memberts',response.data)
         setList(response.data.data.yourworkload)
         setDates(response.data.data.alldates)
         setList

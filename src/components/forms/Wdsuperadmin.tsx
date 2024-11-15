@@ -81,10 +81,6 @@ export default function Approvewdrequest( prop: Data) {
 
    }
 
-   console.log(response)
-
- 
-     
   } catch (error) {
 
        if (axios.isAxiosError(error)) {

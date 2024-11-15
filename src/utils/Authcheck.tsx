@@ -10,14 +10,13 @@ export default function Authcheck() {
     useEffect(() => {
         const getList = async () => {
             try {
-                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teams/teamsearchlist?teamname`,{
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/events/geteventsusers`,{
                     withCredentials: true,
                     headers: {
                       'Content-Type': 'application/json'
                       }
                   })
             
-                  console.log('team search',response.data)
                  
             } catch (error) {
                 

@@ -212,7 +212,6 @@ export default function Indiviualworkloads() {
       colorData.push('bg-cyan-400')
     }
 
-    console.log(colorData)
 
 
     return colorData

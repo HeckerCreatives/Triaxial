@@ -43,7 +43,6 @@ export default function Yourworkload() {
           }
       })
   
-      console.log('Data',response.data)
       setData(response.data.data)
 
     

@@ -96,10 +96,6 @@ export default function Leaveformadmin( prop: Data) {
 
    }
 
-   console.log(response)
-
- 
-     
   } catch (error) {
       setLoading(false)
 
@@ -166,10 +162,6 @@ export default function Leaveformadmin( prop: Data) {
 
    }
 
-   console.log(response)
-
- 
-     
   } catch (error) {
       setLoading1(false)
 

@@ -50,7 +50,6 @@ export default function Memberstable() {
         setTotalpage(response.data.data.totalpages)
         setLoading(false)
 
-        console.log(response.data)
      
       }
       getList()

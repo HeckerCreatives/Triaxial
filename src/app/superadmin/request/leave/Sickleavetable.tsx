@@ -74,9 +74,7 @@ export default function Sickleavetable() {
   const params = useSearchParams()
   const refresh = params.get('state')
 
-
-  console.log(currentDate)
-
+  
   //list
   const [searchName, setSearchName] = useState('')
   const [list, setList]= useState([])
@@ -92,7 +90,6 @@ export default function Sickleavetable() {
               }
           })
       
-          console.log('Leave list',response.data)
           setList(response.data.data.requestlist)
           // setTotalpage(response.data.data.totalpages)
           setLoading(false)
@@ -184,7 +181,6 @@ export default function Sickleavetable() {
   }
 
 
-  console.log(leave)
 
   //paginition
   const handlePageChange = (page: number) => {
@@ -210,9 +206,9 @@ export default function Sickleavetable() {
         <div className=' flex md:flex-row flex-col items-center justify-between gap-4'>
 
           <div className=' flex items-center gap-2'>
-            <p className=' text-[.7rem] text-zinc-400'>Status Legend:</p>
+            {/* <p className=' text-[.7rem] text-zinc-400'>Status Legend:</p>
             <p className=' bg-pink-500 text-zinc-100 text-[.6rem] px-4 py-1 rounded-sm'>Leave Today</p>
-            <p className=' bg-blue-500 text-zinc-100 text-[.6rem] px-4 py-1 rounded-sm'>Pending Leave</p>
+            <p className=' bg-blue-500 text-zinc-100 text-[.6rem] px-4 py-1 rounded-sm'>Pending Leave</p> */}
 
           </div>
 

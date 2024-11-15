@@ -110,10 +110,6 @@ export default function Leaveform( prop: Data) {
 
    }
 
-   console.log(response)
-
- 
-     
   } catch (error) {
       setLoading(false)
 

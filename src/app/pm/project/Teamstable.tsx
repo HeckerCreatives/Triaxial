@@ -137,9 +137,6 @@ export default function Teamstable() {
     (member) => !selected.includes(member)
   );
 
-  console.log(selected);
-
-
   //create team
   const {
     register,
@@ -159,10 +156,8 @@ export default function Teamstable() {
     },
   });
 
-  console.log(errors)
   const onSubmit = async (data: CreateTeam) => {
     setLoading(true)
-    console.log(data)
     router.push('?state=true')
     const selectedIds = selected.map((row) => row.employeeid);
     
@@ -197,9 +192,6 @@ export default function Teamstable() {
         setSelected([])
       }
 
-      console.log(response)
-
-    
         
      } catch (error) {
          setLoading(false)
@@ -236,7 +228,6 @@ export default function Teamstable() {
 
   const editTeam = async (data: CreateTeam) => {
     setLoading(true)
-    console.log(data)
     router.push('?state=true')
     const selectedIds = selected.map((row) => row.employeeid);
     
@@ -272,10 +263,6 @@ export default function Teamstable() {
         setSelected([])
       }
 
-      console.log(response)
-
-    
-        
      } catch (error) {
          setLoading(false)
 
@@ -312,41 +299,7 @@ export default function Teamstable() {
 
   //manager list
   const [managers, setManagers] = useState<Managers[]>([])
-  // useEffect(() => {
-  //   const getList = async () => {
-  //     const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users/managerlist`,{
-  //       withCredentials: true,
-  //       headers: {
-  //         'Content-Type': 'application/json'
-  //         }
-  //     })
-
-  //     console.log('Managers',response.data)
-  //     setManagers(response.data.data.managerlist)
-    
-  //   }
-  //   getList()
-    
-  // },[])
-
-  //employee list
-  // useEffect(() => {
-  //   const getList = async () => {
-  //     const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users/employeesearchlist`,{
-  //       withCredentials: true,
-  //       headers: {
-  //         'Content-Type': 'application/json'
-  //         }
-  //     })
-
-  //     console.log('Employee',response.data)
-  //     setEmployee(response.data.data.employeelist)
-     
-  //   }
-  //   getList()
-    
-  // },[])
-
+ 
   //team list
   const [searchteam, setSearchteam] = useState('')
   const [teamlist, setTeamlist] = useState<Team[]>([])
@@ -361,7 +314,6 @@ export default function Teamstable() {
             }
         })
   
-        console.log('team list',response.data)
         setTeamlist(response.data.data.teams)
         setTotalpage(response.data.data.totalpages)
         setLoading(false)
@@ -384,7 +336,6 @@ export default function Teamstable() {
             }
         })
   
-        console.log('team search',response.data)
        
         setLoading(false)
        
@@ -415,7 +366,6 @@ export default function Teamstable() {
       });
   };
   
-  console.log('Selected Teams',selectedRows)
 
 
   //delete
@@ -455,7 +405,6 @@ export default function Teamstable() {
       setLoading(false)
     }
   
-    console.log(response)
   
   
       
@@ -502,7 +451,6 @@ export default function Teamstable() {
             }
         })
   
-        console.log('team data',response.data)
         setTeamdata(response.data.data)
        
         setLoading(false)

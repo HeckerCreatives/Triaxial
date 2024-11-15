@@ -662,7 +662,6 @@ export default function Yourworkload() {
     const role3 = data.find((item) => item.role.trim() === 'Drft.')
     const role4 = data.find((item) => item.role.trim() === 'Drft. Revr.')
 
-    console.log('Members',data)
 
     setEngr(role1?.employee._id || '')
     setEngrrvr(role2?.employee._id || '')

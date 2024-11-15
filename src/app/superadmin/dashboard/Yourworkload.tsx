@@ -1,25 +1,6 @@
 "use client"
 import React, { useEffect, useMemo, useState } from 'react'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import Createprojectcomponent from '@/components/forms/Createprojectcomponent'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import Legends from '@/components/common/Legends'
 import axios, { AxiosError } from 'axios'
-import { env } from 'process'
-import toast from 'react-hot-toast'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { RefreshCcw } from 'lucide-react'
 
@@ -60,7 +41,6 @@ export default function Yourworkload() {
             withCredentials: true
           })
   
-          console.log(response.data)
           setDates(response.data.data.alldates)
           setList(response.data.data.yourworkload)
         } catch (error) {

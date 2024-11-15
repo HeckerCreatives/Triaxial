@@ -138,7 +138,6 @@ export default function Pmtable() {
             }
         })
       
-        console.log('Data',response.data)
         setEmployeedata(response.data.data)
       
       }
@@ -164,7 +163,6 @@ export default function Pmtable() {
             }
         })
   
-        console.log('Managers',response.data)
         setManagers(response.data.data.employeelist)
         setTotalpage(response.data.data.totalpages)
         setLoading(false)
@@ -216,9 +214,6 @@ export default function Pmtable() {
       setDialog2(false)
      }
     
-     console.log(response)
-    
-    
        
       } catch (error) {
           setLoading(false)
@@ -256,7 +251,6 @@ export default function Pmtable() {
 
   const editEmployee = async (data: CreateEmployee) => {
     setLoading(true)
-    console.log(data)
     router.push('?state=true')
     
      try {
@@ -293,10 +287,6 @@ export default function Pmtable() {
         setLoading(false)
       }
   
-      console.log(response)
-  
-    
-        
      } catch (error) {
          setLoading(false)
   
@@ -415,10 +405,6 @@ export default function Pmtable() {
       setLoading(false)
     }
   
-    console.log(response)
-  
-  
-      
       } catch (error) {
         setLoading(false)
           if (axios.isAxiosError(error)) {

@@ -123,7 +123,6 @@ export default function Leaves() {
 
    }
 
-   console.log(response)
 
  
      

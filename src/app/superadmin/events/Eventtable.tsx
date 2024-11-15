@@ -90,9 +90,6 @@ export default function Eventtable() {
   const state = params.get('state')
   const [id, setId] = useState('')
 
-  console.log(state)
-
-
   const handleUnselect = React.useCallback((team: Team) => {
     setSelected((prev) => prev.filter((s) => s.teamid !== team.teamid));
   }, []);
@@ -136,7 +133,6 @@ export default function Eventtable() {
             }
         })
   
-        console.log('Event list',response.data)
         setList(response.data.data.eventlist)
         setTotalpage(response.data.data.totalpages)
         setLoading(false)
@@ -160,7 +156,6 @@ export default function Eventtable() {
         }
     })
 
-    console.log('Event list',response.data)
     setList(response.data.data.eventlist)
     setTotalpage(response.data.data.totalpages)
     setLoading(false)
@@ -218,10 +213,6 @@ export default function Eventtable() {
 
    }
 
-   console.log(response)
-
- 
-     
   } catch (error) {
       setLoading(false)
 
@@ -292,10 +283,6 @@ export default function Eventtable() {
 
    }
 
-   console.log(response)
-
- 
-     
   } catch (error) {
       setLoading(false)
 
@@ -405,7 +392,6 @@ export default function Eventtable() {
           }
       })
 
-      console.log('Teams list',response.data)
       setTeams(response.data.data.teamlist)
     }
     getList()
@@ -416,20 +402,12 @@ export default function Eventtable() {
     setCurrentpage(page)
   }
 
-  // useEffect(() => {
-  //   if(dialog && dialog2 === false){
-  //     setSelected([])
-  //     setOpen(false)
-  //   }
-  // },[dialog, dialog2])
-
   const formatDate = (date: string) => {
     const newDate = date.split('T')
 
     return newDate[0]
   }
 
-  console.log(id)
 
 
 

@@ -152,7 +152,6 @@ export default function Employeetable() {
 
 const onSubmit = async (data: CreateEmployee) => {
     setLoading(true)
-    console.log(data)
     router.push('?state=true')
     
      try {
@@ -188,7 +187,6 @@ const onSubmit = async (data: CreateEmployee) => {
         setLoading(false)
       }
 
-      console.log(response)
 
     
         
@@ -226,7 +224,6 @@ const onSubmit = async (data: CreateEmployee) => {
 
 const editEmployee = async (data: CreateEmployee) => {
   setLoading(true)
-  console.log(data)
   router.push('?state=true')
   
    try {
@@ -263,9 +260,6 @@ const editEmployee = async (data: CreateEmployee) => {
       setLoading(false)
     }
 
-    console.log(response)
-
-  
       
    } catch (error) {
        setLoading(false)
@@ -316,7 +310,6 @@ useEffect(() => {
             }
         })
     
-        console.log('List',response.data)
         setList(response.data.data.employeelist)
         setTotalpage(response.data.data.totalpages)
         setLoading(false)
@@ -416,9 +409,6 @@ const promote = async () => {
    setLoading(false)
  }
 
- console.log(response)
-
-
    
 } catch (error) {
     setLoading(false)
@@ -517,9 +507,6 @@ const banEmployee = async () => {
     setLoading(false)
   }
 
-  console.log(response)
-
-
     
     } catch (error) {
       setLoading(false)
@@ -564,7 +551,6 @@ const banEmployee = async () => {
           }
       })
     
-      console.log('Data',response.data)
       setEmployeedata(response.data.data)
     
     }
@@ -618,7 +604,6 @@ const [team, setTeam] = useState<Team[]>([])
         }
     })
   
-    console.log('Team Data',response.data)
     setTeam(response.data.data.list)
   
   }

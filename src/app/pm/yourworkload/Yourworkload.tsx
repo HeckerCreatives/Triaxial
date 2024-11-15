@@ -88,7 +88,6 @@ export default function Yourworkload() {
     (wellnessDate) => formatDate(wellnessDate) === date
   );;
 
-    console.log(isWellnessDate, wellnessDates, date)
 
     if(data.includes('1')){
       colorData.push('bg-red-500')

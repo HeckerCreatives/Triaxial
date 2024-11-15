@@ -54,7 +54,6 @@ export default function Yourworkload() {
         }
     })
 
-  console.log(response.data)
     setList(response.data.data.list)
     setAlldates(response.data.data.allDates)
   
@@ -129,7 +128,6 @@ export default function Yourworkload() {
               }
           })
       
-        console.log(response.data)
           setList(response.data.data.list)
           setAlldates(response.data.data.allDates)
         
@@ -278,7 +276,6 @@ export default function Yourworkload() {
                           onClick={() => {
                             setDate(dateObj);
                             setJobcid(graphItem.componentid);
-                            console.log("Remaining value for this item:", remaining); // Log or use `remaining` here if needed
                           }}
                         >
                           {memberDate ? (

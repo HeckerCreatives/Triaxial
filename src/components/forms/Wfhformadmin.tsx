@@ -92,10 +92,6 @@ export default function Wfhformadmin( prop: Props) {
 
    }
 
-   console.log(response)
-
- 
-     
   } catch (error) {
       setLoading(false)
 
@@ -162,10 +158,6 @@ export default function Wfhformadmin( prop: Props) {
 
    }
 
-   console.log(response)
-
- 
-     
   } catch (error) {
       setLoading1(false)
 

@@ -25,7 +25,6 @@ children?: React.ReactNode;
 }
 export default function Editprojectjobmanager( prop: Props) {
 
-    console.log(prop)
   return (
     <>
   

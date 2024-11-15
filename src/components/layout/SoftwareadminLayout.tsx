@@ -47,7 +47,6 @@ export default function SoftwareadminLayout({
     setNav(!nav)
   }
 
-  console.log(path)
   return (
       <div className="flex min-h-screen w-full overflow-hidden">
         <motion.div 

@@ -160,7 +160,6 @@ export default function ClientTable() {
 
   const onSubmit = async (data: CreateClient) => {
     setLoading(true)
-    console.log(data)
     router.push('?state=true')
     const selectedIds = selected.map((row) => row.teamid);
     
@@ -192,9 +191,6 @@ export default function ClientTable() {
         setSelected([])
       }
 
-      console.log(response)
-
-    
         
     } catch (error) {
         setLoading(false)
@@ -231,7 +227,6 @@ export default function ClientTable() {
 
   const editClient = async (data: CreateClient) => {
     setLoading(true)
-    console.log(data)
     router.push('?state=true')
     const selectedIds = selected.map((row) => row.teamid);
     
@@ -264,10 +259,6 @@ export default function ClientTable() {
         setSelected([])
       }
 
-      console.log(response)
-
-    
-        
     } catch (error) {
         setLoading(false)
 
@@ -302,10 +293,6 @@ export default function ClientTable() {
   };
 
 
-  
-
-  console.log(selectables, selected, inputValue);
-
   //team list
   useEffect(() => {
     const getList = async () => {
@@ -316,7 +303,6 @@ export default function ClientTable() {
           }
       })
 
-      console.log('Teams list',response.data)
       setTeams(response.data.data.teamlist)
     }
     getList()
@@ -337,7 +323,6 @@ export default function ClientTable() {
             }
         })
   
-        console.log('Client list',response.data)
         setClients(response.data.data.teamlist)
         setTotalpage(response.data.data.totalpages)
         setLoading(false)
@@ -412,10 +397,6 @@ export default function ClientTable() {
       setLoading(false)
     }
   
-    console.log(response)
-  
-  
-      
       } catch (error) {
         setLoading(false)
           if (axios.isAxiosError(error)) {
@@ -460,7 +441,6 @@ export default function ClientTable() {
             }
         })
   
-        console.log('Client Data',response.data)
         setClientdata(response.data.data)
       }
       getData()
@@ -468,7 +448,6 @@ export default function ClientTable() {
     
   },[clientid])
 
-  console.log('client id',clientid)
 
 
   // Update form values when clientid or clientdata changes

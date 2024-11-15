@@ -72,7 +72,6 @@ export default function Projecttable() {
         }
     })
 
-    console.log('project list',response.data)
     setList(response.data.data.projectlist)
     setTotalpage(response.data.data.totalpages)
     setLoading(false)

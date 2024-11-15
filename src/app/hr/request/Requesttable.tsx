@@ -112,9 +112,6 @@ export default function Requesttable() {
 
    }
 
-   console.log(response)
-
- 
      
   } catch (error) {
 

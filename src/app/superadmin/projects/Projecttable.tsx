@@ -154,8 +154,8 @@ export default function Projecttable() {
             <TableHead>Project Name</TableHead>
             <TableHead>Client</TableHead>
             <TableHead className="">Job Component</TableHead>
-            <TableHead className="">% Invoiced</TableHead>
-            <TableHead className="">Est. $</TableHead>
+            {/* <TableHead className="">% Invoiced</TableHead> */}
+            {/* <TableHead className="">Est. $</TableHead> */}
             <TableHead className="">Status</TableHead>
             <TableHead className="">Start</TableHead>
             <TableHead className="">Deadline</TableHead>
@@ -170,8 +170,8 @@ export default function Projecttable() {
             <TableCell className="">
               <a href={`/superadmin/graph/jobcomponent?projectid=${item._id}`} className=' w-fit bg-red-700 rounded-sm p-1 text-white flex items-center gap-2'>Job Component<Eye size={15}/></a>
               </TableCell>
-            <TableCell className="">{item.invoiced}</TableCell>
-            <TableCell className=""></TableCell>
+            {/* <TableCell className="">{item.invoiced}</TableCell> */}
+            {/* <TableCell className=""></TableCell> */}
             <TableCell className="">{item.status}</TableCell>
             <TableCell className="">{formatDateTime(item.startdate)}</TableCell>
             <TableCell className="">{formatDateTime(item.deadlinedate)}</TableCell>

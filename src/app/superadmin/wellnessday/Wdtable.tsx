@@ -10,7 +10,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-
 import { Plus, Delete, Trash, Eye, Pen } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -21,7 +20,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-
 import { X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -60,17 +58,11 @@ type Wd = {
 
 export default function Wdtable() {
   const [dialog, setDialog] = useState(false)
-  const [dialog2, setDialog2] = useState(false)
-  const [dialog3, setDialog3] = useState(false)
-  const [dialoghover, setDialoghover] = useState(false)
-
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [open, setOpen] = React.useState(false);
   const [selected, setSelected] = React.useState<Team[]>([]);
   const [inputValue, setInputValue] = React.useState("");
   const [teams, setTeams] = useState<Team[]>([])
-
-
   const [list, setList] = useState<Wd[]>([])
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(false)
@@ -80,8 +72,6 @@ export default function Wdtable() {
   const params = useSearchParams()
   const state = params.get('state')
   const [id, setId] = useState('')
-
-  console.log(state)
 
 
   const handleUnselect = React.useCallback((team: Team) => {
@@ -127,7 +117,6 @@ export default function Wdtable() {
              }
          })
 
-         console.log('Wd list',response.data)
          setList(response.data.data.list)
         setTotalpage(response.data.data.totalpage)
          setLoading(false)
@@ -190,10 +179,6 @@ export default function Wdtable() {
      setSelected([])
 
    }
-
-   console.log(response)
-
-
 
   } catch (error) {
       setLoading(false)
@@ -266,10 +251,6 @@ export default function Wdtable() {
 
    }
 
-   console.log(response)
-
-
-
   } catch (error) {
       setLoading(false)
       reset()
@@ -316,7 +297,6 @@ export default function Wdtable() {
           }
       })
 
-      console.log('Teams list',response.data)
       setTeams(response.data.data.teamlist)
     }
     getList()

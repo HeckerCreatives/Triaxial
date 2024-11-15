@@ -90,8 +90,6 @@ export default function Eventtable() {
   const state = params.get('state')
   const [id, setId] = useState('')
 
-  console.log(state)
-
 
   const handleUnselect = React.useCallback((team: Team) => {
     setSelected((prev) => prev.filter((s) => s.teamid !== team.teamid));
@@ -136,7 +134,6 @@ export default function Eventtable() {
              }
          })
   
-         console.log('Event list',response.data)
          setList(response.data.data.eventlist)
          setTotalpage(response.data.data.totalpages)
          setLoading(false)
@@ -200,9 +197,6 @@ export default function Eventtable() {
 
    }
 
-   console.log(response)
-
- 
      
   } catch (error) {
       setLoading(false)
@@ -274,10 +268,6 @@ export default function Eventtable() {
 
    }
 
-   console.log(response)
-
- 
-     
   } catch (error) {
       setLoading(false)
 
@@ -341,10 +331,6 @@ export default function Eventtable() {
 
    }
 
-   console.log(response)
-
- 
-     
   } catch (error) {
       setLoading(false)
 
@@ -391,7 +377,6 @@ export default function Eventtable() {
           }
       })
 
-      console.log('Teams list',response.data)
       setTeams(response.data.data.teams)
     }
     getList()

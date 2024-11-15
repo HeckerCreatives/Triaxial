@@ -138,7 +138,6 @@ export default function Hrtable() {
             }
         })
       
-        console.log('Data',response.data)
         setEmployeedata(response.data.data)
       
       }
@@ -164,7 +163,6 @@ export default function Hrtable() {
             }
         })
   
-        console.log('Managers',response.data)
         setManagers(response.data.data.employeelist)
         setTotalpage(response.data.data.totalpages)
         setLoading(false)
@@ -216,10 +214,6 @@ export default function Hrtable() {
       setDialog2(false)
      }
     
-     console.log(response)
-    
-    
-       
       } catch (error) {
           setLoading(false)
       
@@ -256,7 +250,6 @@ export default function Hrtable() {
 
   const editEmployee = async (data: CreateEmployee) => {
     setLoading(true)
-    console.log(data)
     router.push('?state=true')
     
      try {
@@ -293,7 +286,6 @@ export default function Hrtable() {
         setLoading(false)
       }
   
-      console.log(response)
   
     
         
@@ -415,10 +407,6 @@ export default function Hrtable() {
       setLoading(false)
     }
   
-    console.log(response)
-  
-  
-      
       } catch (error) {
         setLoading(false)
           if (axios.isAxiosError(error)) {

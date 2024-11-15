@@ -381,7 +381,6 @@ export default function Yourworkload() {
 
   // Function to update status of a specific date
   const updateStatus = (memberIndex: number, dateIndex: number, newStatus: number,updatedHours: number, graphIndex: number) => {
-    console.log(newStatus)
     setData(prevData => {
       const newData = { ...prevData };
       const selectedMember = newData.graph[teamIndex].members[memberIndex];

@@ -60,7 +60,6 @@ export default function Yourworkload() {
           withCredentials: true
         })
 
-        console.log(response.data.data)
         setList(response.data.data.yourworkload)
         setDates(response.data.data.alldates)
       } catch (error) {

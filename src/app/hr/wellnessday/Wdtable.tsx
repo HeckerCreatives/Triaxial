@@ -81,9 +81,6 @@ export default function Wdtable() {
   const state = params.get('state')
   const [id, setId] = useState('')
 
-  console.log(state)
-
-
   const handleUnselect = React.useCallback((team: Team) => {
     setSelected((prev) => prev.filter((s) => s.teamid !== team.teamid));
   }, []);
@@ -127,7 +124,6 @@ export default function Wdtable() {
              }
          })
 
-         console.log('Wd list',response.data)
          setList(response.data.data.list)
         setTotalpage(response.data.data.totalpage)
          setLoading(false)
@@ -190,10 +186,6 @@ export default function Wdtable() {
      setSelected([])
 
    }
-
-   console.log(response)
-
-
 
   } catch (error) {
       setLoading(false)
@@ -266,10 +258,6 @@ export default function Wdtable() {
 
    }
 
-   console.log(response)
-
-
-
   } catch (error) {
       setLoading(false)
       reset()
@@ -316,7 +304,6 @@ export default function Wdtable() {
           }
       })
 
-      console.log('Teams list',response.data)
       setTeams(response.data.data.teams)
     }
     getList()

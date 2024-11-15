@@ -81,7 +81,6 @@ export default function Invoice( prop: Props) {
                          withCredentials: true
                      })
     
-                     console.log(response.data)
                      setCurrInvoice(response.data.data.currinvoice)
                      setHasFetched(true)
                 } catch (error) {
@@ -92,9 +91,6 @@ export default function Invoice( prop: Props) {
          }
          currIn()
        },[id, hasFetched])
-
-       console.log(hasFetched)
-
 
       const requestInvoice = async () => {
         setLoading(true)

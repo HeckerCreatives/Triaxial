@@ -37,12 +37,12 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { ToastSuccess, ToastError } from '../common/Toast'
 import { useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 import { superadmin } from '@/types/routes'
+import Authcheck from '@/utils/Authcheck'
 
 export default function SuperadminLayout({
   children,
@@ -78,6 +78,9 @@ export default function SuperadminLayout({
     }
   }
 
+  //auth checker
+  Authcheck()
+
   return (
       <div className="flex min-h-screen w-full overflow-hidden">
         
@@ -101,6 +104,7 @@ export default function SuperadminLayout({
                   <>
                   {item.subpath.length === 0 ? (
                     <Link
+                    key={index}
                       href={item.path}
                       className={` ${path.includes(item.path) ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
                     >

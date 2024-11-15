@@ -35,7 +35,6 @@ export default function Bottomcards() {
             }
         })
   
-        console.log('Event list',response.data)
         setList(response.data.data.current)
         setUpcoming(response.data.data.upcoming)
      

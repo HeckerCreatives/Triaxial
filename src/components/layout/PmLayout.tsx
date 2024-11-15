@@ -25,6 +25,7 @@ import { motion } from 'framer-motion'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 import { pm } from '@/types/routes'
+import Authcheck from '@/utils/Authcheck'
 
 
 export default function PmLayout({
@@ -61,6 +62,9 @@ export default function PmLayout({
       
     }
   }
+
+  //auth checker
+  Authcheck()
 
   return (
       <div className="flex min-h-screen w-full overflow-hidden">

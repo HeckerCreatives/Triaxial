@@ -62,14 +62,11 @@ export default function Copyprojectform( prop: Data) {
   });
 
   const onSubmit = (data: CreateProjectSchema) => {
-    console.log(data); // Handle form submission
   };
 
   useEffect(() => {
     reset()
   },[dialog])
-
-  console.log(errors)
 
   return (
     <Dialog open={dialog} onOpenChange={setDialog} >

@@ -177,7 +177,6 @@ export default function Yourworkload() {
   }
 
   const wdStatusChecker = (wddate: string, date: string) => {
-    console.log('wd',wddate, date)
     if(wddate === date){
       setWdstatus(true)
     } else if (wddate === undefined){

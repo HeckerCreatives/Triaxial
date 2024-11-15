@@ -8,7 +8,6 @@ import {
   CalendarCheck,
   UsersRound
 } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -20,17 +19,11 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { usePathname, useRouter } from 'next/navigation'
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
-import { ToastSuccess } from '../common/Toast'
 import { motion } from 'framer-motion'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 import { employee } from '@/types/routes'
+import Authcheck from '@/utils/Authcheck'
 
 
 export default function EmployeeLayout({
@@ -66,6 +59,9 @@ export default function EmployeeLayout({
       
     }
   }
+
+  //auth checker
+  Authcheck()
 
   return (
       <div className="flex min-h-screen w-full overflow-hidden">

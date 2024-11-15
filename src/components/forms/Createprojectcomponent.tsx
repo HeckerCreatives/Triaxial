@@ -299,7 +299,6 @@ export default function Createprojectcomponent( prop: Data) {
               }
           })
       
-          console.log('EmployeeList',response.data)
           setEmployee(response.data.data.employeelist)
         
         
@@ -354,7 +353,6 @@ export default function Createprojectcomponent( prop: Data) {
               }
           })
       
-          console.log('ManagerList',response.data)
           setManager(response.data.data.managerlist)
           
         
