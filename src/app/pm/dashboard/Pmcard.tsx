@@ -12,6 +12,7 @@ import Autoplay from "embla-carousel-autoplay"
 import axios from 'axios'
 import Yourworkload from './Yourworkload'
 import Dashboardlegends from '@/components/common/Dashboardlegends'
+import { formatDate } from '@/utils/functions'
 
 type Events = {
   title: string
@@ -85,7 +86,7 @@ export default function Pmcards() {
                       <div className=' flex flex-col gap-2 w-full'>
                         <h2 className=' uppercase font-semibold text-sm text-red-700'>CURRENT EVENT!</h2>
                         <h2 className=' uppercase font-semibold text-sm'>{item.title}</h2>
-                        <p className=' text-sm text-zinc-400'>{new Date(item.start).toLocaleString()} - {new Date(item.end).toLocaleString()}</p>
+                        <p className=' text-sm text-zinc-400'>{formatDate(item.start)} to {formatDate(item.end)}</p>
                         <p className=' text-zinc-300 text-xs'>Teams:</p>
 
                         <div className=' flex flex-wrap gap-2'>

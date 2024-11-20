@@ -264,7 +264,7 @@ export default function Invoice( prop: Props) {
                           <div className="text-gray-700 mb-2">Admin Notes : {prop.notes}</div>
 
                           <label htmlFor="">Type</label>
-                          <Select value={prop.budgettype}>
+                          <Select value={prop.budgettype} disabled={true}>
                             <SelectTrigger className="w-[180px] bg-zinc-200">
                                 <SelectValue placeholder="Select" />
                             </SelectTrigger>

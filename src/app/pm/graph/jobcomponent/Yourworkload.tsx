@@ -20,7 +20,7 @@ import axios, { AxiosError } from 'axios'
 import toast from 'react-hot-toast'
 import { useRouter, useSearchParams } from 'next/navigation'
 import {statusData} from '@/types/data'
-import { Check, File, OctagonAlert, Pen, X } from 'lucide-react'
+import { Check, Copy, File, OctagonAlert, Pen, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import Createprojectcomponent from './Createprojectcomponent'
@@ -28,6 +28,7 @@ import { Graph, Members } from '@/types/types'
 import { formatDate } from '@/utils/functions'
 import { any } from 'zod'
 import Invoice from '@/components/forms/Invoice'
+import Copyprojectcomponent from './Copyprojectcomponent'
 
 
 type Employee = {
@@ -78,6 +79,7 @@ export default function Yourworkload() {
   const [addStatus, setAddstatus] = useState([])
   const [wdStatus, setWdstatus] = useState(false)
   const [event, setEvent] = useState(false)
+  const [leave, setLeave] = useState(false)
   const [isJobmamager, setIsjobmanager] = useState(true) 
   const [isMamager, setIsmanager] = useState(true) 
   const [employee, setEmployee] = useState<Employee[]>([])
@@ -93,12 +95,16 @@ export default function Yourworkload() {
   const [drf, setDrf] = useState('')
   const [drfrvr, setDrfrvr] = useState('')
   const [notes, setNotes] = useState('')
+  const [notes2, setNotes2] = useState('')
+  const [notes3, setNotes3] = useState('')
+  const [notes4, setNotes4] = useState('')
 
 
   const router = useRouter()
 
   //selected status
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  const [selected, setSelected] = useState<string[]>([]);
 
   const handleSelectRow = (id: string) => {
     setSelectedRows((prevSelectedRows) => {
@@ -136,7 +142,7 @@ export default function Yourworkload() {
         jobcomponentid:  projectid,
         employeeid: employeeid,
         date: date,
-        status: selectedRows,
+        status: selected,
         hours: hours
       }, {
         withCredentials: true,
@@ -507,17 +513,17 @@ export default function Yourworkload() {
     {
       employee: engrrvr, 
       role: "Engr. Revr.",
-      notes: notes
+      notes: notes2
   },
   {
     employee: drf, 
     role: "Drft.", 
-    notes: notes
+    notes: notes3
   },
   {
     employee: drfrvr, 
     role: "Drft. Revr.", 
-    notes: notes
+    notes: notes4
   },
 ]
   
@@ -587,17 +593,17 @@ export default function Yourworkload() {
     {
       employee: engrrvr, 
       role: "Engr. Revr.",
-      notes: notes
+      notes: notes2
   },
   {
     employee: drf, 
     role: "Drft.", 
-    notes: notes
+    notes: notes3
   },
   {
     employee: drfrvr, 
     role: "Drft. Revr.", 
-    notes: notes
+    notes: notes4
   },
 ]
   
@@ -672,6 +678,22 @@ export default function Yourworkload() {
 
   const url = new URL(window.location.href);
 
+  const handleChangeCheckbox = (id: string) => {
+    setSelected((prevSelected) => {
+      // If the first item is selected, toggle it
+      if (id === statusData[0].id) {
+        return prevSelected.includes(id)
+          ? prevSelected.filter((item) => item !== id)
+          : [...prevSelected, id];
+      }
+
+      // For the other items, only allow one to be selected at a time
+      return prevSelected.includes(id)
+        ? prevSelected.filter((item) => item !== id)
+        : [statusData[0].id, id].filter((value) => prevSelected.includes(value) || value === id);
+    });
+  };
+
 
 
   return (
@@ -711,11 +733,11 @@ export default function Yourworkload() {
         <div className=' h-full overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
           {list.length !== 0 ? (
             <>
-            <table className="table-auto w-[800px] border-collapse ">
+            <table className="table-auto w-[900px] border-collapse ">
             <thead className=' bg-secondary h-[100px]'>
 
               <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
-                <th className=' w-[60px] font-normal'>Action</th>
+                <th className=' w-[80px] font-normal'>Action</th>
                 <th className=' font-normal w-[70px]'>Job Mgr.</th>
                 <th className=' font-normal w-[70px]'>Job Component</th>
                 <th className=' w-[70px] font-normal'>Members</th>
@@ -729,13 +751,13 @@ export default function Yourworkload() {
             {list.map((graphItem, graphIndex) =>
               graphItem.members.map((member, memberIndex) => (
                 <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
-                    <td className="text-center text-white flex items-center justify-center gap-2 h-[40px] w-[60px]">
+                    <td className="text-center text-white flex items-center justify-center gap-1 h-[40px] w-[80px]">
 
                       <Dialog open={dialog2} onOpenChange={setDialog2}>
                           <DialogTrigger>
-                              {memberIndex === 0 && (<button onClick={() => {setProjectname(graphItem.projectname.projectid), setJobmanager(graphItem.jobmanager.employeeid), setJobno(graphItem.jobno), findMember(graphItem.members), setNotes(graphItem.members[0].notes), setIsmanager(graphItem.jobmanager.isManager),setIsjobmanager(graphItem.jobmanager.isJobManager)}} className=' p-1 bg-red-600 rounded-sm'><Pen size={12}/></button>)}
+                              {memberIndex === 0 && (<button onClick={() => {setProjectname(graphItem.projectname.projectid), setJobmanager(graphItem.jobmanager.employeeid), setJobno(graphItem.jobno), findMember(graphItem.members), setNotes(graphItem.members[0].notes),setNotes2(graphItem.members[1].notes),setNotes3(graphItem.members[2].notes),setNotes4(graphItem.members[3].notes), setIsmanager(graphItem.jobmanager.isManager),setIsjobmanager(graphItem.jobmanager.isJobManager)}} className=' p-1 bg-red-600 rounded-sm'><Pen size={12}/></button>)}
                           </DialogTrigger>
-                          <DialogContent className=' max-w-[600px] bg-secondary border-none p-6 text-white'>
+                          <DialogContent className=' max-w-[600px] h-[80%] bg-secondary border-none p-6 text-white overflow-y-auto'>
                             <DialogHeader>
                               <DialogTitle>Edit Project <span className=' text-xs text-zinc-400'>( As {position(graphItem.jobmanager.isJobManager, graphItem.jobmanager.isManager)})</span></DialogTitle>
                               <DialogDescription className={` ${graphItem.jobmanager.isManager === true ? 'text-white' : ' text-red-500'}`}>
@@ -833,6 +855,8 @@ export default function Yourworkload() {
                                       
                                       </SelectContent>
                               </Select>
+                              <label htmlFor="">Notes</label>
+                              <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} className=' text-xs h-[25px] bg-primary' placeholder='Notes' />
 
                               <label htmlFor="">Drafter Reviewer (Drft. Revr.)	</label>
                               <Select value={drfrvr} onValueChange={(setDrfrvr)}>
@@ -849,7 +873,7 @@ export default function Yourworkload() {
                               </Select>
 
                               <label htmlFor="">Notes</label>
-                              <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} className=' text-xs h-[35px] bg-primary' placeholder='Notes' />
+                              <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} className=' text-xs h-[25px] bg-primary' placeholder='Notes' />
 
                                 <div className=' w-full flex items-end justify-end mt-4 text-xs'>
                                   <button onClick={() => updateJobComponenAsJobManager(graphItem._id)} className=' bg-red-600 px-4 py-2 rounded-md w-fit'>Save</button>
@@ -913,6 +937,8 @@ export default function Yourworkload() {
                                           
                                           </SelectContent>
                                   </Select>
+                                  <label htmlFor="">Notes</label>
+                                  <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} className=' text-xs h-[15px] bg-primary' placeholder='Notes' />
 
                                   <label htmlFor="">Engineer Reviewer (Engr. Revr.)</label>
                                   <Select value={engrrvr} onValueChange={(setEngrrvr)}>
@@ -927,6 +953,8 @@ export default function Yourworkload() {
                                           
                                           </SelectContent>
                                   </Select>
+                                  <label htmlFor="">Notes</label>
+                                  <Textarea value={notes2} onChange={(e) => setNotes2(e.target.value)} className=' text-xs h-[15px] bg-primary' placeholder='Notes' />
 
                                   <label htmlFor="">Drafter (Drft.)</label>
                                   <Select value={drf} onValueChange={(setDrf)}>
@@ -941,6 +969,8 @@ export default function Yourworkload() {
                                           
                                           </SelectContent>
                                   </Select>
+                                  <label htmlFor="">Notes</label>
+                                  <Textarea value={notes3} onChange={(e) => setNotes3(e.target.value)} className=' text-xs h-[15px] bg-primary' placeholder='Notes' />
 
                                   <label htmlFor="">Drafter Reviewer (Drft. Revr.)	</label>
                                   <Select value={drfrvr} onValueChange={(setDrfrvr)}>
@@ -955,9 +985,10 @@ export default function Yourworkload() {
                                           
                                           </SelectContent>
                                   </Select>
-
                                   <label htmlFor="">Notes</label>
-                                  <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} className=' text-xs h-[35px] bg-primary' placeholder='Notes' />
+                                  <Textarea value={notes4} onChange={(e) => setNotes4(e.target.value)} className=' text-xs h-[15px] bg-primary' placeholder='Notes' />
+
+                              
                                   
 
                               </div>
@@ -971,6 +1002,15 @@ export default function Yourworkload() {
                          
                           </DialogContent>
                       </Dialog>
+
+                      
+                      {(memberIndex === 0 && graphItem.jobmanager.isJobManager === true) && (
+                        <Copyprojectcomponent name={graphItem.jobcomponent} manager={graphItem.jobmanager.employeeid} budgettype={graphItem.budgettype} engr={graphItem.members[0]?.employee._id} engrrvr={graphItem.members[1]?.employee._id} drftr={graphItem.members[2]?.employee._id} drftrrvr={graphItem.members[3]?.employee._id} estbudget={graphItem.estimatedbudget}>
+                        <button onClick={() => {setProjectname(graphItem.projectname.projectid), setJobmanager(graphItem.jobmanager.employeeid), setJobno(graphItem.jobno), findMember(graphItem.members), setNotes(graphItem.members[0].notes), setIsmanager(graphItem.jobmanager.isManager),setIsjobmanager(graphItem.jobmanager.isJobManager)}} className={`text-xs p-1 bg-red-600  rounded-sm`}><Copy size={12}/></button>
+                      </Copyprojectcomponent>
+                      )}
+
+                      
 
                       {(memberIndex === 0 && graphItem.jobmanager.isJobManager === true) && (
                         <Invoice 
@@ -1110,10 +1150,12 @@ export default function Yourworkload() {
                                     setHours(memberDate?.hours || 0)
                                     setAddstatus(memberDate?.status || [])
                                     setSelectedRows(memberDate?.status || [])
+                                    setSelected(memberDate?.status || [])
                                     setLeavestatus(isDateInRange(dateObj,member.leaveDates[0]?.leavestart,member.leaveDates[0]?.leaveend))
                                     setEvent(isDateInRange(dateObj,member.eventDates[0]?.startdate,member.eventDates[0]?.enddate))
                                     wdStatusChecker(member.wellnessDates, dateObj, member.eventDates)
                                     setIsjobmanager(graphItem.jobmanager.isJobManager)
+                                    setLeave(isDateInRange(dateObj,member.leaveDates[0]?.leavestart,member.leaveDates[0]?.leaveend))
                                   
                                     setRole(member.role)
           
@@ -1182,22 +1224,11 @@ export default function Yourworkload() {
                           Note, you can only update the hours rendered if the employee is not on wellness day.
                         </DialogDescription>
                       </DialogHeader>
-                      <div className=' w-full flex flex-col gap-2'>
-
-                        {/* <p>Employee is on:</p>
-
-                        <div className=' text-xs flex flex-col gap-1 rounded-sm'>
-                        
-                          <p className=' text-zinc-400 flex items-center gap-2'>Leave:{leaveStatus === true ? <Check size={12} color='green'/> : <X size={12} color='red'/>}</p>
-                          <p className=' text-zinc-400 flex items-center gap-2'>Wellness day:{wdStatus === true ? <Check size={12} color='green'/> : <X size={12} color='red'/>}</p>
-                          <p className=' text-zinc-400 flex items-center gap-2'>Event:{event === true ? <Check size={12} color='green'/> : <X size={12} color='red'/>}</p>
-                        </div> */}
-
-                    
+                      <div className=' w-full flex flex-col gap-2'>              
 
                       <label htmlFor="" className=' text-xs mt-4'>Select Status</label>
 
-                      <div className='w-full flex items-center gap-6'>
+                      {/* <div className='w-full flex items-center gap-6'>
                           {statusData.map((item) => (
                             <div key={item.id} className='flex items-center gap-1 text-xs'>
                               <input
@@ -1210,6 +1241,21 @@ export default function Yourworkload() {
                               <p className=' p-1'>{item.name}</p>
                             </div>
                           ))}
+                        </div> */}
+
+                        <div className='w-full flex items-center gap-6'>
+                          {statusData.map((item) => (
+                            <div key={item.id} className='flex items-center gap-1 text-xs'>
+                              <input
+                              disabled={wdStatus || event || leave}
+                                value={item.id}
+                                type="checkbox"
+                                checked={selected.includes(item.id)}
+                               onChange={() => handleChangeCheckbox(item.id as any)}
+                              />
+                              <p className=' p-1'>{item.name}</p>
+                            </div>
+                          ))}
                         </div>
 
 
@@ -1218,15 +1264,15 @@ export default function Yourworkload() {
                 
                       <div className=' flex flex-col gap-2 text-xs'>
                         <label htmlFor="">Hours Rendered</label>
-                        <input disabled={wdStatus || event} type="number" value={hours} onChange={(e) => setHours(e.target.valueAsNumber)} placeholder='Hours' id="" className=' bg-primary p-2 rounded-md text-xs' />
+                        <input disabled={wdStatus || event || leave} type="number" value={hours} onChange={(e) => setHours(e.target.valueAsNumber)} placeholder='Hours' id="" className=' bg-primary p-2 rounded-md text-xs' />
                         
                       </div>
             
                       <div className=' w-full flex items-end justify-end mt-4'>
-                        <button disabled={wdStatus || event} onClick={() => updateWorkload()} className=' px-4 py-2 bg-red-600 text-xs text-white rounded-md'>Save</button>
+                        <button disabled={wdStatus || event || leave} onClick={() => updateWorkload()} className=' px-4 py-2 bg-red-600 text-xs text-white rounded-md'>Save</button>
                       </div>
 
-                      {(wdStatus === true || event === true) && (
+                      {(wdStatus === true || event === true || leave === true) && (
                         <p className=' text-xs text-red-500 flex items-center gap-2'><OctagonAlert size={15}/> Employee is in on wellness or event day, you can't update this selected workload</p>
                       )}
 

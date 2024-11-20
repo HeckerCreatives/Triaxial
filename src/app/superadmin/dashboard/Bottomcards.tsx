@@ -12,7 +12,7 @@ import Autoplay from "embla-carousel-autoplay"
 import axios from 'axios'
 import { Events } from '@/types/types'
 import Yourworkload from './Yourworkload'
-import { formatDateTime } from '@/utils/functions'
+import { formatDate, formatDateTime } from '@/utils/functions'
 import Dashboardlegends from '@/components/common/Dashboardlegends'
 
 
@@ -72,11 +72,11 @@ export default function Bottomcards() {
 
             {Object.values(list).map((item, index) => (
                <CarouselItem key={index} className="basis-1/2">
-                <div className=' flex md:flex-row flex-col gap-6 w-full h-[210px] bg-secondary p-4 overflow-y-auto' >
+                <div className=' flex md:flex-row flex-col justify-between gap-6 w-full h-[210px] bg-secondary p-4 overflow-y-auto' >
                   <div className=' flex flex-col gap-2'>
                     <h2 className=' uppercase font-semibold text-sm text-red-700'>CURRENT EVENT!</h2>
                     <h2 className=' uppercase font-semibold text-sm'>{item.title}</h2>
-                    <p className=' text-sm text-zinc-400'>{formatDateTime(item.start)} - {formatDateTime(item.end)}</p>
+                    <p className=' text-sm text-zinc-400'>{formatDate(item.start)} to {formatDate(item.end)}</p>
                     <p className=' text-zinc-300 text-xs'>Teams:</p>
 
                     <div className=' flex flex-wrap gap-2'>
@@ -88,9 +88,9 @@ export default function Bottomcards() {
                     </div>
                   </div>
     
-                  <div className=' flex items-start'>
-                    <div className='  p-6 bg-secondary'>
-                    <CalendarCheck size={30}/>
+                  <div className=' flex items-center justify-center'>
+                    <div className=' w-full h-full p-6'>
+                    <CalendarCheck size={50}/>
     
                     </div>
                   </div>
@@ -101,11 +101,11 @@ export default function Bottomcards() {
 
             {Object.values(upcoming).map((item, index) => (
                <CarouselItem key={index} className="basis-1/2 ">
-                <div className=' flex md:flex-row flex-col gap-6 w-full h-[210px] bg-secondary p-4 overflow-y-auto'>
+                <div className=' flex md:flex-row flex-col justify-between gap-6 w-full h-[210px] bg-secondary p-4 overflow-y-auto'>
                   <div className=' flex flex-col gap-2'>
                     <h2 className=' uppercase font-semibold text-sm text-red-700'>UPCOMING EVENT!</h2>
                     <h2 className=' uppercase font-semibold text-sm'>{item.title}</h2>
-                    <p className=' text-sm text-zinc-400'>{formatDateTime(item.start)} - {formatDateTime(item.end)}</p>
+                    <p className=' text-sm text-zinc-400'>{formatDate(item.start)} to {formatDate(item.end)}</p>
                     <p className=' text-zinc-300 text-xs'>Teams:</p>
 
                     <div className=' flex flex-wrap gap-2'>
@@ -117,9 +117,9 @@ export default function Bottomcards() {
                     </div>
                   </div>
     
-                  <div className=' flex items-start justify-center'>
-                    <div className='  p-6 bg-secondary'>
-                    <CalendarCheck size={30}/>
+                  <div className=' flex items-center justify-center'>
+                    <div className=' w-full h-full p-6 bg-secondary'>
+                    <CalendarCheck size={50}/>
     
                     </div>
                   </div>

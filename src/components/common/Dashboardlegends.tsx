@@ -33,6 +33,13 @@ export default function Dashboardlegends() {
 
 
         </div>
+
+        <div className=' flex items-center gap-2'>
+          <div className=' h-4 aspect-square bg-cyan-300'></div>
+          <p className=' text-xs text-zinc-400'>Beyond 8 Hours</p>
+
+
+        </div>
       </div>
 
       <div className=' w-full flex flex-col gap-2'>
@@ -44,12 +51,13 @@ export default function Dashboardlegends() {
         </div>
 
       
-        <div className=' flex items-center gap-2'>
+        {/* <div className=' flex items-center gap-2'>
           <div className=' h-4 aspect-square bg-indigo-500'></div>
           <p className=' text-xs text-zinc-400'>Above Hours / Days or 40 Hours/ Week</p>
 
 
-        </div>
+        </div> */}
+
          {/* <div className=' flex items-center gap-2'>
           <div className=' h-4 aspect-square bg-indigo-500'></div>
           <p className=' text-xs text-zinc-400'>Unapplied Leave / WD or Holiday Leave</p>

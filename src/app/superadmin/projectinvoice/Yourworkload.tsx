@@ -193,13 +193,13 @@ export default function Yourworkload() {
             <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
               <th className=' w-[70px] font-normal'>Job Component Name</th>
               <th className=' w-[70px] font-normal'>Job no:</th>
-              <th className=' w-[70px] font-normal'>est. $</th>
-              <th className=' w-[70px] font-normal'>% invoice</th>
-              <th className=' w-[70px] font-normal'>invoiced $</th>
-              <th className=' w-[70px] font-normal'>remaining $</th>
-              <th className=' w-[70px] font-normal'>sub-cont. costs</th>
+              <th className=' w-[70px] font-normal'>Est. $</th>
+              <th className=' w-[70px] font-normal'>Invoice (%/hr)</th>
+              <th className=' w-[70px] font-normal'>Invoiced $</th>
+              <th className=' w-[70px] font-normal'>Remaining $</th>
+              <th className=' w-[70px] font-normal'>Sub-cont. costs</th>
               <th className=' font-normal w-[70px]'>Wip</th>
-              <th className=' font-normal w-[70px]'>catchup inv.</th>
+              <th className=' font-normal w-[70px]'>Catchup inv.</th>
 
             
             </tr>
@@ -214,7 +214,10 @@ export default function Yourworkload() {
             }, 0);
 
            
-            const remaining = graphItem.estimatedbudget - ((graphItem.invoice.percentage / 100) * graphItem.estimatedbudget);
+            // const remaining = graphItem.estimatedbudget - ((graphItem.invoice.percentage / 100) * graphItem.estimatedbudget);
+            const invoiced = graphItem.estimatedbudget * ((graphItem.invoice.percentage / 100));
+            const remaining = graphItem.estimatedbudget - invoiced;
+
 
             return (
               <tr key={`${graphIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
@@ -222,7 +225,7 @@ export default function Yourworkload() {
                 <td className="text-center text-xs text-red-600">{graphItem.jobnumber}</td>
                 <td className="text-center text-xs">$ {graphItem.estimatedbudget}</td>
                 <td className="text-center text-xs">% {graphItem.invoice.percentage}</td>
-                <td className="text-center text-xs">$ {remaining}</td>
+                <td className="text-center text-xs">$ {invoiced}</td>
                 <td className="text-center text-xs">$ {remaining}</td>
                 <td className="text-center text-xs"></td>
                 <td className="text-center text-xs">${catchupINV + catchupINV}</td>

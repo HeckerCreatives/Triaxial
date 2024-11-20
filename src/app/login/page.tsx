@@ -46,7 +46,7 @@ export default function Login() {
         if (response.data.data.auth === 'employee' ){
             reset()
             toast.success('Successfully logged in')
-            router.push('/employee/dashboard')
+            router.push('/employee/yourworkload')
             setLoading(false)
         }else if (response.data.data.auth === 'manager'){
             reset()

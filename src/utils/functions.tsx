@@ -61,3 +61,12 @@ export const getStatus = (data: number, leave: boolean, wd: boolean, event: bool
 
  
 }
+
+export const formatDMY = (date: string) => {
+  const monthName = new Date(date).toLocaleString('default', { month: 'long' });
+  const year = new Date(date).getFullYear();
+  const day = new Date(date).getDate();
+
+  return `${day}-${monthName.slice(0,3)}-${(`${year}`).slice(2,4)}`
+
+}

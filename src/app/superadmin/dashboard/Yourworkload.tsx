@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import axios, { AxiosError } from 'axios'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { RefreshCcw } from 'lucide-react'
+import { formatDMY } from '@/utils/functions'
 
 type Dates = {
   date: string
@@ -55,31 +56,32 @@ export default function Yourworkload() {
   const statusData = ( hours: any, wd: boolean, event: boolean, leave: boolean) => {
     const data = []
 
-    if(hours <= 2){
+    if(hours <= 2.00){
       data.push('bg-red-500')
     }
 
-    if(hours <= 4 && hours >= 4){
+    if(hours <= 4.00 && hours > 2.01){
       data.push('bg-orange-500')
     }
 
-    if(hours <= 6 && hours >= 4){
+    if(hours <= 6.00 && hours >= 4.01){
       data.push('bg-yellow-500')
     }
 
-    if(hours <= 8 && hours >= 6){
+    if(hours <= 8.00 && hours >= 6.01){
       data.push('bg-green-500')
     }
 
-    if(hours > 8){
-      data.push('bg-green-500')
-    }
 
     if(wd === true){
       data.push('bg-violet-500')
     }
-    if(hours < 40){
-      data.push('bg-cyan-500')
+    // if(hours < 40){
+    //   data.push('bg-cyan-500')
+    // }
+
+    if(hours > 8.01){
+      data.push('bg-cyan-300')
     }
 
     if(hours > 40){
@@ -150,11 +152,11 @@ export default function Yourworkload() {
                   {dates.map((dateObj, index) => (
                     <>
                       <th key={index} className=' relative font-normal w-[30px] border-[1px] border-zinc-700'>
-                        <p className=' w-[50px] -translate-x-4 absolute rotate-90 top-10'>{dateObj}</p>
+                        <p className=' w-[60px] -translate-x-[20px] absolute -rotate-90 top-10'>{formatDMY(dateObj)}</p>
                       </th>
                       {(index + 1) % 5 === 0 && (
                         <th key={`total-${index}`} className='font-normal w-[30px] border-[1px] border-zinc-700'>
-                          <p className='rotate-90 w-[50px]'>Total Hours</p>
+                          <p className='-rotate-90 w-[50px]'>Total Hours</p>
                         </th>
                       )}
                     </>
@@ -199,8 +201,8 @@ export default function Yourworkload() {
                           <p className='relative text-black font-bold text-xs z-30'>{!isEventDay && hours}</p>
                         </td>
                         {(dateIndex + 1) % 5 === 0 && (
-                          <th key={`total-${dateIndex}`} className='font-normal w-[40px] bg-primary border-[1px] border-zinc-700'>
-                            <p className={` text-white`}>{totalHours}</p> {/* Display the sum of hours for every 5 days */}
+                          <th key={`total-${dateIndex}`} className={`font-normal w-[40px] ${totalHours > 40 ? 'bg-cyan-500' : 'bg-primary'} border-[1px] border-zinc-700`}>
+                            <p className={` text-white `}>{totalHours}</p> {/* Display the sum of hours for every 5 days */}
                           </th>
                         )}
                       </>

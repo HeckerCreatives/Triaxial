@@ -104,7 +104,7 @@ export default function Createprojectcomponent( prop: Data) {
     }
   
     // Add a new form if validation passes
-    setFormData([...formData, { jobmanager: '',jobno: '', budgettype: '', estimatedbudget: '', jobcomponent: '' , members: [
+    setFormData([...formData, { jobmanager: '',jobno: '123', budgettype: '', estimatedbudget: '', jobcomponent: '' , members: [
       {
           employeeid: "6723819e92ce23277a217af9",
           role: "Engnr."
@@ -184,6 +184,8 @@ export default function Createprojectcomponent( prop: Data) {
     generateJobNumber()
 
   },[dialog])
+
+  console.log(formData)
 
 
   //create job component

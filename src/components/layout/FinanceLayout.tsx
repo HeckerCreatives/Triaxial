@@ -21,6 +21,12 @@ import axios from 'axios'
 import toast from 'react-hot-toast'
 import { finance } from '@/types/routes'
 import Authcheck from '@/utils/Authcheck'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 
 
 export default function FinaceLayout({
@@ -80,14 +86,42 @@ export default function FinaceLayout({
             <div className="flex-1 mt-4 overflow-y-auto">
               <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
               {finance.map((item, index) => (
-                  <Link
-                  key={index}
-                  href={item.path}
-                  className={` ${path.includes(item.path) ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                >
-                 {item.icon}
-                  {item.name}
-                </Link>
+                  <>
+                  {item.subpath.length === 0 ? (
+                    <Link
+                    key={index}
+                      href={item.path}
+                      className={` ${path.includes(item.path) ? ' text-red-700' : 'text-zinc-100'}  text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
+                    >
+                      {item.icon}
+                      {item.name}
+                    </Link>
+                  ) : (
+                    <Accordion type="single" collapsible>
+                      <AccordionItem value="item-1">
+                        <div className={` px-3 flex items-center w-full gap-2 hover:text-red-700 ${path.includes(item.path) ? ' text-red-700' : 'text-zinc-100'}`}>
+                          {item.icon}
+                          <AccordionTrigger className=' w-[200px] text-sm'>{item.name}</AccordionTrigger>
+                        </div>
+                        
+                        <AccordionContent className=' pl-8'>
+                          {item.subpath.map((item, index) => (
+                             <Link
+                             key={index}
+                             href={item.path}
+                             className={` ${path.includes(item.path) ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
+                           >
+                             
+                            {item.name}
+                           </Link>
+                          ))}
+                         
+                        </AccordionContent>
+                      </AccordionItem>
+                      </Accordion>
+                  )}
+                  
+                  </>
                 ))}
                
 
