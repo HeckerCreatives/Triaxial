@@ -10,10 +10,6 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from '../ui/input'
 import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Textarea } from '../ui/textarea'
-import { Checkbox } from '../ui/checkbox'
-import { Plus } from 'lucide-react'
 import {
   Select,
   SelectContent,
@@ -21,172 +17,294 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
 import { useForm } from 'react-hook-form'
 import { createProjectSchema, CreateProjectSchema } from '@/schema/schema'
 import { zodResolver } from '@hookform/resolvers/zod'
-
-
+import axios, { AxiosError } from 'axios'
+import toast from 'react-hot-toast'
+import { useRouter } from 'next/navigation'
+import { formatDate } from '@/utils/functions'
 
 
 interface Data {
-    // open: boolean
-    // onOpenChange: boolean
-    onClick: () => void
-    // name: string
-    // type: string
-    // start: Date
-    // end: Date
-    // details: string
-    // wd
      children?: React.ReactNode;
-
+     team: string
+     jobno: string
+     name: string
+     client: string
+     start: string
+     end: string
 }
 
+type Team = {
+  manager: string
+teamid: string
+teamleader: string
+teamname: string
+}
 
-export default function Copyprojectform( prop: Data) {
+type Client = {
+  clientname: string
+clientid: string
+}
+
+export default function Createprojectform( prop: Data) {
   const [dialog, setDialog] = useState(false)
+  const [jobno, setJobno] = useState('')
+  const [client, setClient] = useState<Client[]>([])
+  const router = useRouter()
+  const [team, setTeam] = useState<Team[]>([])
+  const [loading, setLoading] = useState(false)
 
-   const {
+  const findTeam = team.find((item) => item.teamname === prop.team )
+  const findClient = client.find((item) => item.clientname === prop.client)
+
+  const {
     register,
     handleSubmit,
+    setValue,
     reset,
+    trigger,
     formState: { errors },
   } = useForm<CreateProjectSchema>({
     resolver: zodResolver(createProjectSchema),
+    defaultValues:{
+      start: prop.start,
+      end: prop.end,
+      jobno: prop.jobno,
+      team: findTeam?.teamid,
+      projectname: prop.name,
+      client: findClient?.clientid
+    }
   });
 
-  const onSubmit = (data: CreateProjectSchema) => {
+  const createProject = async (data: CreateProjectSchema) => {
+    router.push('?state=true')
+    setLoading(true)
+    try {
+      const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/projects/createproject`,{
+     
+          team: data.team, // teamid
+          projectname: data.projectname,
+          startdate: data.start,
+          deadlinedate: data.end,
+          client: data.client,
+          jobno: data.jobno,
+
+      }, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json'
+          }
+      })
+
+      const response = await toast.promise(request, {
+        loading: 'Creating project....',
+        success: `Successfully created`,
+        error: 'Error while creating project',
+    });
+
+    if(response.data.message === 'success'){
+      reset()
+      setDialog(false)
+      router.push('?state=false')
+      setLoading(false)
+ 
+    }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError<{ message: string, data: string }>;
+        if (axiosError.response && axiosError.response.status === 401) {
+            toast.error(`${axiosError.response.data.data}`) 
+            router.push('/')    
+        }
+
+        if (axiosError.response && axiosError.response.status === 400) {
+            toast.error(`${axiosError.response.data.data}`)     
+               
+        }
+
+        if (axiosError.response && axiosError.response.status === 402) {
+            toast.error(`${axiosError.response.data.data}`)          
+                   
+        }
+
+        if (axiosError.response && axiosError.response.status === 403) {
+            toast.error(`${axiosError.response.data.data}`)              
+           
+        }
+
+        if (axiosError.response && axiosError.response.status === 404) {
+            toast.error(`${axiosError.response.data.data}`)             
+        }
+      } 
+    }
   };
 
   useEffect(() => {
     reset()
   },[dialog])
 
+
+  //team list
+  useEffect(() => {
+  
+    const timer = setTimeout(() => {
+      const getList = async () => {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teams/managerlistownteam?teamnamefilter&page=0&limit=10`,{
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json'
+            }
+        })
+  
+        setTeam(response.data.data.teams)
+      
+       
+      }
+      getList()
+    },500)
+    return () => clearTimeout(timer)
+    
+    
+  },[])
+
+  //client list
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const getList = async () => {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/clients/clientlistallmanager?clientname`,{
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json'
+            }
+        })
+  
+        setClient(response.data.data.clients)
+    
+      }
+      getList()
+    },500)
+    return () => clearTimeout(timer)
+    
+    
+  },[])
+
+  useEffect(() => {
+    if (findTeam && findClient) {
+      reset({
+        start: prop.start,
+        end: prop.end,
+        jobno: prop.jobno,
+        team: findTeam?.teamid,
+        projectname: prop.name,
+        client: findClient.clientid
+      });
+    }
+  }, [findTeam, findClient, reset]);
+
+
+  
   return (
     <Dialog open={dialog} onOpenChange={setDialog} >
     <DialogTrigger>
        {prop.children}
     </DialogTrigger>
     <DialogContent className=' max-h-[90%] overflow-y-auto'>
-      <form className=' w-full p-4 flex flex-col gap-4' onSubmit={handleSubmit(onSubmit)}>
-        <p className=' text-sm uppercase font-semibold text-red-700 flex items-center gap-2'><span className=' bg-red-700 px-4 py-1 text-zinc-100 text-xs'>Copy</span>Project Details</p>
-        <div className=' w-full flex flex-col gap-2'>
-          <label htmlFor="" className=' text-xs text-zinc-700'>Team</label>
-          <Input type='text' className=' text-xs h-[35px] bg-zinc-200' placeholder='Team'/>
+      <form className=' w-full p-4 flex flex-col gap-4' onSubmit={handleSubmit(createProject)}>
+        <p className=' text-sm uppercase font-semibold text-red-700 flex items-center gap-2'><span className=' bg-red-700 px-4 py-1 text-zinc-100 text-xs'>Variation</span>Project</p>
+        <div className=' w-full flex flex-col gap-1'>
+        <Label className=' mt-2 text-black font-bold'>Project Details</Label>
 
-            <Accordion type="single" collapsible>
-            <AccordionItem value="item-1">
-                <AccordionTrigger className=' text-xs p-2 bg-zinc-300 rounded-sm'>Job Details</AccordionTrigger>
-                <AccordionContent>
-                <div className=' bg-zinc-200 flex flex-col p-2'>
-                    {/* <Label className=' font-semibold'>Job Details</Label> */}
+          <label htmlFor="" className=' text-xs text-zinc-700 mt-4'>Team</label>
+          {/* <Input type='text' className=' text-xs h-[35px] bg-zinc-200' placeholder='Team' {...register('team')}/> */}
+          <Select defaultValue={findTeam?.teamid} onValueChange={(value) => setValue('team', value)}>
+            <SelectTrigger className=" text-xs h-[35px] bg-zinc-200">
+              <SelectValue placeholder="Select Team" className=' text-black'  />
+            </SelectTrigger>
+            <SelectContent className=' text-xs'>
+              {team.map((item, index) => (
+                <SelectItem key={item.teamid} value={item.teamid}>{item.teamname}</SelectItem>
+              ))}
+              
+              
+            </SelectContent>
+          </Select>
+           {errors.team && <p className=' text-[.6em] text-red-500'>{errors.team.message}</p>}
 
-                    <div className=' flex items-center gap-4 mt-2'>
+           
+           <label htmlFor="" className=' text-xs'>Job no</label>
+          <Input type='text' className=' text-xs h-[35px] bg-zinc-200' placeholder='Job no' {...register('jobno')}/>
+          {errors.jobno && <p className=' text-[.6em] text-red-500'>{errors.jobno.message}</p>}
+
+
+           <div className=' bg-zinc-200 rounded-sm flex flex-col p-2'>
+             
+                  <div className=' flex items-start gap-4 '>
+                    
+
                     <div className=' w-full'>
-                        <Label className=' mt-2 text-zinc-500'>Job no <span className=' text-red-700'>*</span></Label>
-                        <Input type='text' className=' text-xs h-[35px] bg-white' placeholder='Job no.'/>
+                      <Label className=' text-zinc-500'>Project Name <span className=' text-red-700'>*</span></Label>
+                      <Input type='text' className=' text-xs h-[35px] bg-white' placeholder='Project name' {...register('projectname')}/>
+                      {errors.projectname && <p className=' text-[.6em] text-red-500'>{errors.projectname.message}</p>}
+
+
                     </div>
 
-                    <div className=' w-full'>
-                        <Label className=' mt-2 text-zinc-500'>Project Name <span className=' text-red-700'>*</span></Label>
-                        <Input type='text' className=' text-xs h-[35px] bg-white' placeholder='Project name'/>
-                    </div>
-
-                    </div>
-
-                    <div className=' flex items-center gap-4 mt-2'>
-                    <div className=' w-full'>
-                        <Label className=' mt-2 text-zinc-500'>Client<span className=' text-red-700'>*</span></Label>
-                        <Select>
+                   
+                      <div className=' w-full'>
+                        <Label className=' text-zinc-500'>Client<span className=' text-red-700'>*</span></Label>
+                        <Select defaultValue={findClient?.clientid} onValueChange={(value) => setValue('client', value)} {...register('client')}>
                         <SelectTrigger className=" text-xs h-[35px] bg-white">
-                        <SelectValue placeholder="Select Client" className=' text-black' />
+                          <SelectValue placeholder="Select Client" className=' text-black'  />
                         </SelectTrigger>
                         <SelectContent className=' text-xs'>
-                        <SelectItem value="light">Client</SelectItem>
-                        <SelectItem value="dark">Client</SelectItem>
-                        </SelectContent>
-                    </Select>
+                          {client.map((item, index) => (
+                          <SelectItem key={item.clientid} value={item.clientid}>{item.clientname}</SelectItem>
 
-                    </div>
-
-                    <div className=' w-full'>
-                        <Label className=' mt-2 text-zinc-500'>If other please input the Client Name</Label>
-                        <Input type='text' className=' text-xs h-[35px] bg-white' placeholder='Name'/>
-                    </div>
-
-                    </div>
-
-                
-
-                
-                </div>
-                </AccordionContent>
-            </AccordionItem>
-            </Accordion>
-
-            <Accordion type="single" collapsible>
-            <AccordionItem value="item-1">
-                <AccordionTrigger className=' text-xs p-2 bg-zinc-300 rounded-sm'>Component Details</AccordionTrigger>
-                <AccordionContent>
-                    <div className=' bg-zinc-200 flex flex-col p-2'>
-                    {/* <Label className=' font-semibold'>Component Details</Label> */}
-
-                    <div className=' flex items-center gap-4 mt-2'>
-                    <div className=' w-full'>
-                        <Label className=' mt-2 text-zinc-500'>Job Manager<span className=' text-red-700'>*</span></Label>
-                        <Select>
-                        <SelectTrigger className=" text-xs h-[35px] bg-white">
-                            <SelectValue placeholder="Select Job Manager" className=' text-black' />
-                        </SelectTrigger>
-                        <SelectContent className=' text-xs'>
-                            <SelectItem value="light">Manager</SelectItem>
-                            <SelectItem value="dark">Manager</SelectItem>
-                        </SelectContent>
-                        </Select>
-                    </div>
-
-                    </div>
-
-                    <Label className=' font-semibold mt-4'>Job Component Budget</Label>
-                    <p className=' bg-red-100 text-xs text-zinc-500 p-2 w-fit mt-2'>Note, you can only edit this once!</p>
-
-                    <Select >
-                        <SelectTrigger className=" text-xs h-[35px] bg-white mt-2">
-                          <SelectValue placeholder="Type" className=' text-black' />
-                        </SelectTrigger>
-                        <SelectContent className=' text-xs' >
-                          <SelectItem value="light">Rates</SelectItem>
-                          <SelectItem value="dark">Lump sum</SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
-                    <div className=' flex items-center gap-4 mt-2'>
+                        {errors.client && <p className=' text-[.6em] text-red-500'>{errors.client.message}</p>}
+
+                      </div>
+
+                  </div>
+
+                  <div className=' flex items-start gap-4 '>
                     
-                    <div className=' w-full'>
-                        <Label className=' mt-2 text-zinc-500'>Estimated Budget $ <span className=' text-red-700'>*</span></Label>
-                        <Input type='number' className=' text-xs h-[35px] bg-white' placeholder='0'/>
-                    </div>
 
                     <div className=' w-full'>
-                        <Label className=' mt-2 text-zinc-500'>Job Component<span className=' text-red-700'>*</span></Label>
-                        <Input type='number' className=' text-xs h-[35px] bg-white' placeholder='Please input here'/>
+                      <Label className=' text-zinc-500'>Start Date <span className=' text-red-700'>*</span></Label>
+                      <Input type='date' className=' text-xs h-[35px] bg-white' placeholder='Project name' {...register('start')}/>
+                      {errors.start && <p className=' text-[.6em] text-red-500'>{errors.start.message}</p>}
+
+
                     </div>
 
-                    </div>
-                
-                </div>
-                </AccordionContent>
-            </AccordionItem>
-            </Accordion>
+                   
+                      <div className=' w-full'>
+                        <Label className=' text-zinc-500'>End date<span className=' text-red-700'>*</span></Label>
+                        <Input type='date' className=' text-xs h-[35px] bg-white' placeholder='Project name' {...register('end')}/>
+                        {errors.end && <p className=' text-[.6em] text-red-500'>{errors.end.message}</p>}
 
+                      </div>
 
-          <Label className=' mt-2 text-zinc-500'>Admin Notes: </Label>
-          <Textarea placeholder='Please input text here' className=' text-xs bg-zinc-200'/>
+                  </div>
+
+                  
+          </div>
+
+          {/* <Label className=' text-zinc-500 mt-4'>Project Component</Label>
+            <Select>
+            <SelectTrigger className=" text-xs h-[35px] bg-zinc-200">
+              <SelectValue placeholder="Select" className=' text-black'  />
+            </SelectTrigger>
+            <SelectContent className=' text-xs'>
+              <SelectItem value="light">Component1</SelectItem>
+              <SelectItem value="dark">Component2</SelectItem>
+            </SelectContent>
+          </Select> */}
 
 
          

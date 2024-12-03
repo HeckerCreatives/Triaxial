@@ -31,11 +31,12 @@ import Createprojectform from '@/components/forms/Createprojectform'
 import Editprojectform from '@/components/forms/Editprojectform'
 import Variationprojectform from '@/components/forms/Variationprojectform'
 import axios from 'axios'
-import { formatDateTime } from '@/utils/functions'
+import { formatDate, formatDateTime } from '@/utils/functions'
 import PaginitionComponent from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
 import { useSearchParams } from 'next/navigation'
 import Projectstatusform from '@/components/forms/Projectstatusform'
+import Copyprojectform from '@/components/forms/Copyprojectform'
 
 
 type Project = {
@@ -191,6 +192,18 @@ export default function Projecttable() {
                     </Tooltip>
                   </TooltipProvider>
               </Editprojectform>
+
+              <Copyprojectform team={item.teamname} jobno={item.jobno} name={item.projectname} client={item.client} start={formatDate(item.startdate)} end={formatDate(item.deadlinedate)}>
+               
+                <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger><button className=' p-2 bg-secondary rounded-md'><Copy size={15}/></button></TooltipTrigger>
+                      <TooltipContent>
+                        <p className=' text-xs'>Project Variation</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+              </Copyprojectform>
 
               {/* <Variationprojectform onClick={() => undefined}>
                 <TooltipProvider>

@@ -4,6 +4,7 @@ import axios, { AxiosError } from 'axios'
 import toast from 'react-hot-toast'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { RefreshCcw } from 'lucide-react'
+import { string } from 'zod'
 
 type Dates = {
   date: string
@@ -15,18 +16,22 @@ type Dates = {
 }
 
 
+type List = {
+  name: string
+  members: Workload[]
+}
+
 type Workload = {
 initial: string
+id: string,
 name: string
 resource: string
 dates: Dates[]
-
-
 }
 
 export default function Yourworkload() {
   const [memberIndex, setMemberIndex] = useState(0)
-  const [list, setList] = useState<Workload[]>([])
+  const [list, setList] = useState<List[]>([])
   const [dates, setDates] = useState<string[]>([])
   const [filter, setFilter] = useState('')
   const router = useRouter()
@@ -38,12 +43,12 @@ export default function Yourworkload() {
     const getList = async () => {
       if (getTeamid !== '' || undefined || null){
         try {
-          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/getjobcomponentdashboardmanager?teamid=${getTeamid}&filterDate=${filter}`,{
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/getmanagerjobcomponentdashboard?filterDate=${filter}`,{
             withCredentials: true
           })
   
           setDates(response.data.data.alldates)
-          setList(response.data.data.yourworkload)
+          setList(response.data.data.teams)
         } catch (error) {
           
         }
@@ -120,6 +125,7 @@ export default function Yourworkload() {
             <thead className=' bg-secondary h-[100px]'>
 
               <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
+                <th className=' w-[20px] font-normal'>Team</th>
                 <th className=' w-[20px] font-normal'>Name</th>
                 <th className=' w-[50px] font-normal'>Initial</th>
                 <th className=' font-normal w-[50px]'>Resource</th>
@@ -128,15 +134,18 @@ export default function Yourworkload() {
             </thead>
             <tbody>
             {list.map((graphItem, graphIndex) =>
-            
-                <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[42px] border-[1px] border-zinc-600">
-                    <td className="text-center">{graphItem.name}</td>
-                    <td className="text-center">{graphItem.initial}</td>
-                    <td className="text-center">{graphItem.resource}</td>
-                  
-        
+              graphItem.members.map((member, memberIndex) => (
+                <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
+                  {memberIndex === 0 ?
+                  (<td className="text-center text-red-500">{graphItem.name}</td>) :  (<td className="text-center"></td>)
+                  }
+                  <td onClick={() => router.push(`/pm/individualworkload?employeeid=${member.id}`)} className="text-center cursor-pointer underline text-blue-400">{member.name}</td>
+                  <td className="text-center">{member.initial}</td>
+                  <td className="text-center">{member.resource}</td>
+                 
+              
                 </tr>
-
+              ))
             )}
           </tbody>
           </table>
@@ -165,48 +174,60 @@ export default function Yourworkload() {
               </thead>
               <tbody>
               {list.map((workItem, workIndex) => (
-                <tr key={workIndex} className="bg-primary text-[.6rem] py-2 h-[42px] border-[1px] border-zinc-600">
-                  {dates.map((date, dateIndex) => {
-                    // Find data for the current date
-                    const dateData = workItem.dates.find(d => d.date === date);
-                    const hours = dateData ? dateData.totalhoursofjobcomponents : '-';
-                    const isEventDay = dateData ? dateData.eventDay : false;
-                    const isWd = dateData ? dateData.wellnessDay : false;
-                    const isLeave = dateData ? dateData.leave : false;
+                <React.Fragment key={workIndex}>
+                  {workItem.members.map((member, memberIndex) => (
+                    <tr
+                      key={`${workIndex}-${memberIndex}`}
+                      className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600"
+                    >
+                      {dates.map((date, dateIndex) => {
+                        // Find date data for the current member and date
+                        const dateData = member.dates.find(d => d.date === date);
+                        const hours = dateData ? dateData.totalhoursofjobcomponents : '-';
+                        const isEventDay = dateData ? dateData.eventDay : false;
+                        const isWd = dateData ? dateData.wellnessDay : false;
+                        const isLeave = dateData ? dateData.leave : false;
 
-                    // Calculate sum every 5 days
-                    const startIndex = Math.floor(dateIndex / 5) * 5;
-                    const endIndex = startIndex + 5;
-                    const totalHours = workItem.dates
-                      .filter(d => dates.slice(startIndex, endIndex).includes(d.date))
-                      .reduce((acc, d) => acc + d.totalhoursofjobcomponents, 0);
+                        // Calculate total hours for every 5-day block
+                        const startIndex = Math.floor(dateIndex / 5) * 5;
+                        const endIndex = startIndex + 5;
+                        const totalHours = member.dates
+                          .filter(d => dates.slice(startIndex, endIndex).includes(d.date))
+                          .reduce((acc, d) => acc + d.totalhoursofjobcomponents, 0);
 
-                    return (
-                      <>
-                        <td 
-                          key={dateIndex} 
-                          className="relative text-center overflow-hidden bg-white border-[1px]"
-                        >
-                          <div className='flex absolute top-0 w-full h-[40px] text-center'>
-                            {statusData(hours, isWd, isEventDay, isLeave).map((item, index) => (
-                              <div key={index} className={`w-full h-full ${item}`}>
-
+                        return (
+                          <React.Fragment key={dateIndex}>
+                            {/* Render date cell */}
+                            <td
+                              className={`relative text-center overflow-hidden bg-white border-[1px] ${
+                                isEventDay ? 'bg-red-200' : isWd ? 'bg-blue-200' : isLeave ? 'bg-yellow-200' : ''
+                              }`}
+                            >
+                              <div className="flex absolute top-0 w-full h-[40px] text-center">
+                                {statusData(hours, isWd, isEventDay, isLeave).map((item, index) => (
+                                  <div key={index} className={`w-full h-full ${item}`}></div>
+                                ))}
                               </div>
-                            ))}
-                            {/* Insert your status handling code here if necessary */}
-                          </div>
-                          <p className='relative text-black font-bold text-xs z-30'>{!isEventDay && hours}</p>
-                        </td>
-                        {(dateIndex + 1) % 5 === 0 && (
-                          <th key={`total-${dateIndex}`} className='font-normal w-[40px] bg-primary border-[1px] border-zinc-700'>
-                            <p className={` text-white`}>{totalHours}</p> {/* Display the sum of hours for every 5 days */}
-                          </th>
-                        )}
-                      </>
-                    );
-                  })}
-                </tr>
-              ))}
+                              <p className="relative text-black font-bold text-xs z-30">{!isEventDay && hours}</p>
+                            </td>
+
+                            {/* Render total for every 5-day block */}
+                            {(dateIndex + 1) % 5 === 0 && (
+                              <th
+                                key={`total-${dateIndex}`}
+                                className="font-normal w-[40px] bg-primary border-[1px] border-zinc-700"
+                              >
+                                <p className="text-white">{totalHours || '-'}</p>
+                              </th>
+                            )}
+                          </React.Fragment>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </React.Fragment>
+                ))}
+
             </tbody>
             </table>
           
