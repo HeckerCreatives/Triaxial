@@ -8,7 +8,7 @@ export const hr = [
     {name: 'Events', path: '/hr/events', icon: <CalendarCheck2 className="h-4 w-4" />,subpath: []},
 
      //no access routes
-     {name: 'Projects', path: '/hr/unauthorized/projects', icon: <Box className="h-4 w-4" />, subpath: []},
+     {name: 'Scheduling', path: '/hr/unauthorized/projects', icon: <Box className="h-4 w-4" />, subpath: []},
      {name: 'Invoice', path: '/hr/unauthorized/invoice', icon: <ListChecks className="h-4 w-4" />, subpath: []},
      {name: 'Searches', path: '/hr/unauthorized/noaccess', icon: <Search className="h-4 w-4" />, subpath: [
          {name: 'Clients', path: '/hr/unauthorized/client'},
@@ -76,7 +76,7 @@ export const pm = [
 export const employee = [
     // {name: 'Dashboard', path: '/employee/dashboard', icon: <Home className="h-4 w-4" />},
     {name: ' Your Workload', path: '/employee/yourworkload', icon: <List className="h-4 w-4" />, subpath: []},
-    {name: 'Projects', path: '/employee/projects', icon: <Box className="h-4 w-4" />, subpath: []},
+    {name: 'Scheduling', path: '/employee/projects', icon: <Box className="h-4 w-4" />, subpath: []},
     {name: 'Invoice Projection', path: '/employee/invoiceprojection/list', icon: <File className="h-4 w-4" />, subpath: []},
     {name: 'Request', path: '/employee/request', icon: <ArrowRightLeft className="h-4 w-4" />, subpath: []},
    
@@ -113,7 +113,7 @@ export const finance = [
     {name: 'Request', path: '/finance/request', icon: <ArrowRightLeft className="h-4 w-4" />,subpath: []},
 
      //no access routes
-     {name: 'Projects', path: '/finance/unauthorized/projects', icon: <Box className="h-4 w-4" />, subpath: []},
+     {name: 'Scheduling', path: '/finance/unauthorized/projects', icon: <Box className="h-4 w-4" />, subpath: []},
      {name: 'Invoice', path: '/finance/unauthorized/invoice', icon: <ListChecks className="h-4 w-4" />, subpath: []},
      {name: 'Searches', path: '/finance/unauthorized/noaccess', icon: <Search className="h-4 w-4" />, subpath: [
          {name: 'Clients', path: '/finance/unauthorized/client'},

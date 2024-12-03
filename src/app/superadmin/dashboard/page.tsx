@@ -34,21 +34,18 @@ export default function page() {
 
   return (
     <SuperadminLayout>
-      <div className='p-6 top-0 left-0 w-full flex flex-col justify-between h-[170px] bg-zinc-800'
+      <div className='p-6 top-0 left-0 w-full flex flex-col justify-between h-[100px] bg-zinc-800'
       style={{backgroundImage: `url('/dbbg.png')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat:"no-repeat"}}
       >
         <Breadcrumbdb page={''}/>
 
-        <div className=' w-full flex items-center justify-center'>
+        {/* <div className=' w-full flex items-center justify-center'>
           <div className=' w-fit p-2 flex flex-wrap items-center justify-center gap-2 bg-secondary rounded-sm'>
-          
             {teams.map((item, index) => (
               <button key={index} onClick={() => {setTab(item.teamid), router.push(`?team=${item.teamid}`)}} className={`text-[.6rem]  p-2 text-zinc-100 rounded-md ${tab === item.teamid && 'bg-red-700'} `}>{item.teamname}</button>
-
             ))}
-
           </div>
-        </div>
+        </div> */}
         
       </div>
         <Bottomcards/>
