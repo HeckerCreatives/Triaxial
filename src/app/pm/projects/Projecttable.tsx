@@ -193,7 +193,7 @@ export default function Projecttable() {
                   </TooltipProvider>
               </Editprojectform>
 
-              <Copyprojectform team={item.teamname} jobno={item.jobno} name={item.projectname} client={item.client} start={formatDate(item.startdate)} end={formatDate(item.deadlinedate)}>
+              <Copyprojectform team={item.teamname} jobno={item.jobno} name={item.projectname} client={item.client} start={formatDate(item.startdate)} end={formatDate(item.deadlinedate)} id={item._id}>
                
                 <TooltipProvider>
                     <Tooltip>

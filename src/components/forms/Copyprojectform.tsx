@@ -34,6 +34,7 @@ interface Data {
      client: string
      start: string
      end: string
+     id: string
 }
 
 type Team = {
@@ -82,7 +83,7 @@ export default function Createprojectform( prop: Data) {
     router.push('?state=true')
     setLoading(true)
     try {
-      const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/projects/createproject`,{
+      const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/projects/createprojectvariation`,{
      
           team: data.team, // teamid
           projectname: data.projectname,
@@ -90,6 +91,7 @@ export default function Createprojectform( prop: Data) {
           deadlinedate: data.end,
           client: data.client,
           jobno: data.jobno,
+          projectid: prop.id
 
       }, {
         withCredentials: true,
@@ -244,7 +246,7 @@ export default function Createprojectform( prop: Data) {
                     
 
                     <div className=' w-full'>
-                      <Label className=' text-zinc-500'>Project Name <span className=' text-red-700'>*</span></Label>
+                      <Label className=' text-zinc-500'>Variation Name <span className=' text-red-700'>*</span></Label>
                       <Input type='text' className=' text-xs h-[35px] bg-white' placeholder='Project name' {...register('projectname')}/>
                       {errors.projectname && <p className=' text-[.6em] text-red-500'>{errors.projectname.message}</p>}
 

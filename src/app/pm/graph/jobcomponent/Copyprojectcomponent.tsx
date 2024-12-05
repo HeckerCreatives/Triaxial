@@ -35,10 +35,10 @@ interface Data {
   name: string
   manager: string
   budgettype: string
-  engr: string
-  engrrvr: string
-  drftr: string
-  drftrrvr: string
+  engr: any
+  engrrvr: any
+  drftr: any
+  drftrrvr: any
   estbudget: number
 }
 
@@ -80,21 +80,23 @@ export default function Copyprojectcomponent( prop: Data) {
   const id = params.get('projectid')
   const [isValidated, setIsvalidated] = useState(false)
 
+  console.log(prop)
+
   const [formData, setFormData] = useState<FormData[]>([{ jobmanager: `${prop.manager}`,jobno: '123', budgettype: `${prop.budgettype}`, estimatedbudget: `${prop.estbudget}`, jobcomponent: `${prop.name}`, members: [
                 {
-                    employeeid: `${prop.engr}`,
+                    employeeid: prop.engr === 'null' ? null : prop.engr,
                     role: "Engnr."
                 },
                 {
-                    employeeid: `${prop.engrrvr}`,
+                    employeeid: prop.engrrvr === 'null' ? null : prop.engrrvr,
                     role: "Engr. Revr."
                 },
                 {
-                    employeeid: `${prop.drftr}`,
+                    employeeid: prop.drftr === 'null' ? null : prop.drftr,
                     role: "Drft."
                 },
                 {
-                    employeeid: `${prop.drftrrvr}`,
+                    employeeid: prop.drftrrvr === 'null' ? null : prop.drftrrvr,
                     role: "Drft. Revr."
                 }
   ]}]);
