@@ -11,7 +11,7 @@ export default function page() {
       style={{backgroundImage: `url('/dbbg.png')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat:"no-repeat"}}
       
       >
-        <Breadcrumbdb page={'Finance / Job Component / Invoice Projection'}/>
+        <Breadcrumbdb page={'Graph / Job Components'}/>
       </div>
       <Yourworkload/>
     </PmLayout>

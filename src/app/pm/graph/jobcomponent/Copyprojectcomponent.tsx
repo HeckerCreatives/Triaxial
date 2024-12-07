@@ -40,6 +40,7 @@ interface Data {
   drftr: any
   drftrrvr: any
   estbudget: number
+  state: boolean
 }
 
 type Member = {
@@ -50,7 +51,7 @@ type Member = {
 interface FormData {
     jobmanager: string;
     budgettype: string;
-    estimatedbudget: string;
+    estimatedbudget: any;
     jobcomponent: string
     jobno: string
     members: Member[]
@@ -82,24 +83,38 @@ export default function Copyprojectcomponent( prop: Data) {
 
   console.log(prop)
 
-  const [formData, setFormData] = useState<FormData[]>([{ jobmanager: `${prop.manager}`,jobno: '123', budgettype: `${prop.budgettype}`, estimatedbudget: `${prop.estbudget}`, jobcomponent: `${prop.name}`, members: [
-                {
-                    employeeid: prop.engr === 'null' ? null : prop.engr,
-                    role: "Engnr."
-                },
-                {
-                    employeeid: prop.engrrvr === 'null' ? null : prop.engrrvr,
-                    role: "Engr. Revr."
-                },
-                {
-                    employeeid: prop.drftr === 'null' ? null : prop.drftr,
-                    role: "Drft."
-                },
-                {
-                    employeeid: prop.drftrrvr === 'null' ? null : prop.drftrrvr,
-                    role: "Drft. Revr."
-                }
-  ]}]);
+  const [formData, setFormData] = useState<FormData[]>([]);
+
+  useEffect(() => {
+    // Set initial form data when the props are received
+    setFormData([
+      {
+        jobmanager: prop.manager ?? '',
+        jobno: '123',
+        budgettype: prop.budgettype ?? '',
+        estimatedbudget: prop.estbudget ?? '',
+        jobcomponent: prop.name ?? '',
+        members: [
+          {
+            employeeid: prop.engr === 'null' ? null : prop.engr ?? null,
+            role: "Engnr.",
+          },
+          {
+            employeeid: prop.engrrvr === 'null' ? null : prop.engrrvr ?? null,
+            role: "Engr. Revr.",
+          },
+          {
+            employeeid: prop.drftr === 'null' ? null : prop.drftr ?? null,
+            role: "Drft.",
+          },
+          {
+            employeeid: prop.drftrrvr === 'null' ? null : prop.drftrrvr ?? null,
+            role: "Drft. Revr.",
+          },
+        ],
+      },
+    ]);
+  }, [prop]);
 
   const handleAddForm = () => {
     const lastForm = formData[formData.length - 1];
@@ -409,10 +424,7 @@ export default function Copyprojectcomponent( prop: Data) {
     }
   },[id])
 
-  
-
-
-
+console.log(prop)
   
   return (
     <Dialog open={dialog} onOpenChange={setDialog} >

@@ -38,29 +38,47 @@ export const pm = [
     {name: ' Your Workload', path: '/pm/yourworkload', icon: <List className="h-4 w-4" />, subpath: []},
     {name: 'Team', path: '/pm/team', icon: <Users className="h-4 w-4" />, subpath: []},
     {name: 'Scheduling', path: '/pm/projects', icon: <Box className="h-4 w-4" />, subpath: []},
-    {name: 'Invoice Projection', path: '/pm/invoiceprojection/list', icon: <File className="h-4 w-4" />, subpath: []},
+    {name: 'Finance', path: '/pm/invoiceprojection/list', icon: <File className="h-4 w-4" />, subpath: []},
+    {name: 'Summaries', path: '/pm/summaries', icon: <File className="h-4 w-4" />, subpath: [
+        {name: 'Projects', path: '/pm/summaries', subpath: [
+            {name: 'Job Master', path: '/pm/summaries/jobmaster',subpath: []},
+            {name: 'Due Dates', path: '/pm/summaries/duedates',subpath: []},
+        ]},
+        {name: 'Requests', path: '/pm/summaries', subpath: [
+            {name: 'Individual Requests', path: '/pm/summaries/individualrequest'},
+            {name: 'Leave List', path: '/pm/summaries/leave',subpath: []},
+            {name: 'WFH List', path: '/pm/summaries/wfh',subpath: []},
+            {name: 'WD List', path: '/pm/summaries/wellnessday',subpath: []},
+        ]},
+        {name: 'Finance WIP List', path: '/pm/summaries', subpath: [
+            {name: 'Per Team', path: '',subpath: []},
+            {name: 'Per Client', path: '',subpath: []},
+        ]}
+    ]},
+
+
     {name: 'Request', path: '/pm/request', icon: <ArrowRightLeft className="h-4 w-4" />, subpath: []},
     {name: 'Wellness Day', path: '/pm/wellnessday', icon: <PlusSquare className="h-4 w-4" />, subpath: []},
     {name: 'Leave', path: '/pm/leave', icon: <CalendarCheck2 className="h-4 w-4" />, subpath: []},
     {name: 'Work from home', path: '/pm/wfh', icon: <HomeIcon className="h-4 w-4" />, subpath: []},
     
     //no access routes
-    {name: 'Invoice', path: '/pm/invoice', icon: <ListChecks className="h-4 w-4" />, subpath: []},
+    // {name: 'Invoice', path: '/pm/invoice', icon: <ListChecks className="h-4 w-4" />, subpath: []},
     {name: 'Searches', path: '/pm/noaccess', icon: <Search className="h-4 w-4" />, subpath: [
-        {name: 'Clients', path: '/pm/client'},
-        {name: 'Teams', path: '/pm/group'},
+        {name: 'Clients', path: '/pm/client', subpath: []},
+        {name: 'Teams', path: '/pm/group', subpath: []},
     ]},
     {name: 'Employee Requests', path: '/pm/list', icon: <ArrowRightLeft className="h-4 w-4" />, subpath: [
-        {name: 'Wellness Day', path: '/pm/list/wellnessday'},
-        {name: 'Leaves', path: '/pm/list/leave'},
-        {name: 'Work from home', path: '/pm/list/wfh'},
+        {name: 'Wellness Day', path: '/pm/list/wellnessday',subpath: []},
+        {name: 'Leaves', path: '/pm/list/leave',subpath: []},
+        {name: 'Work from home', path: '/pm/list/wfh',subpath: []},
     ]},
 
     {name: 'Administration', path: '/pm/manageuser', icon: <Users className="h-4 w-4" />, subpath: [
-        {name: 'Employee', path: '/pm/manageuser/employee'},
-        {name: 'Project Manager', path: '/pm/manageuser/pm'},
-        {name: 'Human Resource', path: '/pm/manageuser/hr'},
-        {name: 'Finance', path: '/pm/manageuser/finance'},
+        {name: 'Employee', path: '/pm/manageuser/employee',subpath: []},
+        {name: 'Project Manager', path: '/pm/manageuser/pm',subpath: []},
+        {name: 'Human Resource', path: '/pm/manageuser/hr',subpath: []},
+        {name: 'Finance', path: '/pm/manageuser/finance',subpath: []},
     ]},
 
     {name: 'Events', path: '/pm/event', icon: <CalendarCheck2 className="h-4 w-4" />, subpath: []},

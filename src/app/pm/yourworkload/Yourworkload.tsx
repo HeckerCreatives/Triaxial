@@ -164,7 +164,10 @@ export default function Yourworkload() {
           <thead className=' bg-secondary h-[100px]'>
 
             <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
+              <th className=' font-normal w-[70px]'>Team.</th>
               <th className=' font-normal w-[70px]'>Job No.</th>
+              <th className=' font-normal w-[70px]'>Client</th>
+              <th className=' font-normal w-[70px]'>Project name</th>
               <th className=' font-normal w-[70px]'>Job Mgr.</th>
               <th className=' font-normal w-[70px]'>Job Component</th>
               <th className=' w-[70px] font-normal'>Members</th>
@@ -179,7 +182,10 @@ export default function Yourworkload() {
             graphItem.members.map((member, memberIndex) => (
               <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
                  
+                  <td className="text-center ">{memberIndex === 0 && graphItem.teamname}</td>
                   <td className="text-center text-red-500">{memberIndex === 0 && graphItem.jobno}</td>
+                  <td className="text-center ">{memberIndex === 0 && graphItem.clientname}</td>
+                  <td className="text-center ">{memberIndex === 0 && graphItem.projectname}</td>
                   <td className="text-center">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
                   <td className="text-center">{memberIndex === 0 && graphItem.jobcomponent}</td>
       
@@ -238,7 +244,7 @@ export default function Yourworkload() {
               <tbody>
               {list.map((graphItem, graphIndex) =>
                   graphItem.members.map((member, memberIndex) => (
-                    <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[41px] border-[1px] border-zinc-600">
+                    <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
                       {dates.map((dateObj, index) => {
                         // Find member data for the given date
                         const memberDate = member.dates?.find((date) => formatDate(date.date) === formatDate(dateObj));

@@ -20,7 +20,7 @@ import axios, { AxiosError } from 'axios'
 import toast from 'react-hot-toast'
 import { useRouter, useSearchParams } from 'next/navigation'
 import {statusData} from '@/types/data'
-import { Check, Copy, File, OctagonAlert, Pen, X } from 'lucide-react'
+import { Check, Copy, File, OctagonAlert, Pen, Plus, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import Createprojectcomponent from './Createprojectcomponent'
@@ -29,6 +29,7 @@ import { formatDate } from '@/utils/functions'
 import { any } from 'zod'
 import Invoice from '@/components/forms/Invoice'
 import Copyprojectcomponent from './Copyprojectcomponent'
+import JobComponentStatus from '@/components/forms/JobComponentStatus'
 
 
 type Employee = {
@@ -66,6 +67,7 @@ type Leave = {
 export default function Yourworkload() {
   const [dialog, setDialog] = useState(false)
   const [dialog2, setDialog2] = useState(false)
+  const [dialog3, setDialog3] = useState(false)
   const [leaveStatus, setLeavestatus] = useState(false)
   const [date, setDate] = useState('')
   const [name, setName] = useState('')
@@ -98,6 +100,19 @@ export default function Yourworkload() {
   const [notes2, setNotes2] = useState('')
   const [notes3, setNotes3] = useState('')
   const [notes4, setNotes4] = useState('')
+
+  const [componentid, setComponentid] = useState('')
+  const [tempData, setTempdata] = useState()
+  const [list, setList] = useState<Graph[]>([])
+
+  const handleCheckboxChange = (id: string) => {
+    setComponentid((prevSelectedId) => (prevSelectedId === id ? '' : id));
+  };
+
+  console.log(componentid)
+
+  const findJobComponent = list.find((item) => item._id === componentid)
+
 
 
   const router = useRouter()
@@ -205,7 +220,6 @@ export default function Yourworkload() {
     }
   }
 
-  const [list, setList] = useState<Graph[]>([])
   useEffect(() => {
     try {
       const timer = setTimeout(() => {
@@ -448,7 +462,7 @@ export default function Yourworkload() {
   
     try {
       const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/editjobcomponentdetails`,{
-        jobcomponentid: id,
+        jobcomponentid: componentid,
         projectid: projectname,
         jobmanagerid: jobmanager // employeeid
       }, {
@@ -529,7 +543,7 @@ export default function Yourworkload() {
   
     try {
       const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/editjobmanagercomponents`,{
-        jobcomponentid: id,
+        jobcomponentid: componentid,
         members: members
       }, {
         withCredentials: true,
@@ -609,7 +623,7 @@ export default function Yourworkload() {
   
     try {
       const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/editalljobcomponentdetails`,{
-        jobcomponentid: id,
+        jobcomponentid: componentid,
         projectid: projectname,
         jobmanagerid: jobmanager, // employeeid
         members: members
@@ -704,20 +718,56 @@ export default function Yourworkload() {
         <div className=' flex gap-12'>
           
           <div className=' flex flex-col gap-1 bg-primary p-2'>
-            <p className=' text-sm font-semibold'>Project Details</p>
+            {/* <p className=' text-sm font-semibold'>Project Details</p>
             <p className=' text-xs text-zinc-400'>Project Name: <span className=' text-red-500'>{list[0]?.projectname.name}</span></p>
             <p className=' text-xs text-zinc-400'>Client: <span className=' text-red-500'>{list[0]?.clientname.name}</span></p>
             <p className=' text-xs text-zinc-400'>Team: <span className=' text-red-500'>{list[0]?.teamname}</span></p>
-            <p className=' text-xs text-zinc-400'>Job no.: <span className=' text-red-500'>{list[0]?.jobno}</span></p>
+            <p className=' text-xs text-zinc-400'>Job no.: <span className=' text-red-500'>{list[0]?.jobno}</span></p> */}
+
+            <p className=' text-sm font-semibold'>Team Members</p>
+
+            <div className=' flex items-center gap-2 flex-wrap'>
+              {list[0]?.members.map(( item, index) => (
+                <p key={index} className=' text-blue-500 underline'>{item.employee.initials}</p>
+              ))}
+            </div>
+            
+
           </div>
 
           <div className=' flex flex-col gap-1 bg-primary rounded-sm text-xs'>
 
             <p className=' text-xs mt-2'>Project Component:</p>
-            <div className='flex items-center gap-2 bg-primary rounded-sm text-xs'>
+            <div className='flex items-center gap-2 bg-primary rounded-sm text-xs mt-2'>
               <Createprojectcomponent>
-                <button className={`text-xs px-3 py-1 bg-red-600  rounded-sm`}>Create</button>
+                <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                  <button className={`text-xs p-1 bg-red-600  rounded-sm`}><Plus size={12}/></button>
+                  <p>Create</p>
+                </div>
               </Createprojectcomponent>
+
+              <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                <button onClick={() => setDialog2(true)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Pen size={12}/></button>
+                <p>Edit</p>
+              </div>
+
+              <Copyprojectcomponent name={findJobComponent?.jobcomponent ?? ''} manager={findJobComponent?.jobmanager.employeeid ?? ''} budgettype={findJobComponent?.budgettype ?? ''} engr={findJobComponent?.members[0]?.employee._id} engrrvr={findJobComponent?.members[1]?.employee._id} drftr={findJobComponent?.members[2]?.employee._id} drftrrvr={findJobComponent?.members[3]?.employee._id} estbudget={findJobComponent?.estimatedbudget ?? 0} state={dialog3}>
+                  <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                    <button onClick={() => setDialog3(!dialog3)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Copy size={12}/></button>
+                    <p>Variation</p>
+                  </div>
+                </Copyprojectcomponent>
+
+                <JobComponentStatus name={findJobComponent?.jobcomponent ?? ''} status={findJobComponent?.status} client={findJobComponent?.clientname.name ?? ''} _id={findJobComponent?._id ?? ''} jobno={findJobComponent?.jobno ?? ''} >
+                  <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                    <button className={`text-xs p-1 bg-red-600  rounded-sm`}><File size={12}/></button>
+                    <p>Complete</p>
+                  </div>
+                </JobComponentStatus>
+
+              
+
+
             </div>
             
           </div>
@@ -751,10 +801,19 @@ export default function Yourworkload() {
             {list.map((graphItem, graphIndex) =>
               graphItem.members.map((member, memberIndex) => (
                 <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
-                    <td className="text-center text-white flex items-center justify-center gap-1 h-[40px] w-[80px]">
+                    <td className="text-center text-white flex items-center justify-center gap-1 h-[40px] w-[30px]">
+                      
 
-                      <Dialog open={dialog2} onOpenChange={setDialog2}>
-                          <DialogTrigger>
+                      {(memberIndex === 0 && graphItem.jobmanager.isJobManager === true) && (
+                        <input
+                        type="checkbox"
+                        checked={componentid === graphItem._id}
+                        onChange={() => {handleCheckboxChange(graphItem._id),setProjectname(graphItem.projectname.projectid), setJobmanager(graphItem.jobmanager.employeeid), setJobno(graphItem.jobno), findMember(graphItem.members), setNotes(graphItem.members[0].notes),setNotes2(graphItem.members[1].notes),setNotes3(graphItem.members[2].notes),setNotes4(graphItem.members[3].notes), setIsmanager(graphItem.jobmanager.isManager),setIsjobmanager(graphItem.jobmanager.isJobManager)}}
+                        />
+                      )}
+
+                      <Dialog open={dialog2} onOpenChange={setDialog2} >
+                          <DialogTrigger className='hidden'>
                               {memberIndex === 0 && (<button onClick={() => {setProjectname(graphItem.projectname.projectid), setJobmanager(graphItem.jobmanager.employeeid), setJobno(graphItem.jobno), findMember(graphItem.members), setNotes(graphItem.members[0].notes),setNotes2(graphItem.members[1].notes),setNotes3(graphItem.members[2].notes),setNotes4(graphItem.members[3].notes), setIsmanager(graphItem.jobmanager.isManager),setIsjobmanager(graphItem.jobmanager.isJobManager)}} className=' p-1 bg-red-600 rounded-sm'><Pen size={12}/></button>)}
                           </DialogTrigger>
                           <DialogContent className=' max-w-[600px] h-[80%] bg-secondary border-none p-6 text-white overflow-y-auto'>
@@ -901,9 +960,6 @@ export default function Yourworkload() {
                                           </SelectContent>
                                   </Select>
 
-                                {/* <label htmlFor="">Job no</label>
-                                <Input value={jobno} onChange={(e) => setJobno(e.target.value)} type='text' className=' text-xs h-[35px] bg-primary' placeholder='Job no' /> */}
-
                                 <label htmlFor="">Job Manager</label>
                                 <Select value={jobmanager} onValueChange={setJobmanager}>
                                           <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
@@ -999,16 +1055,12 @@ export default function Yourworkload() {
                               </>
                             )} 
 
-                         
                           </DialogContent>
                       </Dialog>
-
-                      
-                      {(memberIndex === 0 && graphItem.jobmanager.isJobManager === true) && (
-                        <Copyprojectcomponent name={graphItem.jobcomponent} manager={graphItem.jobmanager.employeeid} budgettype={graphItem.budgettype} engr={graphItem.members[0]?.employee._id} engrrvr={graphItem.members[1]?.employee._id} drftr={graphItem.members[2]?.employee._id} drftrrvr={graphItem.members[3]?.employee._id} estbudget={graphItem.estimatedbudget}>
-                        <button onClick={() => {setProjectname(graphItem.projectname.projectid), setJobmanager(graphItem.jobmanager.employeeid), setJobno(graphItem.jobno), findMember(graphItem.members), setNotes(graphItem.members[0].notes), setIsmanager(graphItem.jobmanager.isManager),setIsjobmanager(graphItem.jobmanager.isJobManager)}} className={`text-xs p-1 bg-red-600  rounded-sm`}><Copy size={12}/></button>
+                     
+                        <Copyprojectcomponent name={graphItem.jobcomponent} manager={graphItem.jobmanager.employeeid} budgettype={graphItem.budgettype} engr={graphItem.members[0]?.employee._id} engrrvr={graphItem.members[1]?.employee._id} drftr={graphItem.members[2]?.employee._id} drftrrvr={graphItem.members[3]?.employee._id} estbudget={graphItem.estimatedbudget} state={dialog3}>
+                        <button onClick={() => {setProjectname(graphItem.projectname.projectid), setJobmanager(graphItem.jobmanager.employeeid), setJobno(graphItem.jobno), findMember(graphItem.members), setNotes(graphItem.members[0].notes), setIsmanager(graphItem.jobmanager.isManager),setIsjobmanager(graphItem.jobmanager.isJobManager)}} className={`text-xs p-1 bg-red-600  rounded-sm hidden`}><Copy size={12}/></button>
                       </Copyprojectcomponent>
-                      )}
 
                       
 

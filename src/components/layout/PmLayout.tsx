@@ -111,14 +111,47 @@ export default function PmLayout({
                          
                          <AccordionContent className=' pl-8'>
                            {item.subpath.map((item, index) => (
-                              <Link
-                              key={index}
-                              href={item.path}
-                              className={` ${path.includes(item.path) ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                            >
-                              
-                             {item.name}
-                            </Link>
+                            <>
+                            {item.subpath.length === 0 ? (
+                               <Link
+                               key={index}
+                               href={item.path}
+                               className={` ${path.includes(item.path) ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
+                             >
+                               
+                              {item.name}
+                             </Link>
+                            ): (
+                              <Accordion type="single" collapsible>
+                              <AccordionItem value="item-1">
+                                <div className={` px-3 flex items-center w-full gap-2 ${path.includes(item.path) ? ' text-zinc-100' : 'text-zinc-100'}`}>
+                                  <AccordionTrigger className=' w-[200px] text-sm'>{item.name}</AccordionTrigger>
+                                </div>
+                                
+                                <AccordionContent className=' pl-8'>
+                                  {item.subpath.map((item, index) => (
+                                    <>
+                                  
+                                      <Link
+                                      key={index}
+                                      href={item.path}
+                                      className={` ${path.includes(item.path) ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
+                                    >
+                                      
+                                      {item.name}
+                                    </Link>
+                             
+                                    </>
+                                    
+                                  ))}
+                                  
+                                </AccordionContent>
+                              </AccordionItem>
+                              </Accordion>
+                            )}
+                            
+                            </>
+                             
                            ))}
                           
                          </AccordionContent>
@@ -128,7 +161,6 @@ export default function PmLayout({
                    
                    </>
                 )) }
-               
                
               
               </nav>

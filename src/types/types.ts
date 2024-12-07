@@ -85,7 +85,7 @@ leavestart: string
 
 export  type Members = {
     dates: Dates[]
-employee: {_id: string,fullname: string}
+employee: {_id: string,fullname: string, initials: string}
 eventDates: Request[]
 leaveDates: Leavedates[]
 notes: string
@@ -111,6 +111,7 @@ members: Members[]
 projectname: Project
 teamname:string
 _id:string
+status: any
 budgettype: string
 estimatedbudget: number
 }
@@ -120,6 +121,7 @@ export type Workload = {
     _id: string
     jobmanager: {employeeid: string, fullname: string}
     componentid:  string
+    clientname: string
     teamname:  string
     projectname:  string
     jobcomponent: string

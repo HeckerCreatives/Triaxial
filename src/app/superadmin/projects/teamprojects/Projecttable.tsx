@@ -151,6 +151,7 @@ export default function Projecttable() {
           )}
         <TableHeader>
             <TableRow>
+            <TableHead>Team</TableHead>
             <TableHead>Project Name</TableHead>
             <TableHead>Client</TableHead>
             <TableHead className="">Job Component</TableHead>
@@ -165,6 +166,7 @@ export default function Projecttable() {
         <TableBody>
           {list.map((item, index) => (
             <TableRow key={index}>
+            <TableCell>{item.teamname}</TableCell>
             <TableCell>{item.projectname}</TableCell>
             <TableCell>{item.client}</TableCell>
             <TableCell className="">

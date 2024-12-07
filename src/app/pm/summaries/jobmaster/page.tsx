@@ -5,7 +5,6 @@ import React from 'react'
 import Projecttable from './Projecttable'
 import { useSearchParams } from 'next/navigation'
 import PmLayout from '@/components/layout/PmLayout'
-import NoAccessPage from '@/components/common/NoAccessPage'
 
 export default function page() {
   const params = useSearchParams()
@@ -15,13 +14,9 @@ export default function page() {
      <PmLayout>
       <div className=' p-6 top-0 left-0 w-full h-auto bg-zinc-800'
       style={{backgroundImage: `url('/dbbg.png')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat:"no-repeat"}}
-      
       >
-        <Breadcrumbdb page={'Finance / Job Component / List'}/>
-
-    
+        <Breadcrumbdb page={'Sumaries / Projects / Job Master'}/>
       </div>
-      {/* <Projectcards/> */}
       <Projecttable/>
      
     </PmLayout>
