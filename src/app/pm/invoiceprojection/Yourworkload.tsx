@@ -327,13 +327,13 @@ const totalsByDate = allDates.map((dateObj) => {
               <th className=' w-[70px] font-normal'></th>
               <th className=' w-[70px] font-normal'></th>
                 <th className=' w-[70px] font-normal'>Totals</th>
-                <th className=' w-[70px] font-normal'>$ {totalEstimatedBudget}</th>
+                <th className=' w-[70px] font-normal'>$ {totalEstimatedBudget.toLocaleString()}</th>
                 <th className=' w-[70px] font-normal'></th>
-                <th className=' w-[70px] font-normal'>$ {totalInvoiced}</th>
-                <th className=' w-[70px] font-normal'>$ {totalRemaining}</th>
-                <th className=' w-[70px] font-normal'>$ {totalSubAmount}</th>
-                <th className=' font-normal w-[70px]'>$ {totalWIP}</th>
-                <th className=' font-normal w-[70px]'>$ {totalCatchupInv}</th>
+                <th className=' w-[70px] font-normal'>$ {totalInvoiced.toLocaleString()}</th>
+                <th className=' w-[70px] font-normal'>$ {totalRemaining.toLocaleString()}</th>
+                <th className=' w-[70px] font-normal'>$ {totalSubAmount.toLocaleString()}</th>
+                <th className=' font-normal w-[70px]'>$ {totalWIP.toLocaleString()}</th>
+                <th className=' font-normal w-[70px]'>$ {totalCatchupInv.toLocaleString()}</th>
 
               
               </tr>
@@ -367,13 +367,13 @@ const totalsByDate = allDates.map((dateObj) => {
                   <td className="text-center ">{graphItem.projectname}</td>
                   <td className="text-center ">{graphItem.jobmanager.fullname}</td>
                   <td className="text-center ">{graphItem.jobcomponent}</td>
-                  <td className="text-center ">$ {graphItem.estimatedbudget}</td>
-                  <td className="text-center ">{graphItem.budgettype === 'rates' ? `${ graphItem.invoice.percentage} hrs` : `$ ${ graphItem.invoice.percentage}` }</td>
-                  <td className="text-center ">$ {graphItem.budgettype === 'rates' ? `${ graphItem.rates.invoiced}` : `${ graphItem.lumpsum.invoiced}` }</td>
-                  <td className="text-center ">{graphItem.budgettype === 'rates' ? `-` : `$ ${ graphItem.lumpsum.remaining}`}</td>
-                  <td onClick={() => {setDialog2(graphItem.budgettype === 'lumpsum' && true), setComponentid(graphItem.componentid), setSubAmount(graphItem.lumpsum.subconts)}} className={`text-center cursor-pointer ${graphItem.budgettype === 'lumpsum' && 'bg-secondary'}`}> {graphItem.budgettype === 'rates' ? '-' : `$ ${graphItem.lumpsum.subconts}`}</td>
-                  <td className="text-center ">$ {graphItem.budgettype === 'rates' ? `${ graphItem.rates.wip}` : ` ${ graphItem.lumpsum.wip}`}</td>
-                  <td className="text-center ">{graphItem.budgettype === 'rates' ? `-` : `$ ${ graphItem.lumpsum.catchupinv}`}</td>
+                  <td className="text-center ">$ {graphItem.estimatedbudget.toLocaleString()}</td>
+                  <td className="text-center ">{graphItem.budgettype === 'rates' ? `${ graphItem.invoice.percentage.toLocaleString()} hrs` : `$ ${ graphItem.invoice.percentage.toLocaleString()}` }</td>
+                  <td className="text-center ">$ {graphItem.budgettype === 'rates' ? `${ graphItem.rates.invoiced.toLocaleString()}` : `${ graphItem.lumpsum.invoiced.toLocaleString()}` }</td>
+                  <td className="text-center ">{graphItem.budgettype === 'rates' ? `-` : `$ ${ graphItem.lumpsum.remaining.toLocaleString()}`}</td>
+                  <td onClick={() => {setDialog2(graphItem.budgettype === 'lumpsum' && true), setComponentid(graphItem.componentid), setSubAmount(graphItem.lumpsum.subconts)}} className={`text-center cursor-pointer ${graphItem.budgettype === 'lumpsum' && 'bg-secondary'}`}> {graphItem.budgettype === 'rates' ? '-' : `$ ${graphItem.lumpsum.subconts.toLocaleString()}`}</td>
+                  <td className="text-center ">$ {graphItem.budgettype === 'rates' ? `${ graphItem.rates.wip.toLocaleString()}` : ` ${ graphItem.lumpsum.wip.toLocaleString()}`}</td>
+                  <td className="text-center ">{graphItem.budgettype === 'rates' ? `-` : `$ ${ graphItem.lumpsum.catchupinv.toLocaleString()}`}</td>
 
 
                 </tr>
@@ -389,7 +389,7 @@ const totalsByDate = allDates.map((dateObj) => {
                 <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
                   {totalsByDate.map((item, index) => (
                     <th key={index} className="relative font-normal px-6 ">
-                      $ {item}
+                      $ {item.toLocaleString()}
                     </th>
                   ))}
                       

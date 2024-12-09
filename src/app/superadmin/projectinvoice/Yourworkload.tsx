@@ -296,15 +296,16 @@ const totalCatchupInv = list.reduce((acc, item) => {
 }, 0);
 
 const totalsByDate = allDates.map((dateObj) => {
-  return list.reduce((total, graphItem) => {
+  const total = list.reduce((total, graphItem) => {
     const memberDate = graphItem.projectedValues.find(
       (date) => formatYearMonth(date.date) === formatYearMonth(dateObj)
     );
-    return total + (memberDate?.amount || 0); // Add amount if it exists, otherwise add 0
+    return total + (memberDate?.amount || 0);
   }, 0);
+
+  // Format the total with commas
+  return total.toLocaleString('en-US');
 });
-
-
 
 
   return (
@@ -327,13 +328,13 @@ const totalsByDate = allDates.map((dateObj) => {
               <th className=' w-[70px] font-normal'></th>
               <th className=' w-[70px] font-normal'></th>
                 <th className=' w-[70px] font-normal'>Totals</th>
-                <th className=' w-[70px] font-normal'>$ {totalEstimatedBudget}</th>
+                <th className=' w-[70px] font-normal'>$ {totalEstimatedBudget.toLocaleString()}</th>
                 <th className=' w-[70px] font-normal'></th>
-                <th className=' w-[70px] font-normal'>$ {totalInvoiced}</th>
-                <th className=' w-[70px] font-normal'>$ {totalRemaining}</th>
-                <th className=' w-[70px] font-normal'>$ {totalSubAmount}</th>
-                <th className=' font-normal w-[70px]'>$ {totalWIP}</th>
-                <th className=' font-normal w-[70px]'>$ {totalCatchupInv}</th>
+                <th className=' w-[70px] font-normal'>$ {totalInvoiced.toLocaleString()}</th>
+                <th className=' w-[70px] font-normal'>$ {totalRemaining.toLocaleString()}</th>
+                <th className=' w-[70px] font-normal'>$ {totalSubAmount.toLocaleString()}</th>
+                <th className=' font-normal w-[70px]'>$ {totalWIP.toLocaleString()}</th>
+                <th className=' font-normal w-[70px]'>$ {totalCatchupInv.toLocaleString()}</th>
 
               
               </tr>
@@ -367,13 +368,13 @@ const totalsByDate = allDates.map((dateObj) => {
                   <td className="text-center ">{graphItem.projectname}</td>
                   <td className="text-center ">{graphItem.jobmanager.fullname}</td>
                   <td className="text-center ">{graphItem.jobcomponent}</td>
-                  <td className="text-center ">$ {graphItem.estimatedbudget}</td>
+                  <td className="text-center ">$ {graphItem.estimatedbudget.toLocaleString()}</td>
                   <td className="text-center ">{graphItem.budgettype === 'rates' ? `${ graphItem.invoice.percentage} hrs` : `$ ${ graphItem.invoice.percentage}` }</td>
-                  <td className="text-center ">$ {graphItem.budgettype === 'rates' ? `${ graphItem.rates.invoiced}` : `${ graphItem.lumpsum.invoiced}` }</td>
-                  <td className="text-center ">{graphItem.budgettype === 'rates' ? `-` : `$ ${ graphItem.lumpsum.remaining}`}</td>
-                  <td className={`text-center `}> {graphItem.budgettype === 'rates' ? '-' : `$ ${graphItem.lumpsum.subconts}`}</td>
-                  <td className="text-center ">$ {graphItem.budgettype === 'rates' ? `${ graphItem.rates.wip}` : ` ${ graphItem.lumpsum.wip}`}</td>
-                  <td className="text-center ">{graphItem.budgettype === 'rates' ? `-` : `$ ${ graphItem.lumpsum.catchupinv}`}</td>
+                  <td className="text-center ">$ {graphItem.budgettype === 'rates' ? `${ graphItem.rates.invoiced.toLocaleString()}` : `${ graphItem.lumpsum.invoiced.toLocaleString()}` }</td>
+                  <td className="text-center ">{graphItem.budgettype === 'rates' ? `-` : `$ ${ graphItem.lumpsum.remaining.toLocaleString()}`}</td>
+                  <td className={`text-center `}> {graphItem.budgettype === 'rates' ? '-' : `$ ${graphItem.lumpsum.subconts.toLocaleString()}`}</td>
+                  <td className="text-center ">$ {graphItem.budgettype === 'rates' ? `${ graphItem.rates.wip.toLocaleString()}` : ` ${ graphItem.lumpsum.wip.toLocaleString()}`}</td>
+                  <td className="text-center ">{graphItem.budgettype === 'rates' ? `-` : `$ ${ graphItem.lumpsum.catchupinv.toLocaleString()}`}</td>
 
 
                 </tr>
@@ -439,7 +440,7 @@ const totalsByDate = allDates.map((dateObj) => {
                          
                         >
                           {memberDate ? (
-                            <span className="text-xs">$ {memberDate.amount}</span>
+                            <span className="text-xs">$ {memberDate.amount.toLocaleString()}</span>
                           ) : (
                             <span>-</span>
                           )}
