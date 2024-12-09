@@ -128,6 +128,7 @@ export const finance = [
     {name: 'Dashboard', path: '/finance/dashboard', icon: <Home className="h-4 w-4" />,subpath: []},
     // {name: ' Your Workload', path: '/finance/yourworkload', icon: <List className="h-4 w-4" />},
     {name: 'Invoice Request', path: '/finance/invoice', icon: <File className="h-4 w-4" />,subpath: []},
+    {name: 'Project Invoice', path: '/finance/projectinvoice/list', icon: <File className="h-4 w-4" />, subpath: []},
     {name: 'Request', path: '/finance/request', icon: <ArrowRightLeft className="h-4 w-4" />,subpath: []},
 
      //no access routes

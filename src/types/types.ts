@@ -114,6 +114,10 @@ _id:string
 status: any
 budgettype: string
 estimatedbudget: number
+invoice: {
+    percentage: number,
+    amount: number
+}
 }
 
 

@@ -282,8 +282,6 @@ export default function Yourworkload() {
     start.setHours(0, 0, 0, 0);
     end.setHours(0, 0, 0, 0);
 
-
-  
     // Check if the dateToCheck is between or equal to startDate and endDate
     return checkDate >= start && checkDate <= end;
   }
@@ -746,24 +744,72 @@ export default function Yourworkload() {
                 </div>
               </Createprojectcomponent>
 
-              <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                <button onClick={() => setDialog2(true)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Pen size={12}/></button>
-                <p>Edit</p>
-              </div>
+              {componentid === '' ? (
+                 <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                  <button onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><Pen size={12}/></button>
+                  <p>Edit</p>
+                </div>
+                
+              ) : (
+                <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                  <button onClick={() => setDialog2(true)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Pen size={12}/></button>
+                  <p>Edit</p>
+                </div>
+              )}
 
-              <Copyprojectcomponent name={findJobComponent?.jobcomponent ?? ''} manager={findJobComponent?.jobmanager.employeeid ?? ''} budgettype={findJobComponent?.budgettype ?? ''} engr={findJobComponent?.members[0]?.employee._id} engrrvr={findJobComponent?.members[1]?.employee._id} drftr={findJobComponent?.members[2]?.employee._id} drftrrvr={findJobComponent?.members[3]?.employee._id} estbudget={findJobComponent?.estimatedbudget ?? 0} state={dialog3}>
-                  <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                    <button onClick={() => setDialog3(!dialog3)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Copy size={12}/></button>
-                    <p>Variation</p>
-                  </div>
-                </Copyprojectcomponent>
 
+             
+
+              {componentid === '' ? (
+                <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                  <button onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><Copy size={12}/></button>
+                  <p>Variation</p>
+                </div>
+                
+              ) : (
+                <Copyprojectcomponent name={findJobComponent?.jobcomponent ?? ''} manager={findJobComponent?.jobmanager.employeeid ?? ''} budgettype={findJobComponent?.budgettype ?? ''} engr={findJobComponent?.members[0]?.employee._id} engrrvr={findJobComponent?.members[1]?.employee._id} drftr={findJobComponent?.members[2]?.employee._id} drftrrvr={findJobComponent?.members[3]?.employee._id} estbudget={findJobComponent?.estimatedbudget ?? 0} state={dialog3}>
+                <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                  <button onClick={() => setDialog3(!dialog3)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Copy size={12}/></button>
+                  <p>Variation</p>
+                </div>
+              </Copyprojectcomponent>
+              )}
+
+              {componentid === '' ? (
+                 <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                  <button onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><File size={12}/></button>
+                  <p>Complete</p>
+                </div>
+
+              ) : (
                 <JobComponentStatus name={findJobComponent?.jobcomponent ?? ''} status={findJobComponent?.status} client={findJobComponent?.clientname.name ?? ''} _id={findJobComponent?._id ?? ''} jobno={findJobComponent?.jobno ?? ''} >
                   <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
                     <button className={`text-xs p-1 bg-red-600  rounded-sm`}><File size={12}/></button>
                     <p>Complete</p>
                   </div>
                 </JobComponentStatus>
+              )}
+
+              {componentid === '' ? (
+                 <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                  <button onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><File size={12}/></button>
+                  <p>Invoice</p>
+                </div>
+
+              ) : (
+                <Invoice projectname={findJobComponent?.projectname.name} jobcname={findJobComponent?.jobcomponent} jobno={findJobComponent?.jobno} budgettype={findJobComponent?.budgettype} estimatedbudget={findJobComponent?.estimatedbudget} jobcid={findJobComponent?.componentid} isJobmanager={findJobComponent?.jobmanager.isJobManager} currinvoice={findJobComponent?.invoice.percentage}>
+                  <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                    <button className={`text-xs p-1 bg-red-600  rounded-sm`}><File size={12}/></button>
+                    <p>Invoice</p>
+                  </div>       
+                </Invoice>
+              )}
+
+             
+
+                
+
+                
 
               
 
@@ -783,13 +829,17 @@ export default function Yourworkload() {
         <div className=' h-full overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
           {list.length !== 0 ? (
             <>
-            <table className="table-auto w-[900px] border-collapse ">
+            <table className="table-auto w-[1300px] border-collapse ">
             <thead className=' bg-secondary h-[100px]'>
 
               <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
                 <th className=' w-[80px] font-normal'>Action</th>
+                <th className=' font-normal w-[70px]'>Status</th>
                 <th className=' font-normal w-[70px]'>Job Mgr.</th>
                 <th className=' font-normal w-[70px]'>Job Component</th>
+                <th className=' font-normal w-[70px]'>Est. $</th>
+                <th className=' font-normal w-[70px]'>Invoiced (%/hrs)</th>
+                <th className=' font-normal w-[70px]'>Budget type</th>
                 <th className=' w-[70px] font-normal'>Members</th>
                 <th className=' font-normal w-[70px]'>Role</th>
                 <th className=' font-normal w-[70px]'>Notes</th>
@@ -811,6 +861,7 @@ export default function Yourworkload() {
                         onChange={() => {handleCheckboxChange(graphItem._id),setProjectname(graphItem.projectname.projectid), setJobmanager(graphItem.jobmanager.employeeid), setJobno(graphItem.jobno), findMember(graphItem.members), setNotes(graphItem.members[0].notes),setNotes2(graphItem.members[1].notes),setNotes3(graphItem.members[2].notes),setNotes4(graphItem.members[3].notes), setIsmanager(graphItem.jobmanager.isManager),setIsjobmanager(graphItem.jobmanager.isJobManager)}}
                         />
                       )}
+
 
                       <Dialog open={dialog2} onOpenChange={setDialog2} >
                           <DialogTrigger className='hidden'>
@@ -1064,31 +1115,15 @@ export default function Yourworkload() {
 
                       
 
-                      {(memberIndex === 0 && graphItem.jobmanager.isJobManager === true) && (
-                        <Invoice 
-                          projectname={graphItem.projectname.name} 
-                          jobno={graphItem.jobno} 
-                          notes={graphItem.members[0].notes} 
-                          jobcname={graphItem.jobcomponent} 
-                          budgettype={graphItem.budgettype} 
-                          estimatedbudget={graphItem.estimatedbudget} 
-                          jobcid={graphItem.componentid} 
-                          isJobmanager={graphItem.jobmanager.isJobManager}
-                        >
-                        
-                            <button onClick={() => {
-                              setIsjobmanager(graphItem.jobmanager.isJobManager);
-                              url.searchParams.set("jobcid", graphItem.componentid);
-                              router.push(url.toString());
-                            }} className='p-1 bg-red-600 rounded-sm'>
-                              <File size={12}/>
-                            </button>
-                        </Invoice>
-                      )}
                                   
                       </td>
+                  <td className={`${graphItem.status === null ? 'text-blue-400' :  'text-green-500'} text-center`}>{memberIndex === 0 && `${graphItem.status === null ? 'Ongoing' :  'Completed'}`}</td>
+
                     <td className="text-center">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
                     <td className="text-center">{memberIndex === 0 && graphItem.jobcomponent}</td>
+                    <td className="text-center">{memberIndex === 0 && `$ ${graphItem.estimatedbudget.toLocaleString()}`}</td>
+                    <td className="text-center">{memberIndex === 0 && `${graphItem.invoice.percentage} ${graphItem.budgettype === 'lumpsum' ? '%' : 'hrs'}`}</td>
+                    <td className="text-center">{memberIndex === 0 && graphItem.budgettype}</td>
         
                   <td className="text-center">{member.employee.fullname}</td>
                   <td className="text-center text-[.5rem]">{member.role}</td>
@@ -1107,6 +1142,8 @@ export default function Yourworkload() {
                     </Dialog>
 
                     </td>
+
+
                 
 
                 </tr>

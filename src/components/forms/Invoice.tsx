@@ -25,14 +25,14 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 type Props = {
     children: React.ReactNode
-    projectname: string
-    jobcname: string
-    jobno: string
-    notes: string
-    budgettype: string
-    estimatedbudget: number
-    jobcid: string
-    isJobmanager: boolean
+    projectname: any
+    jobcname: any
+    jobno: any
+    budgettype: any
+    estimatedbudget: any
+    jobcid: any
+    isJobmanager: any
+    currinvoice: any
 }
 
 export default function Invoice( prop: Props) {
@@ -229,6 +229,12 @@ export default function Invoice( prop: Props) {
         lumpsumCalc()
     },[newInvoice])
 
+    useEffect(() => {
+        if(prop){
+            setCurrInvoice(prop.currinvoice)
+        }
+    },[prop])
+
 
     
 
@@ -261,7 +267,7 @@ export default function Invoice( prop: Props) {
                           <div className="text-gray-700 mb-2">Project Name - {prop.projectname}</div>
                           <div className="text-gray-700 mb-2">Job Component Name - {prop.jobcname}</div>
                           <div className="text-gray-700 mb-2">Job No. - {prop.jobno}</div>
-                          <div className="text-gray-700 mb-2">Admin Notes : {prop.notes}</div>
+                          {/* <div className="text-gray-700 mb-2">Admin Notes : {prop.notes}</div> */}
 
                           <label htmlFor="">Type</label>
                           <Select value={prop.budgettype} disabled={true}>
@@ -290,11 +296,11 @@ export default function Invoice( prop: Props) {
                                   </td>
 
                                   <td className="text-left text-gray-700">
-                                  <Input value={currInvoice} placeholder='Amount' className=' bg-zinc-200'/>
+                                  <Input defaultValue={prop.currinvoice}  value={currInvoice} placeholder='Amount' className=' bg-zinc-200'/>
                                   </td>
 
                                   <td className="text-left text-gray-700">
-                                  <Input max={100} value={newInvoice} onChange={(e) => setNewInvoice(e.target.value)} placeholder='Amount' className=' bg-zinc-200'/>
+                                  <Input max={100}  value={newInvoice} onChange={(e) => setNewInvoice(e.target.value)} placeholder='Amount' className=' bg-zinc-200'/>
                                   </td>
                               </tr>
                             

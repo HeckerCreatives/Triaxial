@@ -76,7 +76,7 @@ export default function Yourworkload() {
   const [componentid, setComponentid] = useState('')
 
   const getList = async () => {
-    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/projectinvoice/managerlistcomponentprojectinvoice?projectid=${id}`,{
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/projectinvoice/listcomponentprojectinvoicefn?projectid=${id}`,{
       withCredentials: true,
       headers: {
         'Content-Type': 'application/json'
@@ -206,7 +206,7 @@ export default function Yourworkload() {
     try {
       const timer = setTimeout(() => {
         const getList = async () => {
-          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/projectinvoice/managerlistcomponentprojectinvoice?projectid=${id}`,{
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/projectinvoice/listcomponentprojectinvoicefn?projectid=${id}`,{
             withCredentials: true,
             headers: {
               'Content-Type': 'application/json'
@@ -296,15 +296,16 @@ const totalCatchupInv = list.reduce((acc, item) => {
 }, 0);
 
 const totalsByDate = allDates.map((dateObj) => {
-  return list.reduce((total, graphItem) => {
+  const total = list.reduce((total, graphItem) => {
     const memberDate = graphItem.projectedValues.find(
       (date) => formatYearMonth(date.date) === formatYearMonth(dateObj)
     );
-    return total + (memberDate?.amount || 0); // Add amount if it exists, otherwise add 0
+    return total + (memberDate?.amount || 0);
   }, 0);
+
+  // Format the total with commas
+  return total.toLocaleString('en-US');
 });
-
-
 
 
   return (
@@ -368,10 +369,10 @@ const totalsByDate = allDates.map((dateObj) => {
                   <td className="text-center ">{graphItem.jobmanager.fullname}</td>
                   <td className="text-center ">{graphItem.jobcomponent}</td>
                   <td className="text-center ">$ {graphItem.estimatedbudget.toLocaleString()}</td>
-                  <td className="text-center ">{graphItem.budgettype === 'rates' ? `${ graphItem.invoice.percentage.toLocaleString()} hrs` : `$ ${ graphItem.invoice.percentage.toLocaleString()}` }</td>
+                  <td className="text-center ">{graphItem.budgettype === 'rates' ? `${ graphItem.invoice.percentage} hrs` : `$ ${ graphItem.invoice.percentage}` }</td>
                   <td className="text-center ">$ {graphItem.budgettype === 'rates' ? `${ graphItem.rates.invoiced.toLocaleString()}` : `${ graphItem.lumpsum.invoiced.toLocaleString()}` }</td>
                   <td className="text-center ">{graphItem.budgettype === 'rates' ? `-` : `$ ${ graphItem.lumpsum.remaining.toLocaleString()}`}</td>
-                  <td onClick={() => {setDialog2(graphItem.budgettype === 'lumpsum' && true), setComponentid(graphItem.componentid), setSubAmount(graphItem.lumpsum.subconts)}} className={`text-center cursor-pointer ${graphItem.budgettype === 'lumpsum' && 'bg-secondary'}`}> {graphItem.budgettype === 'rates' ? '-' : `$ ${graphItem.lumpsum.subconts.toLocaleString()}`}</td>
+                  <td className={`text-center `}> {graphItem.budgettype === 'rates' ? '-' : `$ ${graphItem.lumpsum.subconts.toLocaleString()}`}</td>
                   <td className="text-center ">$ {graphItem.budgettype === 'rates' ? `${ graphItem.rates.wip.toLocaleString()}` : ` ${ graphItem.lumpsum.wip.toLocaleString()}`}</td>
                   <td className="text-center ">{graphItem.budgettype === 'rates' ? `-` : `$ ${ graphItem.lumpsum.catchupinv.toLocaleString()}`}</td>
 
@@ -389,10 +390,13 @@ const totalsByDate = allDates.map((dateObj) => {
                 <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
                   {totalsByDate.map((item, index) => (
                     <th key={index} className="relative font-normal px-6 ">
-                      $ {item.toLocaleString()}
+                      $ {item}
                     </th>
                   ))}
                       
+                    
+                  
+
                   
                 </tr>
               </thead>
@@ -432,16 +436,11 @@ const totalsByDate = allDates.map((dateObj) => {
                       return (
                         <td
                           key={`${graphIndex}-${index}`}
-                          className="text-center border-[1px] border-zinc-600 cursor-pointer"
-                          onClick={() => {
-                            setDialog(true);
-                            setDate(dateObj);
-                            setJobcid(graphItem.componentid);
-                            setAmount(memberDate?.amount || 0)
-                          }}
+                          className="text-center border-[1px] border-zinc-600"
+                         
                         >
                           {memberDate ? (
-                            <span className="text-xs">$ {memberDate.amount}</span>
+                            <span className="text-xs">$ {memberDate.amount.toLocaleString()}</span>
                           ) : (
                             <span>-</span>
                           )}

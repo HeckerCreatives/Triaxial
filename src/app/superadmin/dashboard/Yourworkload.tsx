@@ -1,9 +1,10 @@
 "use client"
 import React, { useEffect, useMemo, useState } from 'react'
 import axios, { AxiosError } from 'axios'
+import toast from 'react-hot-toast'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { RefreshCcw } from 'lucide-react'
-import { formatDMY } from '@/utils/functions'
+import { string } from 'zod'
 
 type Dates = {
   date: string
@@ -27,9 +28,42 @@ id: string,
 name: string
 resource: string
 dates: Dates[]
+leave: [
+  {
+    leavestart: string
+    leaveend: string
+    }
+],
+event: [
+  {
+    eventstart: string
+    eventend: string
+    }
+],
+wellness: [
+  {
+      wellnessdates: string
+  }
+],
+}
+
+type Leave = {
+  leavestart: string
+  leaveend: string
+}
+
+type Event = {
+  startdate: string
+  enddate: string
+}
+
+type Wellnessday = {
+  startdate: string
+  enddate: string
 }
 
 export default function Yourworkload() {
+  const [memberIndex, setMemberIndex] = useState(0)
   const [list, setList] = useState<List[]>([])
   const [dates, setDates] = useState<string[]>([])
   const [filter, setFilter] = useState('')
@@ -57,58 +91,149 @@ export default function Yourworkload() {
     getList()
   },[filter, getTeamid])
 
-  const statusData = ( hours: any, wd: boolean, event: boolean, leave: boolean) => {
+  const isDateInRange = (dateToCheck: string, startDate: string, endDate: string): boolean => {
+    const checkDate = new Date(dateToCheck);
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    checkDate.setHours(0, 0, 0, 0);
+    start.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
+    
+    // Check if the dateToCheck is between or equal to startDate and endDate
+    return checkDate >= start && checkDate <= end;
+  }
+
+  const statusData = ( hours: any, wd: boolean, event: boolean, leave: boolean, leaveDate: string, leaveArray: Array<{ leavestart: string; leaveend: string }>,eventArray: Array<{ eventstart: string; eventend: string }>,wellness: Array<{wellnessdates: string}>, ) => {
     const data = []
 
-    if(hours <= 2.00){
+     // Check if the leaveDate is in any range in the leave array
+    const isLeaveInRange = leaveArray.some((leaveItem) =>
+      isDateInRange(leaveDate, leaveItem.leavestart, leaveItem.leaveend)
+    );
+
+    const isEventInRange = eventArray.some((leaveItem) =>
+      isDateInRange(leaveDate, leaveItem.eventstart, leaveItem.eventend)
+    );
+
+    const isWellnessDay= wellness.some((leaveItem) => {
+      if(leaveItem.wellnessdates.includes(leaveDate)){
+        return true
+      } else {
+        return false
+      }
+    }
+     
+    );
+
+    if(hours <= 2){
       data.push('bg-red-500')
     }
 
-    if(hours <= 4.00 && hours > 2.01){
+    if(hours <= 4 && hours >= 4){
       data.push('bg-orange-500')
     }
 
-    if(hours <= 6.00 && hours >= 4.01){
+    if(hours <= 6 && hours >= 4){
       data.push('bg-yellow-500')
     }
 
-    if(hours <= 8.00 && hours >= 6.01){
+    if(hours <= 8 && hours >= 6){
       data.push('bg-green-500')
     }
 
+    if(hours > 8){
+      data.push('bg-green-500')
+    }
 
-    if(wd === true){
+    if(isWellnessDay){
       data.push('bg-violet-500')
     }
-    // if(hours < 40){
-    //   data.push('bg-cyan-500')
-    // }
-
-    if(hours > 8.01){
-      data.push('bg-cyan-300')
+    if(hours < 40){
+      data.push('bg-cyan-500')
     }
 
     if(hours > 40){
       data.push('bg-indigo-500')
     }
 
-    if(event === true){
+    if(isEventInRange){
       data.push('bg-gray-400')
 
     }
 
-    if(leave === true){
-      data.push('bg-pink-500')
+    if(isEventInRange){
+      data.push('bg-gray-400')
 
+    }
+
+    if(isLeaveInRange){
+      data.push('bg-pink-500')
     }
 
     return data
   }
 
+  
+
+  const statusColor = (data: string[], date: string, leaveStart: string, leaveEnd: string, eventStart: string, eventEnd: string, wddate: string, hours: number, eventDates: Event[], leaveDates: Leave[], wellnessDates: string[]) => {
+    const colorData: string[] = [];
+
+    const isLeaveInRange = isDateInRange(date, leaveStart, leaveEnd);
+    const isEventInRange = isDateInRange(date, eventStart, eventEnd);
+
+    const isWithinAnyEventDate = eventDates.some((item) =>
+      isDateInRange(date, item.startdate, item.enddate)
+    );
+
+    const isWithinAnyLeaveDate = leaveDates.some((item) =>
+      isDateInRange(date, item.leavestart, item.leaveend)
+    );
+
+     // Check if the date is in wellnessDates
+  const isWellnessDate = wellnessDates.some(
+    (wellnessDate) => wellnessDate === date
+  );;
+
+    if(data.includes('1')){
+      colorData.push('bg-red-500')
+    }
+    if(data.includes('2')){
+      colorData.push('bg-amber-500')
+    }
+    if(data.includes('3')){
+      colorData.push('bg-yellow-300')
+    }
+    if(data.includes('4')){
+      colorData.push('bg-green-500')
+    }
+    if(data.includes('5')){
+      colorData.push('bg-blue-500')
+    }
+    if(data.includes('6')){
+      colorData.push('bg-cyan-400')
+    }
+    if(isLeaveInRange){
+      colorData.push('bg-violet-300')
+    }
+    if(isWithinAnyEventDate){
+      colorData.push('bg-gray-300')
+    }
+    if(hours > 8){
+      colorData.push('bg-pink-500')
+    }
+
+    if(isWellnessDate){
+      colorData.push('bg-fuchsia-400')
+    }
+
+    return colorData; 
+  }
+
 
 
   return (
-   <div className=' w-full h-full flex flex-col justify-center bg-secondary p-4 text-zinc-100'>
+    <div className=' w-full h-full flex flex-col justify-center bg-secondary p-4 text-zinc-100'>
 
     
       <div className=' h-full w-full flex flex-col gap-2 max-w-[1920px]'>
@@ -119,7 +244,7 @@ export default function Yourworkload() {
 
 
       </div>
-       {list.length !== 0 ? (
+      {list.length !== 0 ? (
         <div className=' h-full overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
           <table className="table-auto w-[300px] border-collapse ">
             <thead className=' bg-secondary h-[100px]'>
@@ -137,12 +262,13 @@ export default function Yourworkload() {
               graphItem.members.map((member, memberIndex) => (
                 <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
                   {memberIndex === 0 ?
-                  (<td onClick={() => router.push(`/superadmin/projects/teamprojects?teamid=${graphItem.teamid}`)} className="text-center text-red-500 underline cursor-pointer">{graphItem.name}</td>) :  (<td className="text-center"></td>)
+                  (<td  onClick={() => router.push(`/superadmin/projects/teamprojects?teamid=${graphItem.teamid}`)} className="text-center text-red-500 underline cursor-pointer">{graphItem.name}</td>) :  (<td className="text-center"></td>)
                   }
-                  <td onClick={() => router.push(`/superadmin/individualworkload?employeeid=${member.id}`)} className="text-center cursor-pointer underline text-blue-400">{member.name}</td>
+                  <td onClick={() => router.push(`/pm/individualworkload?employeeid=${member.id}`)} className="text-center cursor-pointer underline text-blue-400">{member.name}</td>
                   <td className="text-center">{member.initial}</td>
                   <td className="text-center">{member.resource}</td>
-                
+                 
+              
                 </tr>
               ))
             )}
@@ -203,7 +329,7 @@ export default function Yourworkload() {
                               }`}
                             >
                               <div className="flex absolute top-0 w-full h-[40px] text-center">
-                                {statusData(hours, isWd, isEventDay, isLeave).map((item, index) => (
+                                {statusData(hours, isWd, isEventDay, isLeave, date, member.leave, member.event, member.wellness).map((item, index) => (
                                   <div key={index} className={`w-full h-full ${item}`}></div>
                                 ))}
                               </div>

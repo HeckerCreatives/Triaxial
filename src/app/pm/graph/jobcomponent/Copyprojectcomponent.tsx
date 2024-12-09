@@ -221,7 +221,7 @@ export default function Copyprojectcomponent( prop: Data) {
       const mainFieldsFilled = 
         form.jobmanager.trim() !== '' &&
         form.budgettype.trim() !== '' &&
-        form.estimatedbudget.trim() !== '' &&
+        form.estimatedbudget !== '' &&
         form.jobcomponent.trim() !== '' &&
         form.jobno.trim() !== '';
     

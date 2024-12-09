@@ -27,6 +27,23 @@ id: string,
 name: string
 resource: string
 dates: Dates[]
+leave: [
+  {
+    leavestart: string
+    leaveend: string
+    }
+],
+event: [
+  {
+    eventstart: string
+    eventend: string
+    }
+],
+wellness: [
+  {
+      wellnessdates: string
+  }
+],
 }
 
 export default function Yourworkload() {
@@ -46,60 +63,62 @@ export default function Yourworkload() {
           const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/getmanagerjobcomponentdashboard?filterDate=${filter}`,{
             withCredentials: true
           })
-  
+
           setDates(response.data.data.alldates)
           setList(response.data.data.teams)
         } catch (error) {
-          
+
         }
       }
-     
+
     }
     getList()
   },[filter, getTeamid])
 
-  const statusData = ( hours: any, wd: boolean, event: boolean, leave: boolean) => {
+  const isDateInRange = (dateToCheck: string, startDate: string, endDate: string): boolean => {
+    const checkDate = new Date(dateToCheck);
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    checkDate.setHours(0, 0, 0, 0);
+    start.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
+
+    // Check if the dateToCheck is between or equal to startDate and endDate
+    return checkDate >= start && checkDate <= end;
+  }
+
+  const statusData = ( hours: any, wd: boolean, event: boolean, leave: boolean, leaveDate: string, leaveArray: Array<{ leavestart: string; leaveend: string }>, eventArray: Array<{ eventstart: string; eventend: string }>, wellness: Array<{wellnessdates: string}>) => {
     const data = []
 
-    // if(hours <= 2){
-    //   data.push('bg-red-500')
-    // }
+     // Check if the leaveDate is in any range in the leave array
+    const isLeaveInRange = leaveArray.some((leaveItem) =>
+      isDateInRange(leaveDate, leaveItem.leavestart, leaveItem.leaveend)
+    );
 
-    // if(hours <= 4 && hours >= 4){
-    //   data.push('bg-orange-500')
-    // }
+    const isEventInRange = eventArray.some((leaveItem) =>
+      isDateInRange(leaveDate, leaveItem.eventstart, leaveItem.eventend)
+    );
 
-    // if(hours <= 6 && hours >= 4){
-    //   data.push('bg-yellow-500')
-    // }
+    const isWellnessDay= wellness.some((leaveItem) => {
+      if(leaveItem.wellnessdates.includes(leaveDate)){
+        return true
+      } else {
+        return false
+      }
+    })
 
-    // if(hours <= 8 && hours >= 6){
-    //   data.push('bg-green-500')
-    // }
-
-    // if(hours > 8){
-    //   data.push('bg-green-500')
-    // }
-
-    if(wd === true){
-      data.push('bg-violet-500')
-    }
-    // if(hours < 40){
-    //   data.push('bg-cyan-500')
-    // }
-
-    // if(hours > 40){
-    //   data.push('bg-indigo-500')
-    // }
-
-    if(event === true){
+    if(isEventInRange){
       data.push('bg-gray-400')
 
     }
 
-    if(leave === true){
-      data.push('bg-pink-500')
+    if(isWellnessDay) {
+      data.push('bg-fuchsia-400')
+    }
 
+    if(isLeaveInRange){
+      data.push('bg-violet-300')
     }
 
     return data
@@ -110,11 +129,11 @@ export default function Yourworkload() {
   return (
     <div className=' w-full h-full flex flex-col justify-center bg-secondary p-4 text-zinc-100'>
 
-    
+
       <div className=' h-full w-full flex flex-col gap-2 max-w-[1920px]'>
       <div className=' w-full flex items-center gap-2 justify-end py-4'>
-     
-       
+
+
         <div className=' h-full flex items-end gap-2'>
           <p className=' text-[.8em]'>Legend:</p>
 
@@ -123,7 +142,7 @@ export default function Yourworkload() {
                 <div className=' bg-violet-300'>
                   <p className=' text-[.7em] text-black font-semibold px-1'>Leave</p>
                 </div>
-                
+
 
 
               </div>
@@ -149,7 +168,7 @@ export default function Yourworkload() {
 
             </div>
 
-      </div> 
+      </div>
 
 
       </div>
@@ -163,22 +182,22 @@ export default function Yourworkload() {
                 <th className=' w-[50px] font-normal'>Initial</th>
                 <th className=' font-normal w-[50px]'>Resource</th>
                 <th className=' w-[20px] font-normal'>Team</th>
-            
+
               </tr>
             </thead>
             <tbody>
             {list.map((graphItem, graphIndex) =>
               graphItem.members.map((member, memberIndex) => (
                 <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
-                  
+
 
                   <td onClick={() => router.push(`/pm/individualworkload?employeeid=${member.id}`)} className="text-center cursor-pointer underline text-blue-400">{member.name}</td>
                   <td className="text-center">{member.initial}</td>
                   <td className="text-center">{member.resource}</td>
                   <td className="text-center">{graphItem.name}</td>
 
-                 
-              
+
+
                 </tr>
               ))
             )}
@@ -186,11 +205,11 @@ export default function Yourworkload() {
           </table>
 
           <div className=' overflow-x-auto w-full h-full'>
-        
+
             <table className="table-auto w-full border-collapse ">
               <thead className=' w-full bg-secondary h-[100px]'>
                 <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
-                
+
                   {dates.map((dateObj, index) => (
                     <>
                       <th key={index} className=' relative font-normal w-[30px] border-[1px] border-zinc-700'>
@@ -203,8 +222,8 @@ export default function Yourworkload() {
                       )}
                     </>
                   ))}
-                
-                  
+
+
                 </tr>
               </thead>
               <tbody>
@@ -239,7 +258,7 @@ export default function Yourworkload() {
                               }`}
                             >
                               <div className="flex absolute top-0 w-full h-[40px] text-center">
-                                {statusData(hours, isWd, isEventDay, isLeave).map((item, index) => (
+                                {statusData(hours, isWd, isEventDay, isLeave, date, member.leave, member.event, member.wellness).map((item, index) => (
                                   <div key={index} className={`w-full h-full ${item}`}></div>
                                 ))}
                               </div>
@@ -267,27 +286,27 @@ export default function Yourworkload() {
 
             </tbody>
             </table>
-          
-            
+
+
           </div>
 
 
         </div>
           ): (
-        
+
             <div className=' w-full h-[300px] flex items-center justify-center'>
               <p className=' text-sm text-zinc-400'>No data.</p>
             </div>
-          
-        )}
-     
-      
-    </div>
-   
-      
 
-    
-        
+        )}
+
+
+    </div>
+
+
+
+
+
     </div>
   )
 }
