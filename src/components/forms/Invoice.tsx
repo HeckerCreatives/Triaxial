@@ -38,7 +38,7 @@ type Props = {
 export default function Invoice( prop: Props) {
     const currentDate = new Date()
     const [currInvoice, setCurrInvoice] = useState(0)
-    const [newInvoice, setNewInvoice] = useState('')
+    const [newInvoice, setNewInvoice] = useState(0)
     const [amount, setAmount] = useState(0)
     const [notes, setNotes] = useState('')
     const [loading, setLoading] = useState(false)
@@ -51,27 +51,31 @@ export default function Invoice( prop: Props) {
     const id = params.get('jobcid')
     const [hasFetched, setHasFetched] = useState(false);
 
+    const lumpsumCalculation = (newInvoice / 100) * prop.estimatedbudget
+    const ratesCalculation = prop.estimatedbudget * newInvoice
+
+
 
     const generateRandomTransactionID = () => {
         const randomNumber = Math.floor(100000 + Math.random() * 900000); // Generates a 6-digit random number
         return `TXIN${randomNumber}`;
     }
 
-       const lumpsumCalc = () => {
-        if(Number(newInvoice) && prop.budgettype === 'lumpsum'){
-            const amountCalc = prop.estimatedbudget * ((newInvoice as any - currInvoice) / 100)
-            setAmount(amountCalc)
-            // return amountCalc
-        }
+    //    const lumpsumCalc = () => {
+    //     if(Number(newInvoice) && prop.budgettype === 'lumpsum'){
+    //         const amountCalc = ((newInvoice as any - currInvoice) / 100) * (prop.estimatedbudget - budgetReamining)
+    //         console.log(amountCalc, budgetReamining)
+    //         setAmount(amountCalc)
+         
+    //     }
 
-        if(Number(newInvoice) && prop.budgettype === 'rates'){
-            // const amountCalc = prop.estimatedbudget - (currInvoice + newInvoice as any)
-            const amountCalc = prop.estimatedbudget * (newInvoice as any)
-            setAmount(amountCalc)
-            // return amountCalc
-        }
+    //     if(Number(newInvoice) && prop.budgettype === 'rates'){
+          
+    //         const amountCalc = prop.estimatedbudget * (newInvoice as any)
+    //         setAmount(amountCalc)
+           
       
-       }
+    //    }
 
        useEffect(() => {
          const currIn = async () => {
@@ -190,7 +194,7 @@ export default function Invoice( prop: Props) {
                if(response.data.message === 'success'){
                  setLoading(false)
                  setDialog(false)
-                 setNewInvoice('0')
+                 setNewInvoice(0)
             
                }
     
@@ -198,7 +202,7 @@ export default function Invoice( prop: Props) {
             } catch (error) {
             setLoading(false)
             setDialog(false)
-             setNewInvoice('0')
+             setNewInvoice(0)
             if (axios.isAxiosError(error)) {
                 const axiosError = error as AxiosError<{ message: string, data: string }>;
                 if (axiosError.response && axiosError.response.status === 401) {
@@ -257,12 +261,12 @@ export default function Invoice( prop: Props) {
            if(response.data.message === 'success'){
              setLoading(false)
              setDialog(false)
-             setNewInvoice('0')
+             setNewInvoice(0)
            }  
         } catch (error) {
         setLoading(false)
         setDialog(false)
-        setNewInvoice('0')
+        setNewInvoice(0)
         if (axios.isAxiosError(error)) {
             const axiosError = error as AxiosError<{ message: string, data: string }>;
             if (axiosError.response && axiosError.response.status === 401) {
@@ -294,9 +298,9 @@ export default function Invoice( prop: Props) {
         }
     }
 
-    useEffect(() => {
-        lumpsumCalc()
-    },[newInvoice])
+    // useEffect(() => {
+    //     lumpsumCalc()
+    // },[newInvoice])
 
     useEffect(() => {
         if(prop){
@@ -369,7 +373,7 @@ export default function Invoice( prop: Props) {
                                   </td>
 
                                   <td className="text-left text-gray-700">
-                                  <Input max={100}  value={newInvoice} onChange={(e) => setNewInvoice(e.target.value)} placeholder='Amount' className=' bg-zinc-200'/>
+                                  <Input max={100} type='number'  value={newInvoice} onChange={(e) => setNewInvoice(e.target.valueAsNumber)} placeholder='Amount' className=' bg-zinc-200'/>
                                   </td>
                               </tr>
                             
@@ -383,7 +387,7 @@ export default function Invoice( prop: Props) {
                       <hr className="my-2"/>
 
                       <label htmlFor="">This invoice amount</label>
-                    < Input value={amount} placeholder=' Amount' className=' bg-zinc-200'/>
+                    < Input value={prop.budgettype === 'rates' ? ratesCalculation : lumpsumCalculation} placeholder=' Amount' className=' bg-zinc-200'/>
 
                       <label htmlFor="" className=' mt-8'>Please insert an instruction or comments for the invoice</label>
                       <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder=' Please input here' className=' bg-zinc-200'/>

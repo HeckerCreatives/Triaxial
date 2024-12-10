@@ -230,7 +230,7 @@ export default function Indiviualworkloads() {
               <tbody>
               {list.map((graphItem, graphIndex) =>
                   graphItem.members.map((member, memberIndex) => (
-                    <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[41px] border-[1px] border-zinc-600">
+                    <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
                       {dates.map((dateObj, index) => {
                         // Find member data for the given date
                         const memberDate = member.dates?.find((date) => formatDate(date.date) === formatDate(dateObj));
