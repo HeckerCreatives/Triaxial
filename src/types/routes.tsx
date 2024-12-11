@@ -51,8 +51,8 @@ export const pm = [
             {name: 'WD List', path: '/pm/summaries/wellnessday',subpath: []},
         ]},
         {name: 'Finance WIP List', path: '/pm/summaries', subpath: [
-            {name: 'Per Team', path: '',subpath: []},
-            {name: 'Per Client', path: '',subpath: []},
+            {name: 'Per Team', path: '/pm/summaries/wipperteam',subpath: []},
+            {name: 'Per Client', path: '/pm/summaries/wipperclient',subpath: []},
         ]}
     ]},
 
@@ -129,6 +129,10 @@ export const finance = [
     // {name: ' Your Workload', path: '/finance/yourworkload', icon: <List className="h-4 w-4" />},
     {name: 'Invoice Request', path: '/finance/invoice', icon: <File className="h-4 w-4" />,subpath: []},
     {name: 'Project Invoice', path: '/finance/projectinvoice/list', icon: <File className="h-4 w-4" />, subpath: []},
+    {name: 'Total Invoice', path: '/finance/totalinvoice', icon: <File className="h-4 w-4" />, subpath: [
+        {name: 'Per Team', path: '/finance/totalinvoice/team'},
+        {name: 'Per Client', path: '/finance/totalinvoice/client'}
+    ]},
     {name: 'Request', path: '/finance/request', icon: <ArrowRightLeft className="h-4 w-4" />,subpath: []},
 
      //no access routes
@@ -164,6 +168,10 @@ export const superadmin = [
     {name: 'Scheduling', path: '/superadmin/projects', icon: <Box className="h-4 w-4" />, subpath: []},
     {name: 'Project Invoice', path: '/superadmin/projectinvoice/list', icon: <File className="h-4 w-4" />, subpath: []},
     {name: 'Invoice', path: '/superadmin/invoice', icon: <ListChecks className="h-4 w-4" />, subpath: []},
+    {name: 'Total Invoice', path: '/superadmin/totalinvoice', icon: <File className="h-4 w-4" />, subpath: [
+        {name: 'Per Team', path: '/superadmin/totalinvoice/team'},
+        {name: 'Per Client', path: '/superadmin/totalinvoice/client'}
+    ]},
     {name: 'Searches', path: '/superadmin/client', icon: <Search className="h-4 w-4" />, subpath: [
         {name: 'Clients', path: '/superadmin/client'},
         {name: 'Teams', path: '/superadmin/teams'},

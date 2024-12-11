@@ -636,15 +636,14 @@ export default function Yourworkload() {
 
                     {(memberIndex === 0 && graphItem.jobmanager.isJobManager === true) && (
                         <Invoice 
-                          projectname={graphItem.projectname.name} 
-                          jobno={graphItem.jobno} 
-                          notes={graphItem.members[0].notes} 
-                          jobcname={graphItem.jobcomponent} 
-                          budgettype={graphItem.budgettype} 
-                          estimatedbudget={graphItem.estimatedbudget} 
-                          jobcid={graphItem.componentid} 
-                          isJobmanager={graphItem.jobmanager.isJobManager}
-                        >
+                      projectname={graphItem.projectname.name}
+                      jobno={graphItem.jobno}
+                      // notes={graphItem.members[0]?.notes} 
+                      jobcname={graphItem.jobcomponent}
+                      budgettype={graphItem.budgettype}
+                      estimatedbudget={graphItem.estimatedbudget}
+                      jobcid={graphItem.componentid}
+                      isJobmanager={graphItem.jobmanager.isJobManager} currinvoice={''}                        >
                         
                             <button onClick={() => {
                               setIsjobmanager(graphItem.jobmanager.isJobManager);

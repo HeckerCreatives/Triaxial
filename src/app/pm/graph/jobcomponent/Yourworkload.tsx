@@ -30,6 +30,7 @@ import { any } from 'zod'
 import Invoice from '@/components/forms/Invoice'
 import Copyprojectcomponent from './Copyprojectcomponent'
 import JobComponentStatus from '@/components/forms/JobComponentStatus'
+import EditJobComponent from '@/components/forms/EditJobComponent'
 
 
 type Employee = {
@@ -751,10 +752,13 @@ export default function Yourworkload() {
                 </div>
                 
               ) : (
-                <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                  <button onClick={() => setDialog2(true)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Pen size={12}/></button>
-                  <p>Edit</p>
-                </div>
+                <EditJobComponent id={findJobComponent?.componentid} isManger={findJobComponent?.jobmanager.isManager} isJobManager={findJobComponent?.jobmanager.isJobManager} project={findJobComponent?.projectname.projectid} jobmanager={findJobComponent?.jobmanager.employeeid} engr={findJobComponent?.members[0].employee._id} engrnotes={findJobComponent?.members[0].notes} engrrvr={findJobComponent?.members[1].employee._id} engrrvrnotes={findJobComponent?.members[1].notes} drftr={findJobComponent?.members[2].employee._id} drftrnotes={findJobComponent?.members[2].notes} drftrrvr={findJobComponent?.members[3].employee._id} drftrrvrnotes={findJobComponent?.members[3].notes}>
+                  <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                    <button onClick={() => setDialog2(true)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Pen size={12}/></button>
+                    <p>Edit</p>
+                  </div>
+                </EditJobComponent>
+                
               )}
 
 
@@ -829,7 +833,7 @@ export default function Yourworkload() {
         <div className=' h-full overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
           {list.length !== 0 ? (
             <>
-            <table className="table-auto w-[1300px] border-collapse ">
+            <table className="table-auto w-[1300px] borer-collapse ">
             <thead className=' bg-secondary h-[100px]'>
 
               <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
@@ -862,261 +866,8 @@ export default function Yourworkload() {
                         />
                       )}
 
-
-                      <Dialog open={dialog2} onOpenChange={setDialog2} >
-                          <DialogTrigger className='hidden'>
-                              {memberIndex === 0 && (<button onClick={() => {setProjectname(graphItem.projectname.projectid), setJobmanager(graphItem.jobmanager.employeeid), setJobno(graphItem.jobno), findMember(graphItem.members), setNotes(graphItem.members[0].notes),setNotes2(graphItem.members[1].notes),setNotes3(graphItem.members[2].notes),setNotes4(graphItem.members[3].notes), setIsmanager(graphItem.jobmanager.isManager),setIsjobmanager(graphItem.jobmanager.isJobManager)}} className=' p-1 bg-red-600 rounded-sm'><Pen size={12}/></button>)}
-                          </DialogTrigger>
-                          <DialogContent className=' max-w-[600px] h-[80%] bg-secondary border-none p-6 text-white overflow-y-auto'>
-                            <DialogHeader>
-                              <DialogTitle>Edit Project <span className=' text-xs text-zinc-400'>( As {position(graphItem.jobmanager.isJobManager, graphItem.jobmanager.isManager)})</span></DialogTitle>
-                              <DialogDescription className={` ${graphItem.jobmanager.isManager === true ? 'text-white' : ' text-red-500'}`}>
-                                {/* {graphItem.jobmanager.isManager === true ? 'Your the project manager of this project, you are allowed to edit this project' : ' Your are not the project manager of this project, you are not allowed to edit this project'} */}
-                                
-                              </DialogDescription>
-                            </DialogHeader>
-
-                            {(isMamager === true && isJobmamager=== false ) && (
-                              <div className=' flex flex-col w-full gap-2 text-xs'>
-
-
-                                <label htmlFor="">Project Name</label>
-                                <Select value={projectname} onValueChange={setProjectname}>
-                                          <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
-                                          <SelectValue placeholder="Select" className="text-black" />
-                                          </SelectTrigger>
-                                          <SelectContent className="text-xs">
-                                            {projects.map((item, index) => (
-                                            <SelectItem key={index} value={item.projectid}>{item.projectname}</SelectItem>
-
-                                            ))}
-                                          
-                                          </SelectContent>
-                                  </Select>
-
-                                {/* <label htmlFor="">Job no</label>
-                                <Input value={jobno} onChange={(e) => setJobno(e.target.value)} type='text' className=' text-xs h-[35px] bg-primary' placeholder='Job no' /> */}
-
-                                <label htmlFor="">Job Manager</label>
-                                <Select value={jobmanager} onValueChange={setJobmanager}>
-                                          <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
-                                          <SelectValue placeholder="Select" className="text-black" />
-                                          </SelectTrigger>
-                                          <SelectContent className="text-xs">
-                                            {employee.map((item, index) => (
-                                            <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
-
-                                            ))}
-                                          
-                                          </SelectContent>
-                                  </Select>
-
-                                  <div className=' w-full flex items-end justify-end mt-4 text-xs'>
-                                    <button onClick={() => updateJobComponenAsManager(graphItem._id)} className=' bg-red-600 px-4 py-2 rounded-md w-fit'>Save</button>
-                                  </div>
-                                
-                              </div>
-                            )}
-
-
-                            {(isJobmamager === true && isMamager === false ) && (
-                              <div className=' flex flex-col w-full gap-2 text-xs'>
-                              
-                              <div className=' flex flex-col w-full gap-2 text-xs'>
-
-                              <label htmlFor="">Engineer (Engr.)</label>
-                                <Select value={engr} onValueChange={(setEngr)}>
-                                      <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
-                                      <SelectValue placeholder="Select" className="text-black" />
-                                      </SelectTrigger>
-                                      <SelectContent className="text-xs">
-                                        {employee.map((item, index) => (
-                                        <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
-
-                                        ))}
-                                      
-                                      </SelectContent>
-                              </Select>
-
-                              <label htmlFor="">Engineer Reviewer (Engr. Revr.)</label>
-                              <Select value={engrrvr} onValueChange={(setEngrrvr)}>
-                                      <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
-                                      <SelectValue placeholder="Select" className="text-black" />
-                                      </SelectTrigger>
-                                      <SelectContent className="text-xs">
-                                        {employee.map((item, index) => (
-                                        <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
-
-                                        ))}
-                                      
-                                      </SelectContent>
-                              </Select>
-
-                              <label htmlFor="">Drafter (Drft.)</label>
-                              <Select value={drf} onValueChange={(setDrf)}>
-                                      <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
-                                      <SelectValue placeholder="Select" className="text-black" />
-                                      </SelectTrigger>
-                                      <SelectContent className="text-xs">
-                                        {employee.map((item, index) => (
-                                        <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
-
-                                        ))}
-                                      
-                                      </SelectContent>
-                              </Select>
-                              <label htmlFor="">Notes</label>
-                              <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} className=' text-xs h-[25px] bg-primary' placeholder='Notes' />
-
-                              <label htmlFor="">Drafter Reviewer (Drft. Revr.)	</label>
-                              <Select value={drfrvr} onValueChange={(setDrfrvr)}>
-                                      <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
-                                      <SelectValue placeholder="Select" className="text-black" />
-                                      </SelectTrigger>
-                                      <SelectContent className="text-xs">
-                                        {employee.map((item, index) => (
-                                        <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
-
-                                        ))}
-                                      
-                                      </SelectContent>
-                              </Select>
-
-                              <label htmlFor="">Notes</label>
-                              <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} className=' text-xs h-[25px] bg-primary' placeholder='Notes' />
-
-                                <div className=' w-full flex items-end justify-end mt-4 text-xs'>
-                                  <button onClick={() => updateJobComponenAsJobManager(graphItem._id)} className=' bg-red-600 px-4 py-2 rounded-md w-fit'>Save</button>
-                                </div>
-
-                              </div>
-
-                            </div>
-                            )}
-
-                            {(isJobmamager === true && isMamager === true) && (
-                              <>
-                               <div className=' flex flex-col w-full gap-2 text-xs'>
-                                 <label htmlFor="">Project Name</label>
-                                <Select value={projectname} onValueChange={setProjectname}>
-                                          <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
-                                          <SelectValue placeholder="Select" className="text-black" />
-                                          </SelectTrigger>
-                                          <SelectContent className="text-xs">
-                                            {projects.map((item, index) => (
-                                            <SelectItem key={index} value={item.projectid}>{item.projectname}</SelectItem>
-
-                                            ))}
-                                          
-                                          </SelectContent>
-                                  </Select>
-
-                                <label htmlFor="">Job Manager</label>
-                                <Select value={jobmanager} onValueChange={setJobmanager}>
-                                          <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
-                                          <SelectValue placeholder="Select" className="text-black" />
-                                          </SelectTrigger>
-                                          <SelectContent className="text-xs">
-                                            {employee.map((item, index) => (
-                                            <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
-
-                                            ))}
-                                          
-                                      </SelectContent>
-                                  </Select>
-
-                                
-
-                              </div>
-
-                              <div className=' flex flex-col w-full gap-2 text-xs'>
-
-                                  <label htmlFor="">Engineer (Engr.)</label>
-                                    <Select value={engr} onValueChange={(setEngr)}>
-                                          <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
-                                          <SelectValue placeholder="Select" className="text-black" />
-                                          </SelectTrigger>
-                                          <SelectContent className="text-xs">
-                                            {employee.map((item, index) => (
-                                            <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
-
-                                            ))}
-                                          
-                                          </SelectContent>
-                                  </Select>
-                                  <label htmlFor="">Notes</label>
-                                  <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} className=' text-xs h-[15px] bg-primary' placeholder='Notes' />
-
-                                  <label htmlFor="">Engineer Reviewer (Engr. Revr.)</label>
-                                  <Select value={engrrvr} onValueChange={(setEngrrvr)}>
-                                          <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
-                                          <SelectValue placeholder="Select" className="text-black" />
-                                          </SelectTrigger>
-                                          <SelectContent className="text-xs">
-                                            {employee.map((item, index) => (
-                                            <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
-
-                                            ))}
-                                          
-                                          </SelectContent>
-                                  </Select>
-                                  <label htmlFor="">Notes</label>
-                                  <Textarea value={notes2} onChange={(e) => setNotes2(e.target.value)} className=' text-xs h-[15px] bg-primary' placeholder='Notes' />
-
-                                  <label htmlFor="">Drafter (Drft.)</label>
-                                  <Select value={drf} onValueChange={(setDrf)}>
-                                          <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
-                                          <SelectValue placeholder="Select" className="text-black" />
-                                          </SelectTrigger>
-                                          <SelectContent className="text-xs">
-                                            {employee.map((item, index) => (
-                                            <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
-
-                                            ))}
-                                          
-                                          </SelectContent>
-                                  </Select>
-                                  <label htmlFor="">Notes</label>
-                                  <Textarea value={notes3} onChange={(e) => setNotes3(e.target.value)} className=' text-xs h-[15px] bg-primary' placeholder='Notes' />
-
-                                  <label htmlFor="">Drafter Reviewer (Drft. Revr.)	</label>
-                                  <Select value={drfrvr} onValueChange={(setDrfrvr)}>
-                                          <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
-                                          <SelectValue placeholder="Select" className="text-black" />
-                                          </SelectTrigger>
-                                          <SelectContent className="text-xs">
-                                            {employee.map((item, index) => (
-                                            <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
-
-                                            ))}
-                                          
-                                          </SelectContent>
-                                  </Select>
-                                  <label htmlFor="">Notes</label>
-                                  <Textarea value={notes4} onChange={(e) => setNotes4(e.target.value)} className=' text-xs h-[15px] bg-primary' placeholder='Notes' />
-
-                              
                                   
-
-                              </div>
-
-                                <div className=' w-full flex items-end justify-end mt-4 text-xs'>
-                                  <button onClick={() => updateJobComponenAsBoth(graphItem._id)} className=' bg-red-600 px-4 py-2 rounded-md w-fit'>Save</button>
-                                </div>
-                              </>
-                            )} 
-
-                          </DialogContent>
-                      </Dialog>
-                     
-                        <Copyprojectcomponent name={graphItem.jobcomponent} manager={graphItem.jobmanager.employeeid} budgettype={graphItem.budgettype} engr={graphItem.members[0]?.employee._id} engrrvr={graphItem.members[1]?.employee._id} drftr={graphItem.members[2]?.employee._id} drftrrvr={graphItem.members[3]?.employee._id} estbudget={graphItem.estimatedbudget} state={dialog3}>
-                        <button onClick={() => {setProjectname(graphItem.projectname.projectid), setJobmanager(graphItem.jobmanager.employeeid), setJobno(graphItem.jobno), findMember(graphItem.members), setNotes(graphItem.members[0].notes), setIsmanager(graphItem.jobmanager.isManager),setIsjobmanager(graphItem.jobmanager.isJobManager)}} className={`text-xs p-1 bg-red-600  rounded-sm hidden`}><Copy size={12}/></button>
-                      </Copyprojectcomponent>
-
-                      
-
-                                  
-                      </td>
+                  </td>
                   <td className={`${graphItem.status === null ? 'text-blue-400' :  'text-green-500'} text-center`}>{memberIndex === 0 && `${graphItem.status === null ? 'Ongoing' :  'Completed'}`}</td>
 
                     <td className="text-center">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
@@ -1302,9 +1053,21 @@ export default function Yourworkload() {
               </table>
             </div>
 
-            
+          
+            </>
+          ) : (
+            <div className=' w-full h-full flex items-center justify-center'>
+              <p className=' text-xs text-zinc-400'>No job component's yet under this project, please create one to see the workload!</p>
 
-           {isJobmamager === true ? (
+            </div>
+          )}
+          
+
+          
+
+        </div>
+
+        {isJobmamager === true ? (
              <Dialog open={dialog} onOpenChange={setDialog}>
                     <DialogContent className=' p-8 bg-secondary border-none text-white'>
                       <DialogHeader>
@@ -1385,19 +1148,6 @@ export default function Yourworkload() {
               </DialogContent>
             </Dialog>
            )}
-            
-            </>
-          ) : (
-            <div className=' w-full h-full flex items-center justify-center'>
-              <p className=' text-xs text-zinc-400'>No job component's yet under this project, please create one to see the workload!</p>
-
-            </div>
-          )}
-          
-
-          
-
-        </div>
        
         
       </div>

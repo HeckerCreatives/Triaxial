@@ -175,7 +175,7 @@ export default function Invoice( prop: Props) {
                     jobcomponentid: prop.jobcid,
                     currentinvoice: currInvoice,
                     newinvoice: newInvoice,
-                    invoiceamount: amount,
+                    invoiceamount: lumpsumCalculation,
                     comments: notes
                 },{
                     withCredentials: true,
@@ -242,7 +242,7 @@ export default function Invoice( prop: Props) {
                 jobcomponentid: prop.jobcid,
                 currentinvoice: currInvoice,
                 newinvoice: newInvoice,
-                invoiceamount: amount,
+                invoiceamount: ratesCalculation,
                 comments: notes
             },{
                 withCredentials: true,
