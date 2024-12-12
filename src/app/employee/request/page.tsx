@@ -18,13 +18,12 @@ import Requestable from './Requesttable'
 export default function page() {
   return (
     <EmployeeLayout>
-      <div className=' absolute p-6 top-0 left-0 w-full h-[150px] bg-zinc-800'
+      <div className=' p-6 top-0 left-0 w-full h-[150px] bg-zinc-800'
       style={{backgroundImage: `url('/dbbg.png')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat:"no-repeat"}}
       >
         <Breadcrumbdb page={'Request'}/>
 
       </div>
-      <Requestcards/>
       <Requestable/>
     </EmployeeLayout>
   )

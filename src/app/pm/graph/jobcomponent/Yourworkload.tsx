@@ -20,7 +20,7 @@ import axios, { AxiosError } from 'axios'
 import toast from 'react-hot-toast'
 import { useRouter, useSearchParams } from 'next/navigation'
 import {statusData} from '@/types/data'
-import { Check, Copy, File, OctagonAlert, Pen, Plus, X } from 'lucide-react'
+import { Check, Copy, File, Layers2, OctagonAlert, Pen, Plus, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import Createprojectcomponent from './Createprojectcomponent'
@@ -31,6 +31,8 @@ import Invoice from '@/components/forms/Invoice'
 import Copyprojectcomponent from './Copyprojectcomponent'
 import JobComponentStatus from '@/components/forms/JobComponentStatus'
 import EditJobComponent from '@/components/forms/EditJobComponent'
+import Individualrequest from '../../scheduling/IndividualRequest'
+import DuplicateJobComponent from '@/components/forms/DuplicateJobComponent'
 
 
 type Employee = {
@@ -77,7 +79,7 @@ export default function Yourworkload() {
   const [employeeid, setEmployeeid] = useState('')
   const [projectid, setProjectid] = useState('')
   const params = useSearchParams()
-  const id = params.get('projectid')
+  const id = params.get('teamid')
   const refresh = params.get('state')
   const [addStatus, setAddstatus] = useState([])
   const [wdStatus, setWdstatus] = useState(false)
@@ -110,8 +112,6 @@ export default function Yourworkload() {
     setComponentid((prevSelectedId) => (prevSelectedId === id ? '' : id));
   };
 
-  console.log(componentid)
-
   const findJobComponent = list.find((item) => item._id === componentid)
 
 
@@ -138,7 +138,7 @@ export default function Yourworkload() {
 
 
   const getList = async () => {
-    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/listjobcomponent?projectid=${id}`,{
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/listteamjobcomponent?teamid=${id}`,{
       withCredentials: true,
       headers: {
         'Content-Type': 'application/json'
@@ -225,7 +225,7 @@ export default function Yourworkload() {
     try {
       const timer = setTimeout(() => {
         const getList = async () => {
-          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/listjobcomponent?projectid=${id}`,{
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/listteamjobcomponent?teamid=${id}`,{
             withCredentials: true,
             headers: {
               'Content-Type': 'application/json'
@@ -761,6 +761,24 @@ export default function Yourworkload() {
                 
               )}
 
+              {componentid === '' ? (
+                 <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                  <button  onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><Layers2 size={12}/></button>
+                  <p>Duplicate</p>
+                </div>
+                
+              ) : (
+                <DuplicateJobComponent name={findJobComponent?.jobcomponent} manager={findJobComponent?.jobmanager.employeeid} type={findJobComponent?.budgettype} id={findJobComponent?.projectname.projectid}>
+                  <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                    <button onClick={() => setDialog2(true)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Layers2 size={12}/></button>
+                    <p>Duplicate</p>
+                  </div>
+                </DuplicateJobComponent>
+                
+              )}
+
+            
+
 
              
 
@@ -829,6 +847,8 @@ export default function Yourworkload() {
 
       </div>
 
+      <Individualrequest/>
+
       <div className=' h-full w-full flex flex-col max-w-[1920px]'>
         <div className=' h-full overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
           {list.length !== 0 ? (
@@ -872,7 +892,7 @@ export default function Yourworkload() {
 
                     <td className="text-center">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
                     <td className="text-center">{memberIndex === 0 && graphItem.jobcomponent}</td>
-                    <td className="text-center">{memberIndex === 0 && `$ ${graphItem.estimatedbudget.toLocaleString()}`}</td>
+                    <td className="text-center">{memberIndex === 0 && `$ ${graphItem.estimatedbudget?.toLocaleString()}`}</td>
                     <td className="text-center">{memberIndex === 0 && `${graphItem.invoice.percentage} ${graphItem.budgettype === 'lumpsum' ? '%' : 'hrs'}`}</td>
                     <td className="text-center">{memberIndex === 0 && graphItem.budgettype}</td>
         

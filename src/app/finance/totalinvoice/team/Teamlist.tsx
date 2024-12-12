@@ -41,7 +41,7 @@ export default function Teamlist() {
   useEffect(() => {
     setLoading(true)
     const getList = async () => {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teams/listallteamsfn`,{
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teams/listteamtotalinvoice`,{
             withCredentials: true
         })
 

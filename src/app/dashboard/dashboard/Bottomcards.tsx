@@ -1,6 +1,6 @@
 "use client"
-import axios from 'axios'
 import React, { useEffect, useState } from 'react'
+import { CalendarCheck, TrendingUp } from "lucide-react"
 import {
   Carousel,
   CarouselContent,
@@ -8,13 +8,17 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
-import { CalendarCheck } from 'lucide-react'
+import Autoplay from "embla-carousel-autoplay"
+import axios from 'axios'
 import { Events } from '@/types/types'
-
+import Yourworkload from './Yourworkload'
+import { formatDate, formatDateTime } from '@/utils/functions'
+import Dashboardlegends from '@/components/common/Dashboardlegends'
 
 
 export default function Bottomcards() {
 
+  const date = '00/00/00'
   const [list, setList] = useState<Events[]>([])
   const [upcoming, setUpcoming] = useState<Events[]>([])
 
@@ -24,7 +28,7 @@ export default function Bottomcards() {
 
     const timer = setTimeout(() => {
       const getList = async () => {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/events/geteventsusers`,{
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/events/getevents`,{
           withCredentials: true,
           headers: {
             'Content-Type': 'application/json'
@@ -39,14 +43,23 @@ export default function Bottomcards() {
       getList()
     }, 500)
     return () => clearTimeout(timer)
+    
   },[])
 
-
-  
   return (
-    <div className=' w-full h-full flex flex-col gap-2 items-center justify-start bg-secondary p-4'>
-      <div className=' flex flex-col items-center justify-center gap-2 bg-primary w-full h-[300px] text-zinc-100'>
-        <Carousel className=' w-fit'
+    <div className=' relative w-full h-full flex flex-col gap-2 items-center bg-secondary justify-start'>
+      <div className=' h-[550px] overflow-y-auto overflow-x-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
+
+        <div className=' w-full'>
+         <Yourworkload/>
+        </div>
+      </div>
+       
+
+         <div className=' bg-primary absolute z-30 bottom-0 text-zinc-100 w-full grid grid-cols-1 lg:grid-cols-2 gap-4 max-w-[1920px] p-4'>
+          <Dashboardlegends/>
+
+          <Carousel
           opts={{loop: false, align: 'start'}}
           // plugins={[
           //    Autoplay({
@@ -59,11 +72,11 @@ export default function Bottomcards() {
 
             {Object.values(list).map((item, index) => (
                <CarouselItem key={index} className="basis-1/2">
-                <div className=' flex md:flex-row flex-col gap-6 w-[400px]  h-[210px] bg-secondary p-4'>
-                  <div className=' flex flex-col gap-2 w-full'>
+                <div className=' flex md:flex-row flex-col justify-between gap-6 w-full h-[210px] bg-secondary p-4 overflow-y-auto' >
+                  <div className=' flex flex-col gap-2'>
                     <h2 className=' uppercase font-semibold text-sm text-red-700'>CURRENT EVENT!</h2>
                     <h2 className=' uppercase font-semibold text-sm'>{item.title}</h2>
-                    <p className=' text-sm text-zinc-400'>{new Date(item.start).toLocaleString()} - {new Date(item.end).toLocaleString()}</p>
+                    <p className=' text-sm text-zinc-400'>{formatDate(item.start)} to {formatDate(item.end)}</p>
                     <p className=' text-zinc-300 text-xs'>Teams:</p>
 
                     <div className=' flex flex-wrap gap-2'>
@@ -75,9 +88,9 @@ export default function Bottomcards() {
                     </div>
                   </div>
     
-                  <div className=' flex items-start'>
-                    <div className='  p-6 bg-primary'>
-                    <CalendarCheck size={30}/>
+                  <div className=' flex items-center justify-center'>
+                    <div className=' w-full h-full p-6'>
+                    <CalendarCheck size={50}/>
     
                     </div>
                   </div>
@@ -88,11 +101,11 @@ export default function Bottomcards() {
 
             {Object.values(upcoming).map((item, index) => (
                <CarouselItem key={index} className="basis-1/2 ">
-                <div className=' flex md:flex-row flex-col gap-6 w-[400px]  h-[210px] bg-secondary p-4'>
-                  <div className=' w-full flex flex-col gap-2'>
+                <div className=' flex md:flex-row flex-col justify-between gap-6 w-full h-[210px] bg-secondary p-4 overflow-y-auto'>
+                  <div className=' flex flex-col gap-2'>
                     <h2 className=' uppercase font-semibold text-sm text-red-700'>UPCOMING EVENT!</h2>
                     <h2 className=' uppercase font-semibold text-sm'>{item.title}</h2>
-                    <p className=' text-sm text-zinc-400'>{new Date(item.start).toLocaleString()} - {new Date(item.end).toLocaleString()}</p>
+                    <p className=' text-sm text-zinc-400'>{formatDate(item.start)} to {formatDate(item.end)}</p>
                     <p className=' text-zinc-300 text-xs'>Teams:</p>
 
                     <div className=' flex flex-wrap gap-2'>
@@ -104,9 +117,9 @@ export default function Bottomcards() {
                     </div>
                   </div>
     
-                  <div className=' flex items-start'>
-                    <div className='  p-6 bg-primary'>
-                    <CalendarCheck size={30}/>
+                  <div className=' flex items-center justify-center'>
+                    <div className=' w-full h-full p-6 bg-secondary'>
+                    <CalendarCheck size={50}/>
     
                     </div>
                   </div>
@@ -119,11 +132,8 @@ export default function Bottomcards() {
             
           </CarouselContent>
         </Carousel>
-
-        {(Object.keys(upcoming).length === 0 && Object.keys(list).length === 0) && (
-          <p className=' text-sm text-zinc-300'>No events yet!</p>
-        )}
-      </div>
+            
+        </div>
     </div>
   )
 }

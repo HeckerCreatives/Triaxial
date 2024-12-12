@@ -71,7 +71,7 @@ export default function Createprojectcomponent( prop: Data) {
   const id = params.get('projectid')
   const [isValidated, setIsvalidated] = useState(false)
 
-  const [formData, setFormData] = useState<FormData[]>([{ jobmanager: '',jobno: '', budgettype: '', estimatedbudget: '', jobcomponent: '', members: [
+  const [formData, setFormData] = useState<FormData[]>([{ jobmanager: '',jobno: '123', budgettype: '', estimatedbudget: '', jobcomponent: '', members: [
                 {
                     employeeid: "",
                     role: "Engnr."
@@ -104,7 +104,7 @@ export default function Createprojectcomponent( prop: Data) {
     }
   
     // Add a new form if validation passes
-    setFormData([...formData, { jobmanager: '',jobno: '', budgettype: '', estimatedbudget: '', jobcomponent: '' , members: [
+    setFormData([...formData, { jobmanager: '',jobno: '123', budgettype: '', estimatedbudget: '', jobcomponent: '' , members: [
       {
           employeeid: "6723819e92ce23277a217af9",
           role: "Engnr."
@@ -185,9 +185,12 @@ export default function Createprojectcomponent( prop: Data) {
 
   },[dialog])
 
+  console.log(formData)
+
 
   //create job component
   const createProjectcomponent = async () => {
+    const filteredFormData = formData.map(({ jobno, ...rest }) => rest);
 
     const isFormDataComplete = (form: FormData) => {
       // Check if all main fields are filled
@@ -197,12 +200,9 @@ export default function Createprojectcomponent( prop: Data) {
         form.estimatedbudget.trim() !== '' &&
         form.jobcomponent.trim() !== '' &&
         form.jobno.trim() !== '';
-      
-      // Check if members array is not empty
-      const membersFilled = form.members.length > 0;
     
       // Return true if all conditions are met
-      return mainFieldsFilled && membersFilled;
+      return mainFieldsFilled
     };
 
     const isEveryFormComplete = () => {
@@ -217,7 +217,7 @@ export default function Createprojectcomponent( prop: Data) {
       try {
         const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/createjobcomponent`,{
           projectid: id,
-          jobcomponentvalue: formData
+          jobcomponentvalue: filteredFormData
         }, {
           withCredentials: true,
           headers: {
@@ -232,7 +232,7 @@ export default function Createprojectcomponent( prop: Data) {
       });
 
       if(response.data.message === 'success'){
-        setFormData([{ jobmanager: '',jobno: '', budgettype: '', estimatedbudget: '', jobcomponent: '', members: [
+        setFormData([{ jobmanager: '',jobno: '12345', budgettype: '', estimatedbudget: '', jobcomponent: '', members: [
           {
               employeeid: "",
               role: "Engnr."
@@ -251,6 +251,7 @@ export default function Createprojectcomponent( prop: Data) {
           }
         ] }])
         setDialog(false)
+        window.location.reload()
 
       }
       } catch (error) {
@@ -393,11 +394,11 @@ export default function Createprojectcomponent( prop: Data) {
     
   },[])
 
-  useEffect(() => {
-    if(id === '' || id === undefined || id === null){
-      router.push('/pm/projects')
-    }
-  },[id])
+  // useEffect(() => {
+  //   if(id === '' || id === undefined || id === null){
+  //     router.push('/pm/projects')
+  //   }
+  // },[id])
 
   
 
@@ -446,14 +447,14 @@ export default function Createprojectcomponent( prop: Data) {
                             onChange={(e) => handleChange(index, 'jobcomponent', e.target.value)}
                         />
 
-                        <Label className="mt-2 text-zinc-500">Job no.</Label>
+                        {/* <Label className="mt-2 text-zinc-500">Job no.</Label>
                         <Input
                             type="text"
                             className="text-xs h-[35px] bg-white"
                             placeholder="Job no."
                             value={item.jobno}
                             onChange={(e) => handleChange(index, 'jobno', e.target.value)}
-                        />
+                        /> */}
                         <Label className="mt-2 text-zinc-500">Job Manager</Label>
                         <Select
                             value={item.jobmanager}
@@ -463,7 +464,7 @@ export default function Createprojectcomponent( prop: Data) {
                             <SelectValue placeholder="Select Job Manager" className="text-black" />
                             </SelectTrigger>
                             <SelectContent className="text-xs">
-                              {manager.map((item, index) => (
+                              {employee.map((item, index) => (
                                 <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
                               ))}
                             </SelectContent>

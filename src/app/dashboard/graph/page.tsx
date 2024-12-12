@@ -1,7 +1,7 @@
 import Breadcrumbdb from '@/components/common/Breadcrumb'
 import React from 'react'
 import PmLayout from '@/components/layout/PmLayout'
-
+import Yourworkload from './Yourworkload'
 
 export default function page() {
   return (
@@ -12,7 +12,7 @@ export default function page() {
       >
         <Breadcrumbdb page={'Project Components / Graph'}/>
       </div>
-
+      <Yourworkload/>
     </PmLayout>
   )
 }

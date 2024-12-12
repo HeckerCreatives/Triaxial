@@ -367,7 +367,7 @@ const totalsByDate = allDates.map((dateObj) => {
                   <td className="text-center ">{graphItem.projectname}</td>
                   <td className="text-center ">{graphItem.jobmanager.fullname}</td>
                   <td className="text-center ">{graphItem.jobcomponent}</td>
-                  <td className="text-center ">$ {graphItem.estimatedbudget.toLocaleString()}</td>
+                  <td className="text-center ">$ {graphItem.estimatedbudget?.toLocaleString()}</td>
                   <td className="text-center ">{graphItem.budgettype === 'rates' ? `${ graphItem.invoice.percentage.toLocaleString()} hrs` : `$ ${ graphItem.invoice.percentage.toLocaleString()}` }</td>
                   <td className="text-center ">$ {graphItem.budgettype === 'rates' ? `${ graphItem.rates.invoiced.toLocaleString()}` : `${ graphItem.lumpsum.invoiced.toLocaleString()}` }</td>
                   <td className="text-center ">{graphItem.budgettype === 'rates' ? `-` : `$ ${ graphItem.lumpsum.remaining.toLocaleString()}`}</td>

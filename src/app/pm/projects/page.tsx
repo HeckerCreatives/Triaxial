@@ -6,6 +6,7 @@ import Projectcards from './Projectcards'
 import Projecttable from './Projecttable'
 import { useSearchParams } from 'next/navigation'
 import PmLayout from '@/components/layout/PmLayout'
+import Teamstable from './Teamstable'
 
 export default function page() {
   const params = useSearchParams()
@@ -19,27 +20,9 @@ export default function page() {
       >
         <Breadcrumbdb page={'Projects'}/>
 
-        {/* <div className=' flex items-start gap-4  bg-secondary w-fit text-white text-[.6rem] p-2 rounded-sm mt-6'>
-
-          <div className=' flex flex-col gap-1'>
-            <p className=' text-zinc-400'>Director: <span className=' text-white'>Name</span></p>
-            <p className=' text-zinc-400'>Associate: <span className=' text-white'>Name</span></p>
-            <p className=' text-zinc-400'>Manager: <span className=' text-white'>Name</span></p>
-          </div>
-
-          <div className=' flex flex-col gap-1'>
-            <p className=' text-zinc-400'>Members:</p>
-            <p>Name</p>
-            <p>Name</p>
-            <p>Name</p>
-            <p>Name</p>
-          </div>
-          
-
-        </div> */}
+        
       </div>
-      {/* <Projectcards/> */}
-      <Projecttable/>
+     <Teamstable/>
      
     </PmLayout>
   )
