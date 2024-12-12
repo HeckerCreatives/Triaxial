@@ -264,7 +264,7 @@ export default function Yourworkload() {
                   {memberIndex === 0 ?
                   (<td  onClick={() => router.push(`/superadmin/projects/teamprojects?teamid=${graphItem.teamid}`)} className="text-center text-red-500 underline cursor-pointer">{graphItem.name}</td>) :  (<td className="text-center"></td>)
                   }
-                  <td onClick={() => router.push(`/pm/individualworkload?employeeid=${member.id}`)} className="text-center cursor-pointer underline text-blue-400">{member.name}</td>
+                  <td onClick={() => router.push(`/superadmin/individualworkload?employeeid=${member.id}`)} className="text-center cursor-pointer underline text-blue-400">{member.name}</td>
                   <td className="text-center">{member.initial}</td>
                   <td className="text-center">{member.resource}</td>
                  
