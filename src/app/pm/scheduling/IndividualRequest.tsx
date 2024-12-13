@@ -134,7 +134,7 @@ export default function Individualrequest() {
      
       {list.length !== 0 ? (
         <div className=' h-full overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
-          <table className="table-auto w-[580px] border-collapse ">
+          <table className="table-auto w-[710px] border-collapse ">
             <thead className=' bg-secondary h-[100px]'>
 
               <tr className=' text-[0.6rem] text-zinc-100 font-normal'>

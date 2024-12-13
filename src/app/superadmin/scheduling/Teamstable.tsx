@@ -135,6 +135,7 @@ export default function Teamstable() {
             <TableHead className="">Project Manager</TableHead>
             <TableHead className="">Team Leader</TableHead>
             <TableHead>Job Components</TableHead>
+            <TableHead>Individual Workload</TableHead>
             </TableRow>
         </TableHeader>
         <TableBody>
@@ -146,6 +147,10 @@ export default function Teamstable() {
             <TableCell className="">
               <a href={`/superadmin/graph/jobcomponent?teamid=${item.teamid}`} className=' w-fit bg-red-700 rounded-sm p-1 text-white flex items-center gap-2'>Job Component<Eye size={15}/></a>
             </TableCell>
+
+             <TableCell>
+                <Viewbtn disabled={false} name='View' onClick={() => router.push(`/superadmin/graph/teammembers?teamid=${item.teamid}`)}/>
+              </TableCell>
             
        
 

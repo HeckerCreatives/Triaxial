@@ -752,12 +752,21 @@ export default function Yourworkload() {
                 </div>
                 
               ) : (
-                <EditJobComponent id={findJobComponent?.componentid} isManger={findJobComponent?.jobmanager.isManager} isJobManager={findJobComponent?.jobmanager.isJobManager} project={findJobComponent?.projectname.projectid} jobmanager={findJobComponent?.jobmanager.employeeid} engr={findJobComponent?.members[0].employee._id} engrnotes={findJobComponent?.members[0].notes} engrrvr={findJobComponent?.members[1].employee._id} engrrvrnotes={findJobComponent?.members[1].notes} drftr={findJobComponent?.members[2].employee._id} drftrnotes={findJobComponent?.members[2].notes} drftrrvr={findJobComponent?.members[3].employee._id} drftrrvrnotes={findJobComponent?.members[3].notes}>
+                <>
+                {(isJobmamager === true || isMamager === true) ? (
+                  <EditJobComponent id={findJobComponent?.componentid} isManger={findJobComponent?.jobmanager.isManager} isJobManager={findJobComponent?.jobmanager.isJobManager} project={findJobComponent?.projectname.projectid} jobmanager={findJobComponent?.jobmanager.employeeid} engr={findJobComponent?.members[0].employee._id} engrnotes={findJobComponent?.members[0].notes} engrrvr={findJobComponent?.members[1].employee._id} engrrvrnotes={findJobComponent?.members[1].notes} drftr={findJobComponent?.members[2].employee._id} drftrnotes={findJobComponent?.members[2].notes} drftrrvr={findJobComponent?.members[3].employee._id} drftrrvrnotes={findJobComponent?.members[3].notes}>
                   <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
                     <button onClick={() => setDialog2(true)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Pen size={12}/></button>
                     <p>Edit</p>
                   </div>
                 </EditJobComponent>
+                ):(
+                  <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                    <button onClick={() => toast.error('Only job manager & project manager can edit this job component.')} className={`text-xs p-1 bg-red-600  rounded-sm`}><Pen size={12}/></button>
+                    <p>Edit</p>
+                  </div>
+                )}
+                </>
                 
               )}
 
@@ -853,32 +862,32 @@ export default function Yourworkload() {
         <div className=' h-full overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
           {list.length !== 0 ? (
             <>
-            <table className="table-auto w-[1300px] borer-collapse ">
-            <thead className=' bg-secondary h-[100px]'>
+            <table className="table-auto w-full borer-collapse ">
+            <thead className='  bg-secondary h-[100px]'>
 
               <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
-                <th className=' w-[80px] font-normal'>Action</th>
-                <th className=' font-normal w-[70px]'>Status</th>
-                <th className=' font-normal w-[70px]'>Job Mgr.</th>
-                <th className=' font-normal w-[70px]'>Job Component</th>
-                <th className=' font-normal w-[70px]'>Est. $</th>
-                <th className=' font-normal w-[70px]'>Invoiced (%/hrs)</th>
-                <th className=' font-normal w-[70px]'>Budget type</th>
-                <th className=' w-[70px] font-normal'>Members</th>
-                <th className=' font-normal w-[70px]'>Role</th>
-                <th className=' font-normal w-[70px]'>Notes</th>
+                <th className=' font-normal'>Action</th>
+                <th className=' font-normal'>Status</th>
+                <th className=' font-normal'>Job no.</th>
+                <th className=' font-normal'>Job Mgr.</th>
+                <th className=' font-normal'>Job Component</th>
+                <th className=' font-normal'>Est. $</th>
+                <th className=' font-normal'>Invoiced (%/hrs)</th>
+                <th className=' font-normal'>Budget type</th>
+                <th className=' font-normal'>Members</th>
+                <th className=' font-normal'>Role</th>
+                <th className=' font-normal'>Notes</th>
 
-              
               </tr>
             </thead>
             <tbody>
             {list.map((graphItem, graphIndex) =>
               graphItem.members.map((member, memberIndex) => (
-                <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
-                    <td className="text-center text-white flex items-center justify-center gap-1 h-[40px] w-[30px]">
+                <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[50px] border-[1px] border-zinc-600">
+                    <td className="text-center text-white flex items-center justify-center gap-1 h-[50px] w-[30px]">
                       
 
-                      {(memberIndex === 0 && graphItem.jobmanager.isJobManager === true) && (
+                      {(memberIndex === 0 ) && (
                         <input
                         type="checkbox"
                         checked={componentid === graphItem._id}
@@ -889,7 +898,7 @@ export default function Yourworkload() {
                                   
                   </td>
                   <td className={`${graphItem.status === null ? 'text-blue-400' :  'text-green-500'} text-center`}>{memberIndex === 0 && `${graphItem.status === null ? 'Ongoing' :  'Completed'}`}</td>
-
+                  <td className="text-center">{memberIndex === 0 && graphItem.jobno}</td>
                     <td className="text-center">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
                     <td className="text-center">{memberIndex === 0 && graphItem.jobcomponent}</td>
                     <td className="text-center">{memberIndex === 0 && `$ ${graphItem.estimatedbudget?.toLocaleString()}`}</td>
@@ -925,7 +934,7 @@ export default function Yourworkload() {
 
             <div className=' overflow-x-auto'>
               <table className="table-auto border-collapse ">
-                <thead className=' w-[800px] bg-secondary h-[100px]'>
+                <thead className=' bg-secondary h-[100px]'>
                   <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
                   
                   {list[0]?.allDates
@@ -957,7 +966,7 @@ export default function Yourworkload() {
                 <tbody>
                 {list.map((graphItem, graphIndex) =>
                     graphItem.members.map((member, memberIndex) => (
-                      <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[41px] border-[1px] border-zinc-600">
+                      <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[51px] border-[1px] border-zinc-600">
                         
                   
                         {list[0]?.allDates

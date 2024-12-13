@@ -408,7 +408,7 @@ export default function EditJobComponent( prop: Prop) {
                           </DialogTrigger>
                           <DialogContent className=' max-w-[600px] h-[80%] bg-secondary border-none p-6 text-white overflow-y-auto'>
                             <DialogHeader>
-                              <DialogTitle>Edit Project <span className=' text-xs text-zinc-400'>( As)</span></DialogTitle>
+                              <DialogTitle>Edit Project <span className=' text-xs text-zinc-400'></span></DialogTitle>
                               <DialogDescription className={` ${prop.isManger === true ? 'text-white' : ' text-red-500'}`}>
                                 {/* {graphItem.jobmanager.isManager === true ? 'Your the project manager of this project, you are allowed to edit this project' : ' Your are not the project manager of this project, you are not allowed to edit this project'} */}
                                 
