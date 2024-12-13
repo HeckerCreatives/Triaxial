@@ -19,11 +19,12 @@ import Spinner from '@/components/common/Spinner'
 
 
 type Client  ={
-    teamid: string
-    clientname: string
-    priority: string
-    createdAt: string
-
+  clientName: string
+  priority: string
+  forecastInvoicing: number 
+  totalInvoiceRequested: number
+  wip: number
+  clientid: string
 }
 
 export default function Teamlist() {
@@ -41,13 +42,14 @@ export default function Teamlist() {
   useEffect(() => {
     setLoading(true)
     const getList = async () => {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/clients/clientlistfn`,{
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/invoice/listclienttotalinvoice`,{
             withCredentials: true
         })
 
-        setList(response.data.data.teamlist)
+        setList(response.data.data)
         setTotalpage(response.data.data.totalpages)
         setLoading(false)
+        console.log(response.data)
     }
     getList()
   },[])
@@ -71,6 +73,7 @@ export default function Teamlist() {
             <TableRow>
             <TableHead className="">Client</TableHead>
             <TableHead>priority</TableHead>
+            <TableHead>WIP</TableHead>
             <TableHead>Action</TableHead>
             
             </TableRow>
@@ -78,10 +81,11 @@ export default function Teamlist() {
         <TableBody>
             {list.map((item, index) => (
                 <TableRow key={index}>
-                <TableCell className="font-medium">{item.clientname}</TableCell>
+                <TableCell className="font-medium">{item.clientName}</TableCell>
                 <TableCell>{item.priority}</TableCell>
+                <TableCell>$ {item.wip.toLocaleString()}</TableCell>
                 <TableCell className=" flex items-center gap-2">
-                    <button onClick={() => router.push(`/finance/totalinvoice/client/clienttotalinvoice?clientid=${item.teamid}`)} className=' bg-red-600 px-2 py-1 text-xs rounded-sm text-white flex items-center gap-1'><Eye size={12}/>Total Invoice</button>
+                    <button onClick={() => router.push(`/finance/summaries/client/clienttotalinvoice?clientid=${item.clientid}`)} className=' bg-red-600 px-2 py-1 text-xs rounded-sm text-white flex items-center gap-1'><Eye size={12}/>Total Invoice</button>
                 </TableCell>
                 </TableRow>
             ))}
@@ -90,7 +94,7 @@ export default function Teamlist() {
         </Table>
 
       
-          <PaginitionComponent currentPage={currentpage} total={totalpage} onPageChange={handlePageChange}/>
+          {/* <PaginitionComponent currentPage={currentpage} total={totalpage} onPageChange={handlePageChange}/> */}
       
     </div>
         

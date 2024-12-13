@@ -22,7 +22,7 @@ export default function page() {
 
         
       </div>
-     <Teamstable/>
+     <Projecttable/>
      
     </PmLayout>
   )

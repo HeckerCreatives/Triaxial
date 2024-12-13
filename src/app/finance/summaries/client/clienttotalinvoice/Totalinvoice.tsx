@@ -138,7 +138,7 @@ export default function Totalinvoice() {
         <TableBody>
           {list.map((item, index) => (
             <TableRow>
-              <TableCell className=" text-red-600">{item.jobnumber}</TableCell>
+              <TableCell className=" ">{item.jobnumber}</TableCell>
               <TableCell>{item.jobcomponent}</TableCell>
               <TableCell>{item.projectname}</TableCell>
               <TableCell>{item.jobmanager.fullname}</TableCell>

@@ -93,14 +93,16 @@ export default function Teamlist() {
         <TableBody>
             {list.map((item, index) => (
                 <TableRow key={index}>
-                <TableCell className="font-medium">{item.teamName}</TableCell>
+                <TableCell className="font-medium underline text-red-500 cursor-pointer">
+                  <a href={`/finance/graph/jobcomponent?teamid=${item.teamId}`}>{item.teamName}</a>
+                  </TableCell>
                 <TableCell>{item.teamLeader.name}</TableCell>
                 <TableCell>{item.manager.name}</TableCell>
                 <TableCell>$ {item.wip.toLocaleString()}</TableCell>
                 <TableCell>$ {item.forecastinvoicing.toLocaleString()}</TableCell>
                 <TableCell>$ {item.totalinvoicerequested.toLocaleString()}</TableCell>
                 <TableCell className=" flex items-center gap-2">
-                    <button onClick={() => router.push(`/finance/totalinvoice/team/teamtotalinvoice?teamid=${item.teamId}`)} className=' bg-red-600 px-2 py-1 text-xs rounded-sm text-white flex items-center gap-1'><Eye size={12}/>View</button>
+                    <button onClick={() => router.push(`/finance/summaries/team/teamtotalinvoice?teamid=${item.teamId}`)} className=' bg-red-600 px-2 py-1 text-xs rounded-sm text-white flex items-center gap-1'><Eye size={12}/>View</button>
                 </TableCell>
                 </TableRow>
             ))}

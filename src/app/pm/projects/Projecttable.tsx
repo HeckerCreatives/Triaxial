@@ -151,7 +151,6 @@ export default function Projecttable() {
           )}
         <TableHeader>
             <TableRow>
-            <TableHead className="">Select</TableHead>
             <TableHead>Job no</TableHead>
             <TableHead>Project Name</TableHead>
             <TableHead>Client</TableHead>
@@ -167,7 +166,6 @@ export default function Projecttable() {
         <TableBody>
           {list.map((item, index) => (
             <TableRow key={index}>
-            <TableCell className="font-medium"><Checkbox/></TableCell>
             <TableCell>{item.jobno}</TableCell>
             <TableCell>{item.projectname}</TableCell>
             <TableCell>{item.client}</TableCell>
