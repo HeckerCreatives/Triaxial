@@ -151,7 +151,9 @@ export default function Projecttable() {
               <TableCell>{job.estimatedBudget}</TableCell>
               <TableCell>{project.invoiced}</TableCell>
               <TableCell>{job.name}</TableCell>
-              <TableCell>{job.members}</TableCell>
+              <TableCell className=' flex items-center gap-2'>{job.members.map((item, index) => (
+                <p key={index}>{item}</p>
+              ))}</TableCell>
               <TableCell>{project.teamname}</TableCell>
             </TableRow>
           ))
