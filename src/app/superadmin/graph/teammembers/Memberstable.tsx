@@ -109,7 +109,7 @@ const handlePageChange = (page: number) => {
               <TableCell>{item.role}</TableCell>
               <TableCell className="">{item.resources}</TableCell>
               <TableCell className="">
-                <button onClick={() => router.push(`/pm/graph/individualworkload?employeeid=${item.employeeid}`)} className=' text- xs bg-red-600 p-2 rounded-sm text-white'>View Workload</button>
+                <button onClick={() => router.push(`/superadmin/graph/individualworkload?employeeid=${item.employeeid}`)} className=' text- xs bg-red-600 p-2 rounded-sm text-white'>View Workload</button>
               </TableCell>
             
             </TableRow>

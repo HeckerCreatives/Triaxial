@@ -77,7 +77,7 @@ const handlePageChange = (page: number) => {
       <div className=' flex items-center gap-4'>
         <p className=' w-[85px]'>Team Leader: </p>
         <span className=' text-red-500'>{list.length !== 0 ? list[0].teamleader.fullname : ''} </span>
-        <button onClick={() => router.push(`/superadmin/graph/individualworkload?employeeid=${list[0].teamleader.employeeid}`)} className=' ml-4 text-[0.5rem] bg-red-600 p-1 rounded-sm text-white'>View Workload</button>
+        <button onClick={() => router.push(`/employee/graph/individualworkload?employeeid=${list[0].teamleader.employeeid}`)} className=' ml-4 text-[0.5rem] bg-red-600 p-1 rounded-sm text-white'>View Workload</button>
       </div>
     </div>
 
@@ -109,7 +109,7 @@ const handlePageChange = (page: number) => {
               <TableCell>{item.role}</TableCell>
               <TableCell className="">{item.resources}</TableCell>
               <TableCell className="">
-                <button onClick={() => router.push(`/pm/graph/individualworkload?employeeid=${item.employeeid}`)} className=' text- xs bg-red-600 p-2 rounded-sm text-white'>View Workload</button>
+                <button onClick={() => router.push(`/employee/graph/individualworkload?employeeid=${item.employeeid}`)} className=' text- xs bg-red-600 p-2 rounded-sm text-white'>View Workload</button>
               </TableCell>
             
             </TableRow>
