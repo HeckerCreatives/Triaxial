@@ -1031,7 +1031,7 @@ export default function Yourworkload() {
                                   }
                                 }
                               >
-                                <div className=' w-full h-[40px] absolute flex top-0 '>
+                                <div className=' w-full h-[50px] absolute flex top-0 '>
                                   {statusColor(
                                     memberDate?.status || [],
                                     dateObj,
@@ -1045,7 +1045,7 @@ export default function Yourworkload() {
                                     member.leaveDates,
                                     member.wellnessDates
                                   ).map((item, index) => (
-                                    <div key={index} className={`w-full h-[40px] ${item}`}>
+                                    <div key={index} className={`w-full h-[50px] ${item}`}>
 
                                     </div>
 
