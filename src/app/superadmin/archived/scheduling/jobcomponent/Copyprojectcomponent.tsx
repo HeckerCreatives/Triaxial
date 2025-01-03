@@ -28,20 +28,6 @@ import axios, { AxiosError } from 'axios'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 
-type Project = {
-  createdAt: string
-deadlinedate: string
-invoiced: number
-managerName: string
-projectname: string
-startdate: string
-status: string
-teamname: string
-updatedAt: string
-client: string
-_id: string
-}
-
 
 
 interface Data {
@@ -94,8 +80,6 @@ export default function Copyprojectcomponent( prop: Data) {
   const params = useSearchParams()
   const id = params.get('projectid')
   const [isValidated, setIsvalidated] = useState(false)
-    const [projectid, setProjectId] = useState('')
-  
 
   console.log(prop)
 
@@ -256,7 +240,7 @@ export default function Copyprojectcomponent( prop: Data) {
 
       try {
         const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/createjobcomponent`,{
-          projectid: projectid,
+          projectid: id,
           jobcomponentvalue: filteredFormData
         }, {
           withCredentials: true,
@@ -441,29 +425,6 @@ export default function Copyprojectcomponent( prop: Data) {
 //   },[id])
 
 // console.log(prop)
-
-
-const [list, setList] = useState<Project[]>([])
-useEffect(() => {
-  const timer = setTimeout(() => {
-    const getList = async () => {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/projects/saprojectlist?searchproject&page=0&limit=99999`,{
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json'
-          }
-      })
-      setList(response.data.data.projectlist)
-     
-   
-    }
-    getList()
-  },500)
-  return () => clearTimeout(timer)
-  
-},[])
-
-
   
   return (
     <Dialog open={dialog} onOpenChange={setDialog} >
@@ -478,22 +439,6 @@ useEffect(() => {
             <div className=' w-full flex items-end justify-end'>
                 <button onClick={handleAddForm} className=' px-4 py-2 bg-red-600 rounded-md text-[.6rem] text-white'>Add more</button>
             </div> */}
-
-            <Label className="mt-2 text-zinc-500">Select Project</Label>
-                                                <Select
-                                                 value={projectid} 
-                                                 onValueChange={setProjectId}
-                                                >
-                                                    <SelectTrigger className="text-xs h-[35px] bg-zinc-100">
-                                                    <SelectValue placeholder="Select Project" className="text-black" />
-                                                    </SelectTrigger>
-                                                    <SelectContent className="text-xs">
-                                                      {list.map((item, index) => (
-                                                        <SelectItem key={index} value={item._id}>{item.projectname}</SelectItem>
-                                                      ))}
-                                                    </SelectContent>
-                                                </Select>
-            
 
 
           

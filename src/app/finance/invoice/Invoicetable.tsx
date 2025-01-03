@@ -41,7 +41,7 @@ import {
     DialogTitle,
     DialogTrigger,
   } from "@/components/ui/dialog"
-import { statusColor } from '@/utils/functions'
+import { formatDMY, statusColor } from '@/utils/functions'
   
 
 export default function Invoicetable() {
@@ -379,6 +379,7 @@ export default function Invoicetable() {
             {status === 'Pending' && (
                 <TableHead className="">Select</TableHead>
             )}
+            <TableHead className="">Requested at</TableHead>
             <TableHead className="">Invoice Id</TableHead>
             <TableHead>Job no</TableHead>
             <TableHead>Job Component Name</TableHead>
@@ -390,10 +391,9 @@ export default function Invoicetable() {
             <TableHead className="">New In.</TableHead>
             <TableHead className="">In. Amount</TableHead>
             <TableHead className="">Status</TableHead>
+            {status === 'Pending' && (
             <TableHead className="">Action</TableHead>
-            {/* {status === 'Pending' && (
-            <TableHead className="">Action</TableHead>
-            )} */}
+            )}
             </TableRow>
         </TableHeader>
         <TableBody>
@@ -409,6 +409,7 @@ export default function Invoicetable() {
                     </TableCell> 
                 )}
                
+                <TableCell className="font-medium">{formatDMY(item.createdAt)}</TableCell>
                 <TableCell className="font-medium">{item.invoiceid}</TableCell>
                 <TableCell className="font-medium">{item.jobcomponent.jobno}</TableCell>
                 <TableCell className="font-medium">{item.jobcomponent.name}</TableCell>
@@ -418,7 +419,7 @@ export default function Invoicetable() {
                 <TableCell className="font-medium">{item.jobcomponent.budgettype}</TableCell>
                 <TableCell className="font-medium">{item.currentinvoice}</TableCell>
                 <TableCell className="font-medium">{item.newinvoice}</TableCell>
-                <TableCell className="font-medium">{item.invoiceamount}</TableCell>
+                <TableCell className="font-medium">$ {item.invoiceamount}</TableCell>
                 <TableCell className={` ${statusColor(item.status)} text-xs`}>{item.status}</TableCell>
                 {status === 'Pending' && (
                 <TableCell className="font-medium">

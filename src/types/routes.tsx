@@ -1,4 +1,4 @@
-import { ArrowRightLeft, Box, CalendarCheck2, Cog, File, Files, Home, HomeIcon, Key, List, ListChecks, Mail, PlusSquare, Search, User, Users } from "lucide-react";
+import { ArrowRightLeft, Box, CalendarCheck2, Cog, File, Files, Folder, Home, HomeIcon, Key, List, ListChecks, Mail, PlusSquare, Search, User, Users } from "lucide-react";
 
 export const hrold = [
     {name: 'Dashboard', path: '/hr/dashboard', icon: <Home className="h-4 w-4" />,subpath: []},
@@ -77,6 +77,9 @@ export const hr = [
     {name: 'Request', path: '/hr/request', icon: <ArrowRightLeft className="h-4 w-4" />,subpath: []},
     {name: 'Messages', path: '/hr/messages', icon: <Mail className="h-4 w-4" />, subpath: []},
     {name: 'Settings', path: '/hr/settings', icon: <Cog className="h-4 w-4"  />, subpath: []},
+    {name: 'Archived', path: '/hr/archived', icon: <Folder className="h-4 w-4" />, subpath: [
+        {name: 'Scheduling', path: '/hr/archived/scheduling', subpath: []},
+    ]},
 
 ]
 
@@ -200,6 +203,9 @@ export const pm = [
     {name: 'Your Request', path: '/pm/request', icon: <ArrowRightLeft className="h-4 w-4" />, subpath: []},
     {name: 'Messages', path: '/pm/messages', icon: <Mail className="h-4 w-4" />, subpath: []},
     {name: 'Settings', path: '/pm/settings', icon: <Cog className="h-4 w-4"  />, subpath: []},
+    {name: 'Archived', path: '/pm/archived', icon: <Folder className="h-4 w-4" />, subpath: [
+        {name: 'Scheduling', path: '/pm/archived/scheduling', subpath: []},
+    ]},
 
 ]
 
@@ -281,6 +287,9 @@ export const employee = [
     {name: 'Your Request', path: '/employee/request', icon: <ArrowRightLeft className="h-4 w-4" />,subpath: []},
     {name: 'Messages', path: '/employee/messages', icon: <Mail className="h-4 w-4" />, subpath: []},
     {name: 'Settings', path: '/employee/settings', icon: <Cog className="h-4 w-4"  />, subpath: []},
+    {name: 'Archived', path: '/employee/archived', icon: <Folder className="h-4 w-4" />, subpath: [
+        {name: 'Scheduling', path: '/employee/archived/scheduling', subpath: []},
+    ]},
 
 ]
 
@@ -367,6 +376,9 @@ export const finance = [
     {name: 'Request', path: '/finance/request', icon: <ArrowRightLeft className="h-4 w-4" />,subpath: []},
     {name: 'Messages', path: '/finance/messages', icon: <Mail className="h-4 w-4" />, subpath: []},
     {name: 'Settings', path: '/finance/settings', icon: <Cog className="h-4 w-4"  />, subpath: []},
+    {name: 'Archived', path: '/finance/archived', icon: <Folder className="h-4 w-4" />, subpath: [
+        {name: 'Scheduling', path: '/finance/archived/scheduling', subpath: []},
+    ]},
 
 ]
 
@@ -424,6 +436,9 @@ export const superadmin = [
     // {name: 'My Request', path: '/superadmin/myrequest', icon: <User className="h-4 w-4" />, subpath: []},
     {name: 'Messages', path: '/superadmin/messages', icon: <Mail className="h-4 w-4" />, subpath: []},
     {name: 'Settings', path: '/superadmin/settings', icon: <Cog className="h-4 w-4"  />, subpath: []},
+    {name: 'Archived', path: '/superadmin/archived', icon: <Folder className="h-4 w-4" />, subpath: [
+        {name: 'Scheduling', path: '/superadmin/archived/scheduling', subpath: []},
+    ]},
 
 ]
 

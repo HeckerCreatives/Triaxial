@@ -32,7 +32,19 @@ import axios, { AxiosError } from 'axios'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 
-
+type Project = {
+  createdAt: string
+deadlinedate: string
+invoiced: number
+managerName: string
+projectname: string
+startdate: string
+status: string
+teamname: string
+updatedAt: string
+client: string
+_id: string
+}
 
 interface Data {
   children?: React.ReactNode;
@@ -403,6 +415,26 @@ export default function Createprojectcomponent( prop: Data) {
     }
   },[id])
 
+    const [list, setList] = useState<Project[]>([])
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const getList = async () => {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/projects/saprojectlist?searchproject&page=0&limit=99999`,{
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json'
+            }
+        })
+        setList(response.data.data.projectlist)
+       
+     
+      }
+      getList()
+    },500)
+    return () => clearTimeout(timer)
+    
+  },[])
+
 
   
 
@@ -419,9 +451,25 @@ export default function Createprojectcomponent( prop: Data) {
         <p className=' text-sm uppercase font-semibold text-red-700 flex items-center gap-2'><span className=' bg-red-700 px-4 py-1 text-zinc-100 text-xs'>Create</span>Job Components</p>
         <div className=' w-full flex flex-col gap-4'>
 
+    
+
             <div className=' w-full flex items-end justify-end'>
                 <button onClick={handleAddForm} className=' px-4 py-2 bg-red-600 rounded-md text-[.6rem] text-white'>Add more</button>
             </div>
+
+            <Label className="mt-2 text-zinc-500">Select Project</Label>
+                        <Select
+                          
+                        >
+                            <SelectTrigger className="text-xs h-[35px] bg-zinc-100">
+                            <SelectValue placeholder="Select Project" className="text-black" />
+                            </SelectTrigger>
+                            <SelectContent className="text-xs">
+                              {list.map((item, index) => (
+                                <SelectItem key={index} value={item._id}>{item.projectname}</SelectItem>
+                              ))}
+                            </SelectContent>
+                        </Select>
 
 
           

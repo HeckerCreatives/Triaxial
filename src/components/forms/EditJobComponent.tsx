@@ -383,6 +383,8 @@ export default function EditJobComponent( prop: Prop) {
     }
   }
 
+  
+
   useEffect(() => {
     if(prop){
         setJobmanager(prop.jobmanager)
@@ -406,7 +408,7 @@ export default function EditJobComponent( prop: Prop) {
                           <DialogTrigger className=''>
                            {prop.children}
                           </DialogTrigger>
-                          <DialogContent className=' max-w-[600px] h-[80%] bg-secondary border-none p-6 text-white overflow-y-auto'>
+                          <DialogContent className=' max-w-[600px] h-auto bg-secondary border-none p-6 text-white overflow-y-auto'>
                             <DialogHeader>
                               <DialogTitle>Edit Project <span className=' text-xs text-zinc-400'></span></DialogTitle>
                               <DialogDescription className={` ${prop.isManger === true ? 'text-white' : ' text-red-500'}`}>

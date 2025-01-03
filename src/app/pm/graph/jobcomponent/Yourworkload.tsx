@@ -20,7 +20,7 @@ import axios, { AxiosError } from 'axios'
 import toast from 'react-hot-toast'
 import { useRouter, useSearchParams } from 'next/navigation'
 import {statusData} from '@/types/data'
-import { Check, Copy, File, Layers2, OctagonAlert, Pen, Plus, X } from 'lucide-react'
+import { Check, Copy, File, Folder, Layers2, OctagonAlert, Pen, Plus, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import Createprojectcomponent from './Createprojectcomponent'
@@ -707,6 +707,59 @@ export default function Yourworkload() {
     });
   };
 
+   //update as both
+   const archived = async () => {
+    try {
+      const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/archivejobcomponent`,{
+       jobcomponentId: componentid,
+      status: 'archived' // archived or "" to unarchive
+      }, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json'
+          }
+      })
+
+      const response = await toast.promise(request, {
+        loading: 'Archiving job component....',
+        success: `Successfully archived`,
+        error: 'Error while archiving the job component',
+    });
+
+    if(response.data.message === 'success'){
+        window.location.reload()
+     
+    }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError<{ message: string, data: string }>;
+        if (axiosError.response && axiosError.response.status === 401) {
+            toast.error(`${axiosError.response.data.data}`) 
+            router.push('/')    
+        }
+
+        if (axiosError.response && axiosError.response.status === 400) {
+            toast.error(`${axiosError.response.data.data}`)     
+               
+        }
+
+        if (axiosError.response && axiosError.response.status === 402) {
+            toast.error(`${axiosError.response.data.data}`)          
+                   
+        }
+
+        if (axiosError.response && axiosError.response.status === 403) {
+            toast.error(`${axiosError.response.data.data}`)              
+           
+        }
+
+        if (axiosError.response && axiosError.response.status === 404) {
+            toast.error(`${axiosError.response.data.data}`)             
+        }
+      } 
+    }
+  }
+
 
 
 
@@ -838,13 +891,43 @@ export default function Yourworkload() {
                 </Invoice>
               )}
 
-             
+            {componentid === '' ? (
+                 <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                  <button onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><Folder size={12}/></button>
+                  <p>Archive</p>
+                </div>
+
+              ) : (
+
+                <Dialog>
+                <DialogTrigger>
+                <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                  <button className={`text-xs p-1 bg-red-600  rounded-sm`}><Folder size={12}/></button>
+                  <p>Archive</p>
+                </div>
+                </DialogTrigger>
+                <DialogContent className=' bg-secondary p-6 text-white border-none'>
+                  <DialogHeader>
+                    <DialogTitle>Move to archived.</DialogTitle>
+                    <DialogDescription>
+                      Are you sure you to archived the selected job component?
+                    </DialogDescription>
+                  </DialogHeader>
+
+                  <p>Job Component: {findJobComponent?.jobcomponent} </p>
+
+                  <div className=' flex items-center justify-end gap-4 mt-4'>
+                    <button onClick={archived} className=' bg-red-700 text-zinc-100 px-4 py-2 text-xs rounded-sm mt-4 w-auto'>Continue</button>
+
+                  </div>
+                </DialogContent>
+              </Dialog>
 
                 
+              )}
 
-                
 
-              
+    
 
 
             </div>

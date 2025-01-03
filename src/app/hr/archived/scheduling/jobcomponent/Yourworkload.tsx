@@ -25,7 +25,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import Createprojectcomponent from './Createprojectcomponent'
 import { Graph, Members } from '@/types/types'
-import { formatAustralianDate, formatDate, formatMonthYear } from '@/utils/functions'
+import { formatDate } from '@/utils/functions'
 import { any } from 'zod'
 import Invoice from '@/components/forms/Invoice'
 import Copyprojectcomponent from './Copyprojectcomponent'
@@ -225,7 +225,7 @@ export default function Yourworkload() {
     try {
       const timer = setTimeout(() => {
         const getList = async () => {
-          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/listteamjobcomponent?teamid=${id}`,{
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/listarchivedteamjobcomponent?teamid=${id}`,{
             withCredentials: true,
             headers: {
               'Content-Type': 'application/json'
@@ -707,12 +707,12 @@ export default function Yourworkload() {
     });
   };
 
-   //archived
+   //update as both
    const archived = async () => {
     try {
       const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/archivejobcomponent`,{
        jobcomponentId: componentid,
-      status: 'archived' // archived or "" to unarchive
+      status: 'unarchive' // archived or "" to unarchive
       }, {
         withCredentials: true,
         headers: {
@@ -762,7 +762,6 @@ export default function Yourworkload() {
 
 
 
-
   return (
    <div className=' w-full h-full flex flex-col justify-center bg-secondary p-4 text-zinc-100'>
 
@@ -790,154 +789,52 @@ export default function Yourworkload() {
 
           <div className=' flex flex-col gap-1 bg-primary rounded-sm text-xs'>
 
-            <p className=' text-xs mt-2'>Project Component:</p>
-            <div className='flex items-center gap-2 bg-primary rounded-sm text-xs mt-2'>
-              <Createprojectcomponent>
-                <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                  <button className={`text-xs p-1 bg-red-600  rounded-sm`}><Plus size={12}/></button>
-                  <p>Create</p>
+       
+          <div className='flex items-center gap-2 bg-primary rounded-sm text-xs mt-2'>
+
+            {componentid === '' ? (
+              <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                <button onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><Folder size={12}/></button>
+                <p>Unarchive</p>
+              </div>
+
+            ) : (
+
+              <Dialog>
+              <DialogTrigger>
+              <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                <button className={`text-xs p-1 bg-red-600  rounded-sm`}><Folder size={12}/></button>
+                <p>Unarchive</p>
+              </div>
+              </DialogTrigger>
+              <DialogContent className=' bg-secondary p-6 text-white border-none'>
+                <DialogHeader>
+                  <DialogTitle>Move to archived.</DialogTitle>
+                  <DialogDescription>
+                    Are you sure you to archived the selected job component?
+                  </DialogDescription>
+                </DialogHeader>
+
+                <p>Job Component: {findJobComponent?.jobcomponent} </p>
+
+                <div className=' flex items-center justify-end gap-4 mt-4'>
+                  <button onClick={archived} className=' bg-red-700 text-zinc-100 px-4 py-2 text-xs rounded-sm mt-4 w-auto'>Continue</button>
+
                 </div>
-              </Createprojectcomponent>
-
-              {componentid === '' ? (
-                 <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                  <button onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><Pen size={12}/></button>
-                  <p>Edit</p>
-                </div>
-                
-              ) : (
-                <>
-                {(isJobmamager === true || isMamager === true) ? (
-                  <EditJobComponent id={findJobComponent?.componentid} isManger={findJobComponent?.jobmanager.isManager} isJobManager={findJobComponent?.jobmanager.isJobManager} project={findJobComponent?.projectname.projectid} jobmanager={findJobComponent?.jobmanager.employeeid} engr={findJobComponent?.members[0].employee._id} engrnotes={findJobComponent?.members[0].notes} engrrvr={findJobComponent?.members[1].employee._id} engrrvrnotes={findJobComponent?.members[1].notes} drftr={findJobComponent?.members[2].employee._id} drftrnotes={findJobComponent?.members[2].notes} drftrrvr={findJobComponent?.members[3].employee._id} drftrrvrnotes={findJobComponent?.members[3].notes}>
-                  <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                    <button onClick={() => setDialog2(true)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Pen size={12}/></button>
-                    <p>Edit</p>
-                  </div>
-                </EditJobComponent>
-                ):(
-                  <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                    <button onClick={() => toast.error('Only job manager & project manager can edit this job component.')} className={`text-xs p-1 bg-red-600  rounded-sm`}><Pen size={12}/></button>
-                    <p>Edit</p>
-                  </div>
-                )}
-                </>
-                
-              )}
-
-              {componentid === '' ? (
-                 <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                  <button  onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><Layers2 size={12}/></button>
-                  <p>Duplicate</p>
-                </div>
-                
-              ) : (
-                <DuplicateJobComponent name={findJobComponent?.jobcomponent} manager={findJobComponent?.jobmanager.employeeid} type={findJobComponent?.budgettype} id={findJobComponent?.projectname.projectid}>
-                  <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                    <button onClick={() => setDialog2(true)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Layers2 size={12}/></button>
-                    <p>Duplicate</p>
-                  </div>
-                </DuplicateJobComponent>
-                
-              )}
-
-            
-
-
-             
-
-              {componentid === '' ? (
-                <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                  <button onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><Copy size={12}/></button>
-                  <p>Variation</p>
-                </div>
-                
-              ) : (
-                <Copyprojectcomponent name={findJobComponent?.jobcomponent ?? ''} manager={findJobComponent?.jobmanager.employeeid ?? ''} budgettype={findJobComponent?.budgettype ?? ''} engr={findJobComponent?.members[0]?.employee._id} engrrvr={findJobComponent?.members[1]?.employee._id} drftr={findJobComponent?.members[2]?.employee._id} drftrrvr={findJobComponent?.members[3]?.employee._id} estbudget={findJobComponent?.estimatedbudget ?? 0} state={dialog3}>
-                <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                  <button onClick={() => setDialog3(!dialog3)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Copy size={12}/></button>
-                  <p>Variation</p>
-                </div>
-              </Copyprojectcomponent>
-              )}
-
-              {componentid === '' ? (
-                 <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                  <button onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><File size={12}/></button>
-                  <p>Complete</p>
-                </div>
-
-              ) : (
-                <JobComponentStatus name={findJobComponent?.jobcomponent ?? ''} status={findJobComponent?.status} client={findJobComponent?.clientname.name ?? ''} _id={findJobComponent?._id ?? ''} jobno={findJobComponent?.jobno ?? ''} >
-                  <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                    <button className={`text-xs p-1 bg-red-600  rounded-sm`}><File size={12}/></button>
-                    <p>Complete</p>
-                  </div>
-                </JobComponentStatus>
-              )}
-
-              {componentid === '' ? (
-                 <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                  <button onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><File size={12}/></button>
-                  <p>Invoice</p>
-                </div>
-
-              ) : (
-                <Invoice projectname={findJobComponent?.projectname.name} jobcname={findJobComponent?.jobcomponent} jobno={findJobComponent?.jobno} budgettype={findJobComponent?.budgettype} estimatedbudget={findJobComponent?.estimatedbudget} jobcid={findJobComponent?.componentid} isJobmanager={findJobComponent?.jobmanager.isJobManager} currinvoice={findJobComponent?.invoice.percentage}>
-                  <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                    <button className={`text-xs p-1 bg-red-600  rounded-sm`}><File size={12}/></button>
-                    <p>Invoice</p>
-                  </div>       
-                </Invoice>
-              )}
-
-{componentid === '' ? (
-                 <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                  <button onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><Folder size={12}/></button>
-                  <p>Archive</p>
-                </div>
-
-              ) : (
-
-                <Dialog>
-                <DialogTrigger>
-                <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                  <button className={`text-xs p-1 bg-red-600  rounded-sm`}><Folder size={12}/></button>
-                  <p>Archive</p>
-                </div>
-                </DialogTrigger>
-                <DialogContent className=' bg-secondary p-6 text-white border-none'>
-                  <DialogHeader>
-                    <DialogTitle>Move to archived.</DialogTitle>
-                    <DialogDescription>
-                      Are you sure you to archived the selected job component?
-                    </DialogDescription>
-                  </DialogHeader>
-
-                  <p>Job Component: {findJobComponent?.jobcomponent} </p>
-
-                  <div className=' flex items-center justify-end gap-4 mt-4'>
-                    <button onClick={archived} className=' bg-red-700 text-zinc-100 px-4 py-2 text-xs rounded-sm mt-4 w-auto'>Continue</button>
-
-                  </div>
-                </DialogContent>
-              </Dialog>
-
-                
-              )}
+              </DialogContent>
+            </Dialog>
 
               
-             
-
-                
-
-                
-
-              
+            )}
 
 
-            </div>
-            
+
+
           </div>
+
+          </div>
+
+         
 
         </div>
 
@@ -946,7 +843,7 @@ export default function Yourworkload() {
 
       </div>
 
-      <Individualrequest/>
+      {/* <Individualrequest/> */}
 
       <div className=' h-full w-full flex flex-col max-w-[1920px]'>
         <div className=' h-full overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
@@ -977,7 +874,7 @@ export default function Yourworkload() {
                     <td className="text-center text-white flex items-center justify-center gap-1 h-[50px] w-[30px]">
                       
 
-                      {(memberIndex === 0) && (
+                      {(memberIndex === 0 ) && (
                         <input
                         type="checkbox"
                         checked={componentid === graphItem._id}
@@ -1033,25 +930,35 @@ export default function Yourworkload() {
                     return day >= 1 && day <= 5; // Filter to include only Monday through Friday
                   })
                   .map((dateObj, index) => {
-                    const day = new Date(dateObj).getDay();
+                    const date = new Date(dateObj);
+                    const day = date.getDay();
                     const isFriday = day === 5;
+
+                    // Format functions for Australian date
+                    const formatAustralianDate = (date: Date) =>
+                      date.toLocaleDateString('en-AU', { day: '2-digit', month: '2-digit', year: '2-digit' });
+                    const formatMonthYear = (date: Date) =>
+                      date.toLocaleDateString('en-AU', { month: 'short', year: 'numeric' });
 
                     return (
                       <React.Fragment key={index}>
                         <th className="relative font-normal border-[1px] border-zinc-700">
-                           <div className="whitespace-nowrap transform -rotate-[90deg]">
-                                                                            <p>{formatAustralianDate(dateObj)}</p>
-                                                                            <p>{formatMonthYear(dateObj)}</p>
-                                                                          </div>
+                          <div className="whitespace-nowrap transform -rotate-[90deg]">
+                            <p>{formatAustralianDate(date)}</p>
+                            <p>{formatMonthYear(date)}</p>
+                          </div>
                         </th>
                         {isFriday && (
                           <th className="font-normal px-1 border-[1px] border-zinc-700">
-                            <p className="rotate-90">Total Hours</p>
+                            <div className="transform -rotate-[90deg]">
+                              <p>Total Hours</p>
+                            </div>
                           </th>
                         )}
                       </React.Fragment>
                     );
                   })}
+
 
                     
                   </tr>
@@ -1179,7 +1086,7 @@ export default function Yourworkload() {
             </>
           ) : (
             <div className=' w-full h-full flex items-center justify-center'>
-              <p className=' text-xs text-zinc-400'>No job component's yet under this project, please create one to see the workload!</p>
+              <p className=' text-xs text-zinc-400'>No job component archived yet!</p>
 
             </div>
           )}

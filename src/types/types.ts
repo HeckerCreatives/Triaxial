@@ -166,6 +166,7 @@ invoiceamount: string
 invoiceid: string
 jobcomponent: {name: string, jobmanager: string, budgettype: string, budget: number, jobno: string}
 newinvoice: number
+createdAt: string
 status: string
 client: {
     clientname: string,

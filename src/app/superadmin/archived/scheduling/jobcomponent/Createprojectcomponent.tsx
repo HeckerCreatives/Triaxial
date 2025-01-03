@@ -28,33 +28,10 @@ import axios, { AxiosError } from 'axios'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 
-type Project = {
-  createdAt: string
-deadlinedate: string
-invoiced: number
-managerName: string
-projectname: string
-startdate: string
-status: string
-teamname: string
-updatedAt: string
-client: string
-_id: string
-}
-
 
 
 interface Data {
   children?: React.ReactNode;
-  name: string
-  manager: string
-  budgettype: string
-  engr: any
-  engrrvr: any
-  drftr: any
-  drftrrvr: any
-  estbudget: number
-  state: boolean
 }
 
 type Member = {
@@ -65,7 +42,7 @@ type Member = {
 interface FormData {
     jobmanager: string;
     budgettype: string;
-    estimatedbudget: any;
+    estimatedbudget: string;
     jobcomponent: string
     jobno: string
     members: Member[]
@@ -81,8 +58,7 @@ type Manager = {
   name: string
 }
 
-
-export default function Copyprojectcomponent( prop: Data) {
+export default function Createprojectcomponent( prop: Data) {
   const [dialog, setDialog] = useState(false)
   const [jobno, setJobno] = useState('')
   const [client, setClient] = useState('')
@@ -94,43 +70,25 @@ export default function Copyprojectcomponent( prop: Data) {
   const params = useSearchParams()
   const id = params.get('projectid')
   const [isValidated, setIsvalidated] = useState(false)
-    const [projectid, setProjectId] = useState('')
-  
 
-  console.log(prop)
-
-  const [formData, setFormData] = useState<FormData[]>([]);
-
-  useEffect(() => {
-    // Set initial form data when the props are received
-    setFormData([
-      {
-        jobmanager: prop.manager ?? '',
-        jobno: '123',
-        budgettype: prop.budgettype ?? '',
-        estimatedbudget: prop.estbudget ?? '',
-        jobcomponent: prop.name ?? '',
-        members: [
-          {
-            employeeid: prop.engr === 'null' ? null : prop.engr ?? null,
-            role: "Engnr.",
-          },
-          {
-            employeeid: prop.engrrvr === 'null' ? null : prop.engrrvr ?? null,
-            role: "Engr. Revr.",
-          },
-          {
-            employeeid: prop.drftr === 'null' ? null : prop.drftr ?? null,
-            role: "Drft.",
-          },
-          {
-            employeeid: prop.drftrrvr === 'null' ? null : prop.drftrrvr ?? null,
-            role: "Drft. Revr.",
-          },
-        ],
-      },
-    ]);
-  }, [prop]);
+  const [formData, setFormData] = useState<FormData[]>([{ jobmanager: '',jobno: '123', budgettype: '', estimatedbudget: '', jobcomponent: '', members: [
+                {
+                    employeeid: "",
+                    role: "Engnr."
+                },
+                {
+                    employeeid: "",
+                    role: "Engr. Revr."
+                },
+                {
+                    employeeid: "",
+                    role: "Drft."
+                },
+                {
+                    employeeid: "",
+                    role: "Drft. Revr."
+                }
+  ]}]);
 
   const handleAddForm = () => {
     const lastForm = formData[formData.length - 1];
@@ -227,6 +185,8 @@ export default function Copyprojectcomponent( prop: Data) {
 
   },[dialog])
 
+  console.log(formData)
+
 
   //create job component
   const createProjectcomponent = async () => {
@@ -237,7 +197,7 @@ export default function Copyprojectcomponent( prop: Data) {
       const mainFieldsFilled = 
         form.jobmanager.trim() !== '' &&
         form.budgettype.trim() !== '' &&
-        form.estimatedbudget !== '' &&
+        form.estimatedbudget.trim() !== '' &&
         form.jobcomponent.trim() !== '' &&
         form.jobno.trim() !== '';
     
@@ -256,7 +216,7 @@ export default function Copyprojectcomponent( prop: Data) {
 
       try {
         const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/createjobcomponent`,{
-          projectid: projectid,
+          projectid: id,
           jobcomponentvalue: filteredFormData
         }, {
           withCredentials: true,
@@ -434,34 +394,14 @@ export default function Copyprojectcomponent( prop: Data) {
     
   },[])
 
-//   useEffect(() => {
-//     if(id === '' || id === undefined || id === null){
-//       router.push('/pm/projects')
-//     }
-//   },[id])
+  // useEffect(() => {
+  //   if(id === '' || id === undefined || id === null){
+  //     router.push('/pm/projects')
+  //   }
+  // },[id])
 
-// console.log(prop)
-
-
-const [list, setList] = useState<Project[]>([])
-useEffect(() => {
-  const timer = setTimeout(() => {
-    const getList = async () => {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/projects/saprojectlist?searchproject&page=0&limit=99999`,{
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json'
-          }
-      })
-      setList(response.data.data.projectlist)
-     
-   
-    }
-    getList()
-  },500)
-  return () => clearTimeout(timer)
   
-},[])
+
 
 
   
@@ -472,42 +412,33 @@ useEffect(() => {
     </DialogTrigger>
     <DialogContent className=' max-h-[90%] overflow-y-auto'>
       <div className=' w-full p-4 flex flex-col gap-4'>
-        <p className=' text-sm uppercase font-semibold text-red-700 flex items-center gap-2'><span className=' bg-red-700 px-4 py-1 text-zinc-100 text-xs'>Variation</span>Job Component</p>
+        <p className=' text-sm uppercase font-semibold text-red-700 flex items-center gap-2'><span className=' bg-red-700 px-4 py-1 text-zinc-100 text-xs'>Create</span>Job Components</p>
         <div className=' w-full flex flex-col gap-4'>
-{/* 
+
             <div className=' w-full flex items-end justify-end'>
                 <button onClick={handleAddForm} className=' px-4 py-2 bg-red-600 rounded-md text-[.6rem] text-white'>Add more</button>
-            </div> */}
-
-            <Label className="mt-2 text-zinc-500">Select Project</Label>
-                                                <Select
-                                                 value={projectid} 
-                                                 onValueChange={setProjectId}
-                                                >
-                                                    <SelectTrigger className="text-xs h-[35px] bg-zinc-100">
-                                                    <SelectValue placeholder="Select Project" className="text-black" />
-                                                    </SelectTrigger>
-                                                    <SelectContent className="text-xs">
-                                                      {list.map((item, index) => (
-                                                        <SelectItem key={index} value={item._id}>{item.projectname}</SelectItem>
-                                                      ))}
-                                                    </SelectContent>
-                                                </Select>
-            
+            </div>
 
 
           
 
             {formData.map((item, index) => (
                 <div key={index} className="flex flex-col gap-2 bg-zinc-100 rounded-md p-4">
-               
+                {index !== 0 && (
+                    <div className="w-full flex items-end justify-end">
+                    <div className=' w-full flex items-end justify-end'>
+                        <button onClick={() => handleRemoveForm(index)} className=' px-2 py-2 bg-red-600 rounded-md text-[.5rem] text-white flex items-center gap-1'><Trash size={12}/>Remove</button>
+                    </div>
+                    </div>
+                )}
+
                 <Accordion type="single" collapsible>
                     <AccordionItem value="item-1">
-                    <AccordionTrigger className="text-xs p-2 bg-zinc-300 rounded-sm font-semibold">Variation Details</AccordionTrigger>
+                    <AccordionTrigger className="text-xs p-2 bg-zinc-300 rounded-sm font-semibold">Component Details</AccordionTrigger>
                     <AccordionContent>
                         <div className="bg-zinc-200 flex flex-col gap-1 p-2">
 
-                        <Label className="mt-2 text-zinc-500">Variation Name</Label>
+                        <Label className="mt-2 text-zinc-500">Job Component Name</Label>
                         <Input
                             type="text"
                             className="text-xs h-[35px] bg-white"
