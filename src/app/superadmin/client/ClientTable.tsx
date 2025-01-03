@@ -472,6 +472,16 @@ export default function ClientTable() {
   },[dialog3])
 
   const priorityValue = watch('priority');
+
+  const clientColor = (data: string) => {
+    if(data.includes('1')){
+      return 'text-red-500'
+    } else if(data.includes('2')){
+      return 'text-blue-500'
+    } else if(data.includes('3')){
+      return 'text-green-500'
+    } 
+  }
   
   
   return (
@@ -513,7 +523,7 @@ export default function ClientTable() {
                           <SelectItem value="Priority 1">Priority 1</SelectItem>
                           <SelectItem value="Priority 2">Priority 2</SelectItem>
                           <SelectItem value="Priority 3">Priority 3</SelectItem>
-                          <SelectItem value="Others">Others</SelectItem>
+                          {/* <SelectItem value="Others">Others</SelectItem> */}
                         </SelectContent>
                       </Select>
                       {errors.priority && <p className=' text-[.6em] text-red-500'>{errors.priority.message}</p>}
@@ -609,7 +619,7 @@ export default function ClientTable() {
                 onChange={() => handleSelectRow(`${item.teamid}`, `${item.clientname}`)}
                 type="checkbox" />
             </TableCell>
-            <TableCell className="font-medium">{item.clientname}</TableCell>
+            <TableCell className={`font-medium ${clientColor(item.priority)}`}>{item.clientname}</TableCell>
             <TableCell className="font-medium ">{item.priority}</TableCell>
 
 
@@ -650,7 +660,7 @@ export default function ClientTable() {
                           <SelectItem value="Priority 1">Priority 1</SelectItem>
                           <SelectItem value="Priority 2">Priority 2</SelectItem>
                           <SelectItem value="Priority 3">Priority 3</SelectItem>
-                          <SelectItem value="Others">Others</SelectItem>
+                          {/* <SelectItem value="Others">Others</SelectItem> */}
                         </SelectContent>
                       </Select>
                       {errors.priority && <p className=' text-[.6em] text-red-500'>{errors.priority.message}</p>}

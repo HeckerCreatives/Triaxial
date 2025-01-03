@@ -34,6 +34,10 @@ forecastinvoicing: number,
 totalinvoicerequested: number,
 teamId: string
 wip: number
+currentMonthProjected: number,
+nextMonthProjected: number,
+secondMonthProjected: number,
+totalInvoiceRequestedUpToPreviousMonth: number,
 
 }
 
@@ -67,6 +71,22 @@ export default function Teamlist() {
    <div className=' w-full h-full flex justify-center bg-secondary text-zinc-100'>
 
     <div className=' w-full flex flex-col max-w-[1520px]'>
+
+    <Table className=' mt-4'>
+        
+        <TableHeader>
+
+            <TableRow>
+            <TableHead className=" w-[70px]"></TableHead>
+            <TableHead className=' w-[70px]'> </TableHead>
+            <TableHead className=' w-[70px]'></TableHead>
+            <TableHead className=' w-[70px]'> Forecast Invoicing</TableHead>
+            <TableHead className=' w-[70px]'> Total Invoice Requested</TableHead>
+         
+            </TableRow>
+        </TableHeader>
+        
+        </Table>
      
         <Table className=' mt-4'>
         {list?.length === 0 &&  
@@ -78,14 +98,22 @@ export default function Teamlist() {
               <Spinner/>
             </TableCaption>
           )}
+          
         <TableHeader>
+
             <TableRow>
             <TableHead className="">Team Name</TableHead>
             <TableHead>Team Leader</TableHead>
             <TableHead>Project Manager</TableHead>
+            <TableHead>Total # Projects</TableHead>
             <TableHead>WIP</TableHead>
-            <TableHead> 12 Months Forecast Invoicing</TableHead>
-            <TableHead>Total Invoice Requested</TableHead>
+            <TableHead>Current Month</TableHead>
+            <TableHead>Month 2</TableHead>
+            <TableHead>Month 3</TableHead>
+            <TableHead>Current Month</TableHead>
+            <TableHead>Previous Month</TableHead>
+            {/* <TableHead> 12 Months Forecast Invoicing</TableHead>
+            <TableHead>Total Invoice Requested</TableHead> */}
             <TableHead>Action</TableHead>
             
             </TableRow>
@@ -98,9 +126,13 @@ export default function Teamlist() {
                   </TableCell>
                 <TableCell>{item.teamLeader.name}</TableCell>
                 <TableCell>{item.manager.name}</TableCell>
+                <TableCell>{item.projectCount}</TableCell>
                 <TableCell>$ {item.wip.toLocaleString()}</TableCell>
-                <TableCell>$ {item.forecastinvoicing.toLocaleString()}</TableCell>
+                <TableCell>$ {item.currentMonthProjected.toLocaleString()}</TableCell>
+                <TableCell>$ {item.nextMonthProjected.toLocaleString()}</TableCell>
+                <TableCell>$ {item.secondMonthProjected.toLocaleString()}</TableCell>
                 <TableCell>$ {item.totalinvoicerequested.toLocaleString()}</TableCell>
+                <TableCell>$ {item.totalInvoiceRequestedUpToPreviousMonth.toLocaleString()}</TableCell>
                 <TableCell className=" flex items-center gap-2">
                     <button onClick={() => router.push(`/finance/summaries/team/teamtotalinvoice?teamid=${item.teamId}`)} className=' bg-red-600 px-2 py-1 text-xs rounded-sm text-white flex items-center gap-1'><Eye size={12}/>View</button>
                 </TableCell>
@@ -111,7 +143,7 @@ export default function Teamlist() {
         </Table>
 
       
-          <PaginitionComponent currentPage={currentpage} total={totalpage} onPageChange={handlePageChange}/>
+          {/* <PaginitionComponent currentPage={currentpage} total={totalpage} onPageChange={handlePageChange}/> */}
       
     </div>
         

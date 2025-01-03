@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from "next/link"
 import {
   CircleUser,
@@ -32,6 +32,14 @@ import {
 } from "@/components/ui/accordion"
 
 
+type Data = {
+  contactno: string
+  firstname: string
+  id: string
+  initial: string
+  lastname: string
+}
+
 export default function EmployeeLayout({
   children,
 }: {
@@ -39,6 +47,8 @@ export default function EmployeeLayout({
 }) {
 
   const router = useRouter()
+        const [data, setData] = useState<Data>()
+  
 
 
   const path = usePathname()
@@ -68,6 +78,18 @@ export default function EmployeeLayout({
 
   //auth checker
   Authcheck()
+
+  useEffect(() => {
+    const getData = async () => {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users/getuserdetails`,
+        {withCredentials: true}
+      )
+
+      console.log(response.data)
+      setData(response.data.data)
+    }
+    getData()
+  },[])
 
   return (
       <div className="flex min-h-screen w-full overflow-hidden">
@@ -270,18 +292,21 @@ export default function EmployeeLayout({
             <Menu className="h-5 w-5 text-zinc-100 lg:block hidden" onClick={toggleNav} />
 
             )}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild className=' hover:bg-zinc-100'>
-                <Button variant="secondary" size="icon" className="rounded-full bg-zinc-100">
-                  <CircleUser className="h-5 w-5" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Employee</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={logout}><a href="/">Logout</a></DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <div className=' flex items-center gap-2'>
+                                                              <p className=' text-white text-xs'>{data?.firstname} {data?.lastname}</p>
+                                                            <DropdownMenu>
+                                                              <DropdownMenuTrigger asChild className=' hover:bg-zinc-100'>
+                                                                <Button variant="secondary" size="icon" className="rounded-full bg-zinc-100">
+                                                                  <CircleUser className="h-5 w-5" />
+                                                                </Button>
+                                                              </DropdownMenuTrigger>
+                                                              <DropdownMenuContent align="end">
+                                                                <DropdownMenuLabel>Employee</DropdownMenuLabel>
+                                                                <DropdownMenuSeparator />
+                                                                <DropdownMenuItem onClick={logout}><a href="/">Logout</a></DropdownMenuItem>
+                                                              </DropdownMenuContent>
+                                                            </DropdownMenu>
+                                                            </div>
           </header>
           <main className=" relative flex flex-1 flex-col items-center gap-4 ">
               {children}

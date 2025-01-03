@@ -174,6 +174,17 @@ export default function Yourworkload() {
     return data
   }
 
+  const formatAustralianDate = (date: any) => {
+    const parsedDate = new Date(date); // Ensure the date is converted to a Date object
+    return parsedDate.toLocaleDateString('en-AU', { day: '2-digit', month: '2-digit', year: '2-digit' });
+  };
+  
+  const formatMonthYear = (date: any) => {
+    const parsedDate = new Date(date); // Ensure the date is converted to a Date object
+    return parsedDate.toLocaleDateString('en-AU', { month: 'short', year: 'numeric' });
+  };
+  
+
   
 
   const statusColor = (data: string[], date: string, leaveStart: string, leaveEnd: string, eventStart: string, eventEnd: string, wddate: string, hours: number, eventDates: Event[], leaveDates: Leave[], wellnessDates: string[]) => {
@@ -284,11 +295,14 @@ export default function Yourworkload() {
                   {dates.map((dateObj, index) => (
                     <>
                       <th key={index} className=' relative font-normal w-[30px] border-[1px] border-zinc-700'>
-                        <p className=' w-[50px] -translate-x-4 absolute rotate-90 top-10'>{dateObj}</p>
+                      <div className="whitespace-nowrap transform -rotate-[90deg]">
+                            <p>{formatAustralianDate(dateObj)}</p>
+                            <p>{formatMonthYear(dateObj)}</p>
+                          </div>
                       </th>
                       {(index + 1) % 5 === 0 && (
                         <th key={`total-${index}`} className='font-normal w-[30px] border-[1px] border-zinc-700'>
-                          <p className='rotate-90 w-[50px]'>Total Hours</p>
+                          <p className='-rotate-[90deg] w-[50px]'>Total Hours</p>
                         </th>
                       )}
                     </>

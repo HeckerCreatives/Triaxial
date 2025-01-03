@@ -439,20 +439,18 @@ export default function Yourworkload() {
             </thead>
             <tbody>
             {list.map((graphItem, graphIndex) =>
-              graphItem.members.map((member, memberIndex) => (
-                <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
-                   
-                    <td className="text-center">{ graphItem.jobno}</td>
-                    <td className="text-center">{ graphItem.clientname.name}</td>
-                    <td className="text-center">{ graphItem.projectname.name}</td>
-                    <td className="text-center">{ graphItem.jobmanager.fullname}</td>
+              graphItem.members
+                .filter(member => member.employee.fullname !== "N/A") // Filter out members with fullname "N/A"
+                .map((member, memberIndex) => (
+                  <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
+                    <td className="text-center">{graphItem.jobno}</td>
+                    <td className="text-center">{graphItem.clientname.name}</td>
+                    <td className="text-center">{graphItem.projectname.name}</td>
+                    <td className="text-center">{graphItem.jobmanager.fullname}</td>
                     <td className="text-center">{graphItem.jobcomponent}</td>
-        
-                  <td className="text-center">{member.employee.fullname}</td>
-                 
-
-                </tr>
-              ))
+                    <td className="text-center">{member.employee.fullname}</td>
+                  </tr>
+                ))
             )}
           </tbody>
             </table>
@@ -492,7 +490,9 @@ export default function Yourworkload() {
                 </thead>
                 <tbody>
                 {list.map((graphItem, graphIndex) =>
-                    graphItem.members.map((member, memberIndex) => (
+                    graphItem.members
+                    .filter(member => member.employee.fullname !== "N/A")
+                    .map((member, memberIndex) => (
                       <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
                         
                   

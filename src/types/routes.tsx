@@ -160,7 +160,7 @@ export const pm = [
     {name: 'Dashboard', path: '/pm/dashboard', icon: <Home className="h-4 w-4" />, subpath: []},
     {name: 'Your Workload', path: '/pm/yourworkload', icon: <List className="h-4 w-4" />, subpath: []},
     // {name: 'Team', path: '/pm/team', icon: <Users className="h-4 w-4" />, subpath: []},
-    // {name: 'Projects', path: '/pm/projects', icon: <Box className="h-4 w-4" />, subpath: []},
+    {name: 'Projects', path: '/pm/projects', icon: <Box className="h-4 w-4" />, subpath: []},
     {name: 'Scheduling', path: '/pm/scheduling', icon: <Box className="h-4 w-4" />, subpath: []},
     {name: 'Project Invoice', path: '/pm/noaccess', icon: <File className="h-4 w-4" />, subpath: []},
     {name: 'Invoice Requests', path: '/pm/noaccess', icon: <ListChecks className="h-4 w-4" />, subpath: []},
@@ -328,7 +328,7 @@ export const finance = [
     // {name: 'Projects', path: '/finance/noaccess', icon: <Box className="h-4 w-4" />, subpath: []},
     {name: 'Scheduling', path: '/finance/scheduling', icon: <Box className="h-4 w-4" />, subpath: []},
     {name: 'Project Invoice', path: '/finance/projectinvoice/list', icon: <File className="h-4 w-4" />, subpath: []},
-    {name: 'Invoice Requests', path: '/finance/invoice', icon: <ListChecks className="h-4 w-4" />, subpath: []},
+    // {name: 'Invoice Requests', path: '/finance/invoice', icon: <ListChecks className="h-4 w-4" />, subpath: []},
     {name: 'Finance', path: '/finance/noaccess', icon: <Files className="h-4 w-4" />, subpath: []},
     {name: 'Searches', path: '/finance/client', icon: <Search className="h-4 w-4" />, subpath: [
         {name: 'Clients', path: '/finance/noaccess', subpath: []},
@@ -349,6 +349,8 @@ export const finance = [
         {name: 'Finance WIP List', path: '/finance/summaries', subpath: [
             {name: 'Per Team', path: '/finance/summaries/team',subpath: []},
             {name: 'Per Client', path: '/finance/summaries/client',subpath: []},
+            {name: 'Invoice Requests', path: '/finance/invoice', subpath: []},
+
         ]}
     ]},
 
@@ -357,7 +359,7 @@ export const finance = [
         {name: 'Employee', path: '/finance/noaccess', subpath: []},
         {name: 'Project Manager', path: '/finance/noaccess', subpath: []},
         {name: 'Human Resource', path: '/finance/noaccess', subpath: []},
-        {name: 'Finance', path: '/finance/noaccess', subpath: []},
+
     ]},
 
     {name: 'Events', path: '/finance/noaccess', icon: <CalendarCheck2 className="h-4 w-4" />, subpath: []},
@@ -394,7 +396,7 @@ export const superadmin = [
             {name: 'Due Dates', path: '/superadmin/noaccess',subpath: []},
         ]},
         {name: 'Requests', path: '/superadmin/summaries', subpath: [
-            {name: 'Individual Requests', path: '/pm/noaccess'},
+            {name: 'Individual Requests', path: '/superadmin/summaries/individualrequest'},
             {name: 'Leave List', path: '/superadmin/summaries/leave',subpath: []},
             {name: 'WFH List', path: '/superadmin/summaries/wfh',subpath: []},
             {name: 'WD List', path: '/superadmin/summaries/wellnessday',subpath: []},

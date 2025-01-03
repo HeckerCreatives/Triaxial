@@ -150,7 +150,7 @@ export default function Teamstable() {
             <TableCell>{item.teamleader}</TableCell>
             <TableCell>1</TableCell>
             <TableCell>
-              <Viewbtn disabled={false} name='View' onClick={() => router.push(`/pm/team/teamproject?teamid=${item.teamid}`)}/>
+              <Viewbtn disabled={false} name='View' onClick={() => router.push(`/pm/team/teamproject?teamid=${item.teamid}&team=${item.teamname}`)}/>
 
             </TableCell>
             <TableCell>

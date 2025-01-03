@@ -5,6 +5,7 @@ import toast from 'react-hot-toast'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { RefreshCcw } from 'lucide-react'
 import { string } from 'zod'
+import { formatDate } from '@/utils/functions'
 
 type Dates = {
   date: string
@@ -232,6 +233,18 @@ export default function Yourworkload() {
 
 
 
+  const formatAustralianDate = (date: string) => {
+    const dates = new Date(date); // Convert the string to a Date object
+    return dates.toLocaleDateString('en-AU', { day: '2-digit', month: '2-digit', year: '2-digit' });
+  };
+  
+  const formatMonthYear = (date: string) => {
+    const dates = new Date(date); // Convert the string to a Date object
+    return dates.toLocaleDateString('en-AU', { month: 'short', year: 'numeric' });
+  };
+
+
+
   return (
     <div className=' w-full h-full flex flex-col justify-center bg-secondary p-4 text-zinc-100'>
 
@@ -284,11 +297,14 @@ export default function Yourworkload() {
                   {dates.map((dateObj, index) => (
                     <>
                       <th key={index} className=' relative font-normal w-[30px] border-[1px] border-zinc-700'>
-                        <p className=' w-[50px] -translate-x-4 absolute rotate-90 top-10'>{dateObj}</p>
+                        <div className="whitespace-nowrap transform -rotate-[90deg]">
+                            <p>{formatAustralianDate(dateObj)}</p>
+                            <p>{formatMonthYear(dateObj)}</p>
+                          </div>
                       </th>
                       {(index + 1) % 5 === 0 && (
                         <th key={`total-${index}`} className='font-normal w-[30px] border-[1px] border-zinc-700'>
-                          <p className='rotate-90 w-[50px]'>Total Hours</p>
+                          <p className='-rotate-90 w-[50px]'>Total Hours</p>
                         </th>
                       )}
                     </>

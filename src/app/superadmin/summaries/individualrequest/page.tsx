@@ -1,6 +1,5 @@
 import SuperadminLayout from '@/components/layout/SuperadminLayout'
 import React from 'react'
-import { Dashboardcards } from './Dashboardcards'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,21 +10,22 @@ import {
 } from "@/components/ui/breadcrumb"
 import Link from 'next/link'
 import Breadcrumbdb from '@/components/common/Breadcrumb'
-import Bottomcards from './Bottomcards'
-import HrLayout from '@/components/layout/HrLayout'
+import EmployeeLayout from '@/components/layout/EmployeeLayout'
+
+import PmLayout from '@/components/layout/PmLayout'
+import Yourworkload from './Yourworkload'
 
 
 export default function page() {
   return (
-    <HrLayout>
+    <SuperadminLayout>
       <div className=' p-6 top-0 left-0 w-full h-[100px] bg-zinc-800'
       style={{backgroundImage: `url('/dbbg.png')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat:"no-repeat"}}
       >
-        <Breadcrumbdb page={'Dashboard'}/>
+        <Breadcrumbdb page={'Sumaries / Requests / Indvidual request'}/>
 
       </div>
-        {/* <Dashboardcards/> */}
-        <Bottomcards/>
-    </HrLayout>
+      <Yourworkload/>
+    </SuperadminLayout>
   )
 }

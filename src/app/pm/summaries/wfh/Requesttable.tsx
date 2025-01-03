@@ -78,7 +78,7 @@ export default function Requesttable() {
   useEffect(() => {
     const timer = setTimeout(() => {
       const getList = async () => {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/wfh/listwfhrequestmanager?statusfilter=${status}&fullnamefilter=${searchName}&page=${currentpage}&limit=10`,{
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/wfh/listwfhrequestmanager?statusfilter=Approved&fullnamefilter=${searchName}&page=${currentpage}&limit=10`,{
           withCredentials: true,
           headers: {
             'Content-Type': 'application/json'
@@ -122,7 +122,7 @@ export default function Requesttable() {
       <div className=' flex md:flex-row flex-col items-center justify-between gap-4'>
 
         <div className=' flex flex-col gap-2'>
-          <label htmlFor="" className=' text-xs text-zinc-400 mt-4'>Filter by status</label>
+          {/* <label htmlFor="" className=' text-xs text-zinc-400 mt-4'>Filter by status</label>
           <Select value={status} onValueChange={setStatus}>
           <SelectTrigger className="w-[180px] bg-primary mt-2">
             <SelectValue placeholder="Filter by status" />
@@ -132,7 +132,7 @@ export default function Requesttable() {
             <SelectItem value="Approved">Approved</SelectItem>
             <SelectItem value="Denied">Rejected</SelectItem>
           </SelectContent>
-        </Select>
+        </Select> */}
 
         </div>
 

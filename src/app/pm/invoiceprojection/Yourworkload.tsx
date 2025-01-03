@@ -13,6 +13,8 @@ import toast from 'react-hot-toast'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { formatDate } from '@/utils/functions'
 import { Input } from '@/components/ui/input'
+import Invoice from '@/components/forms/Invoice'
+import { File } from 'lucide-react'
 
 type values = {
   date: string
@@ -29,6 +31,7 @@ jobmanager: {
     fullname: string
 },
 clientname: string
+priority: string
 projectname: string
 budgettype: string
 estimatedbudget: number
@@ -76,7 +79,7 @@ export default function Yourworkload() {
   const [componentid, setComponentid] = useState('')
 
   const getList = async () => {
-    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/projectinvoice/managerlistcomponentprojectinvoice?projectid=${id}`,{
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/projectinvoice/managerlistcomponentprojectinvoice?teamid=${id}`,{
       withCredentials: true,
       headers: {
         'Content-Type': 'application/json'
@@ -206,7 +209,7 @@ export default function Yourworkload() {
     try {
       const timer = setTimeout(() => {
         const getList = async () => {
-          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/projectinvoice/managerlistcomponentprojectinvoice?projectid=${id}`,{
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/projectinvoice/managerlistcomponentprojectinvoice?teamid=${id}`,{
             withCredentials: true,
             headers: {
               'Content-Type': 'application/json'
@@ -304,6 +307,27 @@ const totalsByDate = allDates.map((dateObj) => {
   }, 0);
 });
 
+ const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  const handleSelect = (id: string) => {
+    setSelectedId((prevId) => (prevId === id ? null : id)); // Toggle selection
+  };
+
+  const findJobComponent = list.find((item) => item.componentid === componentid)
+
+
+  console.log(selectedId)
+
+  const clientColor = (data: string) => {
+    if(data.includes('1')){
+      return 'text-red-500'
+    } else if(data.includes('2')){
+      return 'text-blue-500'
+    } else if(data.includes('3')){
+      return 'text-green-500'
+    } 
+  }
+
 
 
 
@@ -319,9 +343,25 @@ const totalsByDate = allDates.map((dateObj) => {
               
             <table className="table-auto w-[1000px] border-collapse ">
           
-            <thead className=' bg-primary h-[40px]'>
+            <thead className=' bg-primary h-[50px]'>
 
               <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
+              <th className=' w-[70px] font-normal'>
+              {componentid === '' ? (
+                 <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                  <button onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><File size={12}/></button>
+                  <p>Invoice</p>
+                </div>
+
+              ) : (
+                <Invoice projectname={findJobComponent?.projectname} jobcname={findJobComponent?.jobcomponent} jobno={findJobComponent?.jobnumber} budgettype={findJobComponent?.budgettype} estimatedbudget={findJobComponent?.estimatedbudget} jobcid={findJobComponent?.componentid} isJobmanager={findJobComponent?.jobmanager.employeeid} currinvoice={findJobComponent?.invoice.percentage}>
+                  <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                    <button className={`text-xs p-1 bg-red-600  rounded-sm`}><File size={12}/></button>
+                    <p>Invoice</p>
+                  </div>       
+                </Invoice>
+              )}
+              </th>
               <th className=' w-[70px] font-normal'></th>
               <th className=' w-[70px] font-normal'></th>
               <th className=' w-[70px] font-normal'></th>
@@ -342,8 +382,9 @@ const totalsByDate = allDates.map((dateObj) => {
             <thead className=' bg-secondary h-[80px]'>
 
               <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
+              <th className=' w-[70px] font-normal'>Action</th>
               <th className=' w-[70px] font-normal'>Job no:</th>
-              <th className=' w-[70px] font-normal'>Client</th>
+              <th className={` w-[70px] font-normal`}>Client</th>
               <th className=' w-[70px] font-normal'>Project Name</th>
               <th className=' w-[70px] font-normal'>Job Mngr.</th>
                 <th className=' w-[70px] font-normal'>Job Component</th>
@@ -362,8 +403,15 @@ const totalsByDate = allDates.map((dateObj) => {
             {list.map((graphItem, graphIndex) => {
               return (
                 <tr key={`${graphIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
-                  <td className="text-center  text-red-600">{graphItem.jobnumber}</td>
-                  <td className="text-center ">{graphItem.clientname}</td>
+                  <td className="text-center  text-red-600">
+                    <input 
+                     type="checkbox"
+                     checked={selectedId === graphItem.componentid}
+                     onChange={() => {handleSelect(graphItem.componentid), setComponentid(graphItem.componentid)}}
+                    />
+                  </td>
+                  <td className="text-center  ">{graphItem.jobnumber}</td>
+                  <td className={`text-center  ${clientColor(graphItem.priority)}`}>{graphItem.clientname}</td>
                   <td className="text-center ">{graphItem.projectname}</td>
                   <td className="text-center ">{graphItem.jobmanager.fullname}</td>
                   <td className="text-center ">{graphItem.jobcomponent}</td>
@@ -385,7 +433,7 @@ const totalsByDate = allDates.map((dateObj) => {
 
           <div className=' overflow-x-auto'>
             <table className="table-auto border-collapse ">
-              <thead className=' w-[800px] bg-primary h-[40px] border-none'>
+              <thead className=' w-[800px] bg-primary h-[50px] border-none'>
                 <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
                   {totalsByDate.map((item, index) => (
                     <th key={index} className="relative font-normal px-6 ">

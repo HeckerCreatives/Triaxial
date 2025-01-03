@@ -943,22 +943,35 @@ export default function Yourworkload() {
                     return day >= 1 && day <= 5; // Filter to include only Monday through Friday
                   })
                   .map((dateObj, index) => {
-                    const day = new Date(dateObj).getDay();
+                    const date = new Date(dateObj);
+                    const day = date.getDay();
                     const isFriday = day === 5;
+
+                    // Format functions for Australian date
+                    const formatAustralianDate = (date: Date) =>
+                      date.toLocaleDateString('en-AU', { day: '2-digit', month: '2-digit', year: '2-digit' });
+                    const formatMonthYear = (date: Date) =>
+                      date.toLocaleDateString('en-AU', { month: 'short', year: 'numeric' });
 
                     return (
                       <React.Fragment key={index}>
                         <th className="relative font-normal border-[1px] border-zinc-700">
-                          <p className="whitespace-nowrap rotate-90">{formatDate(dateObj)}</p>
+                          <div className="whitespace-nowrap transform -rotate-[90deg]">
+                            <p>{formatAustralianDate(date)}</p>
+                            <p>{formatMonthYear(date)}</p>
+                          </div>
                         </th>
                         {isFriday && (
                           <th className="font-normal px-1 border-[1px] border-zinc-700">
-                            <p className="rotate-90">Total Hours</p>
+                            <div className="transform -rotate-[90deg]">
+                              <p>Total Hours</p>
+                            </div>
                           </th>
                         )}
                       </React.Fragment>
                     );
                   })}
+
 
                     
                   </tr>

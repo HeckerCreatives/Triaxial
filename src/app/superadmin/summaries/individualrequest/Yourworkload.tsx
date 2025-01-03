@@ -5,7 +5,15 @@ import toast from 'react-hot-toast'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { RefreshCcw } from 'lucide-react'
 import { string } from 'zod'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { formatAustralianDate, formatMonthYear } from '@/utils/functions'
+
 
 type Dates = {
   date: string
@@ -47,21 +55,28 @@ wellness: [
 ],
 }
 
-export default function Individualrequest() {
+type Team = {
+  teamid: string
+teamname: string
+}
+
+export default function Yourworkload() {
   const [memberIndex, setMemberIndex] = useState(0)
   const [list, setList] = useState<List[]>([])
   const [dates, setDates] = useState<string[]>([])
   const [filter, setFilter] = useState('')
   const router = useRouter()
   const params = useSearchParams()
-  const getTeamid = params.get('teamid')
+  const getTeamid = params.get('team')
+  const [team, setTeam] = useState<Team[]>([])
+  const [id, setId] = useState('')
 
 
   useEffect(() => {
     const getList = async () => {
-      if (getTeamid !== '' || undefined || null){
+    
         try {
-          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/getjobcomponentindividualrequest?teamid=${getTeamid}`,{
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/listemployeeindividualrequests?teamid=${id}`,{
             withCredentials: true
           })
 
@@ -72,9 +87,8 @@ export default function Individualrequest() {
         }
       }
 
-    }
     getList()
-  },[filter, getTeamid])
+  },[filter, id])
 
   const isDateInRange = (dateToCheck: string, startDate: string, endDate: string): boolean => {
     const checkDate = new Date(dateToCheck);
@@ -126,22 +140,97 @@ export default function Individualrequest() {
   }
 
 
+  useEffect(() => {
+    const getList = async () => {
+   
+        try {
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teams/listteamselect`,{
+            withCredentials: true
+          })
+
+        console.log(response.data)
+        setTeam(response.data.data)
+        setId(response.data.data[0].teamid)
+        } catch (error) {
+
+        }
+      }
+    getList()
+  },[])
+
+
 
   return (
-    <div className=' w-full h-full flex flex-col justify-center bg-secondary text-zinc-100'>
+    <div className=' w-full h-full flex flex-col justify-center bg-secondary p-4 text-zinc-100'>
 
 
       <div className=' h-full w-full flex flex-col gap-2 max-w-[1920px]'>
-     
+      <div className=' w-full flex items-center gap-2 justify-between py-4'>
+
+        <div className=' text-xs'>
+          <label htmlFor="">Filter by team:</label>
+          <Select value={id} onValueChange={setId}>
+            <SelectTrigger className="w-[180px] bg-primary mt-1" >
+              <SelectValue placeholder="Select Team" />
+            </SelectTrigger>
+            <SelectContent>
+              {team.map((item, index) => (
+                <SelectItem value={item.teamid}>{item.teamname}</SelectItem>
+              ))}
+             
+            </SelectContent>
+          </Select>
+
+        </div>
+
+        <div className=' h-full flex items-end gap-2'>
+          <p className=' text-[.8em]'>Legend:</p>
+
+            <div className=' w-fit flex items-center gap-2'>
+              <div className=' flex items-center gap-2'>
+                <div className=' bg-violet-300'>
+                  <p className=' text-[.7em] text-black font-semibold px-1'>Leave</p>
+                </div>
+
+
+
+              </div>
+
+              <div className=' flex items-center gap-2'>
+                <div className=' bg-fuchsia-400'>
+                <p className=' text-[.7em] text-black font-semibold px-1'>Wellness Day</p>
+
+                </div>
+
+
+              </div>
+
+              <div className=' flex items-center gap-2'>
+                <div className=' bg-gray-400'>
+                <p className=' text-[.7em] text-black font-semibold px-1'>Events</p>
+
+                </div>
+
+
+              </div>
+
+
+            </div>
+
+      </div>
+
+
+      </div>
       {list.length !== 0 ? (
         <div className=' h-full overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
-          <table className="table-auto w-[710px] border-collapse ">
+          <table className="table-auto w-[300px] border-collapse ">
             <thead className=' bg-secondary h-[100px]'>
 
               <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
                 <th className=' w-[20px] font-normal'>Name</th>
                 <th className=' w-[50px] font-normal'>Initial</th>
                 <th className=' font-normal w-[50px]'>Resource</th>
+                <th className=' w-[20px] font-normal'>Team</th>
 
               </tr>
             </thead>
@@ -154,6 +243,10 @@ export default function Individualrequest() {
                   <td onClick={() => router.push(`/pm/individualworkload?employeeid=${member.id}`)} className="text-center cursor-pointer underline text-blue-400">{member.name}</td>
                   <td className="text-center">{member.initial}</td>
                   <td className="text-center">{member.resource}</td>
+                  <td className="text-center">{graphItem.name}</td>
+
+
+
                 </tr>
               ))
             )}
@@ -168,15 +261,15 @@ export default function Individualrequest() {
 
                   {dates.map((dateObj, index) => (
                     <>
-                       <th className="relative font-normal border-[1px] border-zinc-700">
-                                                <div className="whitespace-nowrap transform -rotate-[90deg]">
-                                                  <p>{formatAustralianDate(dateObj)}</p>
-                                                  <p>{formatMonthYear(dateObj)}</p>
-                                                </div>
-                                              </th>
+                      <th key={index} className=' relative font-normal w-[30px] border-[1px] border-zinc-700'>
+                      <div className="whitespace-nowrap transform -rotate-[90deg]">
+                            <p>{formatAustralianDate(dateObj)}</p>
+                            <p>{formatMonthYear(dateObj)}</p>
+                          </div>
+                      </th>
                       {(index + 1) % 5 === 0 && (
                         <th key={`total-${index}`} className='font-normal w-[30px] border-[1px] border-zinc-700'>
-                          <p className='-rotate-90 w-[50px]'>-</p>
+                          <p className='-rotate-90 w-[50px]'>Total Hours</p>
                         </th>
                       )}
                     </>
@@ -191,7 +284,7 @@ export default function Individualrequest() {
                   {workItem.members.map((member, memberIndex) => (
                     <tr
                       key={`${workIndex}-${memberIndex}`}
-                      className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] w-[50px] border-zinc-600"
+                      className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600"
                     >
                       {dates.map((date, dateIndex) => {
                         // Find date data for the current member and date
@@ -254,7 +347,7 @@ export default function Individualrequest() {
           ): (
 
             <div className=' w-full h-[300px] flex items-center justify-center'>
-              <p className=' text-sm text-zinc-400'>No individual requests.</p>
+              <p className=' text-sm text-zinc-400'>No data.</p>
             </div>
 
         )}

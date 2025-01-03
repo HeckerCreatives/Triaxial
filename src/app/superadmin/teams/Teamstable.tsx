@@ -830,7 +830,7 @@ export default function Teamstable() {
             <TableHead className="">Team name</TableHead>
             <TableHead className="">Project Manager</TableHead>
             <TableHead className="">Team Leader</TableHead>
-            <TableHead>Total Project</TableHead>
+            <TableHead>Total # of Projects</TableHead>
             <TableHead className="">Projects</TableHead>
             <TableHead className="">Individual Workloads</TableHead>
             {/* <TableHead className="">Invoice Projection</TableHead>

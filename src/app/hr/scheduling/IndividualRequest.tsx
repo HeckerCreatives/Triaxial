@@ -5,6 +5,7 @@ import toast from 'react-hot-toast'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { RefreshCcw } from 'lucide-react'
 import { string } from 'zod'
+import { formatAustralianDate, formatMonthYear } from '@/utils/functions'
 
 type Dates = {
   date: string
@@ -167,12 +168,15 @@ export default function Individualrequest() {
 
                   {dates.map((dateObj, index) => (
                     <>
-                      <th key={index} className=' relative font-normal w-[30px] border-[1px] border-zinc-700 px-6'>
-                        <p className=' w-[50px] -translate-x-6 absolute rotate-90 top-10'>{dateObj}</p>
-                      </th>
+                       <th className="relative font-normal border-[1px] border-zinc-700">
+                                                <div className="whitespace-nowrap transform -rotate-[90deg]">
+                                                  <p>{formatAustralianDate(dateObj)}</p>
+                                                  <p>{formatMonthYear(dateObj)}</p>
+                                                </div>
+                                              </th>
                       {(index + 1) % 5 === 0 && (
                         <th key={`total-${index}`} className='font-normal w-[30px] border-[1px] border-zinc-700'>
-                          <p className='rotate-90 w-[50px]'>-</p>
+                          <p className='-rotate-90 w-[50px]'>-</p>
                         </th>
                       )}
                     </>
@@ -250,7 +254,7 @@ export default function Individualrequest() {
           ): (
 
             <div className=' w-full h-[300px] flex items-center justify-center'>
-              <p className=' text-sm text-zinc-400'>No data.</p>
+              <p className=' text-sm text-zinc-400'>No individual requests.</p>
             </div>
 
         )}

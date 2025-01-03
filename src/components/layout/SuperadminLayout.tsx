@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from "next/link"
 import {
   Bell,
@@ -44,6 +44,14 @@ import toast from 'react-hot-toast'
 import { superadmin } from '@/types/routes'
 import Authcheck from '@/utils/Authcheck'
 
+type Data = {
+  contactno: string
+firstname: string
+id: string
+initial: string
+lastname: string
+}
+
 export default function SuperadminLayout({
   children,
 }: {
@@ -55,6 +63,7 @@ export default function SuperadminLayout({
   const getTeam = params.get('team')
   const [menu, setMenu] = useState(false)
   const router = useRouter()
+  const [data, setData] = useState<Data>()
 
    const toggleMenu = () => {
     setMenu(!menu);
@@ -81,7 +90,17 @@ export default function SuperadminLayout({
   //auth checker
   Authcheck()
 
-  console.log(path)
+    useEffect(() => {
+      const getData = async () => {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users/getuserdetails`,
+          {withCredentials: true}
+        )
+
+        console.log(response.data)
+        setData(response.data.data)
+      }
+      getData()
+    },[])
 
   return (
       <div className="flex min-h-screen w-full overflow-hidden">
@@ -264,6 +283,8 @@ export default function SuperadminLayout({
             <Menu className="h-5 w-5 text-zinc-100 lg:block hidden" onClick={toggleMenu} />
 
             )}
+            <div className=' flex items-center gap-2'>
+              <p className=' text-white text-xs'>{data?.firstname} {data?.lastname}</p>
             <DropdownMenu>
               <DropdownMenuTrigger asChild className=' hover:bg-zinc-100'>
                 <Button variant="secondary" size="icon" className="rounded-full bg-zinc-100">
@@ -276,6 +297,8 @@ export default function SuperadminLayout({
                 <DropdownMenuItem onClick={logout}><a href="/">Logout</a></DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+            </div>
+            
           </header>
           <main className=" relative flex flex-1 flex-col items-center gap-4 ">
               {children}

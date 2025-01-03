@@ -25,7 +25,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import Createprojectcomponent from './Createprojectcomponent'
 import { Graph, Members } from '@/types/types'
-import { formatDate } from '@/utils/functions'
+import { formatAustralianDate, formatDate, formatMonthYear } from '@/utils/functions'
 import { any } from 'zod'
 import Invoice from '@/components/forms/Invoice'
 import Copyprojectcomponent from './Copyprojectcomponent'
@@ -709,6 +709,8 @@ export default function Yourworkload() {
 
 
 
+
+
   return (
    <div className=' w-full h-full flex flex-col justify-center bg-secondary p-4 text-zinc-100'>
 
@@ -949,11 +951,14 @@ export default function Yourworkload() {
                     return (
                       <React.Fragment key={index}>
                         <th className="relative font-normal border-[1px] border-zinc-700">
-                          <p className="whitespace-nowrap rotate-90">{formatDate(dateObj)}</p>
+                          <div className="whitespace-nowrap transform -rotate-[90deg]">
+                            <p>{formatAustralianDate(dateObj)}</p>
+                            <p>{formatMonthYear(dateObj)}</p>
+                          </div>
                         </th>
                         {isFriday && (
                           <th className="font-normal px-1 border-[1px] border-zinc-700">
-                            <p className="rotate-90">Total Hours</p>
+                            <p className="-rotate-[90deg]">Total Hours</p>
                           </th>
                         )}
                       </React.Fragment>

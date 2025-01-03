@@ -18,11 +18,11 @@ export default function Breadcrumbdb(prop: any) {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink asChild className=' hover:text-red-600'>
+              {/* <BreadcrumbLink asChild className=' hover:text-red-600'>
                 <p className=' text-zinc-100 text-xs'>Dashboard</p>
-              </BreadcrumbLink>
+              </BreadcrumbLink> */}
             </BreadcrumbItem>
-          <BreadcrumbSeparator />
+          {/* <BreadcrumbSeparator /> */}
             <BreadcrumbItem>
               <BreadcrumbLink href={path} className=' text-xs text-zinc-100 hover:text-red-600'>{prop.page}</BreadcrumbLink>
             </BreadcrumbItem>

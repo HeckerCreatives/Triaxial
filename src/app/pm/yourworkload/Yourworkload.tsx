@@ -123,6 +123,17 @@ export default function Yourworkload() {
     return colorData; 
   }
 
+  const formatAustralianDate = (date: any) => {
+    const parsedDate = new Date(date); // Ensure the date is converted to a Date object
+    return parsedDate.toLocaleDateString('en-AU', { day: '2-digit', month: '2-digit', year: '2-digit' });
+  };
+  
+  const formatMonthYear = (date: any) => {
+    const parsedDate = new Date(date); // Ensure the date is converted to a Date object
+    return parsedDate.toLocaleDateString('en-AU', { month: 'short', year: 'numeric' });
+  };
+  
+
 
 
   return (
@@ -182,7 +193,7 @@ export default function Yourworkload() {
             graphItem.members.map((member, memberIndex) => (
               <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
                  
-                  <td className="text-center ">{memberIndex === 0 && graphItem.teamname}</td>
+                  <td className="text-center ">{graphItem.teamname}</td>
                   <td className="text-center text-red-500">{memberIndex === 0 && graphItem.jobno}</td>
                   <td className="text-center ">{memberIndex === 0 && graphItem.clientname}</td>
                   <td className="text-center ">{memberIndex === 0 && graphItem.projectname}</td>
@@ -227,11 +238,14 @@ export default function Yourworkload() {
                   return (
                     <React.Fragment key={index}>
                       <th className="relative font-normal border-[1px] border-zinc-700">
-                        <p className="whitespace-nowrap rotate-90">{formatDate(dateObj)}</p>
+                        <div className="whitespace-nowrap transform -rotate-[90deg]">
+                            <p>{formatAustralianDate(dateObj)}</p>
+                            <p>{formatMonthYear(dateObj)}</p>
+                          </div>
                       </th>
                       {(index + 1) % 5 === 0 && (
                         <th className="font-normal px-1 border-[1px] border-zinc-700">
-                          <p className="rotate-90">Total Hours</p>
+                          <p className="-rotate-[90deg]">Total Hours</p>
                         </th>
                       )}
                     </React.Fragment>

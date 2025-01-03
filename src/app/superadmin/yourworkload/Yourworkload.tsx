@@ -14,7 +14,7 @@ import { env } from 'process'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
 import { Workload } from '@/types/types'
-import { formatDate } from '@/utils/functions'
+import { formatAustralianDate, formatDate } from '@/utils/functions'
 import Leaveform from '@/components/forms/Leaveform'
 import WDform from '@/components/forms/Wellnessday'
 import Wfhform from '@/components/forms/Wfhform'
@@ -212,7 +212,7 @@ export default function Yourworkload() {
                   return (
                     <React.Fragment key={index}>
                       <th className="relative font-normal border-[1px] border-zinc-700">
-                        <p className="whitespace-nowrap rotate-90">{formatDate(dateObj)}</p>
+                        <p className="whitespace-nowrap rotate-90">{formatAustralianDate(dateObj)}</p>
                       </th>
                       {(index + 1) % 5 === 0 && (
                         <th className="font-normal px-1 border-[1px] border-zinc-700">

@@ -167,4 +167,8 @@ invoiceid: string
 jobcomponent: {name: string, jobmanager: string, budgettype: string, budget: number, jobno: string}
 newinvoice: number
 status: string
+client: {
+    clientname: string,
+    priority: string
+}
 }

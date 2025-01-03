@@ -44,7 +44,7 @@ export default function page() {
       <div className=' p-6 top-0 left-0 w-full flex flex-col justify-between h-[100px] bg-zinc-800'
       style={{backgroundImage: `url('/dbbg.png')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat:"no-repeat"}}
       >
-        <Breadcrumbdb page={''}/>
+        <Breadcrumbdb page={'Dashboard'}/>
 
         {/* <div className=' w-full flex items-center justify-center'>
           <div className=' w-fit p-2 flex flex-wrap items-center justify-center gap-2 bg-secondary rounded-sm'>

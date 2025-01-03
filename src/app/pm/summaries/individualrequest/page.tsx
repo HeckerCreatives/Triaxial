@@ -22,7 +22,7 @@ export default function page() {
       <div className=' p-6 top-0 left-0 w-full h-[100px] bg-zinc-800'
       style={{backgroundImage: `url('/dbbg.png')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat:"no-repeat"}}
       >
-        <Breadcrumbdb page={'Sumaries / Request / Indvidual request'}/>
+        <Breadcrumbdb page={'Sumaries / Requests / Indvidual request'}/>
 
       </div>
       <Yourworkload/>

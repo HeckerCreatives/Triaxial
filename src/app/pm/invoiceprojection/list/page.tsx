@@ -17,7 +17,7 @@ export default function page() {
       style={{backgroundImage: `url('/dbbg.png')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat:"no-repeat"}}
       
       >
-        <Breadcrumbdb page={'Finance / Job Component / List'}/>
+        <Breadcrumbdb page={'Finance'}/>
 
     
       </div>

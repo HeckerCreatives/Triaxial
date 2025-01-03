@@ -5,6 +5,7 @@ import toast from 'react-hot-toast'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { RefreshCcw } from 'lucide-react'
 import { string } from 'zod'
+import { formatAustralianDate, formatMonthYear } from '@/utils/functions'
 
 type Dates = {
   date: string
@@ -53,14 +54,14 @@ export default function Individualrequest() {
   const [filter, setFilter] = useState('')
   const router = useRouter()
   const params = useSearchParams()
-  const getTeamid = params.get('teamid')
+  const getTeamid = params.get('team')
 
 
   useEffect(() => {
     const getList = async () => {
       if (getTeamid !== '' || undefined || null){
         try {
-          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/getjobcomponentindividualrequest?teamid=${getTeamid}`,{
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/getmanagerjobcomponentdashboard?filterDate=${filter}`,{
             withCredentials: true
           })
 
@@ -126,21 +127,23 @@ export default function Individualrequest() {
 
 
 
+
   return (
-    <div className=' w-full h-full flex flex-col justify-center bg-secondary text-zinc-100'>
+    <div className=' w-full h-full flex flex-col justify-center bg-secondary p-4 text-zinc-100'>
 
 
       <div className=' h-full w-full flex flex-col gap-2 max-w-[1920px]'>
      
       {list.length !== 0 ? (
         <div className=' h-full overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
-          <table className="table-auto w-[710px] border-collapse ">
+          <table className="table-auto w-[300px] border-collapse ">
             <thead className=' bg-secondary h-[100px]'>
 
               <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
                 <th className=' w-[20px] font-normal'>Name</th>
                 <th className=' w-[50px] font-normal'>Initial</th>
                 <th className=' font-normal w-[50px]'>Resource</th>
+                <th className=' w-[20px] font-normal'>Team</th>
 
               </tr>
             </thead>
@@ -153,6 +156,10 @@ export default function Individualrequest() {
                   <td onClick={() => router.push(`/pm/individualworkload?employeeid=${member.id}`)} className="text-center cursor-pointer underline text-blue-400">{member.name}</td>
                   <td className="text-center">{member.initial}</td>
                   <td className="text-center">{member.resource}</td>
+                  <td className="text-center">{graphItem.name}</td>
+
+
+
                 </tr>
               ))
             )}
@@ -167,12 +174,15 @@ export default function Individualrequest() {
 
                   {dates.map((dateObj, index) => (
                     <>
-                      <th key={index} className=' relative font-normal w-[30px] border-[1px] border-zinc-700 px-6'>
-                        <p className=' w-[50px] -translate-x-6 absolute rotate-90 top-10'>{dateObj}</p>
+                      <th key={index} className=' relative font-normal w-[30px] border-[1px] border-zinc-700'>
+                      <div className="whitespace-nowrap transform -rotate-[90deg]">
+                            <p>{formatAustralianDate(dateObj)}</p>
+                            <p>{formatMonthYear(dateObj)}</p>
+                          </div>
                       </th>
                       {(index + 1) % 5 === 0 && (
                         <th key={`total-${index}`} className='font-normal w-[30px] border-[1px] border-zinc-700'>
-                          <p className='rotate-90 w-[50px]'>-</p>
+                          <p className='-rotate-90 w-[50px]'>Total Hours</p>
                         </th>
                       )}
                     </>
@@ -187,7 +197,7 @@ export default function Individualrequest() {
                   {workItem.members.map((member, memberIndex) => (
                     <tr
                       key={`${workIndex}-${memberIndex}`}
-                      className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] w-[50px] border-zinc-600"
+                      className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600"
                     >
                       {dates.map((date, dateIndex) => {
                         // Find date data for the current member and date
@@ -250,7 +260,7 @@ export default function Individualrequest() {
           ): (
 
             <div className=' w-full h-[300px] flex items-center justify-center'>
-              <p className=' text-sm text-zinc-400'>No data.</p>
+              <p className=' text-sm text-zinc-400'>No individual requests.</p>
             </div>
 
         )}

@@ -70,3 +70,14 @@ export const formatDMY = (date: string) => {
   return `${day}-${monthName.slice(0,3)}-${(`${year}`).slice(2,4)}`
 
 }
+
+
+export const formatAustralianDate = (date: string) => {
+  const dates = new Date(date); // Convert the string to a Date object
+  return dates.toLocaleDateString('en-AU', { day: '2-digit', month: '2-digit', year: '2-digit' });
+};
+
+export const formatMonthYear = (date: string) => {
+  const dates = new Date(date); // Convert the string to a Date object
+  return dates.toLocaleDateString('en-AU', { month: 'short', year: 'numeric' });
+};
