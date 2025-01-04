@@ -761,6 +761,19 @@ export default function Yourworkload() {
   }
 
 
+  const engrMember = findJobComponent?.members.find((item) => item.role === 'Engr.');
+  const engrId = engrMember?._id;
+
+  const engrrvrMember = findJobComponent?.members.find((item) => item.role === 'Engr. Revr.');
+  const engrrvrId = engrrvrMember?._id; 
+
+  const drftrvrMember = findJobComponent?.members.find((item) => item.role === 'Drft. Revr.');
+  const draftrvrId = drftrvrMember?._id; 
+
+  const drftMember = findJobComponent?.members.find((item) => item.role === 'Drft.');
+  const draftId = drftMember?._id; 
+
+
 
 
   return (
@@ -808,12 +821,12 @@ export default function Yourworkload() {
               ) : (
                 <>
                 {(isJobmamager === true || isMamager === true) ? (
-                  <EditJobComponent id={findJobComponent?.componentid} isManger={findJobComponent?.jobmanager.isManager} isJobManager={findJobComponent?.jobmanager.isJobManager} project={findJobComponent?.projectname.projectid} jobmanager={findJobComponent?.jobmanager.employeeid} engr={findJobComponent?.members[0].employee._id} engrnotes={findJobComponent?.members[0].notes} engrrvr={findJobComponent?.members[1].employee._id} engrrvrnotes={findJobComponent?.members[1].notes} drftr={findJobComponent?.members[2].employee._id} drftrnotes={findJobComponent?.members[2].notes} drftrrvr={findJobComponent?.members[3].employee._id} drftrrvrnotes={findJobComponent?.members[3].notes}>
-                  <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                    <button onClick={() => setDialog2(true)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Pen size={12}/></button>
-                    <p>Edit</p>
-                  </div>
-                </EditJobComponent>
+                 <EditJobComponent id={findJobComponent?.componentid} isManger={findJobComponent?.jobmanager.isManager} isJobManager={findJobComponent?.jobmanager.isJobManager} project={findJobComponent?.projectname.projectid} jobmanager={findJobComponent?.jobmanager.employeeid} engr={engrId} engrnotes={engrMember?.notes} engrrvr={engrrvrId} engrrvrnotes={engrrvrMember?.notes} drftr={draftId} drftrnotes={drftMember?.notes} drftrrvr={draftrvrId} drftrrvrnotes={drftrvrMember?.notes}  members={findJobComponent?.members || []}>
+                                                                     <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                                                                       <button onClick={() => setDialog2(true)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Pen size={12}/></button>
+                                                                       <p>Edit</p>
+                                                                     </div>
+                                                                   </EditJobComponent>
                 ):(
                   <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
                     <button onClick={() => toast.error('Only job manager & project manager can edit this job component.')} className={`text-xs p-1 bg-red-600  rounded-sm`}><Pen size={12}/></button>

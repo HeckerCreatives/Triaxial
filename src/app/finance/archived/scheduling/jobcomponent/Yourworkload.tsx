@@ -721,9 +721,9 @@ export default function Yourworkload() {
       })
 
       const response = await toast.promise(request, {
-        loading: 'Archiving job component....',
-        success: `Successfully archived`,
-        error: 'Error while archiving the job component',
+        loading: 'Unarchiving job component....',
+        success: `Successfully unarchived`,
+        error: 'Error while unarchiving the job component',
     });
 
     if(response.data.message === 'success'){
@@ -1007,10 +1007,10 @@ export default function Yourworkload() {
                             <React.Fragment key={index}>
                               <td 
                                 key={index} 
-                                className="relative text-center overflow-hidden bg-white cursor-pointer border-[1px]"
+                                className="relative text-center overflow-hidden bg-white border-[1px]"
                                 onClick={() => {
                               
-                                    setDialog(true);
+                                    // setDialog(true);
                                     // setHours(memberDate.hours);
                                     setDate(dateObj);
                                     setProjectid(graphItem._id);

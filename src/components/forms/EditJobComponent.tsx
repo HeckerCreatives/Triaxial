@@ -21,6 +21,16 @@ import { Textarea } from '../ui/textarea'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
 
+type Members = {
+  employee: {
+      _id:string
+      fullname: string
+      initials: string
+  },
+  role:string
+  notes: string
+}
+
 type Prop = {
     children: React.ReactNode
     id: any
@@ -36,6 +46,7 @@ type Prop = {
     drftrnotes: any
     drftrrvr: any
     drftrrvrnotes: any
+    members: Members[]
 }
 
 type Employee = {
@@ -70,6 +81,8 @@ export default function EditJobComponent( prop: Prop) {
   const [notes2, setNotes2] = useState('')
   const [notes3, setNotes3] = useState('')
   const [notes4, setNotes4] = useState('')
+
+  console.log(prop)
 
 //employee list
   useEffect(() => {
@@ -383,24 +396,33 @@ export default function EditJobComponent( prop: Prop) {
     }
   }
 
+  const engrMember = prop?.members.find((item) => item.role === 'Engnr.');
+  const engrId = engrMember?.employee._id;
   
-
+  const engrrvrMember = prop?.members.find((item) => item.role === 'Engr. Revr.');
+  const engrrvrId = engrrvrMember?.employee._id;
+  
+  const drftrvrMember = prop?.members.find((item) => item.role === 'Drft. Revr.');
+  const draftrvrId = drftrvrMember?.employee._id;
+  
+  const drftMember = prop?.members.find((item) => item.role === 'Drft.');
+  const draftId = drftMember?.employee._id;
+  
   useEffect(() => {
-    if(prop){
-        setJobmanager(prop.jobmanager)
-        setProjectname(prop.project)
-        setEngr(prop.engr)
-        setNotes(prop.engrnotes)
-        setEngrrvr(prop.engr)
-        setNotes2(prop.engrrvrnotes)
-        setDrf(prop.drftr)
-        setNotes3(prop.drftrnotes)
-        setDrfrvr(prop.drftrrvr)
-        setNotes4(prop.drftrrvrnotes)
+    if (prop) {
+      setJobmanager(prop.jobmanager);
+      setProjectname(prop.project);
+      setEngr(engrId || '');
+      setNotes(engrMember?.notes || '');
+      setEngrrvr(engrrvrId || '');
+      setNotes2(engrrvrMember?.notes || '');
+      setDrf(draftrvrId || '');
+      setNotes3(drftrvrMember?.notes || ''); // Corrected: Use drftrvrMember for Drft. Revr. notes
+      setDrfrvr(draftId || ''); // Corrected: Use draftId for Drft. role
+      setNotes4(drftMember?.notes || ''); // Corrected: Use drftMember for Drft. notes
     }
-  },[prop, prop.engr])
+  }, [prop]); // Only `prop` is needed as a dependency
 
-  console.log('try',employee.find((item) => item.employeeid === prop.engr)?.employeeid || '')
 
   return (
    <>
@@ -408,7 +430,7 @@ export default function EditJobComponent( prop: Prop) {
                           <DialogTrigger className=''>
                            {prop.children}
                           </DialogTrigger>
-                          <DialogContent className=' max-w-[600px] h-auto bg-secondary border-none p-6 text-white overflow-y-auto'>
+                          <DialogContent className=' max-w-[600px] max-h-[80%] h-auto bg-secondary border-none p-6 text-white overflow-y-auto'>
                             <DialogHeader>
                               <DialogTitle>Edit Project <span className=' text-xs text-zinc-400'></span></DialogTitle>
                               <DialogDescription className={` ${prop.isManger === true ? 'text-white' : ' text-red-500'}`}>
@@ -479,6 +501,9 @@ export default function EditJobComponent( prop: Prop) {
                                       </SelectContent>
                               </Select>
 
+                              <label htmlFor="">Notes</label>
+                              <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} className=' text-xs h-[25px] bg-primary' placeholder='Notes' />
+
                               <label htmlFor="">Engineer Reviewer (Engr. Revr.)</label>
                               <Select value={engrrvr} onValueChange={setEngrrvr}>
                                       <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
@@ -492,6 +517,9 @@ export default function EditJobComponent( prop: Prop) {
                                       
                                       </SelectContent>
                               </Select>
+
+                              <label htmlFor="">Notes</label>
+                              <Textarea value={notes2} onChange={(e) => setNotes(e.target.value)} className=' text-xs h-[25px] bg-primary' placeholder='Notes' />
 
                               <label htmlFor="">Drafter (Drft.)</label>
                               <Select value={drf} onValueChange={(setDrf)}>
@@ -507,7 +535,7 @@ export default function EditJobComponent( prop: Prop) {
                                       </SelectContent>
                               </Select>
                               <label htmlFor="">Notes</label>
-                              <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} className=' text-xs h-[25px] bg-primary' placeholder='Notes' />
+                              <Textarea value={notes3} onChange={(e) => setNotes(e.target.value)} className=' text-xs h-[25px] bg-primary' placeholder='Notes' />
 
                               <label htmlFor="">Drafter Reviewer (Drft. Revr.)	</label>
                               <Select value={drfrvr} onValueChange={(setDrfrvr)}>
@@ -524,7 +552,7 @@ export default function EditJobComponent( prop: Prop) {
                               </Select>
 
                               <label htmlFor="">Notes</label>
-                              <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} className=' text-xs h-[25px] bg-primary' placeholder='Notes' />
+                              <Textarea value={notes4} onChange={(e) => setNotes(e.target.value)} className=' text-xs h-[25px] bg-primary' placeholder='Notes' />
 
                                 <div className=' w-full flex items-end justify-end mt-4 text-xs'>
                                   <button onClick={() => updateJobComponenAsJobManager()} className=' bg-red-600 px-4 py-2 rounded-md w-fit'>Save</button>
