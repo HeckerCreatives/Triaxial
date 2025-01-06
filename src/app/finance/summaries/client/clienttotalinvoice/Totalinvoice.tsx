@@ -102,6 +102,8 @@ export default function Totalinvoice() {
   
   return monthNames[monthNumber - 1] || "Invalid month";
 }
+
+
   
     
   
@@ -138,7 +140,9 @@ export default function Totalinvoice() {
         <TableBody>
           {list.map((item, index) => (
             <TableRow>
-              <TableCell className=" ">{item.jobnumber}</TableCell>
+              <TableCell className=" cursor-pointer underline">
+              <a href={`/finance/graph/jobcomponent?teamid=${id}`} className=' '>{item.jobnumber}</a>
+              </TableCell>
               <TableCell>{item.jobcomponent}</TableCell>
               <TableCell>{item.projectname}</TableCell>
               <TableCell>{item.jobmanager.fullname}</TableCell>

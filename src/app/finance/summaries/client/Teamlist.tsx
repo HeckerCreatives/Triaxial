@@ -54,6 +54,16 @@ export default function Teamlist() {
     getList()
   },[])
 
+  const clientColor = (data: string) => {
+    if(data.includes('1')){
+      return 'bg-red-500'
+    } else if(data.includes('2')){
+      return 'bg-blue-500'
+    } else if(data.includes('3')){
+      return 'bg-green-500'
+    } 
+  }
+
   return (
    <div className=' w-full h-full flex justify-center bg-secondary text-zinc-100'>
 
@@ -81,10 +91,10 @@ export default function Teamlist() {
         <TableBody>
             {list.map((item, index) => (
                 <TableRow key={index}>
-                <TableCell className="font-medium">{item.clientName}</TableCell>
-                <TableCell>{item.priority}</TableCell>
-                <TableCell>$ {item.wip.toLocaleString()}</TableCell>
-                <TableCell className=" flex items-center gap-2">
+                <TableCell className={` ${clientColor(item.priority)} text-white`}>{item.clientName}</TableCell>
+                <TableCell className={` ${clientColor(item.priority)} text-white`}>{item.priority}</TableCell>
+                <TableCell className={` ${clientColor(item.priority)} text-white`}>$ {item.wip.toLocaleString()}</TableCell>
+                <TableCell className={` flex items-center gap-2 ${clientColor(item.priority)} text-white `}>
                     <button onClick={() => router.push(`/finance/summaries/client/clienttotalinvoice?clientid=${item.clientid}`)} className=' bg-red-600 px-2 py-1 text-xs rounded-sm text-white flex items-center gap-1'><Eye size={12}/>Total Invoice</button>
                 </TableCell>
                 </TableRow>

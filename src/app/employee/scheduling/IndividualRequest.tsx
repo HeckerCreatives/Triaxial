@@ -47,7 +47,13 @@ wellness: [
 ],
 }
 
-export default function Individualrequest() {
+type Prop = {
+  alldates: string[]
+}
+
+
+
+export default function Individualrequest( prop: Prop) {
   const [memberIndex, setMemberIndex] = useState(0)
   const [list, setList] = useState<List[]>([])
   const [dates, setDates] = useState<string[]>([])
@@ -128,14 +134,14 @@ export default function Individualrequest() {
 
 
   return (
-    <div className=' w-full h-full flex flex-col justify-center bg-secondary text-zinc-100'>
+    <div className=' w-full h-auto flex flex-col bg-secondary text-zinc-100 mb-6'>
 
 
-      <div className=' h-full w-full flex flex-col gap-2 max-w-[1920px]'>
+      <div className=' h-auto w-full flex flex-col gap-2 max-w-[1920px]'>
      
       {list.length !== 0 ? (
-        <div className=' h-full overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
-          <table className="table-auto w-[710px] border-collapse ">
+        <div className=' h-auto overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
+          <table className="table-auto w-full border-collapse ">
             <thead className=' bg-secondary h-[100px]'>
 
               <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
@@ -160,27 +166,40 @@ export default function Individualrequest() {
           </tbody>
           </table>
 
-          <div className=' overflow-x-auto w-full h-full'>
+          <div className=' overflow-x-auto w-full h-auto'>
 
             <table className="table-auto w-full border-collapse ">
               <thead className=' w-full bg-secondary h-[100px]'>
                 <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
 
-                  {dates.map((dateObj, index) => (
-                    <>
-                       <th className="relative font-normal border-[1px] border-zinc-700">
-                                                <div className="whitespace-nowrap transform -rotate-[90deg]">
-                                                  <p>{formatAustralianDate(dateObj)}</p>
-                                                  <p>{formatMonthYear(dateObj)}</p>
-                                                </div>
-                                              </th>
-                      {(index + 1) % 5 === 0 && (
-                        <th key={`total-${index}`} className='font-normal w-[30px] border-[1px] border-zinc-700'>
-                          <p className='-rotate-90 w-[50px]'>-</p>
+                {prop.alldates
+                ?.filter((dateObj: any) => {
+                  const day = new Date(dateObj).getDay();
+                  return day >= 1 && day <= 5; // Filter to include only Monday through Friday
+                })
+                .map((dateObj, index) => {
+                  const date = new Date(dateObj);
+                  const day = date.getDay();
+                  const isFriday = day === 5;
+
+                  return (
+                    <React.Fragment key={index}>
+                      <th className="relative font-normal border-[1px] border-zinc-700">
+                        <div className="whitespace-nowrap transform -rotate-[90deg]">
+                          <p>{formatAustralianDate(dateObj)}</p>
+                          <p>{formatMonthYear(dateObj)}</p>
+                        </div>
+                      </th>
+                      {isFriday && (
+                        <th key={`total-${index}`} className="font-normal px-1 border-[1px] border-zinc-700">
+                          <div className="transform -rotate-[90deg]">
+                            <p>Total Hours</p>
+                          </div>
                         </th>
                       )}
-                    </>
-                  ))}
+                    </React.Fragment>
+                  );
+                })}
 
 
                 </tr>
@@ -193,13 +212,21 @@ export default function Individualrequest() {
                       key={`${workIndex}-${memberIndex}`}
                       className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] w-[50px] border-zinc-600"
                     >
-                      {dates.map((date, dateIndex) => {
+                      {prop.alldates
+                       ?.filter((dateObj: any) => {
+                        const day = new Date(dateObj).getDay();
+                        return day >= 1 && day <= 5; // Filter to include only Monday through Friday
+                      })
+                      .map((date, dateIndex) => {
                         // Find date data for the current member and date
                         const dateData = member.dates.find(d => d.date === date);
                         const hours = dateData ? dateData.totalhoursofjobcomponents : '-';
                         const isEventDay = dateData ? dateData.eventDay : false;
                         const isWd = dateData ? dateData.wellnessDay : false;
                         const isLeave = dateData ? dateData.leave : false;
+
+                        const day = new Date(date).getDay();
+                        const isFriday = day === 5;
 
                         // Calculate total hours for every 5-day block
                         const startIndex = Math.floor(dateIndex / 5) * 5;
@@ -226,7 +253,7 @@ export default function Individualrequest() {
                             </td>
 
                             {/* Render total for every 5-day block */}
-                            {(dateIndex + 1) % 5 === 0 && (
+                            {isFriday && (
                               <th
                                 key={`total-${dateIndex}`}
                                 className="font-normal w-[40px] bg-primary border-[1px] border-zinc-700"

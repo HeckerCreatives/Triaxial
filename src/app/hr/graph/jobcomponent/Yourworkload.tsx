@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -25,7 +25,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import Createprojectcomponent from './Createprojectcomponent'
 import { Graph, Members } from '@/types/types'
-import { formatAustralianDate, formatDate, formatMonthYear } from '@/utils/functions'
+import { formatDate } from '@/utils/functions'
 import { any } from 'zod'
 import Invoice from '@/components/forms/Invoice'
 import Copyprojectcomponent from './Copyprojectcomponent'
@@ -707,61 +707,61 @@ export default function Yourworkload() {
     });
   };
 
-   //archived
-   const archived = async () => {
-    try {
-      const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/archivejobcomponent`,{
-       jobcomponentId: componentid,
-      status: 'archived' // archived or "" to unarchive
-      }, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json'
+   //update as both
+     const archived = async () => {
+      try {
+        const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/archivejobcomponent`,{
+         jobcomponentId: componentid,
+        status: 'archived' // archived or "" to unarchive
+        }, {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json'
+            }
+        })
+  
+        const response = await toast.promise(request, {
+          loading: 'Archiving job component....',
+          success: `Successfully archived`,
+          error: 'Error while archiving the job component',
+      });
+  
+      if(response.data.message === 'success'){
+          window.location.reload()
+       
+      }
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          const axiosError = error as AxiosError<{ message: string, data: string }>;
+          if (axiosError.response && axiosError.response.status === 401) {
+              toast.error(`${axiosError.response.data.data}`) 
+              router.push('/')    
           }
-      })
-
-      const response = await toast.promise(request, {
-        loading: 'Archiving job component....',
-        success: `Successfully archived`,
-        error: 'Error while archiving the job component',
-    });
-
-    if(response.data.message === 'success'){
-        window.location.reload()
-     
+  
+          if (axiosError.response && axiosError.response.status === 400) {
+              toast.error(`${axiosError.response.data.data}`)     
+                 
+          }
+  
+          if (axiosError.response && axiosError.response.status === 402) {
+              toast.error(`${axiosError.response.data.data}`)          
+                     
+          }
+  
+          if (axiosError.response && axiosError.response.status === 403) {
+              toast.error(`${axiosError.response.data.data}`)              
+             
+          }
+  
+          if (axiosError.response && axiosError.response.status === 404) {
+              toast.error(`${axiosError.response.data.data}`)             
+          }
+        } 
+      }
     }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError<{ message: string, data: string }>;
-        if (axiosError.response && axiosError.response.status === 401) {
-            toast.error(`${axiosError.response.data.data}`) 
-            router.push('/')    
-        }
-
-        if (axiosError.response && axiosError.response.status === 400) {
-            toast.error(`${axiosError.response.data.data}`)     
-               
-        }
-
-        if (axiosError.response && axiosError.response.status === 402) {
-            toast.error(`${axiosError.response.data.data}`)          
-                   
-        }
-
-        if (axiosError.response && axiosError.response.status === 403) {
-            toast.error(`${axiosError.response.data.data}`)              
-           
-        }
-
-        if (axiosError.response && axiosError.response.status === 404) {
-            toast.error(`${axiosError.response.data.data}`)             
-        }
-      } 
-    }
-  }
 
 
-  const engrMember = findJobComponent?.members.find((item) => item.role === 'Engr.');
+    const engrMember = findJobComponent?.members.find((item) => item.role === 'Engr.');
   const engrId = engrMember?._id;
 
   const engrrvrMember = findJobComponent?.members.find((item) => item.role === 'Engr. Revr.');
@@ -772,6 +772,67 @@ export default function Yourworkload() {
 
   const drftMember = findJobComponent?.members.find((item) => item.role === 'Drft.');
   const draftId = drftMember?._id; 
+
+  const clientColor = (data: string) => {
+    if(data.includes('1')){
+      return 'bg-red-500'
+    } else if(data.includes('2')){
+      return 'bg-blue-500'
+    } else if(data.includes('3')){
+      return 'bg-green-500'
+    } 
+  }
+
+  const firstDivRef = useRef<HTMLDivElement>(null);
+  const secondDivRef = useRef<HTMLDivElement>(null);
+
+  const syncScroll = (
+    sourceRef: React.RefObject<HTMLDivElement>,
+    targetRefs: React.RefObject<HTMLDivElement>[]
+  ) => {
+    if (sourceRef.current) {
+      const scrollLeft = sourceRef.current.scrollLeft;
+      targetRefs.forEach((ref) => {
+        if (ref.current && ref.current.scrollLeft !== scrollLeft) {
+          ref.current.scrollLeft = scrollLeft;
+        }
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return; // Ensure running on the client
+
+    const firstDiv = firstDivRef.current;
+    const secondDiv = secondDivRef.current;
+
+    const handleFirstDivScroll = () => {
+      console.log('First div scrolled');
+      syncScroll(firstDivRef, [secondDivRef]);
+    };
+
+    const handleSecondDivScroll = () => {
+      console.log('Second div scrolled');
+      syncScroll(secondDivRef, [firstDivRef]);
+    };
+
+    if (firstDiv) {
+      firstDiv.addEventListener('scroll', handleFirstDivScroll);
+    }
+    if (secondDiv) {
+      secondDiv.addEventListener('scroll', handleSecondDivScroll);
+    }
+
+    return () => {
+      if (firstDiv) {
+        firstDiv.removeEventListener('scroll', handleFirstDivScroll);
+      }
+      if (secondDiv) {
+        secondDiv.removeEventListener('scroll', handleSecondDivScroll);
+      }
+    };
+  }, []);
+
 
 
 
@@ -821,12 +882,12 @@ export default function Yourworkload() {
               ) : (
                 <>
                 {(isJobmamager === true || isMamager === true) ? (
-                 <EditJobComponent id={findJobComponent?.componentid} isManger={findJobComponent?.jobmanager.isManager} isJobManager={findJobComponent?.jobmanager.isJobManager} project={findJobComponent?.projectname.projectid} jobmanager={findJobComponent?.jobmanager.employeeid} engr={engrId} engrnotes={engrMember?.notes} engrrvr={engrrvrId} engrrvrnotes={engrrvrMember?.notes} drftr={draftId} drftrnotes={drftMember?.notes} drftrrvr={draftrvrId} drftrrvrnotes={drftrvrMember?.notes}  members={findJobComponent?.members || []}>
-                                                                     <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                                                                       <button onClick={() => setDialog2(true)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Pen size={12}/></button>
-                                                                       <p>Edit</p>
-                                                                     </div>
-                                                                   </EditJobComponent>
+                   <EditJobComponent id={findJobComponent?.componentid} isManger={findJobComponent?.jobmanager.isManager} isJobManager={findJobComponent?.jobmanager.isJobManager} project={findJobComponent?.projectname.projectid} jobmanager={findJobComponent?.jobmanager.employeeid} engr={engrId} engrnotes={engrMember?.notes} engrrvr={engrrvrId} engrrvrnotes={engrrvrMember?.notes} drftr={draftId} drftrnotes={drftMember?.notes} drftrrvr={draftrvrId} drftrrvrnotes={drftrvrMember?.notes}  members={findJobComponent?.members || []}>
+                                                                       <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                                                                         <button onClick={() => setDialog2(true)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Pen size={12}/></button>
+                                                                         <p>Edit</p>
+                                                                       </div>
+                                                                     </EditJobComponent>
                 ):(
                   <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
                     <button onClick={() => toast.error('Only job manager & project manager can edit this job component.')} className={`text-xs p-1 bg-red-600  rounded-sm`}><Pen size={12}/></button>
@@ -903,7 +964,7 @@ export default function Yourworkload() {
                 </Invoice>
               )}
 
-{componentid === '' ? (
+              {componentid === '' ? (
                  <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
                   <button onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><Folder size={12}/></button>
                   <p>Archive</p>
@@ -938,7 +999,7 @@ export default function Yourworkload() {
                 
               )}
 
-              
+
              
 
                 
@@ -959,12 +1020,12 @@ export default function Yourworkload() {
 
       </div>
 
-      <Individualrequest/>
+      <Individualrequest alldates={list[0]?.allDates}/>
 
-      <div className=' h-full w-full flex flex-col max-w-[1920px]'>
-        <div className=' h-full overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
-          {list.length !== 0 ? (
-            <>
+      <div
+      className=' h-auto w-full flex flex-col max-w-[1920px]'>
+        <div className=' h-auto overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
+          
             <table className="table-auto w-full borer-collapse ">
             <thead className='  bg-secondary h-[100px]'>
 
@@ -983,59 +1044,14 @@ export default function Yourworkload() {
 
               </tr>
             </thead>
-            <tbody>
-            {list.map((graphItem, graphIndex) =>
-              graphItem.members.map((member, memberIndex) => (
-                <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[50px] border-[1px] border-zinc-600">
-                    <td className="text-center text-white flex items-center justify-center gap-1 h-[50px] w-[30px]">
-                      
-
-                      {(memberIndex === 0) && (
-                        <input
-                        type="checkbox"
-                        checked={componentid === graphItem._id}
-                        onChange={() => {handleCheckboxChange(graphItem._id),setProjectname(graphItem.projectname.projectid), setJobmanager(graphItem.jobmanager.employeeid), setJobno(graphItem.jobno), findMember(graphItem.members), setNotes(graphItem.members[0].notes),setNotes2(graphItem.members[1].notes),setNotes3(graphItem.members[2].notes),setNotes4(graphItem.members[3].notes), setIsmanager(graphItem.jobmanager.isManager),setIsjobmanager(graphItem.jobmanager.isJobManager)}}
-                        />
-                      )}
-
-                                  
-                  </td>
-                  <td className={`${graphItem.status === null ? 'text-blue-400' :  'text-green-500'} text-center`}>{memberIndex === 0 && `${graphItem.status === null ? 'Ongoing' :  'Completed'}`}</td>
-                  <td className="text-center">{memberIndex === 0 && graphItem.jobno}</td>
-                    <td className="text-center">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
-                    <td className="text-center">{memberIndex === 0 && graphItem.jobcomponent}</td>
-                    <td className="text-center">{memberIndex === 0 && `$ ${graphItem.estimatedbudget?.toLocaleString()}`}</td>
-                    <td className="text-center">{memberIndex === 0 && `${graphItem.invoice.percentage} ${graphItem.budgettype === 'lumpsum' ? '%' : 'hrs'}`}</td>
-                    <td className="text-center">{memberIndex === 0 && graphItem.budgettype}</td>
-        
-                  <td className="text-center">{member.employee.fullname}</td>
-                  <td className="text-center text-[.5rem]">{member.role}</td>
-                  <td className="text-center">
-                    <Dialog>
-                      <DialogTrigger>{member.notes.slice(0, 25) || ''} ...</DialogTrigger>
-                      <DialogContent className=' bg-secondary p-6 border-none max-w-[600px] text-white'>
-                        <DialogHeader>
-                          <DialogTitle>Notes</DialogTitle>
-                          <DialogDescription>
-                            
-                          </DialogDescription>
-                        </DialogHeader>
-                        <p className=' text-xs text-zinc-400'>{member.notes}</p>
-                      </DialogContent>
-                    </Dialog>
-
-                    </td>
-
-
-                
-
-                </tr>
-              ))
-            )}
-          </tbody>
+         
             </table>
 
-            <div className=' overflow-x-auto'>
+            <div ref={firstDivRef} 
+             style={{
+              overflowX: "scroll",
+            }}
+            className=' w-full'>
               <table className="table-auto border-collapse ">
                 <thead className=' bg-secondary h-[100px]'>
                   <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
@@ -1046,248 +1062,359 @@ export default function Yourworkload() {
                     return day >= 1 && day <= 5; // Filter to include only Monday through Friday
                   })
                   .map((dateObj, index) => {
-                    const day = new Date(dateObj).getDay();
+                    const date = new Date(dateObj);
+                    const day = date.getDay();
                     const isFriday = day === 5;
+
+                    // Format functions for Australian date
+                    const formatAustralianDate = (date: Date) =>
+                      date.toLocaleDateString('en-AU', { day: '2-digit', month: '2-digit', year: '2-digit' });
+                    const formatMonthYear = (date: Date) =>
+                      date.toLocaleDateString('en-AU', { month: 'short', year: 'numeric' });
 
                     return (
                       <React.Fragment key={index}>
                         <th className="relative font-normal border-[1px] border-zinc-700">
-                           <div className="whitespace-nowrap transform -rotate-[90deg]">
-                                                                            <p>{formatAustralianDate(dateObj)}</p>
-                                                                            <p>{formatMonthYear(dateObj)}</p>
-                                                                          </div>
+                          <div className="whitespace-nowrap transform -rotate-[90deg]">
+                            <p>{formatAustralianDate(date)}</p>
+                            <p>{formatMonthYear(date)}</p>
+                          </div>
                         </th>
                         {isFriday && (
                           <th className="font-normal px-1 border-[1px] border-zinc-700">
-                            <p className="rotate-90">Total Hours</p>
+                            <div className="transform -rotate-[90deg]">
+                              <p>Total Hours</p>
+                            </div>
                           </th>
                         )}
                       </React.Fragment>
                     );
                   })}
 
+
                     
                   </tr>
                 </thead>
-                <tbody>
-                {list.map((graphItem, graphIndex) =>
-                    graphItem.members.map((member, memberIndex) => (
-                      <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[51px] border-[1px] border-zinc-600">
-                        
-                  
-                        {list[0]?.allDates
-                        .filter((dateObj) => {
-                          const day = new Date(dateObj).getDay();
-                          return day >= 1 && day <= 5; // Filter to include only Monday through Friday
-                        })
-                        .map((dateObj, index) => {
-                          const day = new Date(dateObj).getDay();
-                          const isFriday = day === 5;
-                          const memberDate = member.dates?.find((date) => formatDate(date.date) === formatDate(dateObj));
-
-                           
-                          const totalHoursForWeek = list[0]?.allDates
-                            .filter((dateObj) => {
-                              const day = new Date(dateObj).getDay();
-                              return day >= 1 && day <= 5; // Only include Monday to Friday
-                            })
-                            .reduce<{ weeklyTotals: number[]; currentWeekTotal: number }>((accumulated, dateObj, index, array) => {
-                              const day = new Date(dateObj).getDay();
-                              const memberDate = member.dates?.find((date) => formatDate(date.date) === formatDate(dateObj));
-                              const hoursForDay = memberDate?.hours || 0;
-
-                              // Add current day's hours
-                              accumulated.currentWeekTotal += hoursForDay;
-
-                              // Reset total on Friday
-                              if (day === 5 || index === array.length - 1) { // On Friday or last day of the range
-                                accumulated.weeklyTotals.push(accumulated.currentWeekTotal);
-                                accumulated.currentWeekTotal = 0; // Reset total for next week
-                              }
-
-                              return accumulated;
-                            }, { weeklyTotals: [], currentWeekTotal: 0 }).weeklyTotals;
-   
-                          
-                          return (
-                            <React.Fragment key={index}>
-                              <td 
-                                key={index} 
-                                className="relative text-center overflow-hidden bg-white cursor-pointer border-[1px]"
-                                onClick={() => {
-                              
-                                    setDialog(true);
-                                    // setHours(memberDate.hours);
-                                    setDate(dateObj);
-                                    setProjectid(graphItem._id);
-                                    setName(member.employee.fullname);
-                                    setEmployeeid(member.employee._id);
-                                    setHours(memberDate?.hours || 0)
-                                    setAddstatus(memberDate?.status || [])
-                                    setSelectedRows(memberDate?.status || [])
-                                    setSelected(memberDate?.status || [])
-                                    setLeavestatus(isDateInRange(dateObj,member.leaveDates[0]?.leavestart,member.leaveDates[0]?.leaveend))
-                                    setEvent(isDateInRange(dateObj,member.eventDates[0]?.startdate,member.eventDates[0]?.enddate))
-                                    wdStatusChecker(member.wellnessDates, dateObj, member.eventDates)
-                                    setIsjobmanager(graphItem.jobmanager.isJobManager)
-                                    setLeave(isDateInRange(dateObj,member.leaveDates[0]?.leavestart,member.leaveDates[0]?.leaveend))
-                                  
-                                    setRole(member.role)
-          
-                                  }
-                                }
-                              >
-                                <div className=' w-full h-[50px] absolute flex top-0 '>
-                                  {statusColor(
-                                    memberDate?.status || [],
-                                    dateObj,
-                                    member.leaveDates.length !== 0 ? member.leaveDates[0]?.leavestart : '', 
-                                    member.leaveDates.length !== 0 ? member.leaveDates[0]?.leaveend : '', 
-                                    member.eventDates.length !== 0 ? member.eventDates[0].startdate : '', 
-                                    member.eventDates.length !== 0 ? member.eventDates[0].enddate : '', 
-                                    member.wellnessDates[0],
-                                    memberDate?.hours || 0,
-                                    member.eventDates,
-                                    member.leaveDates,
-                                    member.wellnessDates
-                                  ).map((item, index) => (
-                                    <div key={index} className={`w-full h-[50px] ${item}`}>
-
-                                    </div>
-
-                                  ))}
-
-                                </div>
-                            
-                                <p className='relative text-black font-bold text-xs z-30'>
-                                  {memberDate ? memberDate.hours : '-'}
-                                </p>
-                              </td>
-
-                             
-                              {isFriday && totalHoursForWeek.length > 0 && (
-                                  <td
-                                    key={`total-${index}`}
-                                    className="text-center font-normal w-[40px] bg-primary border-[1px] border-zinc-700"
-                                  >
-                                    <p className="text-center">
-                                    {totalHoursForWeek[Math.floor(index / 5)]} {/* Display the week's total on Friday */}
-                                    </p>
-                                  </td>
-                                )}
-                            </React.Fragment>
-                          );
-                        })}
-
-                      </tr>
-                    ))
-                  )}
-
-
-              </tbody>
+               
               </table>
             </div>
 
-          
-            </>
-          ) : (
-            <div className=' w-full h-full flex items-center justify-center'>
-              <p className=' text-xs text-zinc-400'>No job component's yet under this project, please create one to see the workload!</p>
-
-            </div>
-          )}
-          
-
-          
+            
 
         </div>
-
-        {isJobmamager === true ? (
-             <Dialog open={dialog} onOpenChange={setDialog}>
-                    <DialogContent className=' p-8 bg-secondary border-none text-white'>
-                      <DialogHeader>
-                        <DialogTitle>Update workload ({name} <span className=' text-xs text-red-500'>({role})</span> at {formatDate(date)})</DialogTitle>
-                        <DialogDescription>
-                          Note, you can only update the hours rendered if the employee is not on wellness day.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <div className=' w-full flex flex-col gap-2'>              
-
-                      <label htmlFor="" className=' text-xs mt-4'>Select Status</label>
-
-                      {/* <div className='w-full flex items-center gap-6'>
-                          {statusData.map((item) => (
-                            <div key={item.id} className='flex items-center gap-1 text-xs'>
-                              <input
-                              disabled={wdStatus}
-                                value={item.id}
-                                type="checkbox"
-                                checked={selectedRows.includes(item.id)}
-                                onChange={() => handleSelectRow(item.id)}
-                              />
-                              <p className=' p-1'>{item.name}</p>
-                            </div>
-                          ))}
-                        </div> */}
-
-                        <div className='w-full flex items-center gap-6'>
-                          {statusData.map((item) => (
-                            <div key={item.id} className='flex items-center gap-1 text-xs'>
-                              <input
-                              disabled={wdStatus || event || leave}
-                                value={item.id}
-                                type="checkbox"
-                                checked={selected.includes(item.id)}
-                               onChange={() => handleChangeCheckbox(item.id as any)}
-                              />
-                              <p className=' p-1'>{item.name}</p>
-                            </div>
-                          ))}
-                        </div>
-
-
-                      </div>
-
-                
-                      <div className=' flex flex-col gap-2 text-xs'>
-                        <label htmlFor="">Hours Rendered</label>
-                        <input disabled={wdStatus || event || leave} type="number" value={hours} onChange={(e) => setHours(e.target.valueAsNumber)} placeholder='Hours' id="" className=' bg-primary p-2 rounded-md text-xs' />
-                        
-                      </div>
-            
-                      <div className=' w-full flex items-end justify-end mt-4'>
-                        <button disabled={wdStatus || event || leave} onClick={() => updateWorkload()} className=' px-4 py-2 bg-red-600 text-xs text-white rounded-md'>Save</button>
-                      </div>
-
-                      {(wdStatus === true || event === true || leave === true) && (
-                        <p className=' text-xs text-red-500 flex items-center gap-2'><OctagonAlert size={15}/> Employee is in on wellness or event day, you can't update this selected workload</p>
-                      )}
-
-                      
-                  
-                  
-                    </DialogContent>
-            </Dialog>
-           ): (
-            <Dialog open={dialog} onOpenChange={setDialog}>
-              <DialogContent className=' p-8 bg-secondary border-none text-white'>
-                      <DialogHeader>
-                        <DialogTitle>Update workload ({name} <span className=' text-xs text-red-500'>({role})</span> at {formatDate(date)})</DialogTitle>
-                        <DialogDescription>
-                         
-                        </DialogDescription>
-                      </DialogHeader>
-
-                      <p className=' text-lg text-red-500'>Only job manager can update a workload!</p>
-                    
-              </DialogContent>
-            </Dialog>
-           )}
-       
-        
       </div>
 
+      <div
+      className=' h-[500px] w-full flex flex-col max-w-[1920px] overflow-y-auto ml-1'>
+        <div className=' h-full flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
+
+              <table className="table-auto w-full borer-collapse mt-1 ">
+                
+              <tbody>
+              {list.map((graphItem, graphIndex) =>
+                graphItem.members.map((member, memberIndex) => (
+                  <tr key={`${graphIndex}-${memberIndex}`} className={`text-[.6rem] py-2 h-[50px] border-[1px] border-zinc-600 ${clientColor(graphItem.clientname.priority)}`}>
+                      <td className="text-center text-white flex items-center justify-center gap-1 h-[50px] w-[30px]">
+                        
+
+                        {(memberIndex === 0 ) && (
+                          <input
+                          type="checkbox"
+                          checked={componentid === graphItem._id}
+                          onChange={() => {handleCheckboxChange(graphItem._id),setProjectname(graphItem.projectname.projectid), setJobmanager(graphItem.jobmanager.employeeid), setJobno(graphItem.jobno), findMember(graphItem.members), setNotes(graphItem.members[0].notes),setNotes2(graphItem.members[1].notes),setNotes3(graphItem.members[2].notes),setNotes4(graphItem.members[3].notes), setIsmanager(graphItem.jobmanager.isManager),setIsjobmanager(graphItem.jobmanager.isJobManager)}}
+                          />
+                        )}
+
+                                    
+                    </td>
+                    <td className={`${graphItem.status === null ? 'text-blue-400' :  'text-green-500'} text-center`}>{memberIndex === 0 && `${graphItem.status === null ? 'Ongoing' :  'Completed'}`}</td>
+                    <td className="text-center">{memberIndex === 0 && graphItem.jobno}</td>
+                      <td className="text-center">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
+                      <td className="text-center">{memberIndex === 0 && graphItem.jobcomponent}</td>
+                      <td className="text-center">{memberIndex === 0 && `$ ${graphItem.estimatedbudget?.toLocaleString()}`}</td>
+                      <td className="text-center">{memberIndex === 0 && `${graphItem.invoice.percentage} ${graphItem.budgettype === 'lumpsum' ? '%' : 'hrs'}`}</td>
+                      <td className="text-center">{memberIndex === 0 && graphItem.budgettype}</td>
+          
+                    <td className="text-center">{member.employee.fullname}</td>
+                    <td className="text-center text-[.5rem]">{member.role}</td>
+                    <td className="text-center">
+                      <Dialog>
+                        <DialogTrigger>{member.notes.slice(0, 25) || ''} ...</DialogTrigger>
+                        <DialogContent className=' bg-secondary p-6 border-none max-w-[600px] text-white'>
+                          <DialogHeader>
+                            <DialogTitle>Notes</DialogTitle>
+                            <DialogDescription>
+                              
+                            </DialogDescription>
+                          </DialogHeader>
+                          <p className=' text-xs text-zinc-400'>{member.notes}</p>
+                        </DialogContent>
+                      </Dialog>
+
+                      </td>
+
+
+                  
+
+                  </tr>
+                ))
+              )}
+            </tbody>
+              </table>
+
+              <div ref={secondDivRef} 
+              className=' w-full overflow-x-auto'>
+                <table className="table-auto border-collapse ">
+                  <thead className=' bg-secondary '>
+                    <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
+                    
+                    {list[0]?.allDates
+                    .filter((dateObj) => {
+                      const day = new Date(dateObj).getDay();
+                      return day >= 1 && day <= 5; // Filter to include only Monday through Friday
+                    })
+                    .map((dateObj, index) => {
+                      const date = new Date(dateObj);
+                      const day = date.getDay();
+                      const isFriday = day === 5;
+
+                      // Format functions for Australian date
+                      const formatAustralianDate = (date: Date) =>
+                        date.toLocaleDateString('en-AU', { day: '2-digit', month: '2-digit', year: '2-digit' });
+                      const formatMonthYear = (date: Date) =>
+                        date.toLocaleDateString('en-AU', { month: 'short', year: 'numeric' });
+
+                      return (
+                        <React.Fragment key={index}>
+                          <th className="relative font-normal px-[20.15px] py-[2px] border-zinc-700">
+                            
+                          </th>
+                          {isFriday && (
+                            <th className="font-normal px-[20px] py-[2px] border-zinc-700">
+                              
+                            </th>
+                          )}
+                        </React.Fragment>
+                      );
+                    })}
+
+
+                      
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {list.map((graphItem, graphIndex) =>
+                      graphItem.members.map((member, memberIndex) => (
+                        <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2  h-[51px] border-[1px] border-zinc-600">
+                          
+                    
+                          {list[0]?.allDates
+                          .filter((dateObj) => {
+                            const day = new Date(dateObj).getDay();
+                            return day >= 1 && day <= 5; // Filter to include only Monday through Friday
+                          })
+                          .map((dateObj, index) => {
+                            const day = new Date(dateObj).getDay();
+                            const isFriday = day === 5;
+                            const memberDate = member.dates?.find((date) => formatDate(date.date) === formatDate(dateObj));
+
+                            
+                            const totalHoursForWeek = list[0]?.allDates
+                              .filter((dateObj) => {
+                                const day = new Date(dateObj).getDay();
+                                return day >= 1 && day <= 5; // Only include Monday to Friday
+                              })
+                              .reduce<{ weeklyTotals: number[]; currentWeekTotal: number }>((accumulated, dateObj, index, array) => {
+                                const day = new Date(dateObj).getDay();
+                                const memberDate = member.dates?.find((date) => formatDate(date.date) === formatDate(dateObj));
+                                const hoursForDay = memberDate?.hours || 0;
+
+                                // Add current day's hours
+                                accumulated.currentWeekTotal += hoursForDay;
+
+                                // Reset total on Friday
+                                if (day === 5 || index === array.length - 1) { // On Friday or last day of the range
+                                  accumulated.weeklyTotals.push(accumulated.currentWeekTotal);
+                                  accumulated.currentWeekTotal = 0; // Reset total for next week
+                                }
+
+                                return accumulated;
+                              }, { weeklyTotals: [], currentWeekTotal: 0 }).weeklyTotals;
     
+                            
+                            return (
+                              <React.Fragment key={index}>
+                                <td 
+                                  key={index} 
+                                  className="relative text-center overflow-hidden  bg-white cursor-pointer border-[1px]"
+                                  onClick={() => {
+                                
+                                      setDialog(true);
+                                      // setHours(memberDate.hours);
+                                      setDate(dateObj);
+                                      setProjectid(graphItem._id);
+                                      setName(member.employee.fullname);
+                                      setEmployeeid(member.employee._id);
+                                      setHours(memberDate?.hours || 0)
+                                      setAddstatus(memberDate?.status || [])
+                                      setSelectedRows(memberDate?.status || [])
+                                      setSelected(memberDate?.status || [])
+                                      setLeavestatus(isDateInRange(dateObj,member.leaveDates[0]?.leavestart,member.leaveDates[0]?.leaveend))
+                                      setEvent(isDateInRange(dateObj,member.eventDates[0]?.startdate,member.eventDates[0]?.enddate))
+                                      wdStatusChecker(member.wellnessDates, dateObj, member.eventDates)
+                                      setIsjobmanager(graphItem.jobmanager.isJobManager)
+                                      setLeave(isDateInRange(dateObj,member.leaveDates[0]?.leavestart,member.leaveDates[0]?.leaveend))
+                                    
+                                      setRole(member.role)
+            
+                                    }
+                                  }
+                                >
+                                  <div className=' w-full h-[50px] absolute flex top-0 '>
+                                    {statusColor(
+                                      memberDate?.status || [],
+                                      dateObj,
+                                      member.leaveDates.length !== 0 ? member.leaveDates[0]?.leavestart : '', 
+                                      member.leaveDates.length !== 0 ? member.leaveDates[0]?.leaveend : '', 
+                                      member.eventDates.length !== 0 ? member.eventDates[0].startdate : '', 
+                                      member.eventDates.length !== 0 ? member.eventDates[0].enddate : '', 
+                                      member.wellnessDates[0],
+                                      memberDate?.hours || 0,
+                                      member.eventDates,
+                                      member.leaveDates,
+                                      member.wellnessDates
+                                    ).map((item, index) => (
+                                      <div key={index} className={`w-full h-[50px] ${item}`}>
+
+                                      </div>
+
+                                    ))}
+
+                                  </div>
+                              
+                                  <p className='relative text-black font-bold text-xs z-30'>
+                                    {memberDate ? memberDate.hours : '-'}
+                                  </p>
+                                </td>
+
+                              
+                                {isFriday && totalHoursForWeek.length > 0 && (
+                                    <td
+                                      key={`total-${index}`}
+                                      className="text-center font-normal w-[40px] bg-primary border-[1px] border-zinc-700"
+                                    >
+                                      <p className="text-center">
+                                      {totalHoursForWeek[Math.floor(index / 5)]} {/* Display the week's total on Friday */}
+                                      </p>
+                                    </td>
+                                  )}
+                              </React.Fragment>
+                            );
+                          })}
+
+                        </tr>
+                      ))
+                    )}
+
+
+                </tbody>
+                </table>
+              </div>
+          
+            {list.length === 0 && (
+                  <div className=' w-full h-full flex items-center justify-center'>
+                    <p className=' text-xs text-zinc-400'>No job component's yet under this project, please create one to see the workload!</p>
+
+                  </div>
+                )}
+
+        {isJobmamager === true ? (
+              <Dialog open={dialog} onOpenChange={setDialog}>
+                      <DialogContent className=' p-8 bg-secondary border-none text-white'>
+                        <DialogHeader>
+                          <DialogTitle>Update workload ({name} <span className=' text-xs text-red-500'>({role})</span> at {formatDate(date)})</DialogTitle>
+                          <DialogDescription>
+                            Note, you can only update the hours rendered if the employee is not on wellness day.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className=' w-full flex flex-col gap-2'>              
+
+                        <label htmlFor="" className=' text-xs mt-4'>Select Status</label>
+
+                        {/* <div className='w-full flex items-center gap-6'>
+                            {statusData.map((item) => (
+                              <div key={item.id} className='flex items-center gap-1 text-xs'>
+                                <input
+                                disabled={wdStatus}
+                                  value={item.id}
+                                  type="checkbox"
+                                  checked={selectedRows.includes(item.id)}
+                                  onChange={() => handleSelectRow(item.id)}
+                                />
+                                <p className=' p-1'>{item.name}</p>
+                              </div>
+                            ))}
+                          </div> */}
+
+                          <div className='w-full flex items-center gap-6'>
+                            {statusData.map((item) => (
+                              <div key={item.id} className='flex items-center gap-1 text-xs'>
+                                <input
+                                disabled={wdStatus || event || leave}
+                                  value={item.id}
+                                  type="checkbox"
+                                  checked={selected.includes(item.id)}
+                                onChange={() => handleChangeCheckbox(item.id as any)}
+                                />
+                                <p className=' p-1'>{item.name}</p>
+                              </div>
+                            ))}
+                          </div>
+
+
+                        </div>
+
+                  
+                        <div className=' flex flex-col gap-2 text-xs'>
+                          <label htmlFor="">Hours Rendered</label>
+                          <input disabled={wdStatus || event || leave} type="number" value={hours} onChange={(e) => setHours(e.target.valueAsNumber)} placeholder='Hours' id="" className=' bg-primary p-2 rounded-md text-xs' />
+                          
+                        </div>
+              
+                        <div className=' w-full flex items-end justify-end mt-4'>
+                          <button disabled={wdStatus || event || leave} onClick={() => updateWorkload()} className=' px-4 py-2 bg-red-600 text-xs text-white rounded-md'>Save</button>
+                        </div>
+
+                        {(wdStatus === true || event === true || leave === true) && (
+                          <p className=' text-xs text-red-500 flex items-center gap-2'><OctagonAlert size={15}/> Employee is in on wellness or event day, you can't update this selected workload</p>
+                        )}
+
+                        
+                    
+                    
+                      </DialogContent>
+              </Dialog>
+            ): (
+              <Dialog open={dialog} onOpenChange={setDialog}>
+                <DialogContent className=' p-8 bg-secondary border-none text-white'>
+                        <DialogHeader>
+                          <DialogTitle>Update workload ({name} <span className=' text-xs text-red-500'>({role})</span> at {formatDate(date)})</DialogTitle>
+                          <DialogDescription>
+                          
+                          </DialogDescription>
+                        </DialogHeader>
+
+                        <p className=' text-lg text-red-500'>Only job manager can update a workload!</p>
+                      
+                </DialogContent>
+              </Dialog>
+            )}
+
+            
+
+        </div>
+      </div>
+
         
     </div>
   )

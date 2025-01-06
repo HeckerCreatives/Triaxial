@@ -102,7 +102,7 @@ projectid: string
 export type Graph = {
     allDates: []
 clientname: 
-{clientid: string, name: string}
+{clientid: string, name: string, priority: string}
 componentid: string
 jobcomponent: string
 jobmanager: {employeeid: string, fullname: string, isManager: boolean, isJobManager: boolean}

@@ -120,11 +120,11 @@ export default function Projecttable() {
   
   const clientColor = (data: string) => {
     if(data.includes('1')){
-      return 'text-red-500'
+      return 'bg-red-500'
     } else if(data.includes('2')){
-      return 'text-blue-500'
+      return 'bg-blue-500'
     } else if(data.includes('3')){
-      return 'text-green-500'
+      return 'bg-green-500'
     } 
   }
   
@@ -168,7 +168,7 @@ export default function Projecttable() {
         </TableHeader>
         <TableBody>
           {list.map((item, index) => (
-            <TableRow key={index}>
+            <TableRow key={index} className=' '>
             <TableCell>
               <a href={`/pm/graph/jobcomponent?teamid=${item._id}`} className=' text-red-500 underline'>{item.teamname}</a>
               </TableCell>

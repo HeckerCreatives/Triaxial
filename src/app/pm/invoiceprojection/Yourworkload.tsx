@@ -320,11 +320,11 @@ const totalsByDate = allDates.map((dateObj) => {
 
   const clientColor = (data: string) => {
     if(data.includes('1')){
-      return 'text-red-500'
+      return 'bg-red-500'
     } else if(data.includes('2')){
-      return 'text-blue-500'
+      return 'bg-blue-500'
     } else if(data.includes('3')){
-      return 'text-green-500'
+      return 'bg-green-500'
     } 
   }
 
@@ -402,7 +402,7 @@ const totalsByDate = allDates.map((dateObj) => {
             <tbody>
             {list.map((graphItem, graphIndex) => {
               return (
-                <tr key={`${graphIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
+                <tr key={`${graphIndex}`} className={`text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600 ${clientColor(graphItem.priority)}`}>
                   <td className="text-center  text-red-600">
                     <input 
                      type="checkbox"
@@ -410,7 +410,10 @@ const totalsByDate = allDates.map((dateObj) => {
                      onChange={() => {handleSelect(graphItem.componentid), setComponentid(graphItem.componentid)}}
                     />
                   </td>
-                  <td className="text-center  ">{graphItem.jobnumber}</td>
+                  <td className="text-center underline cursor-pointer">
+                  <a href={`/pm/graph/jobcomponent?teamid=${id}`} className=' '>{graphItem.jobnumber}</a>
+
+                  </td>
                   <td className={`text-center  ${clientColor(graphItem.priority)}`}>{graphItem.clientname}</td>
                   <td className="text-center ">{graphItem.projectname}</td>
                   <td className="text-center ">{graphItem.jobmanager.fullname}</td>

@@ -13,6 +13,8 @@ import toast from 'react-hot-toast'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { formatDate } from '@/utils/functions'
 import { Input } from '@/components/ui/input'
+import Invoice from '@/components/forms/Invoice'
+import { File } from 'lucide-react'
 
 type values = {
   date: string
@@ -29,6 +31,7 @@ jobmanager: {
     fullname: string
 },
 clientname: string
+priority: string
 projectname: string
 budgettype: string
 estimatedbudget: number
@@ -76,7 +79,7 @@ export default function Yourworkload() {
   const [componentid, setComponentid] = useState('')
 
   const getList = async () => {
-    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/projectinvoice/listcomponentprojectinvoicesa?projectid=${id}`,{
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/projectinvoice/listcomponentprojectinvoicealluser?teamid=${id}`,{
       withCredentials: true,
       headers: {
         'Content-Type': 'application/json'
@@ -206,7 +209,7 @@ export default function Yourworkload() {
     try {
       const timer = setTimeout(() => {
         const getList = async () => {
-          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/projectinvoice/listcomponentprojectinvoicesa?projectid=${id}`,{
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/projectinvoice/listcomponentprojectinvoicealluser?teamid=${id}`,{
             withCredentials: true,
             headers: {
               'Content-Type': 'application/json'
@@ -296,16 +299,36 @@ const totalCatchupInv = list.reduce((acc, item) => {
 }, 0);
 
 const totalsByDate = allDates.map((dateObj) => {
-  const total = list.reduce((total, graphItem) => {
+  return list.reduce((total, graphItem) => {
     const memberDate = graphItem.projectedValues.find(
       (date) => formatYearMonth(date.date) === formatYearMonth(dateObj)
     );
-    return total + (memberDate?.amount || 0);
+    return total + (memberDate?.amount || 0); // Add amount if it exists, otherwise add 0
   }, 0);
-
-  // Format the total with commas
-  return total.toLocaleString('en-US');
 });
+
+ const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  const handleSelect = (id: string) => {
+    setSelectedId((prevId) => (prevId === id ? null : id)); // Toggle selection
+  };
+
+  const findJobComponent = list.find((item) => item.componentid === componentid)
+
+
+  console.log(selectedId)
+
+  const clientColor = (data: string) => {
+    if(data.includes('1')){
+      return 'bg-red-500'
+    } else if(data.includes('2')){
+      return 'bg-blue-500'
+    } else if(data.includes('3')){
+      return 'bg-green-500'
+    } 
+  }
+
+
 
 
   return (
@@ -320,9 +343,25 @@ const totalsByDate = allDates.map((dateObj) => {
               
             <table className="table-auto w-[1000px] border-collapse ">
           
-            <thead className=' bg-primary h-[40px]'>
+            <thead className=' bg-primary h-[50px]'>
 
               <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
+              <th className=' w-[70px] font-normal'>
+              {componentid === '' ? (
+                 <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                  <button onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><File size={12}/></button>
+                  <p>Invoice</p>
+                </div>
+
+              ) : (
+                <Invoice projectname={findJobComponent?.projectname} jobcname={findJobComponent?.jobcomponent} jobno={findJobComponent?.jobnumber} budgettype={findJobComponent?.budgettype} estimatedbudget={findJobComponent?.estimatedbudget} jobcid={findJobComponent?.componentid} isJobmanager={findJobComponent?.jobmanager.employeeid} currinvoice={findJobComponent?.invoice.percentage}>
+                  <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                    <button className={`text-xs p-1 bg-red-600  rounded-sm`}><File size={12}/></button>
+                    <p>Invoice</p>
+                  </div>       
+                </Invoice>
+              )}
+              </th>
               <th className=' w-[70px] font-normal'></th>
               <th className=' w-[70px] font-normal'></th>
               <th className=' w-[70px] font-normal'></th>
@@ -343,8 +382,9 @@ const totalsByDate = allDates.map((dateObj) => {
             <thead className=' bg-secondary h-[80px]'>
 
               <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
+              <th className=' w-[70px] font-normal'>Action</th>
               <th className=' w-[70px] font-normal'>Job no:</th>
-              <th className=' w-[70px] font-normal'>Client</th>
+              <th className={` w-[70px] font-normal`}>Client</th>
               <th className=' w-[70px] font-normal'>Project Name</th>
               <th className=' w-[70px] font-normal'>Job Mngr.</th>
                 <th className=' w-[70px] font-normal'>Job Component</th>
@@ -362,17 +402,27 @@ const totalsByDate = allDates.map((dateObj) => {
             <tbody>
             {list.map((graphItem, graphIndex) => {
               return (
-                <tr key={`${graphIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
-                  <td className="text-center  text-red-600">{graphItem.jobnumber}</td>
-                  <td className="text-center ">{graphItem.clientname}</td>
+                <tr key={`${graphIndex}`} className={`text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600 ${clientColor(graphItem.priority)}`}>
+                  <td className="text-center  text-red-600">
+                    <input 
+                     type="checkbox"
+                     checked={selectedId === graphItem.componentid}
+                     onChange={() => {handleSelect(graphItem.componentid), setComponentid(graphItem.componentid)}}
+                    />
+                  </td>
+                  <td className="text-center underline cursor-pointer">
+                  <a href={`/superadmin/graph/jobcomponent?teamid=${id}`} className=' '>{graphItem.jobnumber}</a>
+
+                  </td>
+                  <td className={`text-center  ${clientColor(graphItem.priority)}`}>{graphItem.clientname}</td>
                   <td className="text-center ">{graphItem.projectname}</td>
                   <td className="text-center ">{graphItem.jobmanager.fullname}</td>
                   <td className="text-center ">{graphItem.jobcomponent}</td>
-                  <td className="text-center ">$ {graphItem.estimatedbudget.toLocaleString()}</td>
-                  <td className="text-center ">{graphItem.budgettype === 'rates' ? `${ graphItem.invoice.percentage} hrs` : `$ ${ graphItem.invoice.percentage}` }</td>
+                  <td className="text-center ">$ {graphItem.estimatedbudget?.toLocaleString()}</td>
+                  <td className="text-center ">{graphItem.budgettype === 'rates' ? `${ graphItem.invoice.percentage.toLocaleString()} hrs` : `$ ${ graphItem.invoice.percentage.toLocaleString()}` }</td>
                   <td className="text-center ">$ {graphItem.budgettype === 'rates' ? `${ graphItem.rates.invoiced.toLocaleString()}` : `${ graphItem.lumpsum.invoiced.toLocaleString()}` }</td>
                   <td className="text-center ">{graphItem.budgettype === 'rates' ? `-` : `$ ${ graphItem.lumpsum.remaining.toLocaleString()}`}</td>
-                  <td className={`text-center `}> {graphItem.budgettype === 'rates' ? '-' : `$ ${graphItem.lumpsum.subconts.toLocaleString()}`}</td>
+                  <td className={`text-center cursor-pointer ${graphItem.budgettype === 'lumpsum' && 'bg-secondary'}`}> {graphItem.budgettype === 'rates' ? '-' : `$ ${graphItem.lumpsum.subconts.toLocaleString()}`}</td>
                   <td className="text-center ">$ {graphItem.budgettype === 'rates' ? `${ graphItem.rates.wip.toLocaleString()}` : ` ${ graphItem.lumpsum.wip.toLocaleString()}`}</td>
                   <td className="text-center ">{graphItem.budgettype === 'rates' ? `-` : `$ ${ graphItem.lumpsum.catchupinv.toLocaleString()}`}</td>
 
@@ -386,17 +436,14 @@ const totalsByDate = allDates.map((dateObj) => {
 
           <div className=' overflow-x-auto'>
             <table className="table-auto border-collapse ">
-              <thead className=' w-[800px] bg-primary h-[40px] border-none'>
+              <thead className=' w-[800px] bg-primary h-[50px] border-none'>
                 <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
                   {totalsByDate.map((item, index) => (
                     <th key={index} className="relative font-normal px-6 ">
-                      $ {item}
+                      $ {item.toLocaleString()}
                     </th>
                   ))}
                       
-                    
-                  
-
                   
                 </tr>
               </thead>
@@ -436,11 +483,11 @@ const totalsByDate = allDates.map((dateObj) => {
                       return (
                         <td
                           key={`${graphIndex}-${index}`}
-                          className="text-center border-[1px] border-zinc-600"
-                         
+                          className="text-center border-[1px] border-zinc-600 "
+                          
                         >
                           {memberDate ? (
-                            <span className="text-xs">$ {memberDate.amount.toLocaleString()}</span>
+                            <span className="text-xs">$ {memberDate.amount}</span>
                           ) : (
                             <span>-</span>
                           )}

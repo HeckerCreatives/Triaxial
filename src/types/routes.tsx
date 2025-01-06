@@ -35,7 +35,7 @@ export const hrold = [
 
 export const hr = [
     {name: 'Dashboard', path: '/hr/dashboard', icon: <Home className="h-4 w-4" />, subpath: []},
-    {name: 'Your Workload', path: '/hr/noaccess', icon: <List className="h-4 w-4" />, subpath: []},
+    {name: 'My Workload', path: '/hr/noaccess', icon: <List className="h-4 w-4" />, subpath: []},
     // {name: 'Team', path: '/hr/noaccess', icon: <Users className="h-4 w-4" />, subpath: []},
     // {name: 'Projects', path: '/hr/noaccess', icon: <Box className="h-4 w-4" />, subpath: []},
     {name: 'Scheduling', path: '/hr/scheduling', icon: <Box className="h-4 w-4" />, subpath: []},
@@ -161,7 +161,7 @@ export const pmold = [
 
 export const pm = [
     {name: 'Dashboard', path: '/pm/dashboard', icon: <Home className="h-4 w-4" />, subpath: []},
-    {name: 'Your Workload', path: '/pm/yourworkload', icon: <List className="h-4 w-4" />, subpath: []},
+    {name: 'My Workload', path: '/pm/yourworkload', icon: <List className="h-4 w-4" />, subpath: []},
     // {name: 'Team', path: '/pm/team', icon: <Users className="h-4 w-4" />, subpath: []},
     // {name: 'Projects', path: '/pm/projects', icon: <Box className="h-4 w-4" />, subpath: []},
     {name: 'Scheduling', path: '/pm/scheduling', icon: <Box className="h-4 w-4" />, subpath: []},
@@ -245,7 +245,7 @@ export const employeeold = [
 
 export const employee = [
     {name: 'Dashboard', path: '/employee/noaccess', icon: <Home className="h-4 w-4" />, subpath: []},
-    {name: 'Your Workload', path: '/employee/yourworkload', icon: <List className="h-4 w-4" />, subpath: []},
+    {name: 'My Workload', path: '/employee/yourworkload', icon: <List className="h-4 w-4" />, subpath: []},
     // {name: 'Team', path: '/employee/noaccess', icon: <Users className="h-4 w-4" />, subpath: []},
     // {name: 'Projects', path: '/employee/noaccess', icon: <Box className="h-4 w-4" />, subpath: []},
     {name: 'Scheduling', path: '/employee/scheduling', icon: <Box className="h-4 w-4" />, subpath: []},
@@ -332,7 +332,7 @@ export const financeold = [
 
 export const finance = [
     {name: 'Dashboard', path: '/finance/dashboard', icon: <Home className="h-4 w-4" />, subpath: []},
-    {name: 'Your Workload', path: '/finance/noaccess', icon: <List className="h-4 w-4" />, subpath: []},
+    {name: 'My Workload', path: '/finance/noaccess', icon: <List className="h-4 w-4" />, subpath: []},
     // {name: 'Team', path: '/finance/noaccess', icon: <Users className="h-4 w-4" />, subpath: []},
     // {name: 'Projects', path: '/finance/noaccess', icon: <Box className="h-4 w-4" />, subpath: []},
     {name: 'Scheduling', path: '/finance/scheduling', icon: <Box className="h-4 w-4" />, subpath: []},
@@ -385,7 +385,7 @@ export const finance = [
 
 export const superadmin = [
     {name: 'Dashboard', path: '/superadmin/dashboard', icon: <Home className="h-4 w-4" />, subpath: []},
-    {name: 'Your Workload', path: '/superadmin/noaccess', icon: <List className="h-4 w-4" />, subpath: []},
+    {name: 'My Workload', path: '/superadmin/noaccess', icon: <List className="h-4 w-4" />, subpath: []},
     // {name: 'Team', path: '/superadmin/noaccess', icon: <Users className="h-4 w-4" />, subpath: []},
     // {name: 'Projects', path: '/superadmin/noaccess', icon: <Box className="h-4 w-4" />, subpath: []},
     {name: 'Scheduling', path: '/superadmin/scheduling', icon: <Box className="h-4 w-4" />, subpath: []},

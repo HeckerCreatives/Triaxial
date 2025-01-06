@@ -475,11 +475,11 @@ export default function ClientTable() {
 
   const clientColor = (data: string) => {
     if(data.includes('1')){
-      return 'text-red-500'
+      return 'bg-red-500'
     } else if(data.includes('2')){
-      return 'text-blue-500'
+      return 'bg-blue-500'
     } else if(data.includes('3')){
-      return 'text-green-500'
+      return 'bg-green-500'
     } 
   }
   
@@ -612,21 +612,21 @@ export default function ClientTable() {
         </TableHeader>
         <TableBody>
           {clients.map((item, index) => (
-            <TableRow key={index}>
-            <TableCell className="font-medium">
+            <TableRow key={index} className={` bg-red-500`}>
+            <TableCell className={`${clientColor(item.priority)} text-white`}>
             <input 
                 checked={selectedRows.some((row) => row.id === `${item.teamid}`)}
                 onChange={() => handleSelectRow(`${item.teamid}`, `${item.clientname}`)}
                 type="checkbox" />
             </TableCell>
-            <TableCell className={`font-medium ${clientColor(item.priority)}`}>{item.clientname}</TableCell>
-            <TableCell className="font-medium ">{item.priority}</TableCell>
+            <TableCell className={`font-medium ${clientColor(item.priority)} text-white `}>{item.clientname}</TableCell>
+            <TableCell className={`font-medium ${clientColor(item.priority)} text-white `}>{item.priority}</TableCell>
 
 
             
           
-            <TableCell className="font-medium">{new Date(item.createdAt).toLocaleString()}</TableCell>
-            <TableCell className="font-medium">
+            <TableCell className={`font-medium ${clientColor(item.priority)} text-white `}>{new Date(item.createdAt).toLocaleString()}</TableCell>
+            <TableCell className={`font-medium ${clientColor(item.priority)} text-white `}>
 
             <Dialog open={dialog3} onOpenChange={setDialog3}>
                 <DialogTrigger>
