@@ -31,6 +31,7 @@ componentid: string
 estimatedbudget: string
 jobcomponent: string
 jobnumber: string
+teamid: string
 projectname: string
 jobmanager: {
   employeeid: string
@@ -141,7 +142,7 @@ export default function Totalinvoice() {
           {list.map((item, index) => (
             <TableRow>
               <TableCell className=" cursor-pointer underline">
-              <a href={`/finance/graph/jobcomponent?teamid=${id}`} className=' '>{item.jobnumber}</a>
+              <a href={`/finance/graph/jobcomponent?teamid=${item.teamid}&jobno=${item.componentid}`} className=' '>{item.jobnumber}</a>
               </TableCell>
               <TableCell>{item.jobcomponent}</TableCell>
               <TableCell>{item.projectname}</TableCell>

@@ -37,13 +37,8 @@ import Spinner from '@/components/common/Spinner'
 import { useSearchParams } from 'next/navigation'
 import Projectstatusform from '@/components/forms/Projectstatusform'
 import Copyprojectform from '@/components/forms/Copyprojectform'
+import { Item } from '@radix-ui/react-dropdown-menu'
 
-type Components = {
-  name: string,
-  estimatedBudget: number,
-  members: string[]
-  id: string
-}
 
 type Project = {
   createdAt: string
@@ -54,16 +49,17 @@ projectname: string
 startdate: string
 status: string
 teamname: string
-teamid: string
 updatedAt: string
+teamid: string
 client: string
-priority: string
 _id: string
 jobno: string
-jobComponents: Components[]
 }
 
 export default function Projecttable() {
+  const [dialog, setDialog] = useState(false)
+  const [dialog2, setDialog2] = useState(false)
+  const [dialog6, setDialog6] = useState(false)
   const [loading, setLoading] = useState(false)
 
   const [list, setList] = useState<Project[]>([])
@@ -72,7 +68,7 @@ export default function Projecttable() {
   const [search, setSearch] = useState('')
   const params = useSearchParams()
   const refresh = params.get('state')
-  const id = params.get('projectid')
+  const teamid = params.get('teamid')
 
   useEffect(() => {
     setLoading(true)
@@ -95,22 +91,33 @@ export default function Projecttable() {
     
   },[currentpage, search, refresh])
 
-
+  const getList = async () => {
+    setLoading(true)
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/projects/listprojects?searchproject=${search}&page=0&limit=9999`,{
+      withCredentials: true,
+      headers: {
+        'Content-Type': 'application/json'
+        }
+    })
+    setList(response.data.data.projectlist)
+    setTotalpage(response.data.data.totalpages)
+    setLoading(false)
+ 
+  }
 
    //paginition
    const handlePageChange = (page: number) => {
     setCurrentpage(page)
   }
 
-
-  const clientColor = (data: string) => {
-    if(data.includes('1')){
-      return 'bg-red-500'
-    } else if(data.includes('2')){
-      return 'bg-blue-500'
-    } else if(data.includes('3')){
-      return 'bg-green-500'
-    } 
+  const statusColor = (data: string) => {
+    if(data === 'On-going'){
+      return 'text-blue-500'
+    } else if(data === 'Complete'){
+      return 'text-green-500'
+    } else{
+      return 'text-red-500'
+    }
   }
 
   return (
@@ -120,6 +127,10 @@ export default function Projecttable() {
 
       <div className=' w-full flex items-center justify-between'>
         <div className=' flex items-center gap-2'>
+
+          <Createprojectform onClick={() => undefined}>
+            <button className=' bg-red-700 p-2 rounded-sm text-zinc-100'><FilePlus2 size={15}/></button>
+          </Createprojectform>
 
         </div>
 
@@ -143,60 +154,73 @@ export default function Projecttable() {
         <TableHeader>
             <TableRow>
             <TableHead>Job no</TableHead>
-            <TableHead>Client</TableHead>
             <TableHead>Project Name</TableHead>
-            <TableHead>Job Manager</TableHead>
-            <TableHead>Component Budget</TableHead>
-            <TableHead>% Invoice</TableHead>
-            <TableHead>Job Component</TableHead>
-            <TableHead>Job Members</TableHead>
-            <TableHead>Team</TableHead>
-   
+            <TableHead>Client</TableHead>
+            <TableHead className="">Job Component</TableHead>
+            {/* <TableHead className="">% Invoiced</TableHead> */}
+            {/* <TableHead className="">Est. $</TableHead> */}
+            <TableHead className="">Status</TableHead>
+            <TableHead className="">Start</TableHead>
+            <TableHead className="">Deadline</TableHead>
+            <TableHead className="">Action</TableHead>
             </TableRow>
         </TableHeader>
         <TableBody>
-        {list.map((project) =>
-          project.jobComponents.map((job, index) => (
-            <TableRow key={index} className=' text-white'>
-              <TableCell className={` ${clientColor(project.priority)} text-white underline cursor-pointer`}>
-                <a href={`/pm/graph/jobcomponent?teamid=${project.teamid}&jobno=${job.id}`} className=' '>{project.jobno}</a>
-
-              </TableCell>
-              <TableCell className={` ${clientColor(project.priority)} text-white`}>{project.client}</TableCell>
-              <TableCell className={` ${clientColor(project.priority)} text-white`}>{project.projectname}</TableCell>
-              <TableCell className={` ${clientColor(project.priority)} text-white`}>{project.managerName}</TableCell>
-              <TableCell className={` ${clientColor(project.priority)} text-white`}>{job.estimatedBudget}</TableCell>
-              <TableCell className={` ${clientColor(project.priority)} text-white`}>{project.invoiced}</TableCell>
-              <TableCell className={` ${clientColor(project.priority)} text-white`}>{job.name}</TableCell>
-              <TableCell className={` flex items-center gap-2 h-[50px] ${clientColor(project.priority)} text-white`}>{job.members.map((item, index) => (
-                <p key={index} className=' h-full'>{item}</p>
-              ))}</TableCell>
-              <TableCell className={` ${clientColor(project.priority)} text-white`}>{project.teamname}</TableCell>
-            </TableRow>
-          ))
-        )}
-          {/* {list.map((item, index) => (
+          {list.filter((item) => item.teamid === teamid)
+          .map((item, index) => (
             <TableRow key={index}>
             <TableCell>{item.jobno}</TableCell>
-            <TableCell>{item.client}</TableCell>
             <TableCell>{item.projectname}</TableCell>
-            <TableCell>{item.managerName}</TableCell>
-            <TableCell></TableCell>
-            <TableCell>{item.invoiced}</TableCell>
-            <TableCell></TableCell>
-            <TableCell></TableCell>
-            <TableCell>{item.teamname}</TableCell>
-          
-          
+            <TableCell>{item.client}</TableCell>
+            <TableCell className="">
+              <a href={`/pm/graph/jobcomponent?projectid=${item._id}`} className=' w-fit bg-red-700 rounded-sm p-1 text-white flex items-center gap-2'>Job Component<Eye size={15}/></a>
+              </TableCell>
+            {/* <TableCell className="">{item.invoiced}</TableCell> */}
+            {/* <TableCell className=""></TableCell> */}
+            <TableCell className={`${statusColor(item.status)}`}>{item.status}</TableCell>
+            <TableCell className="">{formatDateTime(item.startdate)}</TableCell>
+            <TableCell className="">{formatDateTime(item.deadlinedate)}</TableCell>
+            <TableCell className=" flex items-center gap-2">
+
+
+              <Editprojectform projectid={item._id} team={item.teamname} projectname={item.projectname} startdate={item.startdate} deadlinedate={item.deadlinedate} client={item.client} jobno={item.jobno} >
+                <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger><button className=' p-2 bg-secondary rounded-md'><Pen size={15}/></button></TooltipTrigger>
+                      <TooltipContent>
+                        <p className=' text-xs'>Edit Project</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+              </Editprojectform>
+
+              {/* <Copyprojectform team={item.teamname} jobno={item.jobno} name={item.projectname} client={item.client} start={formatDate(item.startdate)} end={formatDate(item.deadlinedate)} id={item._id}>
+               
+                <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger><button className=' p-2 bg-secondary rounded-md'><Copy size={15}/></button></TooltipTrigger>
+                      <TooltipContent>
+                        <p className=' text-xs'>Project Variation</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+              </Copyprojectform>
+
+             
+
+              <Projectstatusform deadlinedate={item.deadlinedate} invoiced={item.invoiced} managerName={item.managerName} projectname={item.projectname} startdate={item.startdate} status={item.status} teamname={item.teamname} client={item.client} _id={item._id} jobno={item.jobno}/> */}
+
+              
+            </TableCell>
             </TableRow>
-          ))} */}
+          ))}
             
         </TableBody>
         </Table>
 
-        {list.length !== 0 && (
+        {/* {list.length !== 0 && (
        <PaginitionComponent currentPage={currentpage} total={totalpage} onPageChange={handlePageChange}/>
-       )}
+       )} */}
     </div>
         
     </div>

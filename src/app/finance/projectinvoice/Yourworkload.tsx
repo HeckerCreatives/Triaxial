@@ -411,7 +411,7 @@ const totalsByDate = allDates.map((dateObj) => {
                     />
                   </td>
                   <td className="text-center underline cursor-pointer">
-                  <a href={`/finance/graph/jobcomponent?teamid=${id}`} className=' '>{graphItem.jobnumber}</a>
+                  <a href={`/finance/graph/jobcomponent?teamid=${id}&jobno=${graphItem.componentid}`} className=' '>{graphItem.jobnumber}</a>
 
                   </td>
                   <td className={`text-center  ${clientColor(graphItem.priority)}`}>{graphItem.clientname}</td>

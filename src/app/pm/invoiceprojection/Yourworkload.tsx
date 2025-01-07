@@ -316,7 +316,6 @@ const totalsByDate = allDates.map((dateObj) => {
   const findJobComponent = list.find((item) => item.componentid === componentid)
 
 
-  console.log(selectedId)
 
   const clientColor = (data: string) => {
     if(data.includes('1')){
@@ -327,6 +326,8 @@ const totalsByDate = allDates.map((dateObj) => {
       return 'bg-green-500'
     } 
   }
+
+
 
 
 
@@ -411,7 +412,7 @@ const totalsByDate = allDates.map((dateObj) => {
                     />
                   </td>
                   <td className="text-center underline cursor-pointer">
-                  <a href={`/pm/graph/jobcomponent?teamid=${id}`} className=' '>{graphItem.jobnumber}</a>
+                  <a href={`/pm/graph/jobcomponent?teamid=${id}&jobno=${graphItem.componentid}`} className=' '>{graphItem.jobnumber}</a>
 
                   </td>
                   <td className={`text-center  ${clientColor(graphItem.priority)}`}>{graphItem.clientname}</td>

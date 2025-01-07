@@ -80,6 +80,7 @@ export default function Yourworkload() {
   const [projectid, setProjectid] = useState('')
   const params = useSearchParams()
   const id = params.get('teamid')
+  const scrollId= params.get('jobno')
   const refresh = params.get('state')
   const [addStatus, setAddstatus] = useState([])
   const [wdStatus, setWdstatus] = useState(false)
@@ -835,6 +836,21 @@ export default function Yourworkload() {
 
 
 
+  const tableRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (scrollId && tableRef.current && list.length > 0) {
+      const row = tableRef.current.querySelector(`[data-invoice-id="${scrollId}"]`);
+      if (row) {
+        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else {
+        console.log('Row not found'); // Debugging
+      }
+    }
+  }, [scrollId, list]);
+
+
+
 
 
   return (
@@ -1105,15 +1121,39 @@ export default function Yourworkload() {
       </div>
 
       <div
+      ref={tableRef}
       className=' h-[500px] w-full flex flex-col max-w-[1920px] overflow-y-auto ml-1'>
         <div className=' h-full flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
 
-              <table className="table-auto w-full borer-collapse mt-1 ">
-                
+              <table 
+              
+              className="table-auto w-full borer-collapse ">
+                 <thead className='  bg-secondary h-[100px]'
+                 style={{ visibility: 'collapse' }}
+                 >
+
+                  <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
+                    <th className=' font-normal'>Action</th>
+                    <th className=' font-normal'>Status</th>
+                    <th className=' font-normal'>Job no.</th>
+                    <th className=' font-normal'>Job Mgr.</th>
+                    <th className=' font-normal'>Job Component</th>
+                    <th className=' font-normal'>Est. $</th>
+                    <th className=' font-normal'>Invoiced (%/hrs)</th>
+                    <th className=' font-normal'>Budget type</th>
+                    <th className=' font-normal'>Members</th>
+                    <th className=' font-normal'>Role</th>
+                    <th className=' font-normal'>Notes</th>
+
+                  </tr>
+                  </thead>
               <tbody>
               {list.map((graphItem, graphIndex) =>
                 graphItem.members.map((member, memberIndex) => (
-                  <tr key={`${graphIndex}-${memberIndex}`} className={`text-[.6rem] py-2 h-[50px] border-[1px] border-zinc-600 ${clientColor(graphItem.clientname.priority)}`}>
+                  <tr 
+                  key={`${graphItem._id}`}
+                  data-invoice-id={graphItem._id} 
+                  className={`text-[.6rem] py-2 h-[50px] border-[1px] border-zinc-600 ${clientColor(graphItem.clientname.priority)}`}>
                       <td className="text-center text-white flex items-center justify-center gap-1 h-[50px] w-[30px]">
                         
 
@@ -1130,7 +1170,7 @@ export default function Yourworkload() {
                     <td className={`${graphItem.status === null ? 'text-blue-400' :  'text-green-500'} text-center`}>{memberIndex === 0 && `${graphItem.status === null ? 'Ongoing' :  'Completed'}`}</td>
                     <td className="text-center">{memberIndex === 0 && graphItem.jobno}</td>
                       <td className="text-center">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
-                      <td className="text-center">{memberIndex === 0 && graphItem.jobcomponent}</td>
+                      <td className={` text-center ${scrollId === graphItem._id && 'text-black'}`}>{memberIndex === 0 && graphItem.jobcomponent}</td>
                       <td className="text-center">{memberIndex === 0 && `$ ${graphItem.estimatedbudget?.toLocaleString()}`}</td>
                       <td className="text-center">{memberIndex === 0 && `${graphItem.invoice.percentage} ${graphItem.budgettype === 'lumpsum' ? '%' : 'hrs'}`}</td>
                       <td className="text-center">{memberIndex === 0 && graphItem.budgettype}</td>
@@ -1165,8 +1205,10 @@ export default function Yourworkload() {
               <div ref={secondDivRef} 
               className=' w-full overflow-x-auto'>
                 <table className="table-auto border-collapse ">
-                  <thead className=' bg-secondary '>
-                    <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
+                  <thead className=' bg-secondary h-1'
+                  style={{ visibility: 'collapse' }}
+                  >
+                    <tr className=' text-[0.6rem] text-zinc-100 font-normal h-1'>
                     
                     {list[0]?.allDates
                     .filter((dateObj) => {
@@ -1186,14 +1228,19 @@ export default function Yourworkload() {
 
                       return (
                         <React.Fragment key={index}>
-                          <th className="relative font-normal px-[20.15px] py-[2px] border-zinc-700">
-                            
+                         <th className="relative font-normal border-[1px] h-1 overflow-hidden border-zinc-700">
+                          <div className="whitespace-nowrap transform -rotate-[90deg]">
+                            <p>{formatAustralianDate(date)}</p>
+                            <p>{formatMonthYear(date)}</p>
+                          </div>
+                        </th>
+                        {isFriday && (
+                          <th className="font-normal px-1 border-[1px] h-1 overflow-hidden border-zinc-700">
+                            <div className="transform -rotate-[90deg]">
+                              <p>Total Hours</p>
+                            </div>
                           </th>
-                          {isFriday && (
-                            <th className="font-normal px-[20px] py-[2px] border-zinc-700">
-                              
-                            </th>
-                          )}
+                        )}
                         </React.Fragment>
                       );
                     })}

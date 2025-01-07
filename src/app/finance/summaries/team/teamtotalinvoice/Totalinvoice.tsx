@@ -139,7 +139,7 @@ export default function Totalinvoice() {
           {list.map((item, index) => (
             <TableRow>
               <TableCell className=" underline cursor-pointer">
-              <a href={`/finance/graph/jobcomponent?teamid=${id}`} className=' '>{item.jobnumber}</a>
+              <a href={`/finance/graph/jobcomponent?teamid=${id}&jobno=${item.componentid}`} className=' '>{item.jobnumber}</a>
 
               </TableCell>
               <TableCell>{item.jobcomponent}</TableCell>
