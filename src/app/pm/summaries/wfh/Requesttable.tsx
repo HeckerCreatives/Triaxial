@@ -170,9 +170,9 @@ export default function Requesttable() {
               {/* <TableHead className=' text-xs'>Total Hours for Payroll</TableHead> */}
               <TableHead className=' text-xs'>Status</TableHead>
            
-              {status === 'Pending' && (
+              {/* {status === 'Pending' && (
                  <TableHead className=' text-xs'>Action</TableHead>
-              )}
+              )} */}
 
               </TableRow>
         </TableHeader>
@@ -188,7 +188,7 @@ export default function Requesttable() {
               <TableCell>{item?.totalhourswfh ? item.totalhourswfh.toFixed(2) : '0'}</TableCell>
               <TableCell>{item.hoursofleave}</TableCell>
               <TableCell className={` ${statusColor(item.status)} text-xs`}>{item.status}</TableCell>
-              {status === 'Pending' && (
+              {/* {status === 'Pending' && (
               <TableCell className="">
               <Wfhforpm requestid={item.requestid} startdate={item.requestdate} enddate={item.requestend} totalworkinghours={item.totalhourswfh} wellnessdaycycle={item.wellnessdaycycle} hoursofleave={item.hoursofleave} reason={item.reason} fullname={item.fullname} >
                 
@@ -196,7 +196,7 @@ export default function Requesttable() {
                </Wfhforpm>
              
             </TableCell>
-            )}
+            )} */}
      
               </TableRow>
             ))}
