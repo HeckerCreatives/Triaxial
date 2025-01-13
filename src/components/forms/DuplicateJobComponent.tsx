@@ -405,6 +405,28 @@ export default function DuplicateJobComponent( prop: Data) {
   //   }
   // },[id])
 
+
+  const remove = () => {
+    setFormData([{ jobmanager: prop.manager,jobno: '123', budgettype: prop.type, estimatedbudget: '', jobcomponent: prop.name, members: [
+      {
+          employeeid: "",
+          role: "Engnr."
+      },
+      {
+          employeeid: "",
+          role: "Engr. Revr."
+      },
+      {
+          employeeid: "",
+          role: "Drft."
+      },
+      {
+          employeeid: "",
+          role: "Drft. Revr."
+      }
+]}]);
+  }
+
   
 
 
@@ -442,7 +464,6 @@ export default function DuplicateJobComponent( prop: Data) {
                             className="text-xs h-[35px] bg-white"
                             placeholder="Job Component Name"
                             value={item.jobcomponent}
-                            disabled={true}
                             onChange={(e) => handleChange(index, 'jobcomponent', e.target.value)}
                         />
 
@@ -456,7 +477,6 @@ export default function DuplicateJobComponent( prop: Data) {
                         /> */}
                         <Label className="mt-2 text-zinc-500">Job Manager</Label>
                         <Select
-                        disabled={true}
                             value={item.jobmanager}
                             onValueChange={(value) => handleChange(index, 'jobmanager', value)}
                         >
@@ -473,7 +493,6 @@ export default function DuplicateJobComponent( prop: Data) {
 
                         <Label className="font-semibold mt-4">Job Component Budget</Label>
                         <Select
-                        disabled={true}
                             value={item.budgettype}
                             onValueChange={(value) => handleChange(index, 'budgettype', value)}
                         >
@@ -576,6 +595,10 @@ export default function DuplicateJobComponent( prop: Data) {
                 /> */}
                 </div>
             ))}
+
+            <div className=' w-full flex items-end justify-end'>
+              <button onClick={remove} className='  bg-red-700 text-zinc-100 px-4 py-2 text-xs rounded-sm w-auto'>Remove Members</button>
+            </div>
            
          
           

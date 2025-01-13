@@ -39,8 +39,7 @@ export const hr = [
     // {name: 'Team', path: '/hr/noaccess', icon: <Users className="h-4 w-4" />, subpath: []},
     // {name: 'Projects', path: '/hr/noaccess', icon: <Box className="h-4 w-4" />, subpath: []},
     {name: 'Scheduling', path: '/hr/scheduling', icon: <Box className="h-4 w-4" />, subpath: []},
-    {name: 'Project Invoice', path: '/hr/noaccess', icon: <File className="h-4 w-4" />, subpath: []},
-    {name: 'Invoice Requests', path: '/hr/noaccess', icon: <ListChecks className="h-4 w-4" />, subpath: []},
+    // {name: 'Project Invoice', path: '/hr/noaccess', icon: <File className="h-4 w-4" />, subpath: []},
     {name: 'Finance', path: '/hr/noaccess', icon: <Files className="h-4 w-4" />, subpath: []},
     {name: 'Searches', path: '/hr/client', icon: <Search className="h-4 w-4" />, subpath: [
         {name: 'Clients', path: '/hr/noaccess', subpath: []},
@@ -59,6 +58,7 @@ export const hr = [
             {name: 'WD List', path: '/hr/noaccess',subpath: []},
         ]},
         {name: 'Finance WIP List', path: '/hr/summaries', subpath: [
+    {name: 'Invoice Requests', path: '/hr/noaccess', icon: <ListChecks className="h-4 w-4" />, subpath: []},
             {name: 'Per Team', path: '/hr/noaccess',subpath: []},
             {name: 'Per Client', path: '/hr/noaccess',subpath: []},
         ]}
@@ -165,8 +165,7 @@ export const pm = [
     // {name: 'Team', path: '/pm/team', icon: <Users className="h-4 w-4" />, subpath: []},
     // {name: 'Projects', path: '/pm/projects', icon: <Box className="h-4 w-4" />, subpath: []},
     {name: 'Scheduling', path: '/pm/scheduling', icon: <Box className="h-4 w-4" />, subpath: []},
-    {name: 'Project Invoice', path: '/pm/noaccess', icon: <File className="h-4 w-4" />, subpath: []},
-    {name: 'Invoice Requests', path: '/pm/noaccess', icon: <ListChecks className="h-4 w-4" />, subpath: []},
+    // {name: 'Project Invoice', path: '/pm/noaccess', icon: <File className="h-4 w-4" />, subpath: []},
     {name: 'Finance', path: '/pm/invoiceprojection/list', icon: <Files className="h-4 w-4" />, subpath: []},
     {name: 'Searches', path: '/pm/client', icon: <Search className="h-4 w-4" />, subpath: [
         {name: 'Clients', path: '/pm/noaccess', subpath: []},
@@ -185,6 +184,7 @@ export const pm = [
             {name: 'WD List', path: '/pm/summaries/wellnessday',subpath: []},
         ]},
         {name: 'Finance WIP List', path: '/pm/noaccess', subpath: [
+            {name: 'Invoice Requests', path: '/pm/noaccess', icon: <ListChecks className="h-4 w-4" />, subpath: []},
             {name: 'Per Team', path: '/pm/noaccess',subpath: []},
             {name: 'Per Client', path: '/pm/noaccess',subpath: []},
         ]}
@@ -249,8 +249,6 @@ export const employee = [
     // {name: 'Team', path: '/employee/noaccess', icon: <Users className="h-4 w-4" />, subpath: []},
     // {name: 'Projects', path: '/employee/noaccess', icon: <Box className="h-4 w-4" />, subpath: []},
     {name: 'Scheduling', path: '/employee/scheduling', icon: <Box className="h-4 w-4" />, subpath: []},
-    {name: 'Project Invoice', path: '/employee/noaccess', icon: <File className="h-4 w-4" />, subpath: []},
-    {name: 'Invoice Requests', path: '/employee/noaccess', icon: <ListChecks className="h-4 w-4" />, subpath: []},
     {name: 'Finance', path: '/employee/noaccess', icon: <Files className="h-4 w-4" />, subpath: []},
     {name: 'Searches', path: '/employee/client', icon: <Search className="h-4 w-4" />, subpath: [
         {name: 'Clients', path: '/employee/noaccess', subpath: []},
@@ -269,6 +267,7 @@ export const employee = [
             {name: 'WD List', path: '/employee/noaccess',subpath: []},
         ]},
         {name: 'Finance WIP List', path: '/employee/summaries', subpath: [
+    {name: 'Invoice Requests', path: '/employee/noaccess', icon: <ListChecks className="h-4 w-4" />, subpath: []},
             {name: 'Per Team', path: '/employee/noaccess',subpath: []},
             {name: 'Per Client', path: '/employee/noaccess',subpath: []},
         ]}
@@ -389,7 +388,6 @@ export const superadmin = [
     // {name: 'Team', path: '/superadmin/noaccess', icon: <Users className="h-4 w-4" />, subpath: []},
     // {name: 'Projects', path: '/superadmin/noaccess', icon: <Box className="h-4 w-4" />, subpath: []},
     {name: 'Scheduling', path: '/superadmin/scheduling', icon: <Box className="h-4 w-4" />, subpath: []},
-    {name: 'Project Invoice', path: '/superadmin/projectinvoice/list', icon: <File className="h-4 w-4" />, subpath: []},
     // {name: 'Invoice Request', path: '/superadmin/invoice', icon: <ListChecks className="h-4 w-4" />, subpath: []},
     {name: 'Invoice Requests', path: '/superadmin/noaccess', icon: <ListChecks className="h-4 w-4" />, subpath: []},
     {name: 'Finance', path: '/superadmin/noaccess', icon: <Files className="h-4 w-4" />, subpath: []},
@@ -414,6 +412,7 @@ export const superadmin = [
             {name: 'WD List', path: '/superadmin/summaries/wellnessday',subpath: []},
         ]},
         {name: 'Finance WIP List', path: '/superadmin/noaccess', subpath: [
+            {name: 'Project Invoice', path: '/superadmin/projectinvoice/list', icon: <File className="h-4 w-4" />, subpath: []},
             {name: 'Per Team', path: '/superadmin/noaccess',subpath: []},
             {name: 'Per Client', path: '/superadmin/noaccess',subpath: []},
         ]}

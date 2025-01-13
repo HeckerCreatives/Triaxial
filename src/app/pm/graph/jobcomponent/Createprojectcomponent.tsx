@@ -42,6 +42,11 @@ client: string
 _id: string
 }
 
+type Client = {
+  clientname: string
+clientid: string
+}
+
 
 
 interface Data {
@@ -74,17 +79,22 @@ type Manager = {
 
 export default function Createprojectcomponent( prop: Data) {
   const [dialog, setDialog] = useState(false)
-  const [jobno, setJobno] = useState('')
   const [client, setClient] = useState('')
+  const [clientid, setClientid] = useState('')
   const [pm, setPm] = useState('')
-  const [count, setCount] = useState(1)
   const router = useRouter()
   const [employee, setEmployee] = useState<Employee[]>([])
   const [manager, setManager] = useState<Manager[]>([])
   const params = useSearchParams()
-  const id = params.get('projectid')
+  const id = params.get('teamid')
   const [isValidated, setIsvalidated] = useState(false)
   const [projectid, setProjectId] = useState('')
+
+  const [jobno, setJobno] = useState('')
+  const [projectname, setProjectname] = useState('')
+  const [start, setStart] = useState('')
+  const [end, setEnd] = useState('')
+
 
   const [formData, setFormData] = useState<FormData[]>([{ jobmanager: '',jobno: '123', budgettype: '', estimatedbudget: '', jobcomponent: '', members: [
                 {
@@ -232,6 +242,12 @@ export default function Createprojectcomponent( prop: Data) {
       try {
         const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/createjobcomponent`,{
           projectid: projectid,
+          teamid: id,
+          projectname:  projectname,
+          clientid: clientid,
+          jobno: jobno,
+          start: start,
+          end: end,
           jobcomponentvalue: filteredFormData
         }, {
           withCredentials: true,
@@ -435,6 +451,32 @@ export default function Createprojectcomponent( prop: Data) {
     
   },[])
 
+  
+  const [clients, setClients] = useState<Client[]>([])
+
+
+    //client list
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        const getList = async () => {
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/clients/clientlistallmanager?clientname`,{
+            withCredentials: true,
+            headers: {
+              'Content-Type': 'application/json'
+              }
+          })
+    
+          setClients(response.data.data.clients)
+      
+        }
+        getList()
+      },500)
+      return () => clearTimeout(timer)
+      
+      
+    },[])
+  
+
 
   
 
@@ -451,11 +493,11 @@ export default function Createprojectcomponent( prop: Data) {
         <p className=' text-sm uppercase font-semibold text-red-700 flex items-center gap-2'><span className=' bg-red-700 px-4 py-1 text-zinc-100 text-xs'>Create</span>Job Components</p>
         <div className=' w-full flex flex-col gap-4'>
 
-            <div className=' w-full flex items-end justify-end'>
-                <button onClick={handleAddForm} className=' px-4 py-2 bg-red-600 rounded-md text-[.6rem] text-white'>Add more</button>
-            </div>
+            
 
-               <Label className="mt-2 text-zinc-500">Select Project</Label>
+            <p className=' text-xs'>Project Details</p>
+
+               {/* <Label className="mt-2 text-zinc-500">Select Project</Label>
                                     <Select
                                      value={projectid} 
                                      onValueChange={setProjectId}
@@ -468,10 +510,68 @@ export default function Createprojectcomponent( prop: Data) {
                                             <SelectItem key={index} value={item._id}>{item.projectname}</SelectItem>
                                           ))}
                                         </SelectContent>
-                                    </Select>
+                                    </Select> */}
 
-
-          
+                                    
+                                                             {/* <label htmlFor="" className=' text-xs'>Job no</label> */}
+                                                                      <Input type='text' value={jobno} onChange={(e) => setJobno(e.target.value)} className=' text-xs h-[35px] bg-zinc-200' placeholder='Job no'/>
+                                                            
+                                                            
+                                                                       <div className=' bg-zinc-200 rounded-sm flex flex-col p-2'>
+                                                                         
+                                                                              <div className=' flex items-start gap-4 '>
+                                                                                
+                                                            
+                                                                                <div className=' w-full'>
+                                                                                  <Label className=' text-zinc-500'>Project Name <span className=' text-red-700'>*</span></Label>
+                                                                                  <Input type='text' value={projectname} onChange={(e) => setProjectname(e.target.value)} className=' text-xs h-[35px] bg-white' placeholder='Project name'/>
+                                                            
+                                                            
+                                                                                </div>
+                                                            
+                                                                               
+                                                                                  <div className=' w-full'>
+                                                                                    <Label className=' text-zinc-500'>Client<span className=' text-red-700'>*</span></Label>
+                                                                                    <Select value={clientid} onValueChange={setClientid}>
+                                                                                    <SelectTrigger className=" text-xs h-[35px] bg-white">
+                                                                                      <SelectValue placeholder="Select Client" className=' text-black'  />
+                                                                                    </SelectTrigger>
+                                                                                    <SelectContent className=' text-xs'>
+                                                                                      {clients.map((item, index) => (
+                                                                                      <SelectItem key={item.clientid} value={item.clientid}>{item.clientname}</SelectItem>
+                                                            
+                                                                                      ))}
+                                                                                    </SelectContent>
+                                                                                  </Select>
+                                                            
+                                                                                  </div>
+                                                            
+                                                                              </div>
+                                                            
+                                                                              <div className=' flex items-start gap-4 '>
+                                                                                
+                                                            
+                                                                                <div className=' w-full'>
+                                                                                  <Label className=' text-zinc-500'>Start Date <span className=' text-red-700'>*</span></Label>
+                                                                                  <Input type='date' value={start} onChange={(e) => setStart(e.target.value)} className=' text-xs h-[35px] bg-white' placeholder='Project name' />
+                                                            
+                                                            
+                                                                                </div>
+                                                            
+                                                                               
+                                                                                  <div className=' w-full'>
+                                                                                    <Label className=' text-zinc-500'>End date<span className=' text-red-700'>*</span></Label>
+                                                                                    <Input type='date' value={end} onChange={(e) => setEnd(e.target.value)} className=' text-xs h-[35px] bg-white' placeholder='Project name'/>
+                                                            
+                                                                                  </div>
+                                                            
+                                                                              </div>
+                                                            
+                                                                              
+                                                                      </div>
+            <div className=' w-full flex items-end justify-end'>
+                <button onClick={handleAddForm} className=' px-4 py-2 bg-red-600 rounded-md text-[.6rem] text-white'>Add more</button>
+            </div>
 
             {formData.map((item, index) => (
                 <div key={index} className="flex flex-col gap-2 bg-zinc-100 rounded-md p-4">

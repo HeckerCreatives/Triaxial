@@ -776,11 +776,11 @@ export default function Yourworkload() {
 
   const clientColor = (data: string) => {
     if(data.includes('1')){
-      return 'bg-red-500'
+      return 'bg-[#93C47D]'
     } else if(data.includes('2')){
-      return 'bg-blue-500'
+      return 'bg-[#B6D7A7]'
     } else if(data.includes('3')){
-      return 'bg-green-500'
+      return 'bg-[#969696]'
     } 
   }
 
@@ -1151,7 +1151,7 @@ export default function Yourworkload() {
               {list.map((graphItem, graphIndex) =>
                 graphItem.members.map((member, memberIndex) => (
                   <tr 
-                  key={`${graphItem._id}`}
+                  key={`${graphItem._id}-${memberIndex}`}
                   data-invoice-id={graphItem._id} 
                   className={`text-[.6rem] py-2 h-[50px] border-[1px] border-zinc-600 ${clientColor(graphItem.clientname.priority)}`}>
                       <td className="text-center text-white flex items-center justify-center gap-1 h-[50px] w-[30px]">

@@ -775,14 +775,13 @@ export default function Yourworkload() {
 
   const clientColor = (data: string) => {
     if(data.includes('1')){
-      return 'bg-red-500'
+      return 'bg-[#93C47D]'
     } else if(data.includes('2')){
-      return 'bg-blue-500'
+      return 'bg-[#B6D7A7]'
     } else if(data.includes('3')){
-      return 'bg-green-500'
+      return 'bg-[#969696]'
     } 
   }
-
   const firstDivRef = useRef<HTMLDivElement>(null);
   const secondDivRef = useRef<HTMLDivElement>(null);
 

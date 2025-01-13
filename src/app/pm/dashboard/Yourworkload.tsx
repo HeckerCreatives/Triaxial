@@ -126,41 +126,28 @@ export default function Yourworkload() {
      
     );
 
-    if(hours <= 2){
-      data.push('bg-red-500')
+    if(hours <= 7){
+      data.push('bg-green-500')
     }
 
-    if(hours <= 4 && hours >= 4){
+    if(hours <= 9 && hours >= 7){
       data.push('bg-orange-500')
     }
 
-    if(hours <= 6 && hours >= 4){
-      data.push('bg-yellow-500')
-    }
-
-    if(hours <= 8 && hours >= 6){
-      data.push('bg-green-500')
-    }
-
-    if(hours > 8){
-      data.push('bg-green-500')
+    if(hours > 9){
+      data.push('bg-pink-500')
     }
 
     if(isWellnessDay){
-      data.push('bg-violet-500')
+      data.push('bg-fuchsia-500')
     }
-    if(hours < 40){
-      data.push('bg-cyan-500')
-    }
+    // if(hours < 40){
+    //   data.push('bg-cyan-500')
+    // }
 
-    if(hours > 40){
-      data.push('bg-indigo-500')
-    }
-
-    if(isEventInRange){
-      data.push('bg-gray-400')
-
-    }
+    // if(hours > 40){
+    //   data.push('bg-indigo-500')
+    // }
 
     if(isEventInRange){
       data.push('bg-gray-400')
@@ -168,7 +155,7 @@ export default function Yourworkload() {
     }
 
     if(isLeaveInRange){
-      data.push('bg-pink-500')
+      data.push('bg-violet-500')
     }
 
     return data

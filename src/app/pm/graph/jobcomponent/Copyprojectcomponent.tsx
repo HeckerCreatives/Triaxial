@@ -255,7 +255,7 @@ export default function Copyprojectcomponent( prop: Data) {
     }
 
       try {
-        const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/createjobcomponent`,{
+        const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/createvariationjobcomponent`,{
           projectid: projectid,
           jobcomponentvalue: filteredFormData
         }, {
@@ -266,9 +266,9 @@ export default function Copyprojectcomponent( prop: Data) {
         })
   
         const response = await toast.promise(request, {
-          loading: 'Creating job component....',
+          loading: 'Creating variation of job component....',
           success: `Successfully created`,
-          error: 'Error while creating the job component',
+          error: 'Error while creating variation of job component',
       });
 
       if(response.data.message === 'success'){

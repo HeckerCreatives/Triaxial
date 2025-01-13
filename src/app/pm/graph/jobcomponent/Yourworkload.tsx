@@ -33,6 +33,8 @@ import JobComponentStatus from '@/components/forms/JobComponentStatus'
 import EditJobComponent from '@/components/forms/EditJobComponent'
 import Individualrequest from '../../scheduling/IndividualRequest'
 import DuplicateJobComponent from '@/components/forms/DuplicateJobComponent'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
 
 
 type Employee = {
@@ -63,6 +65,14 @@ type Wellnessday = {
 type Leave = {
   leavestart: string
   leaveend: string
+}
+
+interface FormData {
+  date: string;
+  employeeid: string;
+  hours: number;
+  jobcomponentid: string;
+  status: string[];
 }
 
 
@@ -109,9 +119,9 @@ export default function Yourworkload() {
   const [tempData, setTempdata] = useState()
   const [list, setList] = useState<Graph[]>([])
 
-  const handleCheckboxChange = (id: string) => {
-    setComponentid((prevSelectedId) => (prevSelectedId === id ? '' : id));
-  };
+   const handleCheckboxChange = (id: string) => {
+     setComponentid((prevSelectedId) => (prevSelectedId === id ? '' : id));
+   };
 
   const findJobComponent = list.find((item) => item._id === componentid)
 
@@ -174,6 +184,7 @@ export default function Yourworkload() {
         error: 'Error while updating the workload',
     });
 
+
     if(response.data.message === 'success'){
       getList()
       setDialog(false)
@@ -208,6 +219,8 @@ export default function Yourworkload() {
       } 
     }
   }
+
+  
 
 
   const position = (jobManager: boolean, manager: boolean) => {
@@ -776,11 +789,11 @@ export default function Yourworkload() {
 
   const clientColor = (data: string) => {
     if(data.includes('1')){
-      return 'bg-red-500'
+      return 'bg-[#93C47D]'
     } else if(data.includes('2')){
-      return 'bg-blue-500'
+      return 'bg-[#B6D7A7]'
     } else if(data.includes('3')){
-      return 'bg-green-500'
+      return 'bg-[#969696]'
     } 
   }
 
@@ -848,6 +861,151 @@ export default function Yourworkload() {
       }
     }
   }, [scrollId, list]);
+
+
+
+
+
+  //multi form
+  const [forms, setForms] = useState<FormData[]>([
+    {
+      date: '',
+      employeeid: employeeid,
+      hours: 0,
+      jobcomponentid: projectid,
+      status: [],
+    },
+  ]);
+
+  // Add a new form
+  const addForm = () => {
+    setForms([
+      ...forms,
+      {
+        date: '',
+        employeeid: employeeid,
+        hours: 0,
+        jobcomponentid: projectid,
+        status: [],
+      },
+    ]);
+  };
+
+  // Delete a form by index
+  const deleteForm = (index: number) => {
+    const newForms = forms.filter((_, i) => i !== index);
+    setForms(newForms);
+  };
+
+  // Handle changes in form fields
+  const handleChange = (index: number, field: keyof FormData, value: string | number | string[]) => {
+    const newForms = [...forms];
+    // Use a type assertion to ensure TypeScript understands the value type
+    (newForms[index][field] as typeof value) = value;
+    setForms(newForms);
+  };
+
+
+  // Handle checkbox changes for status
+  const handleCheckbox = (index: number, id: string) => {
+    const newForms = [...forms];
+  
+    // Get the current form's status array
+    const currentStatus = newForms[index].status;
+  
+    // If the first checkbox (statusData[0].id) is being toggled
+    if (id === statusData[0].id) {
+      newForms[index].status = currentStatus.includes(id)
+        ? currentStatus.filter((statusId) => statusId !== id) // Deselect the first checkbox
+        : [...currentStatus, id]; // Select the first checkbox
+    } else {
+      // For other checkboxes (statusData[1-3].id)
+      if (currentStatus.includes(id)) {
+        // Deselect the checkbox if it's already selected
+        newForms[index].status = currentStatus.filter((statusId) => statusId !== id);
+      } else {
+        // Ensure the first checkbox is always selected
+        const newStatus = [statusData[0].id, id].filter(
+          (value) => currentStatus.includes(value) || value === id
+        );
+        newForms[index].status = newStatus;
+      }
+    }
+  
+    // Update the forms state
+    setForms(newForms);
+  };
+
+  // Submit all forms
+  const handleSubmit = () => {
+    console.log('Submitted Forms:', forms);
+    // Replace with your submission logic (e.g., API call)
+  };
+
+  const updateMultipleWorkload = async () => {
+  
+    try {
+      const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/editmultiplestatushours`,{
+        jobcomponentid:  projectid,
+        employeeid: employeeid,
+        updates: forms
+      }, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json'
+          }
+      })
+
+      const response = await toast.promise(request, {
+        loading: 'Updating workload....',
+        success: `Successfully updated`,
+        error: 'Error while updating the workload',
+    });
+
+
+    if(response.data.message === 'success'){
+      getList()
+      setDialog(false)
+      setSelectedRows([])
+      setForms([
+        {
+          date: '',
+          employeeid: employeeid,
+          hours: 0,
+          jobcomponentid: projectid,
+          status: [],
+        },
+      ]);
+    }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError<{ message: string, data: string }>;
+        if (axiosError.response && axiosError.response.status === 401) {
+            toast.error(`${axiosError.response.data.data}`) 
+            router.push('/')    
+        }
+
+        if (axiosError.response && axiosError.response.status === 400) {
+            toast.error(`${axiosError.response.data.data}`)     
+               
+        }
+
+        if (axiosError.response && axiosError.response.status === 402) {
+            toast.error(`${axiosError.response.data.data}`)          
+                   
+        }
+
+        if (axiosError.response && axiosError.response.status === 403) {
+            toast.error(`${axiosError.response.data.data}`)              
+           
+        }
+
+        if (axiosError.response && axiosError.response.status === 404) {
+            toast.error(`${axiosError.response.data.data}`)             
+        }
+      } 
+    }
+  }
 
 
 
@@ -1123,7 +1281,7 @@ export default function Yourworkload() {
       <div
       ref={tableRef}
       className=' h-[500px] w-full flex flex-col max-w-[1920px] overflow-y-auto ml-1'>
-        <div className=' h-full flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
+        <div className=' h-[500px] flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
 
               <table 
               
@@ -1151,9 +1309,9 @@ export default function Yourworkload() {
               {list.map((graphItem, graphIndex) =>
                 graphItem.members.map((member, memberIndex) => (
                   <tr 
-                  key={`${graphItem._id}`}
+                  key={`${graphItem._id}-${memberIndex}`}
                   data-invoice-id={graphItem._id} 
-                  className={`text-[.6rem] py-2 h-[50px] border-[1px] border-zinc-600 ${clientColor(graphItem.clientname.priority)}`}>
+                  className={`text-[.6rem] py-2 h-[50px] border-[1px] border-zinc-600 ${graphItem.isVariation === true ? 'text-red-600 font-black' : 'text-zinc-100'} ${clientColor(graphItem.clientname.priority)}`}>
                       <td className="text-center text-white flex items-center justify-center gap-1 h-[50px] w-[30px]">
                         
 
@@ -1167,7 +1325,8 @@ export default function Yourworkload() {
 
                                     
                     </td>
-                    <td className={`${graphItem.status === null ? 'text-blue-400' :  'text-green-500'} text-center`}>{memberIndex === 0 && `${graphItem.status === null ? 'Ongoing' :  'Completed'}`}</td>
+                    {/* ${graphItem.status === null ? 'text-blue-400' :  'text-green-500'} */}
+                    <td className={` text-center`}>{memberIndex === 0 && `${graphItem.status === null ? 'Ongoing' :  'Completed'}`}</td>
                     <td className="text-center">{memberIndex === 0 && graphItem.jobno}</td>
                       <td className="text-center">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
                       <td className={` text-center ${scrollId === graphItem._id && 'text-black'}`}>{memberIndex === 0 && graphItem.jobcomponent}</td>
@@ -1377,67 +1536,134 @@ export default function Yourworkload() {
 
         {isJobmamager === true ? (
               <Dialog open={dialog} onOpenChange={setDialog}>
-                      <DialogContent className=' p-8 bg-secondary border-none text-white'>
-                        <DialogHeader>
-                          <DialogTitle>Update workload ({name} <span className=' text-xs text-red-500'>({role})</span> at {formatDate(date)})</DialogTitle>
-                          <DialogDescription>
-                            Note, you can only update the hours rendered if the employee is not on wellness day.
-                          </DialogDescription>
-                        </DialogHeader>
-                        <div className=' w-full flex flex-col gap-2'>              
-
-                        <label htmlFor="" className=' text-xs mt-4'>Select Status</label>
-
-                        {/* <div className='w-full flex items-center gap-6'>
-                            {statusData.map((item) => (
-                              <div key={item.id} className='flex items-center gap-1 text-xs'>
-                                <input
-                                disabled={wdStatus}
-                                  value={item.id}
-                                  type="checkbox"
-                                  checked={selectedRows.includes(item.id)}
-                                  onChange={() => handleSelectRow(item.id)}
-                                />
-                                <p className=' p-1'>{item.name}</p>
-                              </div>
-                            ))}
-                          </div> */}
-
-                          <div className='w-full flex items-center gap-6'>
-                            {statusData.map((item) => (
-                              <div key={item.id} className='flex items-center gap-1 text-xs'>
-                                <input
-                                disabled={wdStatus || event || leave}
-                                  value={item.id}
-                                  type="checkbox"
-                                  checked={selected.includes(item.id)}
-                                onChange={() => handleChangeCheckbox(item.id as any)}
-                                />
-                                <p className=' p-1'>{item.name}</p>
-                              </div>
-                            ))}
-                          </div>
-
-
-                        </div>
-
-                  
-                        <div className=' flex flex-col gap-2 text-xs'>
-                          <label htmlFor="">Hours Rendered</label>
-                          <input disabled={wdStatus || event || leave} type="number" value={hours} onChange={(e) => setHours(e.target.valueAsNumber)} placeholder='Hours' id="" className=' bg-primary p-2 rounded-md text-xs' />
-                          
-                        </div>
-              
-                        <div className=' w-full flex items-end justify-end mt-4'>
-                          <button disabled={wdStatus || event || leave} onClick={() => updateWorkload()} className=' px-4 py-2 bg-red-600 text-xs text-white rounded-md'>Save</button>
-                        </div>
-
-                        {(wdStatus === true || event === true || leave === true) && (
-                          <p className=' text-xs text-red-500 flex items-center gap-2'><OctagonAlert size={15}/> Employee is in on wellness or event day, you can't update this selected workload</p>
-                        )}
-
+                      <DialogContent className=' p-8 bg-secondary border-none text-white max-h-[80%] overflow-y-auto'>
                         
-                    
+                        <Tabs defaultValue="account" className=" w-full">
+                          <TabsList className=' text-xs bg-zinc-800'>
+                            <TabsTrigger value="single">Single</TabsTrigger>
+                            <TabsTrigger value="multiple">Multiple</TabsTrigger>
+                          </TabsList>
+                          <TabsContent value="single">
+                            <DialogHeader>
+                              <DialogTitle>Update workload ({name} <span className=' text-xs text-red-500'>({role})</span> at {formatDate(date)})</DialogTitle>
+                              <DialogDescription>
+                                Note, you can only update the hours rendered if the employee is not on wellness day.
+                              </DialogDescription>
+                            </DialogHeader>
+                            <div className=' w-full flex flex-col gap-2'>              
+                            <label htmlFor="" className=' text-xs mt-4'>Select Status</label>
+
+                              <div className='w-full flex items-center gap-6'>
+                                {statusData.map((item) => (
+                                  <div key={item.id} className='flex items-center gap-1 text-xs'>
+                                    <input
+                                    disabled={wdStatus || event || leave}
+                                      value={item.id}
+                                      type="checkbox"
+                                      checked={selected.includes(item.id)}
+                                    onChange={() => handleChangeCheckbox(item.id as any)}
+                                    />
+                                    <p className=' p-1'>{item.name}</p>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+
+                            <div className=' flex flex-col gap-2 text-xs'>
+                              <label htmlFor="">Hours Rendered</label>
+                              <input disabled={wdStatus || event || leave} type="number" value={hours} onChange={(e) => setHours(e.target.valueAsNumber)} placeholder='Hours' id="" className=' bg-primary p-2 rounded-md text-xs' />
+                              
+                            </div>
+                  
+                            <div className=' w-full flex items-end justify-end mt-4'>
+                              <button disabled={wdStatus || event || leave} onClick={() => updateWorkload()} className=' px-4 py-2 bg-red-600 text-xs text-white rounded-md'>Save</button>
+                            </div>
+
+                            {(wdStatus === true || event === true || leave === true) && (
+                              <p className=' text-xs text-red-500 flex items-center gap-2'><OctagonAlert size={15}/> Employee is in on wellness or event day, you can't update this selected workload</p>
+                            )}
+                          </TabsContent>
+                          <TabsContent value="multiple">
+
+                            <DialogHeader>
+                              <DialogTitle>Update workload ({name} <span className=' text-xs text-red-500'>({role})</span></DialogTitle>
+                              <DialogDescription>
+                                Note, you can only update the hours rendered if the employee is not on wellness day.
+                              </DialogDescription>
+                            </DialogHeader>
+                            {forms.map((form, index) => (
+                            <div key={index} className=" w-full mb-6 p-4 border border-zinc-700 rounded-lg text-xs">
+                              <h2 className="text-sm font-semibold mb-2">Form {index + 1}</h2>
+                              <div className="space-y-4">
+                                <div>
+                                  <label className="block text-sm font-medium">Date</label>
+                                  <input disabled={wdStatus || event || leave}
+                                    type="date"
+                                    value={form.date.split('T')[0]}
+                                    onChange={(e) => handleChange(index, 'date', e.target.value + 'T00:00:00.000Z')}
+                                  placeholder='Date'
+                                  className=' bg-primary p-2 rounded-md text-xs' />
+                                
+                                </div>
+
+                                <div>
+                                <label className="block text-sm font-medium">Hours Rendered</label>
+                                <input disabled={wdStatus || event || leave} type="number"
+                                  value={form.hours}
+                                  onChange={(e) => handleChange(index, 'hours', e.target.valueAsNumber)}
+                                placeholder='Hours' id="" className=' bg-primary p-2 rounded-md text-xs' />
+                                
+                                </div>
+
+                                <div>
+                                  <label className="block text-sm font-medium">Status</label>
+                                  <div className="flex space-x-4">
+                                    {statusData.map((option) => (
+                                      <label key={option.id} className="flex items-center">
+                                        <input
+                                          type="checkbox"
+                                          value={option.id}
+                                          checked={form.status.includes(option.id)}
+                                          onChange={() => handleCheckbox(index, option.id)}
+                                          className="mr-2"
+                                        />
+                                        {option.name}
+                                      </label>
+                                    ))}
+                                  </div>
+                                </div>
+
+                                {index !== 0 && (
+                                  <button
+                                  onClick={() => deleteForm(index)}
+                                  className="px-4 py-2 bg-red-500 text-white rounded-md text-[.6rem]"
+                                >
+                                  Delete Form
+                                </button>
+                                )}
+                                
+                              </div>
+                            </div>
+                            ))}
+
+                            <button
+                              onClick={addForm}
+                              className=" w-fit text-xs px-4 py-2 bg-blue-500 text-white rounded-md mr-2"
+                            >
+                              Add Form
+                            </button>
+
+                            <button
+                              onClick={updateMultipleWorkload}
+                              className=" w-fit text-xs px-4 py-2 bg-green-500 text-white rounded-md"
+                            >
+                              Submit All
+                            </button>
+
+                          </TabsContent>
+                        </Tabs>
+                        
+
                     
                       </DialogContent>
               </Dialog>

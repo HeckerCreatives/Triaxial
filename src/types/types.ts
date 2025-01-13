@@ -112,6 +112,7 @@ projectname: Project
 teamname:string
 _id:string
 status: any
+isVariation: boolean
 budgettype: string
 estimatedbudget: number
 invoice: {
