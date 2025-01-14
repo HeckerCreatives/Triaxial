@@ -220,6 +220,66 @@ export default function Yourworkload() {
     }
   }
 
+  const removeWorkload = async () => {
+    setHours(0)
+    setSelected([])
+  
+    try {
+      const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/editstatushours`,{
+        jobcomponentid:  projectid,
+        employeeid: employeeid,
+        date: date,
+        status: [],
+        hours: null
+      }, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json'
+          }
+      })
+
+      const response = await toast.promise(request, {
+        loading: 'Removing workload data....',
+        success: `Successfully removed`,
+        error: 'Error while removing workload data',
+    });
+
+
+    if(response.data.message === 'success'){
+      getList()
+      setDialog(false)
+      setSelectedRows([])
+    }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError<{ message: string, data: string }>;
+        if (axiosError.response && axiosError.response.status === 401) {
+            toast.error(`${axiosError.response.data.data}`) 
+            router.push('/')    
+        }
+
+        if (axiosError.response && axiosError.response.status === 400) {
+            toast.error(`${axiosError.response.data.data}`)     
+               
+        }
+
+        if (axiosError.response && axiosError.response.status === 402) {
+            toast.error(`${axiosError.response.data.data}`)          
+                   
+        }
+
+        if (axiosError.response && axiosError.response.status === 403) {
+            toast.error(`${axiosError.response.data.data}`)              
+           
+        }
+
+        if (axiosError.response && axiosError.response.status === 404) {
+            toast.error(`${axiosError.response.data.data}`)             
+        }
+      } 
+    }
+  }
+
   
 
 
@@ -1574,11 +1634,16 @@ export default function Yourworkload() {
                               <input disabled={wdStatus || event || leave} type="number" value={hours} onChange={(e) => setHours(e.target.valueAsNumber)} placeholder='Hours' id="" className=' bg-primary p-2 rounded-md text-xs' />
                               
                             </div>
-                  
-                            <div className=' w-full flex items-end justify-end mt-4'>
-                              <button disabled={wdStatus || event || leave} onClick={() => updateWorkload()} className=' px-4 py-2 bg-red-600 text-xs text-white rounded-md'>Save</button>
-                            </div>
 
+                        
+                  
+                            <div className=' w-full flex items-end justify-end mt-4 gap-2'>
+                              <button disabled={wdStatus || event || leave} onClick={() => removeWorkload()} className=' px-4 py-2 bg-zinc-600 text-xs text-white rounded-md'>Remove</button>
+
+                              <button disabled={wdStatus || event || leave} onClick={() => updateWorkload()} className=' px-4 py-2 bg-red-600 text-xs text-white rounded-md'>Save</button>
+
+                            </div>
+                         
                             {(wdStatus === true || event === true || leave === true) && (
                               <p className=' text-xs text-red-500 flex items-center gap-2'><OctagonAlert size={15}/> Employee is in on wellness or event day, you can't update this selected workload</p>
                             )}
@@ -1657,7 +1722,7 @@ export default function Yourworkload() {
                               onClick={updateMultipleWorkload}
                               className=" w-fit text-xs px-4 py-2 bg-green-500 text-white rounded-md"
                             >
-                              Submit All
+                              Save All
                             </button>
 
                           </TabsContent>

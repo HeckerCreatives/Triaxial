@@ -355,9 +355,9 @@ export const finance = [
             {name: 'WD List', path: '/finance/noaccess',subpath: []},
         ]},
         {name: 'Finance WIP List', path: '/finance/summaries', subpath: [
+            {name: 'Invoice Requests', path: '/finance/invoice', subpath: []},
             {name: 'Per Team', path: '/finance/summaries/team',subpath: []},
             {name: 'Per Client', path: '/finance/summaries/client',subpath: []},
-            {name: 'Invoice Requests', path: '/finance/invoice', subpath: []},
 
         ]}
     ]},
@@ -389,7 +389,6 @@ export const superadmin = [
     // {name: 'Projects', path: '/superadmin/noaccess', icon: <Box className="h-4 w-4" />, subpath: []},
     {name: 'Scheduling', path: '/superadmin/scheduling', icon: <Box className="h-4 w-4" />, subpath: []},
     // {name: 'Invoice Request', path: '/superadmin/invoice', icon: <ListChecks className="h-4 w-4" />, subpath: []},
-    {name: 'Invoice Requests', path: '/superadmin/noaccess', icon: <ListChecks className="h-4 w-4" />, subpath: []},
     {name: 'Finance', path: '/superadmin/noaccess', icon: <Files className="h-4 w-4" />, subpath: []},
     // {name: 'Total Invoice', path: '/superadmin/totalinvoice', icon: <File className="h-4 w-4" />, subpath: [
     //     {name: 'Per Team', path: '/superadmin/totalinvoice/team', subpath: []},
@@ -401,6 +400,7 @@ export const superadmin = [
     ]},
 
     {name: 'Summaries', path: '/superadmin/summaries', icon: <File className="h-4 w-4" />, subpath: [
+
         {name: 'Projects', path: '/superadmin/noaccess', subpath: [
             {name: 'Job Master', path: '/superadmin/noaccess',subpath: []},
             {name: 'Due Dates', path: '/superadmin/noaccess',subpath: []},
@@ -412,7 +412,9 @@ export const superadmin = [
             {name: 'WD List', path: '/superadmin/summaries/wellnessday',subpath: []},
         ]},
         {name: 'Finance WIP List', path: '/superadmin/noaccess', subpath: [
-            {name: 'Project Invoice', path: '/superadmin/projectinvoice/list', icon: <File className="h-4 w-4" />, subpath: []},
+            {name: 'Invoice Requests', path: '/superadmin/noaccess', icon: <ListChecks className="h-4 w-4" />, subpath: []},
+
+            // {name: 'Project Invoice', path: '/superadmin/projectinvoice/list', icon: <File className="h-4 w-4" />, subpath: []},
             {name: 'Per Team', path: '/superadmin/noaccess',subpath: []},
             {name: 'Per Client', path: '/superadmin/noaccess',subpath: []},
         ]}
