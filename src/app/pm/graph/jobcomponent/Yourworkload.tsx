@@ -259,7 +259,7 @@ export default function Yourworkload() {
         }
 
         if (axiosError.response && axiosError.response.status === 400) {
-            toast.error(`${axiosError.response.data.data}`)     
+            toast.error(`Cannot remove an empty data`)     
                
         }
 
