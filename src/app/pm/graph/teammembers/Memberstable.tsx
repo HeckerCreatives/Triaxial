@@ -68,7 +68,7 @@ const handlePageChange = (page: number) => {
   return (
    <div className=' w-full h-full flex flex-col bg-secondary p-4 text-zinc-100'>
 
-    <div className=' flex flex-col gap-2 text-xs bg-primary p-4 w-fit'>
+    {/* <div className=' flex flex-col gap-2 text-xs bg-primary p-4 w-fit'>
       <div className=' w-full flex items-center gap-4'>
           <p className=' w-[85px]'>Manager Name:</p>
           <span className=' text-red-500'>{list.length !== 0 ? list[0].manager.fullname : ''}</span>
@@ -79,7 +79,7 @@ const handlePageChange = (page: number) => {
         <span className=' text-red-500'>{list.length !== 0 ? list[0].teamleader.fullname : ''} </span>
         <button onClick={() => router.push(`/pm/graph/individualworkload?employeeid=${list[0].teamleader.employeeid}`)} className=' ml-4 text-[0.5rem] bg-red-600 p-1 rounded-sm text-white'>View Workload</button>
       </div>
-    </div>
+    </div> */}
 
     <Table className=' mt-4'>
         {list.length === 0 &&  
@@ -93,7 +93,6 @@ const handlePageChange = (page: number) => {
           )}
         <TableHeader>
             <TableRow>
-            <TableHead>Employee Id</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Position</TableHead>
             <TableHead>Resource</TableHead>
@@ -104,7 +103,6 @@ const handlePageChange = (page: number) => {
         <TableBody>
           {list[0]?.members.map((item, index) => (
             <TableRow key={index}>
-              <TableCell className="">{item.employeeid}</TableCell>
               <TableCell>{item.fullname}</TableCell>
               <TableCell>{item.role}</TableCell>
               <TableCell className="">{item.resources}</TableCell>

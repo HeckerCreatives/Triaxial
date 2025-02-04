@@ -6,6 +6,9 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { RefreshCcw } from 'lucide-react'
 import { string } from 'zod'
 import { formatDate } from '@/utils/functions'
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { fileURLToPath } from 'url'
 
 type Dates = {
   date: string
@@ -46,6 +49,12 @@ wellness: [
       wellnessdates: string
   }
 ],
+wfh: [
+  {
+      requestdate: string
+      requestend: string
+  }
+]
 }
 
 type Leave = {
@@ -63,21 +72,28 @@ type Wellnessday = {
   enddate: string
 }
 
+type Wfh = {
+  requestdate: string
+  requestend: string
+}
+
 export default function Yourworkload() {
   const [memberIndex, setMemberIndex] = useState(0)
   const [list, setList] = useState<List[]>([])
   const [dates, setDates] = useState<string[]>([])
-  const [filter, setFilter] = useState('')
+  const [filter, setFilter] = useState<Date | null>(null)
   const router = useRouter()
   const params = useSearchParams()
   const getTeamid = params.get('team')
+  const [date, setDate] = useState('')
 
+  const filterDate = filter === null ?  '' : (filter?.toLocaleString())?.split(',')[0]
 
   useEffect(() => {
     const getList = async () => {
-      if (getTeamid !== '' || undefined || null){
+     
         try {
-          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/getsuperadminjobcomponentdashboard?filterDate=${filter}`,{
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/getsuperadminjobcomponentdashboard?filterDate=${filterDate}`,{
             withCredentials: true
           })
   
@@ -86,7 +102,7 @@ export default function Yourworkload() {
         } catch (error) {
           
         }
-      }
+      
      
     }
     getList()
@@ -105,7 +121,7 @@ export default function Yourworkload() {
     return checkDate >= start && checkDate <= end;
   }
 
-  const statusData = ( hours: any, wd: boolean, event: boolean, leave: boolean, leaveDate: string, leaveArray: Array<{ leavestart: string; leaveend: string }>,eventArray: Array<{ eventstart: string; eventend: string }>,wellness: Array<{wellnessdates: string}>, ) => {
+  const statusData = ( hours: any, wd: boolean, event: boolean, leave: boolean, wfh: Wfh[], leaveDate: string, leaveArray: Array<{ leavestart: string; leaveend: string }>,eventArray: Array<{ eventstart: string; eventend: string }>,wellness: Array<{wellnessdates: string}>, ) => {
     const data = []
 
      // Check if the leaveDate is in any range in the leave array
@@ -115,6 +131,10 @@ export default function Yourworkload() {
 
     const isEventInRange = eventArray.some((leaveItem) =>
       isDateInRange(leaveDate, leaveItem.eventstart, leaveItem.eventend)
+    );
+
+    const isWfhInRange = wfh.some((item) =>
+      isDateInRange(leaveDate, item.requestdate, item.requestend)
     );
 
     const isWellnessDay= wellness.some((leaveItem) => {
@@ -152,6 +172,11 @@ export default function Yourworkload() {
 
     if(isEventInRange){
       data.push('bg-gray-400')
+
+    }
+
+    if(isWfhInRange){
+      data.push('bg-cyan-400')
 
     }
 
@@ -232,6 +257,7 @@ export default function Yourworkload() {
 
 
 
+
   return (
     <div className=' w-full h-full flex flex-col justify-center bg-secondary p-4 text-zinc-100'>
 
@@ -239,8 +265,15 @@ export default function Yourworkload() {
       <div className=' h-full w-full flex flex-col gap-2 max-w-[1920px]'>
       <div className=' w-full flex items-center gap-2 justify-end'>
         <label htmlFor="" className=' text-xs'>Filter by date:</label>
-        <input value={filter} onChange={(e) => setFilter(e.target.value)} type="date" name="" id="" className=' p-2 bg-primary text-xs rounded-sm' />
-        <button onClick={() => setFilter('')} className=' p-2 bg-red-600 text-white rounded-sm'><RefreshCcw size={15}/></button>
+        {/* <input value={filter} onChange={(e) => setFilter(e.target.value)} type="date" name="" id="" className=' p-2 bg-primary text-xs rounded-sm' /> */}
+        <DatePicker
+          selected={filter}
+          onChange={(date) => setFilter(date)}
+          dateFormat="dd/MM/yyyy"
+          placeholderText="DD/MM/YYYY"
+          className="bg-primary text-xs p-2 w-fit z-50 relative"
+        />
+        <button onClick={() => setFilter(null)} className=' p-2 bg-red-600 text-white rounded-sm'><RefreshCcw size={15}/></button>
 
 
       </div>
@@ -283,15 +316,15 @@ export default function Yourworkload() {
                 
                   {dates.map((dateObj, index) => (
                     <>
-                      <th key={index} className=' relative font-normal w-[30px] border-[1px] border-zinc-700'>
-                        <div className="whitespace-nowrap transform -rotate-[90deg]">
-                            <p>{formatAustralianDate(dateObj)}</p>
-                            <p>{formatMonthYear(dateObj)}</p>
+                      <th key={index} className=' relative font-normal border-[1px] border-zinc-700'>
+                        <div className=" whitespace-nowrap transform -rotate-[90deg] w-[20px]">
+                            <p className=' mt-4'>{formatAustralianDate(dateObj)}</p>
+                            {/* <p>{formatMonthYear(dateObj)}</p> */}
                           </div>
                       </th>
                       {(index + 1) % 5 === 0 && (
-                        <th key={`total-${index}`} className='font-normal w-[30px] border-[1px] border-zinc-700'>
-                          <p className='-rotate-90 w-[50px]'>Total Hours</p>
+                        <th key={`total-${index}`} className='font-normal w-[20px] border-[1px] border-zinc-700'>
+                          <p className='-rotate-90 w-[20px] ml-[6px]'>Total Hours</p>
                         </th>
                       )}
                     </>
@@ -332,11 +365,11 @@ export default function Yourworkload() {
                               }`}
                             >
                               <div className="flex absolute top-0 w-full h-[40px] text-center">
-                                {statusData(hours, isWd, isEventDay, isLeave, date, member.leave, member.event, member.wellness).map((item, index) => (
+                                {statusData(hours, isWd, isEventDay, isLeave,member.wfh , date, member.leave, member.event, member.wellness).map((item, index) => (
                                   <div key={index} className={`w-full h-full ${item}`}></div>
                                 ))}
                               </div>
-                              <p className="relative text-black font-bold text-xs z-30">{!isEventDay && hours}</p>
+                              <p className="relative text-black font-bold text-[.6rem] z-30">{!isEventDay && hours}</p>
                             </td>
 
                             {/* Render total for every 5-day block */}

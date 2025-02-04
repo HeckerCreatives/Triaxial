@@ -43,6 +43,7 @@ import axios from 'axios'
 import toast from 'react-hot-toast'
 import { superadmin } from '@/types/routes'
 import Authcheck from '@/utils/Authcheck'
+import refreshStore from '@/zustand/refresh'
 
 type Data = {
   contactno: string
@@ -64,6 +65,10 @@ export default function SuperadminLayout({
   const [menu, setMenu] = useState(false)
   const router = useRouter()
   const [data, setData] = useState<Data>()
+  const [unread, setUnread] = useState(0)
+  const {refresh} = refreshStore()
+
+  
 
    const toggleMenu = () => {
     setMenu(!menu);
@@ -88,7 +93,7 @@ export default function SuperadminLayout({
   }
 
   //auth checker
-  Authcheck()
+   Authcheck()
 
     useEffect(() => {
       const getData = async () => {
@@ -101,6 +106,19 @@ export default function SuperadminLayout({
       }
       getData()
     },[])
+
+     //get unread messages
+  useEffect(() => {
+    const getData = async () => {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/email/unreademail`,
+        {withCredentials: true}
+      )
+
+      console.log(response.data)
+      setUnread(response.data.unreademails)
+    }
+    getData()
+  },[refresh])
 
   return (
       <div className="flex min-h-screen w-full overflow-hidden">
@@ -131,6 +149,12 @@ export default function SuperadminLayout({
                    >
                      {item.icon}
                      {item.name}
+                     {(item.path.includes('superadmin/messages') && unread !== 0) && (
+                        <div className=' w-4 h-4 bg-red-600 rounded-full -translate-y-1 flex items-center justify-center'>
+                          <p className=' text-[.7rem] text-white'>{unread}</p>
+
+                        </div>
+                       )}
                      {item.path.includes('noaccess') && (
                      <p className=' text-[.5rem] px-2 py-1 h-4 bg-red-600 flex items-center justify-center rounded-full group-hover:text-white'>Forbidden</p>
                      )}

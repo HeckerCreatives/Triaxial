@@ -34,7 +34,7 @@ export default function page() {
 
   return (
     <SuperadminLayout>
-      <div className='p-6 top-0 left-0 w-full flex flex-col justify-between h-[100px] bg-zinc-800'
+      <div className='p-6 top-0 left-0 w-full flex flex-col justify-between h-[20px] bg-zinc-800'
       style={{backgroundImage: `url('/dbbg.png')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat:"no-repeat"}}
       >
         <Breadcrumbdb page={''}/>

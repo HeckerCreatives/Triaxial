@@ -66,7 +66,7 @@ export default function Leaveform( prop: Data) {
     resolver: zodResolver(leaveSchema),
     defaultValues:{
       type: '0',
-      wdcycle: 'Yes'
+      wdcycle: 'No'
     }
   });
 
@@ -301,7 +301,7 @@ export default function Leaveform( prop: Data) {
 
           <div className=' flex items-center gap-2 mt-4'>
             <Label className=' text-zinc-500'>Are you in a Wellness Day Cycle? <span className=' text-red-500'>*</span></Label>
-            <RadioGroup className=' flex items-center gap-2' value={watch('wdcycle')}  onValueChange={(value) => {setValue('wdcycle', value), setWd(value)}} >
+            <RadioGroup defaultValue="No"  className=' flex items-center gap-2' value={watch('wdcycle')}  onValueChange={(value) => {setValue('wdcycle', value), setWd(value)}} >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="Yes" id="Yes"  />
                 <Label htmlFor="Yes">Yes</Label>

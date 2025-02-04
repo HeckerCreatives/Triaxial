@@ -80,9 +80,10 @@ type Managers = {
 
 type Team = {
   manager: string
-teamid: string
+_id: string
 teamleader: string
 teamname: string
+
 }
 
 type Row = { id: string; name: string };
@@ -831,8 +832,8 @@ export default function Teamstable() {
             <TableHead className="">Project Manager</TableHead>
             <TableHead className="">Team Leader</TableHead>
             <TableHead>Total # of Projects</TableHead>
-            <TableHead className="">Projects</TableHead>
-            <TableHead className="">Individual Workloads</TableHead>
+            {/* <TableHead className="">Projects</TableHead>
+            <TableHead className="">Individual Workloads</TableHead> */}
             {/* <TableHead className="">Invoice Projection</TableHead>
             <TableHead className="">Due on</TableHead> */}
             <TableHead className="">Action</TableHead>
@@ -840,23 +841,23 @@ export default function Teamstable() {
         </TableHeader>
         <TableBody>
           {teamlist.map((item, index) => (
-            <TableRow key={item.teamid}>
+            <TableRow key={item._id}>
             <TableCell className="font-medium">
             <input 
-                checked={selectedRows.some((row) => row.id === `${item.teamid}`)}
-                onChange={() => handleSelectRow(`${item.teamid}`, `${item.teamname}`)}
+                checked={selectedRows.some((row) => row.id === `${item._id}`)}
+                onChange={() => handleSelectRow(`${item._id}`, `${item.teamname}`)}
                 type="checkbox" />
             </TableCell>
             <TableCell className="font-medium">{item.teamname}</TableCell>
             <TableCell className="font-medium">{item.manager}</TableCell>
             <TableCell>{item.teamleader}</TableCell>
             <TableCell>1</TableCell>
-            <TableCell>
-              <Viewbtn disabled={false} name='View' onClick={() => router.push(`/superadmin/teams/teamproject?teamid=${item.teamid}`)}/>
+            {/* <TableCell>
+              <Viewbtn disabled={false} name='View' onClick={() => router.push(`/superadmin/teams/teamproject?teamid=${item._id}`)}/>
             </TableCell>
             <TableCell>
-              <Viewbtn disabled={false} name='View' onClick={() => router.push(`/superadmin/graph/teammembers?teamid=${item.teamid}`)}/>
-            </TableCell>
+              <Viewbtn disabled={false} name='View' onClick={() => router.push(`/superadmin/graph/teammembers?teamid=${item._id}`)}/>
+            </TableCell> */}
             {/* <TableCell>
                 <Viewbtn disabled={true} name='View' onClick={() => router.push('?active=members')}/>
             </TableCell>
@@ -869,7 +870,7 @@ export default function Teamstable() {
                
                 <Dialog open={dialog3} onOpenChange={setDialog3}>
                 <DialogTrigger>
-                  <button onClick={() => {setTeamid(item.teamid) }} className=' btn-red'>Edit</button>
+                  <button onClick={() => {setTeamid(item._id) }} className=' btn-red'>Edit</button>
                 </DialogTrigger>
                 <DialogContent className=' bg-secondary border-none text-zinc-100 grid grid-cols-1 lg:grid-cols-[250px,1fr]'>
                   <div className=' bg-blue-400 lg:block hidden'

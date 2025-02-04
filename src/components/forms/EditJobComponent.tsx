@@ -20,6 +20,8 @@ import axios, { AxiosError } from 'axios'
 import { Textarea } from '../ui/textarea'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
+import { Label } from '../ui/label'
+import { Input } from '../ui/input'
 
 type Members = {
   employee: {
@@ -47,6 +49,10 @@ type Prop = {
     drftrrvr: any
     drftrrvrnotes: any
     members: Members[]
+    pname: string
+    client: string
+    start: string
+    end: string
 }
 
 type Employee = {
@@ -244,7 +250,7 @@ export default function EditJobComponent( prop: Prop) {
     const members = [
       {
         employee: engr, 
-        role: "Engnr.",
+        role: "Engr.",
         notes: notes
     },
     {
@@ -323,7 +329,7 @@ export default function EditJobComponent( prop: Prop) {
     const members = [
       {
         employee: engr, 
-        role: "Engnr.",
+        role: "Engr.",
         notes: notes
     },
     {
@@ -396,7 +402,7 @@ export default function EditJobComponent( prop: Prop) {
     }
   }
 
-  const engrMember = prop?.members.find((item) => item.role === 'Engnr.');
+  const engrMember = prop?.members.find((item) => item.role === 'Engr.');
   const engrId = engrMember?.employee._id;
   
   const engrrvrMember = prop?.members.find((item) => item.role === 'Engr. Revr.');
@@ -443,9 +449,17 @@ export default function EditJobComponent( prop: Prop) {
                               <div className=' flex flex-col w-full gap-2 text-xs'>
 
 
-                                <label htmlFor="">Project Name</label>
-                                <Select value={projectname} onValueChange={setProjectname}>
-                                          <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
+                                <div className=' flex flex-col w-full gap-2 text-xs'>
+                                 <label htmlFor="">Project Details</label>
+                               
+
+                                  <div className=' flex items-start gap-4 '>
+                                                                                          
+                                                                      
+                                      <div className=' w-full'>
+                                        <Label className=' text-zinc-500'>Project Name</Label>
+                                        <Select value={projectname} onValueChange={setProjectname}>
+                                          <SelectTrigger className="text-xs h-[35px] bg-primary">
                                           <SelectValue placeholder="Select" className="text-black" />
                                           </SelectTrigger>
                                           <SelectContent className="text-xs">
@@ -455,7 +469,61 @@ export default function EditJobComponent( prop: Prop) {
                                             ))}
                                           
                                           </SelectContent>
+                                        </Select>
+                                                                                                                                                                                                                                      
+                                      </div>
+                                                                                                                                          
+                                                                                                                                                             
+                                        <div className=' w-full'>
+                                          <Label className=' text-zinc-500'>Client</Label>
+                                        <Input type='text' value={prop.client}  className=' text-xs h-[35px] bg-primary' placeholder='Project name'/>
+                                                                    
+                                                                                            
+                                                                                                                                          
+                                        </div>
+                                                                                                                                          
+                                    </div>
+                                                                                                                                          
+                                    <div className=' flex items-start gap-4 '>
+                                                                                                                                                              
+                                                                                                                                          
+                                      <div className=' w-full'>
+                                        <Label className=' text-zinc-500'>Start Date</Label>
+                                        <Input type='text' value={prop.start.split('T')[0]}  className=' text-xs h-[35px] bg-primary' placeholder='Project name' />
+                                                                                                                                          
+                                                                                                                                          
+                                      </div>
+                                                                                                                                          
+                                                                                                                                                             
+                                        <div className=' w-full'>
+                                          <Label className=' text-zinc-500'>End date</Label>
+                                          <Input type='text' value={prop.end.split('T')[0]}  className=' text-xs h-[35px] bg-primary' placeholder='Project name'/>
+                                                                                                                                          
+                                        </div>
+                                                                                                                                          
+                                    </div>
+
+                                  <div>
+
+                                  </div>
+
+                                <label htmlFor="">Job Manager</label>
+                                <Select value={jobmanager} onValueChange={setJobmanager}>
+                                          <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
+                                          <SelectValue placeholder="Select" className="text-black" />
+                                          </SelectTrigger>
+                                          <SelectContent className="text-xs">
+                                            {employee.map((item, index) => (
+                                            <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
+
+                                            ))}
+                                          
+                                      </SelectContent>
                                   </Select>
+
+                                
+
+                              </div>
 
                                 {/* <label htmlFor="">Job no</label>
                                 <Input value={jobno} onChange={(e) => setJobno(e.target.value)} type='text' className=' text-xs h-[35px] bg-primary' placeholder='Job no' /> */}
@@ -566,9 +634,16 @@ export default function EditJobComponent( prop: Prop) {
                             {(prop.isJobManager === true && prop.isManger === true) && (
                               <>
                                <div className=' flex flex-col w-full gap-2 text-xs'>
-                                 <label htmlFor="">Project Name</label>
-                                <Select value={projectname} onValueChange={setProjectname}>
-                                          <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
+                                 <label htmlFor="">Project Details</label>
+                               
+
+                                  <div className=' flex items-start gap-4 '>
+                                                                                          
+                                                                      
+                                      <div className=' w-full'>
+                                        <Label className=' text-zinc-500'>Project Name</Label>
+                                        <Select value={projectname} onValueChange={setProjectname}>
+                                          <SelectTrigger className="text-xs h-[35px] bg-primary">
                                           <SelectValue placeholder="Select" className="text-black" />
                                           </SelectTrigger>
                                           <SelectContent className="text-xs">
@@ -578,7 +653,43 @@ export default function EditJobComponent( prop: Prop) {
                                             ))}
                                           
                                           </SelectContent>
-                                  </Select>
+                                        </Select>
+                                                                                                                                                                                                                                      
+                                      </div>
+                                                                                                                                          
+                                                                                                                                                             
+                                        <div className=' w-full'>
+                                          <Label className=' text-zinc-500'>Client</Label>
+                                        <Input type='text' value={prop.client}  className=' text-xs h-[35px] bg-primary' placeholder='Project name'/>
+                                                                    
+                                                                                            
+                                                                                                                                          
+                                        </div>
+                                                                                                                                          
+                                    </div>
+                                                                                                                                          
+                                    <div className=' flex items-start gap-4 '>
+                                                                                                                                                              
+                                                                                                                                          
+                                      <div className=' w-full'>
+                                        <Label className=' text-zinc-500'>Start Date</Label>
+                                        <Input type='text' value={prop.start.split('T')[0]}  className=' text-xs h-[35px] bg-primary' placeholder='Project name' />
+                                                                                                                                          
+                                                                                                                                          
+                                      </div>
+                                                                                                                                          
+                                                                                                                                                             
+                                        <div className=' w-full'>
+                                          <Label className=' text-zinc-500'>End date</Label>
+                                          <Input type='text' value={prop.end.split('T')[0]}  className=' text-xs h-[35px] bg-primary' placeholder='Project name'/>
+                                                                                                                                          
+                                        </div>
+                                                                                                                                          
+                                    </div>
+
+                                  <div>
+
+                                  </div>
 
                                 <label htmlFor="">Job Manager</label>
                                 <Select value={jobmanager} onValueChange={setJobmanager}>

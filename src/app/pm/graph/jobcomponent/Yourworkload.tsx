@@ -31,9 +31,10 @@ import Invoice from '@/components/forms/Invoice'
 import Copyprojectcomponent from './Copyprojectcomponent'
 import JobComponentStatus from '@/components/forms/JobComponentStatus'
 import EditJobComponent from '@/components/forms/EditJobComponent'
-import Individualrequest from '../../scheduling/IndividualRequest'
 import DuplicateJobComponent from '@/components/forms/DuplicateJobComponent'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { clientColor } from '@/utils/helpers'
+import Individualrequest from './IndividualRequest'
 
 
 
@@ -73,6 +74,45 @@ interface FormData {
   hours: number;
   jobcomponentid: string;
   status: string[];
+}
+
+type List = {
+  name: string
+  members: Workload[]
+}
+
+type Workload = {
+initial: string
+id: string,
+name: string
+resource: string
+dates: Dates[]
+leave: [
+  {
+    leavestart: string
+    leaveend: string
+    }
+],
+event: [
+  {
+    eventstart: string
+    eventend: string
+    }
+],
+wellness: [
+  {
+      wellnessdates: string
+  }
+],
+}
+
+type Dates = {
+  date: string
+  eventDay: boolean
+  leave: boolean
+  status: string[]
+  totalhoursofjobcomponents: number
+  wellnessDay: boolean
 }
 
 
@@ -404,7 +444,7 @@ export default function Yourworkload() {
     if(isWithinAnyEventDate){
       colorData.push('bg-gray-300')
     }
-    if(hours > 8){
+    if(hours > 9){
       colorData.push('bg-pink-500')
     }
 
@@ -847,63 +887,55 @@ export default function Yourworkload() {
   const drftMember = findJobComponent?.members.find((item) => item.role === 'Drft.');
   const draftId = drftMember?._id; 
 
-  const clientColor = (data: string) => {
-    if(data.includes('1')){
-      return 'bg-[#93C47D]'
-    } else if(data.includes('2')){
-      return 'bg-[#B6D7A7]'
-    } else if(data.includes('3')){
-      return 'bg-[#969696]'
-    } 
-  }
 
   const firstDivRef = useRef<HTMLDivElement>(null);
   const secondDivRef = useRef<HTMLDivElement>(null);
+  const individualRequestRef = useRef<HTMLDivElement>(null); // New ref
+  
+  
 
-  const syncScroll = (
-    sourceRef: React.RefObject<HTMLDivElement>,
-    targetRefs: React.RefObject<HTMLDivElement>[]
-  ) => {
-    if (sourceRef.current) {
-      const scrollLeft = sourceRef.current.scrollLeft;
-      targetRefs.forEach((ref) => {
-        if (ref.current && ref.current.scrollLeft !== scrollLeft) {
-          ref.current.scrollLeft = scrollLeft;
-        }
-      });
-    }
+  const syncScroll = (source: HTMLDivElement, targets: HTMLDivElement[]) => {
+    const scrollLeft = source.scrollLeft;
+    targets.forEach((target) => {
+      if (Math.abs(target.scrollLeft - scrollLeft) > 1) { // Only update if there's a significant difference
+        target.scrollLeft = scrollLeft;
+      }
+    });
   };
+  
+  
 
   useEffect(() => {
-    if (typeof window === 'undefined') return; // Ensure running on the client
-
     const firstDiv = firstDivRef.current;
     const secondDiv = secondDivRef.current;
-
-    const handleFirstDivScroll = () => {
-      console.log('First div scrolled');
-      syncScroll(firstDivRef, [secondDivRef]);
+    const individualRequestDiv = individualRequestRef.current;
+  
+    if (!firstDiv || !secondDiv || !individualRequestDiv) return;
+  
+    let timeout: NodeJS.Timeout | null = null;
+  
+    const handleScroll = (source: HTMLDivElement, targets: HTMLDivElement[]) => {
+      return () => {
+        if (timeout) clearTimeout(timeout);
+        
+        timeout = setTimeout(() => {
+          syncScroll(source, targets);
+        }, 10); // Delay to prevent jittering
+      };
     };
-
-    const handleSecondDivScroll = () => {
-      console.log('Second div scrolled');
-      syncScroll(secondDivRef, [firstDivRef]);
-    };
-
-    if (firstDiv) {
-      firstDiv.addEventListener('scroll', handleFirstDivScroll);
-    }
-    if (secondDiv) {
-      secondDiv.addEventListener('scroll', handleSecondDivScroll);
-    }
-
+  
+    const firstScroll = handleScroll(firstDiv, [secondDiv, individualRequestDiv]);
+    const secondScroll = handleScroll(secondDiv, [firstDiv, individualRequestDiv]);
+    const individualScroll = handleScroll(individualRequestDiv, [firstDiv, secondDiv]);
+  
+    firstDiv.addEventListener("scroll", firstScroll);
+    secondDiv.addEventListener("scroll", secondScroll);
+    individualRequestDiv.addEventListener("scroll", individualScroll);
+  
     return () => {
-      if (firstDiv) {
-        firstDiv.removeEventListener('scroll', handleFirstDivScroll);
-      }
-      if (secondDiv) {
-        secondDiv.removeEventListener('scroll', handleSecondDivScroll);
-      }
+      firstDiv.removeEventListener("scroll", firstScroll);
+      secondDiv.removeEventListener("scroll", secondScroll);
+      individualRequestDiv.removeEventListener("scroll", individualScroll);
     };
   }, []);
 
@@ -921,6 +953,8 @@ export default function Yourworkload() {
       }
     }
   }, [scrollId, list]);
+
+
 
 
 
@@ -951,40 +985,31 @@ export default function Yourworkload() {
     ]);
   };
 
-  // Delete a form by index
   const deleteForm = (index: number) => {
     const newForms = forms.filter((_, i) => i !== index);
     setForms(newForms);
   };
 
-  // Handle changes in form fields
   const handleChange = (index: number, field: keyof FormData, value: string | number | string[]) => {
     const newForms = [...forms];
-    // Use a type assertion to ensure TypeScript understands the value type
     (newForms[index][field] as typeof value) = value;
     setForms(newForms);
   };
 
 
-  // Handle checkbox changes for status
   const handleCheckbox = (index: number, id: string) => {
     const newForms = [...forms];
   
-    // Get the current form's status array
     const currentStatus = newForms[index].status;
   
-    // If the first checkbox (statusData[0].id) is being toggled
     if (id === statusData[0].id) {
       newForms[index].status = currentStatus.includes(id)
-        ? currentStatus.filter((statusId) => statusId !== id) // Deselect the first checkbox
-        : [...currentStatus, id]; // Select the first checkbox
+        ? currentStatus.filter((statusId) => statusId !== id)
+        : [...currentStatus, id]; 
     } else {
-      // For other checkboxes (statusData[1-3].id)
       if (currentStatus.includes(id)) {
-        // Deselect the checkbox if it's already selected
         newForms[index].status = currentStatus.filter((statusId) => statusId !== id);
       } else {
-        // Ensure the first checkbox is always selected
         const newStatus = [statusData[0].id, id].filter(
           (value) => currentStatus.includes(value) || value === id
         );
@@ -992,14 +1017,11 @@ export default function Yourworkload() {
       }
     }
   
-    // Update the forms state
     setForms(newForms);
   };
 
-  // Submit all forms
   const handleSubmit = () => {
     console.log('Submitted Forms:', forms);
-    // Replace with your submission logic (e.g., API call)
   };
 
   const updateMultipleWorkload = async () => {
@@ -1067,6 +1089,13 @@ export default function Yourworkload() {
     }
   }
 
+  const longestAlldates = list.reduce((max, current) => {
+    return current.allDates.length > max.allDates.length ? current : max;
+  }, list[0]);
+
+
+
+
 
 
 
@@ -1078,23 +1107,7 @@ export default function Yourworkload() {
 
         <div className=' flex gap-12'>
           
-          <div className=' flex flex-col gap-1 bg-primary p-2'>
-            {/* <p className=' text-sm font-semibold'>Project Details</p>
-            <p className=' text-xs text-zinc-400'>Project Name: <span className=' text-red-500'>{list[0]?.projectname.name}</span></p>
-            <p className=' text-xs text-zinc-400'>Client: <span className=' text-red-500'>{list[0]?.clientname.name}</span></p>
-            <p className=' text-xs text-zinc-400'>Team: <span className=' text-red-500'>{list[0]?.teamname}</span></p>
-            <p className=' text-xs text-zinc-400'>Job no.: <span className=' text-red-500'>{list[0]?.jobno}</span></p> */}
-
-            <p className=' text-sm font-semibold'>Team Members</p>
-
-            <div className=' flex items-center gap-2 flex-wrap'>
-              {list[0]?.members.map(( item, index) => (
-                <p key={index} className=' text-blue-500 underline'>{item.employee.initials}</p>
-              ))}
-            </div>
-            
-
-          </div>
+         
 
           <div className=' flex flex-col gap-1 bg-primary rounded-sm text-xs'>
 
@@ -1116,7 +1129,7 @@ export default function Yourworkload() {
               ) : (
                 <>
                 {(isJobmamager === true || isMamager === true) ? (
-                   <EditJobComponent id={findJobComponent?.componentid} isManger={findJobComponent?.jobmanager.isManager} isJobManager={findJobComponent?.jobmanager.isJobManager} project={findJobComponent?.projectname.projectid} jobmanager={findJobComponent?.jobmanager.employeeid} engr={engrId} engrnotes={engrMember?.notes} engrrvr={engrrvrId} engrrvrnotes={engrrvrMember?.notes} drftr={draftId} drftrnotes={drftMember?.notes} drftrrvr={draftrvrId} drftrrvrnotes={drftrvrMember?.notes}  members={findJobComponent?.members || []}>
+                   <EditJobComponent id={findJobComponent?.componentid} isManger={findJobComponent?.jobmanager.isManager} isJobManager={findJobComponent?.jobmanager.isJobManager} project={findJobComponent?.projectname.projectid} jobmanager={findJobComponent?.jobmanager.employeeid} engr={engrId} engrnotes={engrMember?.notes} engrrvr={engrrvrId} engrrvrnotes={engrrvrMember?.notes} drftr={draftId} drftrnotes={drftMember?.notes} drftrrvr={draftrvrId} drftrrvrnotes={drftrvrMember?.notes} members={findJobComponent?.members || []} pname={findJobComponent?.projectname.name || ''} client={findJobComponent?.clientname.name || ''} start={findJobComponent?.projectstart || ''} end={findJobComponent?.projectend || ''}>
                                                                        <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
                                                                          <button onClick={() => setDialog2(true)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Pen size={12}/></button>
                                                                          <p>Edit</p>
@@ -1139,7 +1152,7 @@ export default function Yourworkload() {
                 </div>
                 
               ) : (
-                <DuplicateJobComponent name={findJobComponent?.jobcomponent} manager={findJobComponent?.jobmanager.employeeid} type={findJobComponent?.budgettype} id={findJobComponent?.projectname.projectid}>
+                <DuplicateJobComponent name={findJobComponent?.jobcomponent} manager={findJobComponent?.jobmanager.employeeid} type={findJobComponent?.budgettype} id={findJobComponent?.projectname.projectid} pname={findJobComponent?.projectname.name || ''} client={findJobComponent?.clientname.name || ''} start={findJobComponent?.projectstart || ''} end={findJobComponent?.projectend || ''} estbudget={findJobComponent?.estimatedbudget || 0}>
                   <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
                     <button onClick={() => setDialog2(true)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Layers2 size={12}/></button>
                     <p>Duplicate</p>
@@ -1175,7 +1188,7 @@ export default function Yourworkload() {
                 </div>
 
               ) : (
-                <JobComponentStatus name={findJobComponent?.jobcomponent ?? ''} status={findJobComponent?.status} client={findJobComponent?.clientname.name ?? ''} _id={findJobComponent?._id ?? ''} jobno={findJobComponent?.jobno ?? ''} teamname={findJobComponent?.teamname ?? ''} managerName={findJobComponent?.jobmanager.fullname ?? ''} projectname={findJobComponent?.projectname.name ?? ''} invoiced={`${findJobComponent?.invoice.amount ?? ''}`} budget={`${findJobComponent?.estimatedbudget}`}  >
+                <JobComponentStatus name={findJobComponent?.jobcomponent ?? ''} status={findJobComponent?.status} client={findJobComponent?.clientname.name ?? ''} _id={findJobComponent?._id ?? ''} jobno={findJobComponent?.jobno ?? ''} teamname={findJobComponent?.teamname ?? ''} managerName={findJobComponent?.jobmanager.fullname ?? ''} projectname={findJobComponent?.projectname.name ?? ''} invoiced={`${findJobComponent?.invoice.amount ?? ''}`} budget={`${findJobComponent?.estimatedbudget}`} currinvoice={findJobComponent?.invoice.amount || 0}  >
                   <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
                     <button className={`text-xs p-1 bg-red-600  rounded-sm`}><File size={12}/></button>
                     <p>Complete</p>
@@ -1198,7 +1211,7 @@ export default function Yourworkload() {
                 </Invoice>
               )}
 
-              {componentid === '' ? (
+              {/* {componentid === '' ? (
                  <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
                   <button onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><Folder size={12}/></button>
                   <p>Archive</p>
@@ -1231,7 +1244,7 @@ export default function Yourworkload() {
               </Dialog>
 
                 
-              )}
+              )} */}
 
 
              
@@ -1254,7 +1267,11 @@ export default function Yourworkload() {
 
       </div>
 
-      <Individualrequest alldates={list[0]?.allDates}/>
+      
+
+
+
+      <Individualrequest ref={individualRequestRef}  alldates={longestAlldates?.allDates}/>
 
       <div
       className=' h-auto w-full flex flex-col max-w-[1920px]'>
@@ -1264,17 +1281,17 @@ export default function Yourworkload() {
             <thead className='  bg-secondary h-[100px]'>
 
               <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
-                <th className=' font-normal'>Action</th>
-                <th className=' font-normal'>Status</th>
-                <th className=' font-normal'>Job no.</th>
-                <th className=' font-normal'>Job Mgr.</th>
-                <th className=' font-normal'>Job Component</th>
-                <th className=' font-normal'>Est. $</th>
-                <th className=' font-normal'>Invoiced (%/hrs)</th>
-                <th className=' font-normal'>Budget type</th>
-                <th className=' font-normal'>Members</th>
-                <th className=' font-normal'>Role</th>
-                <th className=' font-normal'>Notes</th>
+                  <th className=' font-normal'>Action</th>
+                    <th className=' font-normal'>Job Mgr.</th>
+                    <th className=' font-normal'>Client Name</th>
+                    <th className=' font-normal'>Job no.</th>
+                    <th className=' font-normal'>Job Component</th>
+                    <th className=' font-normal'>Est. $</th>
+                    <th className=' font-normal'>Invoiced (%/hrs)</th>
+                    <th className=' font-normal'>Budget type</th>
+                    <th className=' font-normal'>Members</th>
+                    <th className=' font-normal'>Role</th>
+                    <th className=' font-normal'>Notes</th>
 
               </tr>
             </thead>
@@ -1288,9 +1305,11 @@ export default function Yourworkload() {
             className=' w-full'>
               <table className="table-auto border-collapse ">
                 <thead className=' bg-secondary h-[100px]'>
-                  <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
+                  <tr 
+                 
+                  className=' text-[0.6rem] text-zinc-100 font-normal'>
                   
-                  {list[0]?.allDates
+                  {longestAlldates?.allDates
                   .filter((dateObj) => {
                     const day = new Date(dateObj).getDay();
                     return day >= 1 && day <= 5; // Filter to include only Monday through Friday
@@ -1308,15 +1327,17 @@ export default function Yourworkload() {
 
                     return (
                       <React.Fragment key={index}>
-                        <th className="relative font-normal border-[1px] border-zinc-700">
-                          <div className="whitespace-nowrap transform -rotate-[90deg]">
-                            <p>{formatAustralianDate(date)}</p>
-                            <p>{formatMonthYear(date)}</p>
+                        <th 
+                         data-date={date} 
+                        className="relative  w-[20px] font-normal border-[1px] border-zinc-700">
+                          <div className="whitespace-nowrap  w-[20px] transform -rotate-[90deg]">
+                            <p className=' mt-3'>{formatAustralianDate(date)}</p>
+                            {/* <p>{formatMonthYear(date)}</p> */}
                           </div>
                         </th>
                         {isFriday && (
-                          <th className="font-normal px-1 border-[1px] border-zinc-700">
-                            <div className="transform -rotate-[90deg]">
+                          <th className="font-normal  w-[20px] px-1 border-[1px] border-zinc-700">
+                            <div className="transform  w-[20px] -rotate-[90deg]">
                               <p>Total Hours</p>
                             </div>
                           </th>
@@ -1332,13 +1353,10 @@ export default function Yourworkload() {
                
               </table>
             </div>
-
-            
-
-        </div>
+            </div>
       </div>
 
-      <div
+         <div
       ref={tableRef}
       className=' h-[500px] w-full flex flex-col max-w-[1920px] overflow-y-auto ml-1'>
         <div className=' h-[500px] flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
@@ -1352,9 +1370,9 @@ export default function Yourworkload() {
 
                   <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
                     <th className=' font-normal'>Action</th>
-                    <th className=' font-normal'>Status</th>
-                    <th className=' font-normal'>Job no.</th>
                     <th className=' font-normal'>Job Mgr.</th>
+                    <th className=' font-normal'>Client Name</th>
+                    <th className=' font-normal'>Job no.</th>
                     <th className=' font-normal'>Job Component</th>
                     <th className=' font-normal'>Est. $</th>
                     <th className=' font-normal'>Invoiced (%/hrs)</th>
@@ -1371,7 +1389,7 @@ export default function Yourworkload() {
                   <tr 
                   key={`${graphItem._id}-${memberIndex}`}
                   data-invoice-id={graphItem._id} 
-                  className={`text-[.6rem] py-2 h-[50px] border-[1px] border-zinc-600 ${graphItem.isVariation === true ? 'text-red-600 font-black' : 'text-zinc-100'} ${clientColor(graphItem.clientname.priority)}`}>
+                  className={`text-[.6rem] py-2 h-[50px] border-[1px] border-zinc-600 ${graphItem.isVariation === true ? 'text-red-600 font-black' : ' text-black'} ${clientColor(graphItem.clientname.priority)}`}>
                       <td className="text-center text-white flex items-center justify-center gap-1 h-[50px] w-[30px]">
                         
 
@@ -1386,9 +1404,10 @@ export default function Yourworkload() {
                                     
                     </td>
                     {/* ${graphItem.status === null ? 'text-blue-400' :  'text-green-500'} */}
-                    <td className={` text-center`}>{memberIndex === 0 && `${graphItem.status === null ? 'Ongoing' :  'Completed'}`}</td>
-                    <td className="text-center">{memberIndex === 0 && graphItem.jobno}</td>
+                    {/* <td className={` text-center`}>{memberIndex === 0 && `${graphItem.status === null ? 'Ongoing' :  'Completed'}`}</td> */}
                       <td className="text-center">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
+                      <td className="text-center">{memberIndex === 0 && graphItem.clientname.name}</td>
+                      <td className="text-center">{memberIndex === 0 && graphItem.jobno}</td>
                       <td className={` text-center ${scrollId === graphItem._id && 'text-black'}`}>{memberIndex === 0 && graphItem.jobcomponent}</td>
                       <td className="text-center">{memberIndex === 0 && `$ ${graphItem.estimatedbudget?.toLocaleString()}`}</td>
                       <td className="text-center">{memberIndex === 0 && `${graphItem.invoice.percentage} ${graphItem.budgettype === 'lumpsum' ? '%' : 'hrs'}`}</td>
@@ -1398,7 +1417,7 @@ export default function Yourworkload() {
                     <td className="text-center text-[.5rem]">{member.role}</td>
                     <td className="text-center">
                       <Dialog>
-                        <DialogTrigger>{member.notes.slice(0, 25) || ''} ...</DialogTrigger>
+                        <DialogTrigger>{member.notes === '' ? '... ' : <button className=' text-[.5rem] bg-red-600 rounded-sm text-white p-1'>View</button>}</DialogTrigger>
                         <DialogContent className=' bg-secondary p-6 border-none max-w-[600px] text-white'>
                           <DialogHeader>
                             <DialogTitle>Notes</DialogTitle>
@@ -1429,7 +1448,7 @@ export default function Yourworkload() {
                   >
                     <tr className=' text-[0.6rem] text-zinc-100 font-normal h-1'>
                     
-                    {list[0]?.allDates
+                    {longestAlldates?.allDates
                     .filter((dateObj) => {
                       const day = new Date(dateObj).getDay();
                       return day >= 1 && day <= 5; // Filter to include only Monday through Friday
@@ -1447,15 +1466,15 @@ export default function Yourworkload() {
 
                       return (
                         <React.Fragment key={index}>
-                         <th className="relative font-normal border-[1px] h-1 overflow-hidden border-zinc-700">
-                          <div className="whitespace-nowrap transform -rotate-[90deg]">
+                         <th className="relative font-normal w-[20px] border-[1px] h-1 overflow-hidden border-zinc-700">
+                          <div className="whitespace-nowrap transform w-[20px] -rotate-[90deg]">
                             <p>{formatAustralianDate(date)}</p>
                             <p>{formatMonthYear(date)}</p>
                           </div>
                         </th>
                         {isFriday && (
-                          <th className="font-normal px-1 border-[1px] h-1 overflow-hidden border-zinc-700">
-                            <div className="transform -rotate-[90deg]">
+                          <th className="font-normal  w-[20px] px-1 border-[1px] h-1 overflow-hidden border-zinc-700">
+                            <div className="transform  w-[20px] -rotate-[90deg]">
                               <p>Total Hours</p>
                             </div>
                           </th>
@@ -1474,7 +1493,7 @@ export default function Yourworkload() {
                         <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2  h-[51px] border-[1px] border-zinc-600">
                           
                     
-                          {list[0]?.allDates
+                          {longestAlldates?.allDates
                           .filter((dateObj) => {
                             const day = new Date(dateObj).getDay();
                             return day >= 1 && day <= 5; // Filter to include only Monday through Friday
@@ -1587,12 +1606,8 @@ export default function Yourworkload() {
                 </table>
               </div>
           
-            {list.length === 0 && (
-                  <div className=' w-full h-full flex items-center justify-center'>
-                    <p className=' text-xs text-zinc-400'>No job component's yet under this project, please create one to see the workload!</p>
-
-                  </div>
-                )}
+          
+           
 
         {isJobmamager === true ? (
               <Dialog open={dialog} onOpenChange={setDialog}>
@@ -1751,7 +1766,18 @@ export default function Yourworkload() {
             
 
         </div>
-      </div>
+        </div>
+
+        {list.length === 0 && (
+          <div className=' w-full h-full flex items-center justify-center'>
+            <p className=' text-xs text-zinc-400'>No job component's yet under this project, please create one to see the workload!</p>
+          </div>
+        )}
+  
+       
+    
+
+     
 
         
     </div>

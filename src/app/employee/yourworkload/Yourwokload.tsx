@@ -84,9 +84,9 @@ export default function Yourworkload() {
     );
 
      // Check if the date is in wellnessDates
-  const isWellnessDate = wellnessDates.some(
-    (wellnessDate) => formatDate(wellnessDate) === date
-  );;
+    const isWellnessDate = wellnessDates.some(
+      (wellnessDate) => formatDate(wellnessDate) === date
+    );;
 
 
     if(data.includes('1')){
@@ -107,7 +107,7 @@ export default function Yourworkload() {
     if(data.includes('6')){
       colorData.push('bg-cyan-400')
     }
-    if(hours > 8){
+    if(hours > 9){
       colorData.push('bg-pink-500')
     }
     if(isWithinAnyEventDate){
@@ -117,11 +117,23 @@ export default function Yourworkload() {
       colorData.push('bg-violet-300')
     }
     if(isWellnessDate){
-      colorData.push('bg-fuchsia-500')
+      colorData.push('bg-fuchsia-400')
     }
+
 
     return colorData; 
   }
+
+  const formatAustralianDate = (date: any) => {
+    const parsedDate = new Date(date); // Ensure the date is converted to a Date object
+    return parsedDate.toLocaleDateString('en-AU', { day: '2-digit', month: '2-digit', year: '2-digit' });
+  };
+  
+  const formatMonthYear = (date: any) => {
+    const parsedDate = new Date(date); // Ensure the date is converted to a Date object
+    return parsedDate.toLocaleDateString('en-AU', { month: 'short', year: 'numeric' });
+  };
+  
 
 
 
@@ -164,7 +176,10 @@ export default function Yourworkload() {
           <thead className=' bg-secondary h-[100px]'>
 
             <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
+              <th className=' font-normal w-[70px]'>Team.</th>
               <th className=' font-normal w-[70px]'>Job No.</th>
+              <th className=' font-normal w-[70px]'>Client</th>
+              <th className=' font-normal w-[70px]'>Project name</th>
               <th className=' font-normal w-[70px]'>Job Mgr.</th>
               <th className=' font-normal w-[70px]'>Job Component</th>
               <th className=' w-[70px] font-normal'>Members</th>
@@ -179,7 +194,10 @@ export default function Yourworkload() {
             graphItem.members.map((member, memberIndex) => (
               <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
                  
+                  <td className="text-center ">{graphItem.teamname}</td>
                   <td className="text-center text-red-500">{memberIndex === 0 && graphItem.jobno}</td>
+                  <td className="text-center ">{memberIndex === 0 && graphItem.clientname}</td>
+                  <td className="text-center ">{memberIndex === 0 && graphItem.projectname}</td>
                   <td className="text-center">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
                   <td className="text-center">{memberIndex === 0 && graphItem.jobcomponent}</td>
       
@@ -221,11 +239,14 @@ export default function Yourworkload() {
                   return (
                     <React.Fragment key={index}>
                       <th className="relative font-normal border-[1px] border-zinc-700">
-                        <p className="whitespace-nowrap rotate-90">{formatDate(dateObj)}</p>
+                        <div className="whitespace-nowrap transform -rotate-[90deg]">
+                            <p>{formatAustralianDate(dateObj)}</p>
+                            <p>{formatMonthYear(dateObj)}</p>
+                          </div>
                       </th>
                       {(index + 1) % 5 === 0 && (
                         <th className="font-normal px-1 border-[1px] border-zinc-700">
-                          <p className="rotate-90">Total Hours</p>
+                          <p className="-rotate-[90deg]">Total Hours</p>
                         </th>
                       )}
                     </React.Fragment>
@@ -238,7 +259,7 @@ export default function Yourworkload() {
               <tbody>
               {list.map((graphItem, graphIndex) =>
                   graphItem.members.map((member, memberIndex) => (
-                    <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[41px] border-[1px] border-zinc-600">
+                    <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
                       {dates.map((dateObj, index) => {
                         // Find member data for the given date
                         const memberDate = member.dates?.find((date) => formatDate(date.date) === formatDate(dateObj));

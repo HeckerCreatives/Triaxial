@@ -46,7 +46,7 @@ export default function Wfh() {
   const refresh = params.get('state')
   const [totalpage, setTotalpage] = useState(0)
   const [currentpage, setCurrentpage] = useState(0)
-  const [status, setStatus] = useState('Pending')
+  const [status, setStatus] = useState('Approved')
 
    //paginition
    const handlePageChange = (page: number) => {
@@ -161,17 +161,7 @@ export default function Wfh() {
     <div className=' w-full h-full flex justify-center bg-secondary p-6 text-zinc-100'>
 
       <div className=' w-full max-w-[1520px] flex flex-col'>
-        <label htmlFor="" className=' text-xs text-zinc-400'>Filter by status</label>
-      <Select value={status} onValueChange={setStatus}>
-      <SelectTrigger className="w-[180px] bg-primary mt-2">
-        <SelectValue placeholder="Filter by status" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="Pending">Pending</SelectItem>
-        <SelectItem value="Approved">Approved</SelectItem>
-        <SelectItem value="Denied">Denied</SelectItem>
-      </SelectContent>
-    </Select>
+       
 
           <Table className=' mt-4'>
           {leave.length === 0 &&  

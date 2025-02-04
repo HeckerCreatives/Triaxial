@@ -51,31 +51,12 @@ export default function Invoice( prop: Props) {
     const id = params.get('jobcid')
     const [hasFetched, setHasFetched] = useState(false);
 
-    const lumpsumCalculation = (newInvoice / 100) * prop.estimatedbudget
+    const lumpsumCalculation = ((newInvoice / 100 ) * prop.estimatedbudget) -  (currInvoice / 100) * prop.estimatedbudget
+
+
+
+
     const ratesCalculation = prop.estimatedbudget * newInvoice
-
-
-
-    const generateRandomTransactionID = () => {
-        const randomNumber = Math.floor(100000 + Math.random() * 900000); // Generates a 6-digit random number
-        return `TXIN${randomNumber}`;
-    }
-
-    //    const lumpsumCalc = () => {
-    //     if(Number(newInvoice) && prop.budgettype === 'lumpsum'){
-    //         const amountCalc = ((newInvoice as any - currInvoice) / 100) * (prop.estimatedbudget - budgetReamining)
-    //         console.log(amountCalc, budgetReamining)
-    //         setAmount(amountCalc)
-         
-    //     }
-
-    //     if(Number(newInvoice) && prop.budgettype === 'rates'){
-          
-    //         const amountCalc = prop.estimatedbudget * (newInvoice as any)
-    //         setAmount(amountCalc)
-           
-      
-    //    }
 
        useEffect(() => {
          const currIn = async () => {
@@ -95,77 +76,6 @@ export default function Invoice( prop: Props) {
          }
          currIn()
        },[id, hasFetched])
-
-    //   const requestInvoice = async () => {
-    //     setLoading(true)
-    //     if(newInvoice as any > currInvoice && newInvoice as any <= 100 && prop.budgettype === 'lumpsum'){
-    //         try {
-    //             const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}${dynamicCreateInvoiceApiUrl}`,{
-    //                 jobcomponentid: prop.jobcid,
-    //                 currentinvoice: currInvoice,
-    //                 newinvoice: newInvoice,
-    //                 invoiceamount: amount,
-    //                 comments: notes
-    //             },{
-    //                 withCredentials: true,
-    //                 headers: {
-    //                   'Content-Type': 'application/json'
-    //                   }
-    
-    //             })
-
-    //             const response = await toast.promise(request, {
-    //                 loading: 'Requesting invoice ....',
-    //                 success: `Successfully requested`,
-    //                 error: 'Error while requesting invoice',
-    //             });
-            
-    //            if(response.data.message === 'success'){
-    //              setLoading(false)
-    //              setDialog(false)
-    //              setNewInvoice('0')
-            
-    //            }
-    
-                
-    //         } catch (error) {
-    //         setLoading(false)
-    //         setDialog(false)
-    //          setNewInvoice('0')
-    //         if (axios.isAxiosError(error)) {
-    //             const axiosError = error as AxiosError<{ message: string, data: string }>;
-    //             if (axiosError.response && axiosError.response.status === 401) {
-    //                 toast.error(`${axiosError.response.data.data}`) 
-    //                 router.push('/')    
-    //             }
-  
-    //             if (axiosError.response && axiosError.response.status === 400) {
-    //                 toast.error(`${axiosError.response.data.data}`)     
-                       
-    //             }
-  
-    //             if (axiosError.response && axiosError.response.status === 402) {
-    //                 toast.error(`${axiosError.response.data.data}`)          
-                           
-    //             }
-  
-    //             if (axiosError.response && axiosError.response.status === 403) {
-    //                 toast.error(`${axiosError.response.data.data}`)              
-                   
-    //             }
-  
-    //             if (axiosError.response && axiosError.response.status === 404) {
-    //                 toast.error(`${axiosError.response.data.data}`)             
-    //             }
-    //         } 
-
-                
-    //         }
-    //     } else {
-    //         toast.error('The new invoice should be greater than & not equal to the current invoice & not greater 100%')
-    //     }
-        
-    //   }
 
     const requestInvoice = async () => {
         setLoading(true)
@@ -298,9 +208,6 @@ export default function Invoice( prop: Props) {
         }
     }
 
-    // useEffect(() => {
-    //     lumpsumCalc()
-    // },[newInvoice])
 
     useEffect(() => {
         if(prop){

@@ -37,6 +37,7 @@ import Spinner from '@/components/common/Spinner'
 import { useSearchParams } from 'next/navigation'
 import Projectstatusform from '@/components/forms/Projectstatusform'
 import Copyprojectform from '@/components/forms/Copyprojectform'
+import { clientColor } from '@/utils/helpers'
 
 type Components = {
   name: string,
@@ -103,16 +104,6 @@ export default function Projecttable() {
   }
 
 
-  const clientColor = (data: string) => {
-    if(data.includes('1')){
-      return 'bg-[#93C47D]'
-    } else if(data.includes('2')){
-      return 'bg-[#B6D7A7]'
-    } else if(data.includes('3')){
-      return 'bg-[#969696]'
-    } 
-  }
-
   return (
    <div className=' w-full h-full flex justify-center bg-secondary p-6 text-zinc-100'>
 
@@ -158,20 +149,20 @@ export default function Projecttable() {
         {list.map((project) =>
           project.jobComponents.map((job, index) => (
             <TableRow key={index} className=' text-white'>
-              <TableCell className={` ${clientColor(project.priority)} text-white underline cursor-pointer`}>
+              <TableCell className={` ${clientColor(project.priority)} text-black underline cursor-pointer`}>
                 <a href={`/pm/graph/jobcomponent?teamid=${project.teamid}&jobno=${job.id}`} className=' '>{project.jobno}</a>
 
               </TableCell>
-              <TableCell className={` ${clientColor(project.priority)} text-white`}>{project.client}</TableCell>
-              <TableCell className={` ${clientColor(project.priority)} text-white`}>{project.projectname}</TableCell>
-              <TableCell className={` ${clientColor(project.priority)} text-white`}>{project.managerName}</TableCell>
-              <TableCell className={` ${clientColor(project.priority)} text-white`}>{job.estimatedBudget}</TableCell>
-              <TableCell className={` ${clientColor(project.priority)} text-white`}>{project.invoiced}</TableCell>
-              <TableCell className={` ${clientColor(project.priority)} text-white`}>{job.name}</TableCell>
-              <TableCell className={` flex items-center gap-2 h-[50px] ${clientColor(project.priority)} text-white`}>{job.members.map((item, index) => (
+              <TableCell className={` ${clientColor(project.priority)} text-black`}>{project.client}</TableCell>
+              <TableCell className={` ${clientColor(project.priority)} text-black`}>{project.projectname}</TableCell>
+              <TableCell className={` ${clientColor(project.priority)} text-black`}>{project.managerName}</TableCell>
+              <TableCell className={` ${clientColor(project.priority)} text-black`}>{job.estimatedBudget}</TableCell>
+              <TableCell className={` ${clientColor(project.priority)} text-black`}>{project.invoiced}</TableCell>
+              <TableCell className={` ${clientColor(project.priority)} text-black`}>{job.name}</TableCell>
+              <TableCell className={` flex items-center gap-2 h-[50px] ${clientColor(project.priority)} text-black`}>{job.members.map((item, index) => (
                 <p key={index} className=' h-full'>{item}</p>
               ))}</TableCell>
-              <TableCell className={` ${clientColor(project.priority)} text-white`}>{project.teamname}</TableCell>
+              <TableCell className={` ${clientColor(project.priority)} text-black`}>{project.teamname}</TableCell>
             </TableRow>
           ))
         )}

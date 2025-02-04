@@ -67,6 +67,7 @@ import { createClient, CreateClient } from '@/schema/schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Spinner from '@/components/common/Spinner'
 import PaginitionComponent from '@/components/common/Pagination'
+import { clientColor } from '@/utils/helpers'
 
 type Team = Record<"teamname" | "teamid", string>;
 
@@ -473,15 +474,6 @@ export default function ClientTable() {
 
   const priorityValue = watch('priority');
 
-  const clientColor = (data: string) => {
-    if(data.includes('1')){
-      return 'bg-[#93C47D]'
-    } else if(data.includes('2')){
-      return 'bg-[#B6D7A7]'
-    } else if(data.includes('3')){
-      return 'bg-[#969696]'
-    } 
-  }
   
   
   return (
@@ -523,7 +515,7 @@ export default function ClientTable() {
                           <SelectItem value="Priority 1">Priority 1</SelectItem>
                           <SelectItem value="Priority 2">Priority 2</SelectItem>
                           <SelectItem value="Priority 3">Priority 3</SelectItem>
-                          {/* <SelectItem value="Others">Others</SelectItem> */}
+                          <SelectItem value="Others">Others</SelectItem>
                         </SelectContent>
                       </Select>
                       {errors.priority && <p className=' text-[.6em] text-red-500'>{errors.priority.message}</p>}
@@ -613,20 +605,20 @@ export default function ClientTable() {
         <TableBody>
           {clients.map((item, index) => (
             <TableRow key={index} className={` bg-red-500`}>
-            <TableCell className={`${clientColor(item.priority)} text-white`}>
+            <TableCell className={`${clientColor(item.priority)} text-black`}>
             <input 
                 checked={selectedRows.some((row) => row.id === `${item.teamid}`)}
                 onChange={() => handleSelectRow(`${item.teamid}`, `${item.clientname}`)}
                 type="checkbox" />
             </TableCell>
-            <TableCell className={`font-medium ${clientColor(item.priority)} text-white `}>{item.clientname}</TableCell>
-            <TableCell className={`font-medium ${clientColor(item.priority)} text-white `}>{item.priority}</TableCell>
+            <TableCell className={`font-medium ${clientColor(item.priority)} text-black `}>{item.clientname}</TableCell>
+            <TableCell className={`font-medium ${clientColor(item.priority)} text-black `}>{item.priority}</TableCell>
 
 
             
           
-            <TableCell className={`font-medium ${clientColor(item.priority)} text-white `}>{new Date(item.createdAt).toLocaleString()}</TableCell>
-            <TableCell className={`font-medium ${clientColor(item.priority)} text-white `}>
+            <TableCell className={`font-medium ${clientColor(item.priority)} text-black `}>{new Date(item.createdAt).toLocaleString()}</TableCell>
+            <TableCell className={`font-medium ${clientColor(item.priority)} text-black `}>
 
             <Dialog open={dialog3} onOpenChange={setDialog3}>
                 <DialogTrigger>

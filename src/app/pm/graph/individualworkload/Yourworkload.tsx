@@ -12,7 +12,7 @@ import {
 import axios from 'axios';
 import { useSearchParams } from 'next/navigation';
 import { Workload } from '@/types/types';
-import { formatDate } from '@/utils/functions';
+import { formatAustralianDate, formatDate, formatMonthYear } from '@/utils/functions';
 import Legends from '@/components/common/Legends';
 
 type Event = {
@@ -130,13 +130,12 @@ export default function Indiviualworkloads() {
     <div className=' w-full h-full flex flex-col justify-center bg-secondary text-zinc-100 p-4'>
 
       <div className=' w-full flex justify-between items-end gap-8 h-auto bg-primary mb-2 p-4 text-xs'>
-        <div className=' w-auto flex flex-col gap-1'>
+        {/* <div className=' w-auto flex flex-col gap-1'>
           <p className=' text-zinc-400'>Project Name: <span className=' text-red-500 underline'>{list.length !== 0 ? list[0].projectname : ''}</span></p>
           <p className=' text-zinc-400'>Employee Name: <span className=' text-red-500 underline'>{list.length !== 0 ? list[0].members[0].employee.fullname : ''}</span></p>
           <p className=' text-zinc-400'>Manager Name: <span className=' text-red-500 underline'>{list.length !== 0 ? list[0].jobmanager.fullname : ''}</span></p>
-          {/* <p className=' text-zinc-400'>Client Name: <span className=' text-zinc-100 underline'>test@gmail.com</span></p> */}
 
-        </div>
+        </div> */}
 
         <Legends/>
 
@@ -212,11 +211,14 @@ export default function Indiviualworkloads() {
                   return (
                     <React.Fragment key={index}>
                       <th className="relative font-normal border-[1px] border-zinc-700">
-                        <p className="whitespace-nowrap rotate-90">{formatDate(dateObj)}</p>
+                        <div className="whitespace-nowrap transform -rotate-[90deg]">
+                            <p>{formatAustralianDate(dateObj)}</p>
+                            <p>{formatMonthYear(dateObj)}</p>
+                          </div>
                       </th>
                       {(index + 1) % 5 === 0 && (
                         <th className="font-normal px-1 border-[1px] border-zinc-700">
-                          <p className="rotate-90">Total Hours</p>
+                          <p className="-rotate-[90deg]">Total Hours</p>
                         </th>
                       )}
                     </React.Fragment>

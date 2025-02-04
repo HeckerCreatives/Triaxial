@@ -35,6 +35,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
+import refreshStore from '@/zustand/refresh'
 
 type Data = {
   contactno: string
@@ -53,7 +54,9 @@ export default function HrLayout({
   const path = usePathname()
   const [nav, setNav] = useState(true)
   const router = useRouter()
-    const [data, setData] = useState<Data>()
+  const [data, setData] = useState<Data>()
+  const {refresh} = refreshStore()
+  const [unread, setUnread] = useState(0)
   
 
 
@@ -95,6 +98,19 @@ export default function HrLayout({
     getData()
   },[])
 
+   //get unread messages
+   useEffect(() => {
+    const getData = async () => {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/email/unreademail`,
+        {withCredentials: true}
+      )
+
+      console.log(response.data)
+      setUnread(response.data.unreademails)
+    }
+    getData()
+  },[refresh])
+
   return (
       <div className="flex min-h-screen w-full overflow-hidden">
         <motion.div 
@@ -124,6 +140,12 @@ export default function HrLayout({
                    >
                      {item.icon}
                      {item.name}
+                     {(item.path.includes('pm/messages') && unread !== 0) && (
+                        <div className=' w-4 h-4 bg-red-600 rounded-full -translate-y-1 flex items-center justify-center'>
+                          <p className=' text-[.7rem] text-white'>{unread}</p>
+
+                        </div>
+                       )}
                      {item.path.includes('noaccess') && (
                      <p className=' text-[.5rem] px-2 py-1 h-4 bg-red-600 flex items-center justify-center rounded-full group-hover:text-white'>Forbidden</p>
                      )}
@@ -139,53 +161,7 @@ export default function HrLayout({
                        <AccordionContent className=' pl-8'>
                          {item.subpath.map((item, index) => (
                           <>
-                          {item.subpath.length === 0 ? (
-                             <Link
-                             key={index}
-                             href={item.path}
-                             className={` group ${(path.includes(item.path) && path !== '/pm/noaccess/') ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                           >
-                             
-                            {item.name}
-
-                            {item.path.includes('noaccess') && (
-                              <p className=' text-[.5rem] px-2 py-1 h-4 bg-red-600 flex items-center justify-center rounded-full group-hover:text-white'>Forbidden</p>
-                              )}
-                           </Link>
-                          ): (
-                            // <Accordion type="single" collapsible>
-                            // <AccordionItem value="item-1">
-                            //   <div className={` px-3 flex items-center w-full gap-2 ${path.includes(item.path) ? ' text-zinc-100' : 'text-zinc-100'}`}>
-                            //     <AccordionTrigger className=' w-[200px] text-sm'>{item.name}</AccordionTrigger>
-                            //   </div>
-                              
-                            //   <AccordionContent className=' pl-8'>
-                            //     {item.subpath.map((item, index) => (
-                            //       <>
-                                
-                            //         <Link
-                            //         key={index}
-                            //         href={item.path}
-                            //         className={` group ${(path.includes(item.path) && path !== '/pm/noaccess/') ? ' text-red-700' : 'text-zinc-100'} text-muted-foreground text-sm flex items-center gap-3 rounded-lg px-3  py-2 transition-all hover:text-red-700`}
-                            //       >
-                                    
-                            //         {item.name}
-
-                            //         {item.path.includes('noaccess') && (
-                            //         <p className=' text-[.5rem] px-2 py-1 h-4 bg-red-600 flex items-center justify-center rounded-full group-hover:text-white'>Forbidden</p>
-                            //         )}
-                            //       </Link>
-                           
-                            //       </>
-                                  
-                            //     ))}
-                                
-                            //   </AccordionContent>
-                            // </AccordionItem>
-                            // </Accordion>
-
-                            <></>
-                          )}
+                        
                           
                           </>
                            

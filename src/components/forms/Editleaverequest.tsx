@@ -74,7 +74,7 @@ export default function Editleaverequest( prop: Data) {
   } = useForm<LeaveSchema>({
     resolver: zodResolver(leaveSchema),
     defaultValues:{
-      wdcycle: prop.wellnessdaycycle === true ? 'Yes' : 'No',
+      wdcycle: 'No',
      type: findType(prop.type),
      startdate: prop.startdate,
      enddate: prop.enddate,

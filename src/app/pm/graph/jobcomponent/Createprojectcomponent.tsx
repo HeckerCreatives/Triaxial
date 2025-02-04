@@ -27,6 +27,7 @@ import toast from 'react-hot-toast'
 import axios, { AxiosError } from 'axios'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Input } from '@/components/ui/input'
+import { formatAustralianDate } from '@/utils/helpers'
 
 type Project = {
   createdAt: string
@@ -79,7 +80,6 @@ type Manager = {
 
 export default function Createprojectcomponent( prop: Data) {
   const [dialog, setDialog] = useState(false)
-  const [client, setClient] = useState('')
   const [clientid, setClientid] = useState('')
   const [pm, setPm] = useState('')
   const router = useRouter()
@@ -94,12 +94,17 @@ export default function Createprojectcomponent( prop: Data) {
   const [projectname, setProjectname] = useState('')
   const [start, setStart] = useState('')
   const [end, setEnd] = useState('')
+  const [client, setClient] = useState('')
+  const today = new Date()
+
+
+
 
 
   const [formData, setFormData] = useState<FormData[]>([{ jobmanager: '',jobno: '123', budgettype: '', estimatedbudget: '', jobcomponent: '', members: [
                 {
                     employeeid: "",
-                    role: "Engnr."
+                    role: "Engr."
                 },
                 {
                     employeeid: "",
@@ -132,7 +137,7 @@ export default function Createprojectcomponent( prop: Data) {
     setFormData([...formData, { jobmanager: '',jobno: '123', budgettype: '', estimatedbudget: '', jobcomponent: '' , members: [
       {
           employeeid: "6723819e92ce23277a217af9",
-          role: "Engnr."
+          role: "Engr."
       },
       {
           employeeid: "672c2984da9422943054dbe4",
@@ -244,10 +249,9 @@ export default function Createprojectcomponent( prop: Data) {
           projectid: projectid,
           teamid: id,
           projectname:  projectname,
-          clientid: clientid,
+          clientid: clientid === '' ? client : clientid,
           jobno: jobno,
-          start: start,
-          end: end,
+          start: (today.toLocaleString()).split(',')[0],
           jobcomponentvalue: filteredFormData
         }, {
           withCredentials: true,
@@ -548,7 +552,7 @@ export default function Createprojectcomponent( prop: Data) {
                                                             
                                                                               </div>
                                                             
-                                                                              <div className=' flex items-start gap-4 '>
+                                                                              {/* <div className=' flex items-start gap-4 '>
                                                                                 
                                                             
                                                                                 <div className=' w-full'>
@@ -565,7 +569,13 @@ export default function Createprojectcomponent( prop: Data) {
                                                             
                                                                                   </div>
                                                             
-                                                                              </div>
+                                                                              </div> */}
+
+                                                                              <div className=' w-full'>
+                                                                                  <Label className=' text-zinc-500'>If other, please input the client name.</Label>
+                                                                                  <Input type='text' value={client} onChange={(e) => setClient(e.target.value)} className=' text-xs h-[35px] bg-white' placeholder='Client name' />
+                                                            
+                                                                                </div>
                                                             
                                                                               
                                                                       </div>

@@ -16,6 +16,7 @@ import { useRouter } from 'next/navigation'
 import PaginitionComponent from '@/components/common/Pagination'
 import axios from 'axios'
 import Spinner from '@/components/common/Spinner'
+import { clientColor } from '@/utils/helpers'
 
 
 type Client  ={
@@ -54,15 +55,6 @@ export default function Teamlist() {
     getList()
   },[])
 
-  const clientColor = (data: string) => {
-    if(data.includes('1')){
-      return 'bg-[#93C47D]'
-    } else if(data.includes('2')){
-      return 'bg-[#B6D7A7]'
-    } else if(data.includes('3')){
-      return 'bg-[#969696]'
-    } 
-  }
 
   return (
    <div className=' w-full h-full flex justify-center bg-secondary text-zinc-100'>
@@ -91,10 +83,10 @@ export default function Teamlist() {
         <TableBody>
             {list.map((item, index) => (
                 <TableRow key={index}>
-                <TableCell className={` ${clientColor(item.priority)} text-white`}>{item.clientName}</TableCell>
-                <TableCell className={` ${clientColor(item.priority)} text-white`}>{item.priority}</TableCell>
-                <TableCell className={` ${clientColor(item.priority)} text-white`}>$ {item.wip.toLocaleString()}</TableCell>
-                <TableCell className={` flex items-center gap-2 ${clientColor(item.priority)} text-white `}>
+                <TableCell className={` ${clientColor(item.priority)} text-black`}>{item.clientName}</TableCell>
+                <TableCell className={` ${clientColor(item.priority)} text-black`}>{item.priority}</TableCell>
+                <TableCell className={` ${clientColor(item.priority)} text-black`}>$ {item.wip.toLocaleString()}</TableCell>
+                <TableCell className={` flex items-center gap-2 ${clientColor(item.priority)} text-black `}>
                     <button onClick={() => router.push(`/finance/summaries/client/clienttotalinvoice?clientid=${item.clientid}`)} className=' bg-red-600 px-2 py-1 text-xs rounded-sm text-white flex items-center gap-1'><Eye size={12}/>Total Invoice</button>
                 </TableCell>
                 </TableRow>

@@ -25,6 +25,7 @@ import { Textarea } from '@/components/ui/textarea'
 import axios from 'axios'
 import PaginitionComponent from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
+import refreshStore from '@/zustand/refresh'
 
 type Message = {
   _id: string
@@ -33,6 +34,7 @@ type Message = {
   senderfullname: string
   receiverfullname: string
   createdAt: string
+  isRead: boolean
 }
 
 
@@ -48,6 +50,7 @@ export default function Emailtable() {
   const [date, setDate] = useState('')
   const [name, setName] = useState('')
   const [content, setContent] = useState('')
+  const { refresh, setRefresh, clearRefresh} = refreshStore()
 
 
   //messages
@@ -78,7 +81,7 @@ export default function Emailtable() {
     });
   
     fetchLeaveData();
-  }, [ currentpage]);
+  }, [ currentpage, refresh]);
 
   //paginition
   const handlePageChange = (page: number) => {
@@ -91,6 +94,24 @@ export default function Emailtable() {
     setContent(content)
     setName(name)
     setDate(date)
+  }
+
+  const readmessages = async (id: string) => {
+    setRefresh('true')
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/email/reademail?emailId=${id}`,{
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      if(response.data.message === 'success'){
+        clearRefresh()
+      }
+    } catch (error) {
+      
+    }
   }
 
 
@@ -169,9 +190,13 @@ export default function Emailtable() {
         </TableHeader>
         <TableBody>
           {list.map((item, index) => (
-            <TableRow onClick={() => openMessage(item.title,item.content, item.createdAt, item.senderfullname)} key={index} className=' w-full cursor-pointer'>
+            <TableRow onClick={() => {openMessage(item.title,item.content, item.createdAt, item.senderfullname); readmessages(item._id)}} key={index} className=' w-full cursor-pointer'>
             {/* <TableCell className="font-medium"><Checkbox/></TableCell> */}
-              <TableCell>{item.senderfullname}</TableCell>
+              <TableCell className=' relative'>{item.senderfullname}
+                {item.isRead === false && (
+                  <p className=' absolute px-2 rounded-full text-[.55rem] bg-red-600 text-white top-0 left-0'>New</p>
+                )}
+              </TableCell>
               <TableCell>{item.title}</TableCell>
               <TableCell className=' w-[700px] flex'>
                 <p className=' line-clamp-3'>{item.content.slice(0,150)}...

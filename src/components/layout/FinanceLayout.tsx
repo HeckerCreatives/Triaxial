@@ -27,6 +27,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
+import refreshStore from '@/zustand/refresh'
 
 type Data = {
   contactno: string
@@ -46,7 +47,9 @@ export default function FinaceLayout({
   const getTeam = params.get('team')
   const [nav, setNav] = useState(true)
   const router = useRouter()
-      const [data, setData] = useState<Data>()
+  const [data, setData] = useState<Data>()
+  const {refresh} = refreshStore()
+  const [unread, setUnread] = useState(0)
   
 
 
@@ -88,6 +91,19 @@ export default function FinaceLayout({
     getData()
   },[])
 
+  //get unread messages
+  useEffect(() => {
+    const getData = async () => {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/email/unreademail`,
+        {withCredentials: true}
+      )
+
+      console.log(response.data)
+      setUnread(response.data.unreademails)
+    }
+    getData()
+  },[refresh])
+
   return (
       <div className="flex min-h-screen w-full overflow-hidden">
         <motion.div 
@@ -116,6 +132,12 @@ export default function FinaceLayout({
                     >
                       {item.icon}
                       {item.name}
+                      {(item.path.includes('pm/messages') && unread !== 0) && (
+                        <div className=' w-4 h-4 bg-red-600 rounded-full -translate-y-1 flex items-center justify-center'>
+                          <p className=' text-[.7rem] text-white'>{unread}</p>
+
+                        </div>
+                       )}
                       {item.path.includes('noaccess') && (
                       <p className=' text-[.5rem] px-2 py-1 h-4 bg-red-600 flex items-center justify-center rounded-full group-hover:text-white'>Forbidden</p>
                       )}

@@ -15,6 +15,7 @@ import { formatDate } from '@/utils/functions'
 import { Input } from '@/components/ui/input'
 import Invoice from '@/components/forms/Invoice'
 import { File } from 'lucide-react'
+import { clientColor } from '@/utils/helpers'
 
 type values = {
   date: string
@@ -317,17 +318,6 @@ const totalsByDate = allDates.map((dateObj) => {
 
 
 
-  const clientColor = (data: string) => {
-    if(data.includes('1')){
-      return 'bg-[#93C47D]'
-    } else if(data.includes('2')){
-      return 'bg-[#B6D7A7]'
-    } else if(data.includes('3')){
-      return 'bg-[#969696]'
-    } 
-  }
-
-
 
 
 
@@ -342,7 +332,7 @@ const totalsByDate = allDates.map((dateObj) => {
           <div className=' h-full overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
               
               
-            <table className="table-auto w-[1000px] border-collapse ">
+            <table className="table-auto w-[1240px] border-collapse ">
           
             <thead className=' bg-primary h-[50px]'>
 
@@ -403,7 +393,7 @@ const totalsByDate = allDates.map((dateObj) => {
             <tbody>
             {list.map((graphItem, graphIndex) => {
               return (
-                <tr key={`${graphIndex}`} className={`text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600 ${clientColor(graphItem.priority)}`}>
+                <tr key={`${graphIndex}`} className={`text-[.6rem] text-black py-2 h-[40px] border-[1px] border-zinc-600 ${clientColor(graphItem.priority)}`}>
                   <td className="text-center  text-red-600">
                     <input 
                      type="checkbox"
@@ -420,10 +410,10 @@ const totalsByDate = allDates.map((dateObj) => {
                   <td className="text-center ">{graphItem.jobmanager.fullname}</td>
                   <td className="text-center ">{graphItem.jobcomponent}</td>
                   <td className="text-center ">$ {graphItem.estimatedbudget?.toLocaleString()}</td>
-                  <td className="text-center ">{graphItem.budgettype === 'rates' ? `${ graphItem.invoice.percentage.toLocaleString()} hrs` : `$ ${ graphItem.invoice.percentage.toLocaleString()}` }</td>
+                  <td className="text-center ">{graphItem.budgettype === 'rates' ? `${ graphItem.invoice.percentage.toLocaleString()} hrs` : `% ${ graphItem.invoice.percentage.toLocaleString()}` }</td>
                   <td className="text-center ">$ {graphItem.budgettype === 'rates' ? `${ graphItem.rates.invoiced.toLocaleString()}` : `${ graphItem.lumpsum.invoiced.toLocaleString()}` }</td>
                   <td className="text-center ">{graphItem.budgettype === 'rates' ? `-` : `$ ${ graphItem.lumpsum.remaining.toLocaleString()}`}</td>
-                  <td onClick={() => {setDialog2(graphItem.budgettype === 'lumpsum' && true), setComponentid(graphItem.componentid), setSubAmount(graphItem.lumpsum.subconts)}} className={`text-center cursor-pointer ${graphItem.budgettype === 'lumpsum' && ''}`}> {graphItem.budgettype === 'rates' ? '-' : `$ ${graphItem.lumpsum.subconts.toLocaleString()}`}</td>
+                  <td onClick={() => {setDialog2(graphItem.budgettype === 'lumpsum' && true), setComponentid(graphItem.componentid), setSubAmount(graphItem.lumpsum.subconts)}} className={`text-center cursor-pointer text-red-600 font-semibold ${graphItem.budgettype === 'lumpsum' && ''}`}> {graphItem.budgettype === 'rates' ? '-' : `$ ${graphItem.lumpsum.subconts.toLocaleString()}`}</td>
                   <td className="text-center ">$ {graphItem.budgettype === 'rates' ? `${ graphItem.rates.wip.toLocaleString()}` : ` ${ graphItem.lumpsum.wip.toLocaleString()}`}</td>
                   <td className="text-center ">{graphItem.budgettype === 'rates' ? `-` : `$ ${ graphItem.lumpsum.catchupinv.toLocaleString()}`}</td>
 
@@ -545,7 +535,18 @@ const totalsByDate = allDates.map((dateObj) => {
             </DialogHeader>
 
             <label htmlFor="">Amount $</label>
-            <Input value={subamount} onChange={(e) => setSubAmount(e.target.valueAsNumber)} placeholder='Amount' type='number' className=' bg-primary'/>
+            <Input
+              value={subamount}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value === "" || /^-?\d*\.?\d*$/.test(value)) {
+                  setSubAmount(value as any);
+                }
+              }}
+              placeholder="Amount"
+              type="number"
+              className="bg-primary"
+            />
 
             <div className=' w-full flex items-end justify-end mt-4'>
               <button onClick={updateSubsconstvalue} className=' px-4 py-2 bg-red-600 text-xs text-white rounded-md'>Save</button>

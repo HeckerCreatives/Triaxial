@@ -36,6 +36,11 @@ interface Data {
   manager: any
   type: any
   id: any
+  pname: string
+  client: string
+  start: string
+  end: string
+  estbudget: number
 }
 
 type Member = {
@@ -76,7 +81,7 @@ export default function DuplicateJobComponent( prop: Data) {
   const id = params.get('projectid')
   const [isValidated, setIsvalidated] = useState(false)
 
-  const [formData, setFormData] = useState<FormData[]>([{ jobmanager: prop.manager,jobno: '123', budgettype: prop.type, estimatedbudget: '', jobcomponent: prop.name, members: [
+  const [formData, setFormData] = useState<FormData[]>([{ jobmanager: prop.manager,jobno: '123', budgettype: prop.type, estimatedbudget:` ${prop.estbudget}`, jobcomponent: prop.name, members: [
                 {
                     employeeid: "",
                     role: "Engnr."
@@ -427,6 +432,8 @@ export default function DuplicateJobComponent( prop: Data) {
 ]}]);
   }
 
+  console.log(prop.estbudget)
+
   
 
 
@@ -441,6 +448,59 @@ export default function DuplicateJobComponent( prop: Data) {
       <div className=' w-full p-4 flex flex-col gap-4'>
         <p className=' text-sm uppercase font-semibold text-red-700 flex items-center gap-2'><span className=' bg-red-700 px-4 py-1 text-zinc-100 text-xs'>Duplicate</span>Job Component</p>
         <div className=' w-full flex flex-col gap-4'>
+
+          <p className=' text-xs'>Project Details</p>
+          
+                        
+          
+                                              
+            <Input type='text' value={jobno} onChange={(e) => setJobno(e.target.value)} className=' text-xs h-[35px] bg-zinc-200' placeholder='Job no'/>
+                                                                      
+                                                                      
+              <div className=' bg-zinc-200 rounded-sm flex flex-col p-2'>
+                                                                                   
+                    <div className=' flex items-start gap-4 '>
+                                                                                          
+                                                                      
+                      <div className=' w-full'>
+                        <Label className=' text-zinc-500'>Project Name <span className=' text-red-700'>*</span></Label>
+                        <Input type='text' value={prop.pname}  className=' text-xs h-[35px] bg-white' placeholder='Project name'/>
+                                                                      
+                                                                      
+                      </div>
+                                                                      
+                                                                                         
+                        <div className=' w-full'>
+                          <Label className=' text-zinc-500'>Client<span className=' text-red-700'>*</span></Label>
+                        <Input type='text' value={prop.client}  className=' text-xs h-[35px] bg-white' placeholder='Project name'/>
+
+                        
+                                                                      
+                        </div>
+                                                                      
+                    </div>
+                                                                      
+                    <div className=' flex items-start gap-4 '>
+                                                                                          
+                                                                      
+                      <div className=' w-full'>
+                        <Label className=' text-zinc-500'>Start Date <span className=' text-red-700'>*</span></Label>
+                        <Input type='text' value={prop.start.split('T')[0]}  className=' text-xs h-[35px] bg-white' placeholder='Project name' />
+                                                                      
+                                                                      
+                      </div>
+                                                                      
+                                                                                         
+                        <div className=' w-full'>
+                          <Label className=' text-zinc-500'>End date<span className=' text-red-700'>*</span></Label>
+                          <Input type='text' value={prop.end.split('T')[0]}  className=' text-xs h-[35px] bg-white' placeholder='Project name'/>
+                                                                      
+                        </div>
+                                                                      
+                    </div>
+                                      
+                                                                                        
+             </div>
 
             {formData.map((item, index) => (
                 <div key={index} className="flex flex-col gap-2 bg-zinc-100 rounded-md p-4">
@@ -492,6 +552,7 @@ export default function DuplicateJobComponent( prop: Data) {
 
 
                         <Label className="font-semibold mt-4">Job Component Budget</Label>
+                        <Label className="mt-2 text-zinc-500">Budget Type</Label>
                         <Select
                             value={item.budgettype}
                             onValueChange={(value) => handleChange(index, 'budgettype', value)}
@@ -504,6 +565,13 @@ export default function DuplicateJobComponent( prop: Data) {
                             <SelectItem value="lumpsum">Lump sum</SelectItem>
                             </SelectContent>
                         </Select>
+
+                        <Label className="mt-2 text-zinc-500">Component Budget</Label>
+                        <Input
+                            type="text"
+                            className="text-xs h-[35px] bg-white"
+                            value={item.estimatedbudget}
+                        />
 
                         <Label className="font-semibold mt-4">Members</Label>
                         <Label className="font-semibold mt-4">Engineer</Label>

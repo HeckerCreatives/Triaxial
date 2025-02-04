@@ -42,6 +42,7 @@ export default function WDform( prop: Data) {
   const [dialog, setDialog] = useState(false)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const [friday, setFriday] = useState('')
 
   //request welness day
   const {
@@ -123,6 +124,26 @@ export default function WDform( prop: Data) {
     reset()
   },[dialog])
 
+  useEffect(() => {
+    const getData = async () => {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/wellnessday/getwellnessdaylastfriday`,{
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json'
+          }
+      })
+
+    console.log(response.data)
+    setFriday(response.data.data)
+       
+      
+    
+    }
+    getData()
+
+  
+},[])
+
 
 
   
@@ -147,6 +168,13 @@ export default function WDform( prop: Data) {
               <Label className=' mt-2 text-zinc-500'>Start Day Of Wellness Day Cycle: <span className=' text-red-700'>*</span></Label>
               <Input type='date' className=' text-xs h-[35px] bg-zinc-200' placeholder='Name' {...register('startdate')}/>
               {errors.startdate && <p className=' text-[.6em] text-red-500'>{errors.startdate.message}</p>}
+
+
+            </div>
+
+            <div  className=' w-full'>
+              <Label className=' mt-2 text-zinc-500'>Last friday of the a 2-week cycle <span className=' text-red-700'>*</span></Label>
+              <Input type='date' value={friday.split('T')[0]} className=' text-xs h-[35px] bg-zinc-200'/>
 
 
             </div>

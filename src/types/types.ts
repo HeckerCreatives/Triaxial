@@ -105,6 +105,8 @@ clientname:
 {clientid: string, name: string, priority: string}
 componentid: string
 jobcomponent: string
+projectstart: string
+projectend: string
 jobmanager: {employeeid: string, fullname: string, isManager: boolean, isJobManager: boolean}
 jobno: string
 members: Members[]

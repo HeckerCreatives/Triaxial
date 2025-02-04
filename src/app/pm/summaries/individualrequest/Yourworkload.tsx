@@ -5,7 +5,15 @@ import toast from 'react-hot-toast'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { RefreshCcw } from 'lucide-react'
 import { string } from 'zod'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { formatAustralianDate, formatMonthYear } from '@/utils/functions'
+
 
 type Dates = {
   date: string
@@ -47,6 +55,11 @@ wellness: [
 ],
 }
 
+type Team = {
+  teamid: string
+teamname: string
+}
+
 export default function Yourworkload() {
   const [memberIndex, setMemberIndex] = useState(0)
   const [list, setList] = useState<List[]>([])
@@ -55,13 +68,15 @@ export default function Yourworkload() {
   const router = useRouter()
   const params = useSearchParams()
   const getTeamid = params.get('team')
+  const [team, setTeam] = useState<Team[]>([])
+  const [id, setId] = useState('')
 
 
   useEffect(() => {
     const getList = async () => {
-      if (getTeamid !== '' || undefined || null){
+    
         try {
-          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/getmanagerjobcomponentdashboard?filterDate=${filter}`,{
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/listemployeeindividualrequests?teamid=${id}`,{
             withCredentials: true
           })
 
@@ -72,9 +87,8 @@ export default function Yourworkload() {
         }
       }
 
-    }
     getList()
-  },[filter, getTeamid])
+  },[filter, id])
 
   const isDateInRange = (dateToCheck: string, startDate: string, endDate: string): boolean => {
     const checkDate = new Date(dateToCheck);
@@ -126,6 +140,24 @@ export default function Yourworkload() {
   }
 
 
+  useEffect(() => {
+    const getList = async () => {
+   
+        try {
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teams/listteamselect`,{
+            withCredentials: true
+          })
+
+        console.log(response.data)
+        setTeam(response.data.data)
+        setId(response.data.data[0].teamid)
+        } catch (error) {
+
+        }
+      }
+    getList()
+  },[])
+
 
 
   return (
@@ -133,8 +165,23 @@ export default function Yourworkload() {
 
 
       <div className=' h-full w-full flex flex-col gap-2 max-w-[1920px]'>
-      <div className=' w-full flex items-center gap-2 justify-end py-4'>
+      <div className=' w-full flex items-center gap-2 justify-between py-4'>
 
+        <div className=' text-xs'>
+          <label htmlFor="">Filter by team:</label>
+          <Select value={id} onValueChange={setId}>
+            <SelectTrigger className="w-[180px] bg-primary mt-1" >
+              <SelectValue placeholder="Select Team" />
+            </SelectTrigger>
+            <SelectContent>
+              {team.map((item, index) => (
+                <SelectItem value={item.teamid}>{item.teamname}</SelectItem>
+              ))}
+             
+            </SelectContent>
+          </Select>
+
+        </div>
 
         <div className=' h-full flex items-end gap-2'>
           <p className=' text-[.8em]'>Legend:</p>

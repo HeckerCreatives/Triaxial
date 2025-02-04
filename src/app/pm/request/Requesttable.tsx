@@ -48,7 +48,7 @@ import Editwdrequest from '@/components/forms/Editwdrequest'
 
 
 const Tab = [
-  "Leaves",
+  "Leave",
   "Wellness Day",
   "WFH",
 ]
@@ -181,7 +181,7 @@ export default function Requesttable() {
                 <TableRow>
                 <TableHead className="">Requested at</TableHead>
                 <TableHead>Type</TableHead>
-                <TableHead>Start Date</TableHead>
+                <TableHead>Wellness Day</TableHead>
                 <TableHead className="">First Day of Wellness Day Cycle</TableHead>
                 <TableHead className="">Action</TableHead>
                 </TableRow>
@@ -227,7 +227,7 @@ export default function Requesttable() {
         )} 
 
         
-        {active === 'Leaves' && (
+        {active === 'Leave' && (
           <>
           <Leaves/>
           </>

@@ -72,7 +72,7 @@ export default function Legends() {
 
             <div className=' flex items-center gap-2'>
               <div className=' bg-pink-500'>
-                <p className=' text-[.7em] text-black font-semibold px-1'>Greater than 8 hours/ day or  40 hours / week</p>
+                <p className=' text-[.7em] text-black font-semibold px-1'>"Greater than 9 hours/day</p>
               </div>
               
 

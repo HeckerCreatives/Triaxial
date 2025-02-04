@@ -11,7 +11,6 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Plus, Delete, Trash, Eye } from 'lucide-react'
-import { Checkbox } from '@/components/ui/checkbox'
 import {
   Dialog,
   DialogContent,
@@ -26,6 +25,7 @@ import { Textarea } from '@/components/ui/textarea'
 import axios from 'axios'
 import PaginitionComponent from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
+import refreshStore from '@/zustand/refresh'
 
 type Message = {
   _id: string
@@ -34,6 +34,7 @@ type Message = {
   senderfullname: string
   receiverfullname: string
   createdAt: string
+  isRead: boolean
 }
 
 
@@ -49,6 +50,7 @@ export default function Emailtable() {
   const [date, setDate] = useState('')
   const [name, setName] = useState('')
   const [content, setContent] = useState('')
+  const { refresh, setRefresh, clearRefresh} = refreshStore()
 
 
   //messages
@@ -79,7 +81,7 @@ export default function Emailtable() {
     });
   
     fetchLeaveData();
-  }, [ currentpage]);
+  }, [ currentpage, refresh]);
 
   //paginition
   const handlePageChange = (page: number) => {
@@ -94,6 +96,24 @@ export default function Emailtable() {
     setDate(date)
   }
 
+  const readmessages = async (id: string) => {
+    setRefresh('true')
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/email/reademail?emailId=${id}`,{
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      if(response.data.message === 'success'){
+        clearRefresh()
+      }
+    } catch (error) {
+      
+    }
+  }
+
 
 
   return (
@@ -101,7 +121,52 @@ export default function Emailtable() {
 
       <div className=' w-full flex flex-col max-w-[1520px]'>
         <div className=' flex md:flex-row flex-col items-center justify-between gap-4'>
-           
+            {/* <div className=' flex  items-center gap-4'>
+                <Dialog open={dialog} onOpenChange={setDialog}>
+                <DialogTrigger>
+                  <button className=' bg-red-700 text-xs px-6 py-2 rounded-sm flex items-center gap-1'><Plus size={15}/>Create</button>
+                </DialogTrigger>
+                <DialogContent className=' bg-secondary border-none text-zinc-100 grid grid-cols-1 lg:grid-cols-[250px,1fr]'>
+                  <div className=' bg-blue-400 lg:block hidden'
+                  style={{backgroundImage: `url('/bg2.png')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat:"no-repeat"}}
+                  
+                  >
+                    <p className=' p-2 uppercase text-sm font-semibold mt-8 bg-gradient-to-r from-zinc-950 to-zinc-950/10'>Create Mail</p>
+                  </div>
+
+                  <div className=' flex flex-col gap-2 p-4'>
+                    <DialogHeader>
+                    <DialogDescription>
+                    </DialogDescription>
+                    </DialogHeader>
+                  <form action="" className=' flex flex-col '>
+                    <h2 className=' uppercase font-semibold text-sm'>Mail</h2>
+                    <div className=' grid grid-cols-1 gap-4'>
+                      <div className=' flex flex-col gap-1'>
+                        <label htmlFor="" className=' mt-2 text-xs'>Subject</label>
+                        <Input placeholder='Subject' type='text' className=' bg-primary text-xs h-[35px]'/>
+
+                        <label htmlFor="" className=' mt-2 text-xs'>Content</label>
+                        <Textarea placeholder='Content' className=' bg-primary border-none text-xs'/>
+                      </div>
+
+                      
+                    </div>
+                      
+
+                  </form>
+                  
+                    <div className=' w-full flex items-end justify-end gap-2 mt-8'>
+                      <ButtonSecondary onClick={() => setDialog(false)}  name={'Cancel'}/>
+                      <Button onClick={() => setDialog(false)} name={'Save'}/>
+                    </div>
+
+                  </div>
+                  
+                </DialogContent>
+                </Dialog>
+
+            </div> */}
             
         </div>
 
@@ -117,7 +182,7 @@ export default function Emailtable() {
           )}
         <TableHeader>
             <TableRow>
-            {/* <TableHead className="w-[100px]">Select</TableHead> */}
+       
             <TableHead>Sender</TableHead>
             <TableHead>Title</TableHead>
             <TableHead>Message</TableHead>
@@ -125,9 +190,13 @@ export default function Emailtable() {
         </TableHeader>
         <TableBody>
           {list.map((item, index) => (
-            <TableRow onClick={() => openMessage(item.title,item.content, item.createdAt, item.senderfullname)} key={index} className=' w-full cursor-pointer'>
+            <TableRow onClick={() => {openMessage(item.title,item.content, item.createdAt, item.senderfullname); readmessages(item._id)}} key={index} className=' w-full cursor-pointer'>
             {/* <TableCell className="font-medium"><Checkbox/></TableCell> */}
-              <TableCell>{item.senderfullname}</TableCell>
+              <TableCell className=' relative'>{item.senderfullname}
+                {item.isRead === false && (
+                  <p className=' absolute px-2 rounded-full text-[.55rem] bg-red-600 text-white top-0 left-0'>New</p>
+                )}
+              </TableCell>
               <TableCell>{item.title}</TableCell>
               <TableCell className=' w-[700px] flex'>
                 <p className=' line-clamp-3'>{item.content.slice(0,150)}...
@@ -139,11 +208,11 @@ export default function Emailtable() {
              
             </DialogTrigger>
               <DialogContent className=' max-w-[600px] p-6 bg-secondary border-none text-white'>
-                {/* <DialogHeader>
+                <DialogHeader>
                   <DialogTitle></DialogTitle>
                   <DialogDescription>
                   </DialogDescription>
-                </DialogHeader> */}
+                </DialogHeader>
 
                 <div className=' flex flex-col gap-4 w-full'>
                   <p className=' text-lg font-semibold'>{title}</p>

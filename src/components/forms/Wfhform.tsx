@@ -174,7 +174,7 @@ export default function Wfhform( prop: Data) {
         <p className=' text-sm uppercase font-semibold text-red-700'>Work from home application form</p>
         <div className=' w-full flex flex-col gap-1'>
 
-        <Label className=' mt-4 font-semibold'>Wfh Period</Label>
+        <Label className=' mt-4 font-semibold'>Wfh</Label>
           <div className=' flex items-center gap-4'>
             <div>
               <Label className=' mt-2 text-zinc-500'>First Day Of Leave: <span className=' text-red-500'>*</span></Label>
@@ -211,7 +211,7 @@ export default function Wfhform( prop: Data) {
           <div className=' w-full flex items-start gap-2 mt-4'>
             <div className=' w-full'>
               <Label className=' text-zinc-500'>Total Working Hours</Label>
-            < Input type='number' value={hoursonleave.toLocaleString()} defaultValue={0} className=' text-xs h-[35px] bg-zinc-200' placeholder='0' {...register('totalhoursonleave',{ valueAsNumber: true})}/>
+            < Input type='number' value={hoursonleave.toFixed(2)} defaultValue={0} className=' text-xs h-[35px] bg-zinc-200' placeholder='0' {...register('totalhoursonleave',{ valueAsNumber: true})}/>
               {errors.totalhoursonleave && <p className=' text-[.6em] text-red-500'>{errors.totalhoursonleave.message}</p>}
 
             </div>

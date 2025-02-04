@@ -84,9 +84,9 @@ export default function Yourworkload() {
     );
 
      // Check if the date is in wellnessDates
-  const isWellnessDate = wellnessDates.some(
-    (wellnessDate) => formatDate(wellnessDate) === date
-  );;
+    const isWellnessDate = wellnessDates.some(
+      (wellnessDate) => formatDate(wellnessDate) === date
+    );;
 
 
     if(data.includes('1')){
@@ -107,18 +107,19 @@ export default function Yourworkload() {
     if(data.includes('6')){
       colorData.push('bg-cyan-400')
     }
-    if(hours > 8){
+    if(hours > 9){
       colorData.push('bg-pink-500')
     }
     if(isWithinAnyEventDate){
       colorData.push('bg-gray-400')
     }
     if(isWithinAnyLeaveDate){
-      colorData.push('bg-violet-400')
+      colorData.push('bg-violet-300')
     }
     if(isWellnessDate){
-      colorData.push('bg-fuchsia-500')
+      colorData.push('bg-fuchsia-400')
     }
+
 
     return colorData; 
   }
