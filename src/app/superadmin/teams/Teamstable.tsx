@@ -688,75 +688,86 @@ export default function Teamstable() {
                           {/* <label htmlFor="" className=' mt-2 text-xs'>Members</label>
                           <Textarea placeholder='Members' className=' bg-primary text-xs'/> */}
 
-                        <Command
-                          onKeyDown={handleKeyDown}
-                          className="overflow-visible text-white bg-primary mt-4"
-                        >
-                          <div className="group bg-primary px-3 py-2 text-sm ">
-                            <div className="flex flex-wrap gap-1">
-                              {selected.map((item) => {
-                                return (
-                                  <Badge key={item.employeeid} variant="secondary" className=' text-white'>
-                                    {item.name}
-                                    <button
-                                      className="ml-1 rounded-full text-white outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                                      onKeyDown={(e) => {
-                                        if (e.key === "Enter") {
-                                          handleUnselect(item);
-                                        }
-                                      }}
-                                      onMouseDown={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                      }}
-                                      onClick={() => handleUnselect(item)}
-                                    >
-                                      <X className="h-3 w-3 text-red-600" />
-                                    </button>
-                                  </Badge>
-                                );
-                              })}
-                              {/* Avoid having the "Search" Icon */}
-                              <CommandPrimitive.Input
-                                ref={inputRef}
-                                value={inputValue}
-                                onValueChange={setInputValue}
-                                onBlur={() => setOpen(false)}
-                                onFocus={() => setOpen(true)}
-                                placeholder="Select members"
-                                className=" flex-1 bg-transparent outline-none placeholder:text-white"
-                              />
+                          <Command
+                            onKeyDown={handleKeyDown}
+                            className="overflow-visible text-white bg-primary mt-4"
+                          >
+                            <div className="group bg-primary px-3 py-2 text-sm">
+                              <div className="flex flex-wrap gap-1">
+                                {selected.map((item) => {
+                                  return (
+                                    <Badge key={item.employeeid} variant="secondary" className="text-white">
+                                      {item.name}
+                                      <button
+                                        className="ml-1 rounded-full text-white outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                                        onKeyDown={(e) => {
+                                          if (e.key === "Enter") {
+                                            handleUnselect(item);
+                                          }
+                                        }}
+                                        onMouseDown={(e) => {
+                                          e.preventDefault();
+                                          e.stopPropagation();
+                                        }}
+                                        onClick={() => handleUnselect(item)}
+                                      >
+                                        <X className="h-3 w-3 text-red-600" />
+                                      </button>
+                                    </Badge>
+                                  );
+                                })}
+                                {/* Avoid having the "Search" Icon */}
+                                <CommandPrimitive.Input
+                                  ref={inputRef}
+                                  value={inputValue}
+                                  onValueChange={setInputValue}
+                                  onBlur={() => setOpen(false)}
+                                  onFocus={() => setOpen(true)}
+                                  placeholder="Select members"
+                                  className="flex-1 bg-transparent outline-none placeholder:text-white"
+                                />
+                              </div>
                             </div>
-                          </div>
-                          <div className="relative mt-2">
-                            <CommandList>
-                              {open && selectables.length > 0 ? (
+
+                            {/* Dropdown Container */}
+                            <div className="relative mt-2">
+                              {open && selectables.length > 0 && (
                                 <div className="absolute top-0 z-10 w-full h-[200px] rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in">
-                                  <CommandGroup className="h-full overflow-auto">
-                                    {selectables.map((list) => {
-                                      return (
-                                        <CommandItem
-                                          key={list.employeeid}
-                                          onMouseDown={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                          }}
-                                          onSelect={(value) => {
-                                            setInputValue("");
-                                            setSelected((prev) => [...prev, list]);
-                                          }}
-                                          className={"cursor-pointer"}
-                                        >
-                                          {list.name}
-                                        </CommandItem>
-                                      );
-                                    })}
-                                  </CommandGroup>
+                                  {/* Close Button */}
+                                  <button
+                                    className="absolute z-30 top-2 right-2 p-1 rounded-full bg-zinc-200 text-white "
+                                    onClick={() => setOpen(false)}
+                                  >
+                                    <X className="h-3 w-3 text-black" />
+                                  </button>
+
+                                  <CommandList>
+                                    <CommandGroup className="h-full overflow-auto mt-4">
+                                      {selectables.map((list) => {
+                                        return (
+                                          <CommandItem
+                                            key={list.employeeid}
+                                            onMouseDown={(e) => {
+                                              e.preventDefault();
+                                              e.stopPropagation();
+                                            }}
+                                            onSelect={() => {
+                                              setInputValue("");
+                                              setSelected((prev) => [...prev, list]);
+                                            }}
+                                            className="cursor-pointer"
+                                          >
+                                            {list.name}
+                                          </CommandItem>
+                                        );
+                                      })}
+                                    </CommandGroup>
+                                  </CommandList>
                                 </div>
-                              ) : null}
-                            </CommandList>
-                          </div>
-                        </Command>
+                              )}
+                            </div>
+                          </Command>
+
 
                         </div>
 

@@ -246,13 +246,12 @@ export default function Createprojectcomponent( prop: Data) {
 
       try {
         const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/createjobcomponent`,{
-          projectid: projectid,
           teamid: id,
           projectname:  projectname,
           clientid: clientid === '' ? client : clientid,
           jobno: jobno,
           start: (today.toLocaleString()).split(',')[0],
-          jobcomponentvalue: filteredFormData
+          jobcomponentvalue: filteredFormData //jobcomponentvalue, clientid, projectname, start, teamid, jobno, priority 
         }, {
           withCredentials: true,
           headers: {
@@ -516,9 +515,13 @@ export default function Createprojectcomponent( prop: Data) {
                                         </SelectContent>
                                     </Select> */}
 
+                                    <div className=' flex flex-col'>
+                                      <label htmlFor="" className=' text-xs'>Job Number</label>
+                                      <Input type='text' value={jobno} onChange={(e) => setJobno(e.target.value)} className=' text-xs h-[35px] bg-zinc-200' placeholder='Job no'/>
+                                    </div>
+
                                     
-                                                             {/* <label htmlFor="" className=' text-xs'>Job no</label> */}
-                                                                      <Input type='text' value={jobno} onChange={(e) => setJobno(e.target.value)} className=' text-xs h-[35px] bg-zinc-200' placeholder='Job no'/>
+                                                          
                                                             
                                                             
                                                                        <div className=' bg-zinc-200 rounded-sm flex flex-col p-2'>
@@ -579,9 +582,9 @@ export default function Createprojectcomponent( prop: Data) {
                                                             
                                                                               
                                                                       </div>
-            <div className=' w-full flex items-end justify-end'>
+            {/* <div className=' w-full flex items-end justify-end'>
                 <button onClick={handleAddForm} className=' px-4 py-2 bg-red-600 rounded-md text-[.6rem] text-white'>Add more</button>
-            </div>
+            </div> */}
 
             {formData.map((item, index) => (
                 <div key={index} className="flex flex-col gap-2 bg-zinc-100 rounded-md p-4">
@@ -633,6 +636,7 @@ export default function Createprojectcomponent( prop: Data) {
 
 
                         <Label className="font-semibold mt-4">Job Component Budget</Label>
+                        <Label className="mt-2 text-zinc-500">Budget Type</Label>
                         <Select
                             value={item.budgettype}
                             onValueChange={(value) => handleChange(index, 'budgettype', value)}
@@ -645,6 +649,14 @@ export default function Createprojectcomponent( prop: Data) {
                             <SelectItem value="lumpsum">Lump sum</SelectItem>
                             </SelectContent>
                         </Select>
+                        <Label className="mt-2 text-zinc-500">Estimated Budget $</Label>
+                        <Input
+                            type="number"
+                            className="text-xs h-[35px] bg-white"
+                            placeholder="0"
+                            value={item.estimatedbudget}
+                            onChange={(e) => handleChange(index, 'estimatedbudget', e.target.value)}
+                        />
 
                         <Label className="font-semibold mt-4">Members</Label>
                         <Label className="font-semibold mt-4">Engineer</Label>
@@ -712,14 +724,7 @@ export default function Createprojectcomponent( prop: Data) {
                             </SelectContent>
                         </Select>
 
-                        <Label className="mt-2 text-zinc-500">Estimated Budget $</Label>
-                        <Input
-                            type="number"
-                            className="text-xs h-[35px] bg-white"
-                            placeholder="0"
-                            value={item.estimatedbudget}
-                            onChange={(e) => handleChange(index, 'estimatedbudget', e.target.value)}
-                        />
+                        
 
                         </div>
 

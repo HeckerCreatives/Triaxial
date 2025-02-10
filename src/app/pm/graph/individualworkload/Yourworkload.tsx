@@ -200,34 +200,46 @@ export default function Indiviualworkloads() {
 
           <div className=' overflow-x-auto'>
             <table className="table-auto border-collapse ">
-              <thead className=' w-[800px] bg-secondary h-[100px]'>
-                <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
-                
-                {dates
-                .map((dateObj, index) => {
-                  const day = new Date(dateObj).getDay();
-                  const isFriday = day === 5;
-
-                  return (
-                    <React.Fragment key={index}>
-                      <th className="relative font-normal border-[1px] border-zinc-700">
-                        <div className="whitespace-nowrap transform -rotate-[90deg]">
-                            <p>{formatAustralianDate(dateObj)}</p>
-                            <p>{formatMonthYear(dateObj)}</p>
-                          </div>
-                      </th>
-                      {(index + 1) % 5 === 0 && (
-                        <th className="font-normal px-1 border-[1px] border-zinc-700">
-                          <p className="-rotate-[90deg]">Total Hours</p>
-                        </th>
-                      )}
-                    </React.Fragment>
-                  );
-                })}
-
-                  
-                </tr>
-              </thead>
+                <thead className="w-full bg-white h-[100px]">
+                    <tr className="text-[0.6rem] text-black font-normal">
+                                            {dates.map((dateObj, index) => {
+                                              const date = new Date(dateObj)
+                                              date.setHours(0, 0, 0, 0) // Normalize the date to remove time differences
+                            
+                                              const today = new Date()
+                                              today.setHours(0, 0, 0, 0) // Normalize today
+                            
+                                              const tomorrow = new Date(today)
+                                              tomorrow.setDate(today.getDate() + 1) // Get tomorrow's date
+                            
+                                              // Determine background color
+                                              let bgColor = "bg-white"
+                                              if (date.getTime() < today.getTime()) bgColor = "bg-gray-300"
+                                              else if (date.getTime() === today.getTime()) bgColor = "bg-pink-500"
+                                              else if (date.getTime() === tomorrow.getTime()) bgColor = "bg-pink-300"
+                            
+                                              return (
+                                                <React.Fragment key={index}>
+                                                  <th
+                                                    className={`relative font-normal border-[1px] border-zinc-700 ${bgColor}`}
+                                                  >
+                                                    <div className="whitespace-nowrap transform -rotate-[90deg] w-[20px]">
+                                                      <p className="mt-4 font-bold">{formatAustralianDate(dateObj)}</p>
+                                                    </div>
+                                                  </th>
+                                                  {(index + 1) % 5 === 0 && (
+                                                    <th
+                                                      key={`total-${index}`}
+                                                      className="font-normal bg-primary w-[20px] border-[1px] border-zinc-700"
+                                                    >
+                                                      <p className="-rotate-90 w-[20px] ml-[2px] font-bold text-white">Total Hours</p>
+                                                    </th>
+                                                  )}
+                                                </React.Fragment>
+                                              )
+                                            })}
+                    </tr>
+                  </thead>
               <tbody>
               {list.map((graphItem, graphIndex) =>
                   graphItem.members.map((member, memberIndex) => (

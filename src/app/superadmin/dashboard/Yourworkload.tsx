@@ -266,13 +266,16 @@ export default function Yourworkload() {
       <div className=' w-full flex items-center gap-2 justify-end'>
         <label htmlFor="" className=' text-xs'>Filter by date:</label>
         {/* <input value={filter} onChange={(e) => setFilter(e.target.value)} type="date" name="" id="" className=' p-2 bg-primary text-xs rounded-sm' /> */}
+        <div className=' relative z-50'>
         <DatePicker
           selected={filter}
           onChange={(date) => setFilter(date)}
           dateFormat="dd/MM/yyyy"
           placeholderText="DD/MM/YYYY"
-          className="bg-primary text-xs p-2 w-fit z-50 relative"
+          className="bg-primary text-xs p-2 w-fit z-[9999] relative"
         />
+        </div>
+        
         <button onClick={() => setFilter(null)} className=' p-2 bg-red-600 text-white rounded-sm'><RefreshCcw size={15}/></button>
 
 
@@ -311,28 +314,49 @@ export default function Yourworkload() {
           <div className=' overflow-x-auto w-full h-full'>
         
             <table className="table-auto w-full border-collapse ">
-              <thead className=' w-full bg-secondary h-[100px]'>
-                <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
-                
-                  {dates.map((dateObj, index) => (
-                    <>
-                      <th key={index} className=' relative font-normal border-[1px] border-zinc-700'>
-                        <div className=" whitespace-nowrap transform -rotate-[90deg] w-[20px]">
-                            <p className=' mt-4'>{formatAustralianDate(dateObj)}</p>
-                            {/* <p>{formatMonthYear(dateObj)}</p> */}
-                          </div>
+              
+            <thead className="w-full bg-white h-[100px]">
+              <tr className="text-[0.6rem] text-black font-normal">
+                {dates.map((dateObj, index) => {
+                  const date = new Date(dateObj)
+                  date.setHours(0, 0, 0, 0) // Normalize the date to remove time differences
+
+                  const today = new Date()
+                  today.setHours(0, 0, 0, 0) // Normalize today
+
+                  const tomorrow = new Date(today)
+                  tomorrow.setDate(today.getDate() + 1) // Get tomorrow's date
+
+                  // Determine background color
+                  let bgColor = "bg-white"
+                  if (date.getTime() < today.getTime()) bgColor = "bg-gray-300"
+                  else if (date.getTime() === today.getTime()) bgColor = "bg-pink-500"
+                  else if (date.getTime() === tomorrow.getTime()) bgColor = "bg-pink-300"
+
+                  return (
+                    <React.Fragment key={index}>
+                      <th
+                        className={`relative font-normal border-[1px] border-zinc-700 ${bgColor}`}
+                      >
+                        <div className="whitespace-nowrap transform -rotate-[90deg] w-[20px]">
+                          <p className="mt-4 font-bold">{formatAustralianDate(dateObj)}</p>
+                        </div>
                       </th>
                       {(index + 1) % 5 === 0 && (
-                        <th key={`total-${index}`} className='font-normal w-[20px] border-[1px] border-zinc-700'>
-                          <p className='-rotate-90 w-[20px] ml-[6px]'>Total Hours</p>
+                        <th
+                          key={`total-${index}`}
+                          className="font-normal w-[20px] border-[1px] bg-primary border-zinc-700"
+                        >
+                          <p className="-rotate-90 w-[20px] ml-[8px] font-bold text-white">Total Hours</p>
                         </th>
                       )}
-                    </>
-                  ))}
-                
-                  
-                </tr>
-              </thead>
+                    </React.Fragment>
+                  )
+                })}
+              </tr>
+            </thead>
+
+
               <tbody>
               {list.map((workItem, workIndex) => (
                 <React.Fragment key={workIndex}>

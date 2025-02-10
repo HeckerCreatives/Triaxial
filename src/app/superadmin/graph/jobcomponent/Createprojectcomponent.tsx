@@ -27,6 +27,7 @@ import toast from 'react-hot-toast'
 import axios, { AxiosError } from 'axios'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Input } from '@/components/ui/input'
+import { formatAustralianDate } from '@/utils/helpers'
 
 type Project = {
   createdAt: string
@@ -79,7 +80,6 @@ type Manager = {
 
 export default function Createprojectcomponent( prop: Data) {
   const [dialog, setDialog] = useState(false)
-  const [client, setClient] = useState('')
   const [clientid, setClientid] = useState('')
   const [pm, setPm] = useState('')
   const router = useRouter()
@@ -94,12 +94,17 @@ export default function Createprojectcomponent( prop: Data) {
   const [projectname, setProjectname] = useState('')
   const [start, setStart] = useState('')
   const [end, setEnd] = useState('')
+  const [client, setClient] = useState('')
+  const today = new Date()
+
+
+
 
 
   const [formData, setFormData] = useState<FormData[]>([{ jobmanager: '',jobno: '123', budgettype: '', estimatedbudget: '', jobcomponent: '', members: [
                 {
                     employeeid: "",
-                    role: "Engnr."
+                    role: "Engr."
                 },
                 {
                     employeeid: "",
@@ -132,7 +137,7 @@ export default function Createprojectcomponent( prop: Data) {
     setFormData([...formData, { jobmanager: '',jobno: '123', budgettype: '', estimatedbudget: '', jobcomponent: '' , members: [
       {
           employeeid: "6723819e92ce23277a217af9",
-          role: "Engnr."
+          role: "Engr."
       },
       {
           employeeid: "672c2984da9422943054dbe4",
@@ -241,14 +246,12 @@ export default function Createprojectcomponent( prop: Data) {
 
       try {
         const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/createjobcomponent`,{
-          projectid: projectid,
           teamid: id,
           projectname:  projectname,
-          clientid: clientid,
+          clientid: clientid === '' ? client : clientid,
           jobno: jobno,
-          start: start,
-          end: end,
-          jobcomponentvalue: filteredFormData
+          start: (today.toLocaleString()).split(',')[0],
+          jobcomponentvalue: filteredFormData //jobcomponentvalue, clientid, projectname, start, teamid, jobno, priority 
         }, {
           withCredentials: true,
           headers: {
@@ -512,9 +515,13 @@ export default function Createprojectcomponent( prop: Data) {
                                         </SelectContent>
                                     </Select> */}
 
+                                    <div className=' flex flex-col'>
+                                      <label htmlFor="" className=' text-xs'>Job Number</label>
+                                      <Input type='text' value={jobno} onChange={(e) => setJobno(e.target.value)} className=' text-xs h-[35px] bg-zinc-200' placeholder='Job no'/>
+                                    </div>
+
                                     
-                                                             {/* <label htmlFor="" className=' text-xs'>Job no</label> */}
-                                                                      <Input type='text' value={jobno} onChange={(e) => setJobno(e.target.value)} className=' text-xs h-[35px] bg-zinc-200' placeholder='Job no'/>
+                                                          
                                                             
                                                             
                                                                        <div className=' bg-zinc-200 rounded-sm flex flex-col p-2'>
@@ -548,7 +555,7 @@ export default function Createprojectcomponent( prop: Data) {
                                                             
                                                                               </div>
                                                             
-                                                                              <div className=' flex items-start gap-4 '>
+                                                                              {/* <div className=' flex items-start gap-4 '>
                                                                                 
                                                             
                                                                                 <div className=' w-full'>
@@ -565,13 +572,19 @@ export default function Createprojectcomponent( prop: Data) {
                                                             
                                                                                   </div>
                                                             
-                                                                              </div>
+                                                                              </div> */}
+
+                                                                              <div className=' w-full'>
+                                                                                  <Label className=' text-zinc-500'>If other, please input the client name.</Label>
+                                                                                  <Input type='text' value={client} onChange={(e) => setClient(e.target.value)} className=' text-xs h-[35px] bg-white' placeholder='Client name' />
+                                                            
+                                                                                </div>
                                                             
                                                                               
                                                                       </div>
-            <div className=' w-full flex items-end justify-end'>
+            {/* <div className=' w-full flex items-end justify-end'>
                 <button onClick={handleAddForm} className=' px-4 py-2 bg-red-600 rounded-md text-[.6rem] text-white'>Add more</button>
-            </div>
+            </div> */}
 
             {formData.map((item, index) => (
                 <div key={index} className="flex flex-col gap-2 bg-zinc-100 rounded-md p-4">
@@ -623,6 +636,7 @@ export default function Createprojectcomponent( prop: Data) {
 
 
                         <Label className="font-semibold mt-4">Job Component Budget</Label>
+                        <Label className="mt-2 text-zinc-500">Budget Type</Label>
                         <Select
                             value={item.budgettype}
                             onValueChange={(value) => handleChange(index, 'budgettype', value)}
@@ -635,6 +649,14 @@ export default function Createprojectcomponent( prop: Data) {
                             <SelectItem value="lumpsum">Lump sum</SelectItem>
                             </SelectContent>
                         </Select>
+                        <Label className="mt-2 text-zinc-500">Estimated Budget $</Label>
+                        <Input
+                            type="number"
+                            className="text-xs h-[35px] bg-white"
+                            placeholder="0"
+                            value={item.estimatedbudget}
+                            onChange={(e) => handleChange(index, 'estimatedbudget', e.target.value)}
+                        />
 
                         <Label className="font-semibold mt-4">Members</Label>
                         <Label className="font-semibold mt-4">Engineer</Label>
@@ -702,14 +724,7 @@ export default function Createprojectcomponent( prop: Data) {
                             </SelectContent>
                         </Select>
 
-                        <Label className="mt-2 text-zinc-500">Estimated Budget $</Label>
-                        <Input
-                            type="number"
-                            className="text-xs h-[35px] bg-white"
-                            placeholder="0"
-                            value={item.estimatedbudget}
-                            onChange={(e) => handleChange(index, 'estimatedbudget', e.target.value)}
-                        />
+                        
 
                         </div>
 

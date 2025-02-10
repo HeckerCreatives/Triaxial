@@ -212,6 +212,8 @@ export const superadmin = [
     // {name: 'Team', path: '/superadmin/noaccess', icon: <Users className="h-4 w-4" />, subpath: []},
     // {name: 'Projects', path: '/superadmin/noaccess', icon: <Box className="h-4 w-4" />, subpath: []},
     {name: 'Scheduling', path: '/superadmin/scheduling', icon: <Box className="h-4 w-4" />, subpath: []},
+    {name: 'Finance', path: '/superadmin/invoiceprojection/list', icon: <Files className="h-4 w-4" />, subpath: []},
+
     // {name: 'Invoice Request', path: '/superadmin/invoice', icon: <ListChecks className="h-4 w-4" />, subpath: []},
     // {name: 'Finance', path: '/superadmin/noaccess', icon: <Files className="h-4 w-4" />, subpath: []},
     // {name: 'Total Invoice', path: '/superadmin/totalinvoice', icon: <File className="h-4 w-4" />, subpath: [
@@ -225,23 +227,22 @@ export const superadmin = [
 
     {name: 'Summaries', path: '/superadmin/summaries', icon: <File className="h-4 w-4" />, subpath: [
 
-        // {name: 'Projects', path: '/superadmin/noaccess', subpath: [
-        //     {name: 'Job Master', path: '/superadmin/noaccess',subpath: []},
-        //     {name: 'Due Dates', path: '/superadmin/noaccess',subpath: []},
-        // ]},
+        {name: 'Projects', path: '/superadmin/noaccess', subpath: [
+            {name: 'Job Master', path: '/superadmin/summaries/jobmaster',subpath: []},
+            {name: 'Due Dates', path: '/superadmin/summaries/duedates',subpath: []},
+        ]},
         {name: 'Requests', path: '/superadmin/summaries', subpath: [
             {name: 'Individual Requests', path: '/superadmin/summaries/individualrequest'},
             {name: 'Leave List', path: '/superadmin/summaries/leave',subpath: []},
             {name: 'WFH List', path: '/superadmin/summaries/wfh',subpath: []},
             {name: 'WD List', path: '/superadmin/summaries/wellnessday',subpath: []},
         ]},
-        // {name: 'Finance WIP List', path: '/superadmin/noaccess', subpath: [
-        //     {name: 'Invoice Requests', path: '/superadmin/noaccess', icon: <ListChecks className="h-4 w-4" />, subpath: []},
+        {name: 'Finance WIP List', path: '/finance/summaries', subpath: [
+            {name: 'Invoice Requests', path: '/superadmin/invoice', subpath: []},
+            {name: 'Per Team', path: '/superadmin/summaries/team',subpath: []},
+            {name: 'Per Client', path: '/superadmin/summaries/client',subpath: []},
 
-        //     // {name: 'Project Invoice', path: '/superadmin/projectinvoice/list', icon: <File className="h-4 w-4" />, subpath: []},
-        //     {name: 'Per Team', path: '/superadmin/noaccess',subpath: []},
-        //     {name: 'Per Client', path: '/superadmin/noaccess',subpath: []},
-        // ]}
+        ]}
     ]},
     // {name: 'Employee Requests', path: '/superadmin/request', icon: <ArrowRightLeft className="h-4 w-4" />, subpath: [
     //     {name: 'Wellness Day', path: '/superadmin/request/wellnessday', subpath: []},

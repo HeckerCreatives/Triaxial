@@ -316,7 +316,7 @@ export default function Leaveform( prop: Data) {
           <div className=' w-full flex items-start gap-2 mt-4'>
             <div className=' w-full'>
               <Label className=' text-zinc-500'>Total Working Hours on Leave:</Label>
-            < Input type='number' value={hoursonleave.toLocaleString()} defaultValue={0} className=' text-xs h-[35px] bg-zinc-200' placeholder='0' {...register('totalhoursonleave',{ valueAsNumber: true})}/>
+            < Input type='number' value={hoursonleave.toFixed(2)} defaultValue={0} className=' text-xs h-[35px] bg-zinc-200' placeholder='0' {...register('totalhoursonleave',{ valueAsNumber: true})}/>
               {errors.totalhoursonleave && <p className=' text-[.6em] text-red-500'>{errors.totalhoursonleave.message}</p>}
 
             </div>

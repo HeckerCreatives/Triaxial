@@ -38,6 +38,7 @@ import Individualrequest from './IndividualRequest'
 
 
 
+
 type Employee = {
   employeeid: string,
   name: string
@@ -417,7 +418,7 @@ export default function Yourworkload() {
 
      // Check if the date is in wellnessDates
   const isWellnessDate = wellnessDates.some(
-    (wellnessDate) => wellnessDate === date
+    (wellnessDate) => wellnessDate.includes(date.split('T')[0])
   );;
 
     if(data.includes('1')){
@@ -570,224 +571,6 @@ export default function Yourworkload() {
     
   },[])
 
-  //update as manager
-  const updateJobComponenAsManager = async (id: string) => {
-  
-    try {
-      const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/editjobcomponentdetails`,{
-        jobcomponentid: componentid,
-        projectid: projectname,
-        jobmanagerid: jobmanager // employeeid
-      }, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json'
-          }
-      })
-
-      const response = await toast.promise(request, {
-        loading: 'Updating workload....',
-        success: `Successfully updated`,
-        error: 'Error while updating the workload',
-    });
-
-    if(response.data.message === 'success'){
-      getList()
-      setDialog(false)
-      setSelectedRows([])
-      setDialog2(false)
-
-    }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError<{ message: string, data: string }>;
-        if (axiosError.response && axiosError.response.status === 401) {
-            toast.error(`${axiosError.response.data.data}`) 
-            router.push('/')    
-        }
-
-        if (axiosError.response && axiosError.response.status === 400) {
-            toast.error(`${axiosError.response.data.data}`)     
-               
-        }
-
-        if (axiosError.response && axiosError.response.status === 402) {
-            toast.error(`${axiosError.response.data.data}`)          
-                   
-        }
-
-        if (axiosError.response && axiosError.response.status === 403) {
-            toast.error(`${axiosError.response.data.data}`)              
-           
-        }
-
-        if (axiosError.response && axiosError.response.status === 404) {
-            toast.error(`${axiosError.response.data.data}`)             
-        }
-      } 
-    }
-  }
-
-  //update as job manager
-  const updateJobComponenAsJobManager = async (id: string) => {
-
-    const members = [
-      {
-        employee: engr, 
-        role: "Engnr.",
-        notes: notes
-    },
-    {
-      employee: engrrvr, 
-      role: "Engr. Revr.",
-      notes: notes2
-  },
-  {
-    employee: drf, 
-    role: "Drft.", 
-    notes: notes3
-  },
-  {
-    employee: drfrvr, 
-    role: "Drft. Revr.", 
-    notes: notes4
-  },
-]
-  
-    try {
-      const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/editjobmanagercomponents`,{
-        jobcomponentid: componentid,
-        members: members
-      }, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json'
-          }
-      })
-
-      const response = await toast.promise(request, {
-        loading: 'Updating workload....',
-        success: `Successfully updated`,
-        error: 'Error while updating the workload',
-    });
-
-    if(response.data.message === 'success'){
-      getList()
-      setDialog(false)
-      setSelectedRows([])
-      setDialog2(false)
-
-    }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError<{ message: string, data: string }>;
-        if (axiosError.response && axiosError.response.status === 401) {
-            toast.error(`${axiosError.response.data.data}`) 
-            router.push('/')    
-        }
-
-        if (axiosError.response && axiosError.response.status === 400) {
-            toast.error(`${axiosError.response.data.data}`)     
-               
-        }
-
-        if (axiosError.response && axiosError.response.status === 402) {
-            toast.error(`${axiosError.response.data.data}`)          
-                   
-        }
-
-        if (axiosError.response && axiosError.response.status === 403) {
-            toast.error(`${axiosError.response.data.data}`)              
-           
-        }
-
-        if (axiosError.response && axiosError.response.status === 404) {
-            toast.error(`${axiosError.response.data.data}`)             
-        }
-      } 
-    }
-  }
-
-  //update as both
-  const updateJobComponenAsBoth = async (id: string) => {
-
-    const members = [
-      {
-        employee: engr, 
-        role: "Engnr.",
-        notes: notes
-    },
-    {
-      employee: engrrvr, 
-      role: "Engr. Revr.",
-      notes: notes2
-  },
-  {
-    employee: drf, 
-    role: "Drft.", 
-    notes: notes3
-  },
-  {
-    employee: drfrvr, 
-    role: "Drft. Revr.", 
-    notes: notes4
-  },
-]
-  
-    try {
-      const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/editalljobcomponentdetails`,{
-        jobcomponentid: componentid,
-        projectid: projectname,
-        jobmanagerid: jobmanager, // employeeid
-        members: members
-      }, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json'
-          }
-      })
-
-      const response = await toast.promise(request, {
-        loading: 'Updating workload....',
-        success: `Successfully updated`,
-        error: 'Error while updating the workload',
-    });
-
-    if(response.data.message === 'success'){
-      getList()
-      setDialog(false)
-      setSelectedRows([])
-      setDialog2(false)
-    }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError<{ message: string, data: string }>;
-        if (axiosError.response && axiosError.response.status === 401) {
-            toast.error(`${axiosError.response.data.data}`) 
-            router.push('/')    
-        }
-
-        if (axiosError.response && axiosError.response.status === 400) {
-            toast.error(`${axiosError.response.data.data}`)     
-               
-        }
-
-        if (axiosError.response && axiosError.response.status === 402) {
-            toast.error(`${axiosError.response.data.data}`)          
-                   
-        }
-
-        if (axiosError.response && axiosError.response.status === 403) {
-            toast.error(`${axiosError.response.data.data}`)              
-           
-        }
-
-        if (axiosError.response && axiosError.response.status === 404) {
-            toast.error(`${axiosError.response.data.data}`)             
-        }
-      } 
-    }
-  }
 
   const findMember = (data: Members[]) => {
     const role1 = data.find((item) => item.role.trim() === 'Engnr.')
@@ -820,59 +603,6 @@ export default function Yourworkload() {
         : [statusData[0].id, id].filter((value) => prevSelected.includes(value) || value === id);
     });
   };
-
-   //update as both
-     const archived = async () => {
-      try {
-        const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/archivejobcomponent`,{
-         jobcomponentId: componentid,
-        status: 'archived' // archived or "" to unarchive
-        }, {
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'application/json'
-            }
-        })
-  
-        const response = await toast.promise(request, {
-          loading: 'Archiving job component....',
-          success: `Successfully archived`,
-          error: 'Error while archiving the job component',
-      });
-  
-      if(response.data.message === 'success'){
-          window.location.reload()
-       
-      }
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          const axiosError = error as AxiosError<{ message: string, data: string }>;
-          if (axiosError.response && axiosError.response.status === 401) {
-              toast.error(`${axiosError.response.data.data}`) 
-              router.push('/')    
-          }
-  
-          if (axiosError.response && axiosError.response.status === 400) {
-              toast.error(`${axiosError.response.data.data}`)     
-                 
-          }
-  
-          if (axiosError.response && axiosError.response.status === 402) {
-              toast.error(`${axiosError.response.data.data}`)          
-                     
-          }
-  
-          if (axiosError.response && axiosError.response.status === 403) {
-              toast.error(`${axiosError.response.data.data}`)              
-             
-          }
-  
-          if (axiosError.response && axiosError.response.status === 404) {
-              toast.error(`${axiosError.response.data.data}`)             
-          }
-        } 
-      }
-    }
 
 
     const engrMember = findJobComponent?.members.find((item) => item.role === 'Engr.');
@@ -1100,14 +830,13 @@ export default function Yourworkload() {
 
 
 
+
   return (
    <div className=' w-full h-full flex flex-col justify-center bg-secondary p-4 text-zinc-100'>
 
       <div className=' w-full flex items-center justify-between h-auto bg-primary mb-2 p-4 text-xs'>
 
         <div className=' flex gap-12'>
-          
-         
 
           <div className=' flex flex-col gap-1 bg-primary rounded-sm text-xs'>
 
@@ -1261,8 +990,6 @@ export default function Yourworkload() {
           </div>
 
         </div>
-
-
         <Legends/>
 
       </div>
@@ -1271,27 +998,28 @@ export default function Yourworkload() {
 
 
 
-      <Individualrequest ref={individualRequestRef}  alldates={longestAlldates?.allDates}/>
+      <Individualrequest ref={individualRequestRef} alldates={longestAlldates?.allDates} data={list}/>
 
       <div
       className=' h-auto w-full flex flex-col max-w-[1920px]'>
         <div className=' h-auto overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
           
-            <table className="table-auto w-full borer-collapse ">
-            <thead className='  bg-secondary h-[100px]'>
+            <table className="table-auto w-full borer-collapse ml-[6px] ">
+            <thead className='  bg-secondary h-[50px]'>
 
-              <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
-                  <th className=' font-normal'>Action</th>
-                    <th className=' font-normal'>Job Mgr.</th>
-                    <th className=' font-normal'>Client Name</th>
-                    <th className=' font-normal'>Job no.</th>
-                    <th className=' font-normal'>Job Component</th>
-                    <th className=' font-normal'>Est. $</th>
-                    <th className=' font-normal'>Invoiced (%/hrs)</th>
-                    <th className=' font-normal'>Budget type</th>
-                    <th className=' font-normal'>Members</th>
-                    <th className=' font-normal'>Role</th>
-                    <th className=' font-normal'>Notes</th>
+              <tr className=' text-[0.6rem] text-zinc-100 font-normal '>
+                  <th className=' font-normal w-[40px]'>Action</th>
+                    <th className=' font-normal w-[100px] ' >Job Mgr.</th>
+                    <th className=' font-normal w-[100px] ' >Client Name</th>
+                    <th className=' font-normal w-[100px] ' >Project Name</th>
+                    <th className=' font-normal w-[100px] ' >Job no.</th>
+                    <th className=' font-normal w-[100px] ' >Job Component</th>
+                    <th className=' font-normal w-[100px] ' >Est. $</th>
+                    <th className=' font-normal w-[100px] ' >Invoiced (%/hrs)</th>
+                    <th className=' font-normal w-[100px] ' >Budget type</th>
+                    <th className=' font-normal w-[50px] ' >Members</th>
+                    <th className=' font-normal w-[50px] ' >Role</th>
+                    <th className=' font-normal w-[50px] ' >Notes</th>
 
               </tr>
             </thead>
@@ -1300,10 +1028,12 @@ export default function Yourworkload() {
 
             <div ref={firstDivRef} 
              style={{
-              overflowX: "scroll",
+              overflowX: "hidden",
             }}
             className=' w-full'>
-              <table className="table-auto border-collapse ">
+              <table className="table-auto border-collapse "
+              style={{ visibility: 'collapse' }}
+              >
                 <thead className=' bg-secondary h-[100px]'>
                   <tr 
                  
@@ -1370,16 +1100,17 @@ export default function Yourworkload() {
 
                   <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
                     <th className=' font-normal'>Action</th>
-                    <th className=' font-normal'>Job Mgr.</th>
-                    <th className=' font-normal'>Client Name</th>
-                    <th className=' font-normal'>Job no.</th>
-                    <th className=' font-normal'>Job Component</th>
-                    <th className=' font-normal'>Est. $</th>
-                    <th className=' font-normal'>Invoiced (%/hrs)</th>
-                    <th className=' font-normal'>Budget type</th>
-                    <th className=' font-normal'>Members</th>
-                    <th className=' font-normal'>Role</th>
-                    <th className=' font-normal'>Notes</th>
+                    <th className=' font-normal w-[95px]'>Job Mgr.</th>
+                    <th className=' font-normal  w-[95px]'>Client Name</th>
+                    <th className=' font-normal  w-[95px]'>Project Name</th>
+                    <th className=' font-normal  w-[95px]'>Job no.</th>
+                    <th className=' font-normal  w-[95px]'>Job Component</th>
+                    <th className=' font-normal  w-[95px]'>Est. $</th>
+                    <th className=' font-normal  w-[95px]'>Invoiced (%/hrs)</th>
+                    <th className=' font-normal  w-[95px]'>Budget type</th>
+                    <th className=' font-normal  w-[50px]'>Members</th>
+                    <th className=' font-normal  w-[50px]'>Role</th>
+                    <th className=' font-normal  w-[50px]'>Notes</th>
 
                   </tr>
                   </thead>
@@ -1407,13 +1138,14 @@ export default function Yourworkload() {
                     {/* <td className={` text-center`}>{memberIndex === 0 && `${graphItem.status === null ? 'Ongoing' :  'Completed'}`}</td> */}
                       <td className="text-center">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
                       <td className="text-center">{memberIndex === 0 && graphItem.clientname.name}</td>
+                      <td className="text-center">{memberIndex === 0 && graphItem.projectname.name}</td>
                       <td className="text-center">{memberIndex === 0 && graphItem.jobno}</td>
                       <td className={` text-center ${scrollId === graphItem._id && 'text-black'}`}>{memberIndex === 0 && graphItem.jobcomponent}</td>
                       <td className="text-center">{memberIndex === 0 && `$ ${graphItem.estimatedbudget?.toLocaleString()}`}</td>
                       <td className="text-center">{memberIndex === 0 && `${graphItem.invoice.percentage} ${graphItem.budgettype === 'lumpsum' ? '%' : 'hrs'}`}</td>
                       <td className="text-center">{memberIndex === 0 && graphItem.budgettype}</td>
           
-                    <td className="text-center">{member.employee.fullname}</td>
+                    <td className="text-center">{member.employee.initials}</td>
                     <td className="text-center text-[.5rem]">{member.role}</td>
                     <td className="text-center">
                       <Dialog>
@@ -1489,117 +1221,121 @@ export default function Yourworkload() {
                   </thead>
                   <tbody>
                   {list.map((graphItem, graphIndex) =>
-                      graphItem.members.map((member, memberIndex) => (
-                        <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2  h-[51px] border-[1px] border-zinc-600">
-                          
-                    
-                          {longestAlldates?.allDates
-                          .filter((dateObj) => {
-                            const day = new Date(dateObj).getDay();
-                            return day >= 1 && day <= 5; // Filter to include only Monday through Friday
-                          })
-                          .map((dateObj, index) => {
-                            const day = new Date(dateObj).getDay();
-                            const isFriday = day === 5;
-                            const memberDate = member.dates?.find((date) => formatDate(date.date) === formatDate(dateObj));
+                    graphItem.members.map((member, memberIndex) => {
+                      const filteredDates = longestAlldates?.allDates.filter((dateObj) => {
+                        const date = new Date(dateObj);
+                        const day = date.getUTCDay(); // Use getUTCDay() to avoid timezone issues
+                        return day >= 1 && day <= 5; // Ensure Monday (1) to Friday (5)
+                      });
 
-                            
-                            const totalHoursForWeek = list[0]?.allDates
-                              .filter((dateObj) => {
-                                const day = new Date(dateObj).getDay();
-                                return day >= 1 && day <= 5; // Only include Monday to Friday
-                              })
-                              .reduce<{ weeklyTotals: number[]; currentWeekTotal: number }>((accumulated, dateObj, index, array) => {
-                                const day = new Date(dateObj).getDay();
-                                const memberDate = member.dates?.find((date) => formatDate(date.date) === formatDate(dateObj));
-                                const hoursForDay = memberDate?.hours || 0;
+                      console.log('filter dates', filteredDates)
+                      
 
-                                // Add current day's hours
-                                accumulated.currentWeekTotal += hoursForDay;
+                      // Precompute weekly totals
+                      const totalHoursForWeek: number[] = [];
+                      let currentWeekTotal = 0;
+                      filteredDates.forEach((dateObj, index) => {
+                        const memberDate = member.dates?.find(
+                          (date) => formatDate(date.date) === formatDate(dateObj)
+                        );
+                        currentWeekTotal += memberDate?.hours || 0;
 
-                                // Reset total on Friday
-                                if (day === 5 || index === array.length - 1) { // On Friday or last day of the range
-                                  accumulated.weeklyTotals.push(accumulated.currentWeekTotal);
-                                  accumulated.currentWeekTotal = 0; // Reset total for next week
-                                }
+                        if (new Date(dateObj).getDay() === 5 || index === filteredDates.length - 1) {
+                          totalHoursForWeek.push(currentWeekTotal);
+                          currentWeekTotal = 0; // Reset total for next week
+                        }
+                      });
 
-                                return accumulated;
-                              }, { weeklyTotals: [], currentWeekTotal: 0 }).weeklyTotals;
-    
-                            
+                      return (
+                        <tr
+                          key={`${graphIndex}-${memberIndex}`}
+                          className="bg-primary text-[.6rem] py-2 h-[51px] border-[1px] border-zinc-600"
+                        >
+                          {filteredDates.map((dateObj, index) => {
+                            const date = new Date(dateObj);
+                            const isFriday = date.getDay() === 6;
+                            const memberDate = member.dates?.find(
+                              (date) => formatDate(date.date) === formatDate(dateObj)
+                            );
+
+                            // Handle Click
+                            const handleClick = () => {
+                              setDialog(true);
+                              setDate(dateObj);
+                              setProjectid(graphItem._id);
+                              setName(member.employee.fullname);
+                              setEmployeeid(member.employee._id);
+                              setHours(memberDate?.hours || 0);
+                              setAddstatus(memberDate?.status || []);
+                              setSelectedRows(memberDate?.status || []);
+                              setSelected(memberDate?.status || []);
+                              setLeavestatus(
+                                isDateInRange(
+                                  dateObj,
+                                  member.leaveDates[0]?.leavestart,
+                                  member.leaveDates[0]?.leaveend
+                                )
+                              );
+                              setEvent(
+                                isDateInRange(
+                                  dateObj,
+                                  member.eventDates[0]?.startdate,
+                                  member.eventDates[0]?.enddate
+                                )
+                              );
+                              wdStatusChecker(member.wellnessDates, dateObj, member.eventDates);
+                              setIsjobmanager(graphItem.jobmanager.isJobManager);
+                              setLeave(
+                                isDateInRange(
+                                  dateObj,
+                                  member.leaveDates[0]?.leavestart,
+                                  member.leaveDates[0]?.leaveend
+                                )
+                              );
+                              setRole(member.role);
+                            };
+
                             return (
                               <React.Fragment key={index}>
-                                <td 
-                                  key={index} 
-                                  className="relative text-center overflow-hidden  bg-white cursor-pointer border-[1px]"
-                                  onClick={() => {
-                                
-                                      setDialog(true);
-                                      // setHours(memberDate.hours);
-                                      setDate(dateObj);
-                                      setProjectid(graphItem._id);
-                                      setName(member.employee.fullname);
-                                      setEmployeeid(member.employee._id);
-                                      setHours(memberDate?.hours || 0)
-                                      setAddstatus(memberDate?.status || [])
-                                      setSelectedRows(memberDate?.status || [])
-                                      setSelected(memberDate?.status || [])
-                                      setLeavestatus(isDateInRange(dateObj,member.leaveDates[0]?.leavestart,member.leaveDates[0]?.leaveend))
-                                      setEvent(isDateInRange(dateObj,member.eventDates[0]?.startdate,member.eventDates[0]?.enddate))
-                                      wdStatusChecker(member.wellnessDates, dateObj, member.eventDates)
-                                      setIsjobmanager(graphItem.jobmanager.isJobManager)
-                                      setLeave(isDateInRange(dateObj,member.leaveDates[0]?.leavestart,member.leaveDates[0]?.leaveend))
-                                    
-                                      setRole(member.role)
-            
-                                    }
-                                  }
+                                <td
+                                  className="relative text-center overflow-hidden bg-white cursor-pointer border-[1px]"
+                                  onClick={handleClick}
                                 >
-                                  <div className=' w-full h-[50px] absolute flex top-0 '>
+                                  <div className="w-full h-[50px] absolute flex top-0">
                                     {statusColor(
                                       memberDate?.status || [],
                                       dateObj,
-                                      member.leaveDates.length !== 0 ? member.leaveDates[0]?.leavestart : '', 
-                                      member.leaveDates.length !== 0 ? member.leaveDates[0]?.leaveend : '', 
-                                      member.eventDates.length !== 0 ? member.eventDates[0].startdate : '', 
-                                      member.eventDates.length !== 0 ? member.eventDates[0].enddate : '', 
+                                      member.leaveDates[0]?.leavestart || "",
+                                      member.leaveDates[0]?.leaveend || "",
+                                      member.eventDates[0]?.startdate || "",
+                                      member.eventDates[0]?.enddate || "",
                                       member.wellnessDates[0],
                                       memberDate?.hours || 0,
                                       member.eventDates,
                                       member.leaveDates,
                                       member.wellnessDates
                                     ).map((item, index) => (
-                                      <div key={index} className={`w-full h-[50px] ${item}`}>
-
-                                      </div>
-
+                                      <div key={index} className={`w-full h-[50px] ${item}`}></div>
                                     ))}
-
                                   </div>
-                              
-                                  <p className='relative text-black font-bold text-xs z-30'>
-                                    {memberDate ? memberDate.hours : '-'}
+                                  <p className="relative text-black font-bold text-xs z-30">
+                                    {memberDate ? memberDate.hours : "-"}
                                   </p>
                                 </td>
 
-                              
                                 {isFriday && totalHoursForWeek.length > 0 && (
-                                    <td
-                                      key={`total-${index}`}
-                                      className="text-center font-normal w-[40px] bg-primary border-[1px] border-zinc-700"
-                                    >
-                                      <p className="text-center">
-                                      {totalHoursForWeek[Math.floor(index / 5)]} {/* Display the week's total on Friday */}
-                                      </p>
-                                    </td>
-                                  )}
+                                  <td className="text-center font-normal w-[40px] bg-primary border-[1px] border-zinc-700">
+                                    <p>{totalHoursForWeek[Math.floor(index / 5)]}</p>
+                                  </td>
+                                )}
                               </React.Fragment>
                             );
                           })}
-
                         </tr>
-                      ))
-                    )}
+                      );
+                    })
+                  )}
+
 
 
                 </tbody>

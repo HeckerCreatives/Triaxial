@@ -5,6 +5,10 @@ import toast from 'react-hot-toast'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { RefreshCcw } from 'lucide-react'
 import { string } from 'zod'
+import { formatDate } from '@/utils/functions'
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { fileURLToPath } from 'url'
 
 type Dates = {
   date: string
@@ -45,6 +49,12 @@ wellness: [
       wellnessdates: string
   }
 ],
+wfh: [
+  {
+      requestdate: string
+      requestend: string
+  }
+]
 }
 
 type Leave = {
@@ -62,21 +72,28 @@ type Wellnessday = {
   enddate: string
 }
 
+type Wfh = {
+  requestdate: string
+  requestend: string
+}
+
 export default function Yourworkload() {
   const [memberIndex, setMemberIndex] = useState(0)
   const [list, setList] = useState<List[]>([])
   const [dates, setDates] = useState<string[]>([])
-  const [filter, setFilter] = useState('')
+  const [filter, setFilter] = useState<Date | null>(null)
   const router = useRouter()
   const params = useSearchParams()
   const getTeamid = params.get('team')
+  const [date, setDate] = useState('')
 
+  const filterDate = filter === null ?  '' : (filter?.toLocaleString())?.split(',')[0]
 
   useEffect(() => {
     const getList = async () => {
-      if (getTeamid !== '' || undefined || null){
+     
         try {
-          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/getmanagerjobcomponentdashboard?filterDate=${filter}`,{
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/getsuperadminjobcomponentdashboard?filterDate=${filterDate}`,{
             withCredentials: true
           })
   
@@ -85,7 +102,7 @@ export default function Yourworkload() {
         } catch (error) {
           
         }
-      }
+      
      
     }
     getList()
@@ -104,7 +121,7 @@ export default function Yourworkload() {
     return checkDate >= start && checkDate <= end;
   }
 
-  const statusData = ( hours: any, wd: boolean, event: boolean, leave: boolean, leaveDate: string, leaveArray: Array<{ leavestart: string; leaveend: string }>,eventArray: Array<{ eventstart: string; eventend: string }>,wellness: Array<{wellnessdates: string}>, ) => {
+  const statusData = ( hours: any, wd: boolean, event: boolean, leave: boolean, wfh: Wfh[], leaveDate: string, leaveArray: Array<{ leavestart: string; leaveend: string }>,eventArray: Array<{ eventstart: string; eventend: string }>,wellness: Array<{wellnessdates: string}>, ) => {
     const data = []
 
      // Check if the leaveDate is in any range in the leave array
@@ -114,6 +131,10 @@ export default function Yourworkload() {
 
     const isEventInRange = eventArray.some((leaveItem) =>
       isDateInRange(leaveDate, leaveItem.eventstart, leaveItem.eventend)
+    );
+
+    const isWfhInRange = wfh.some((item) =>
+      isDateInRange(leaveDate, item.requestdate, item.requestend)
     );
 
     const isWellnessDay= wellness.some((leaveItem) => {
@@ -154,6 +175,11 @@ export default function Yourworkload() {
 
     }
 
+    if(isWfhInRange){
+      data.push('bg-cyan-400')
+
+    }
+
     if(isLeaveInRange){
       data.push('bg-violet-500')
     }
@@ -161,72 +187,17 @@ export default function Yourworkload() {
     return data
   }
 
-  const formatAustralianDate = (date: any) => {
-    const parsedDate = new Date(date); // Ensure the date is converted to a Date object
-    return parsedDate.toLocaleDateString('en-AU', { day: '2-digit', month: '2-digit', year: '2-digit' });
+
+  const formatAustralianDate = (date: string) => {
+    const dates = new Date(date); // Convert the string to a Date object
+    return dates.toLocaleDateString('en-AU', { day: '2-digit', month: '2-digit', year: '2-digit' });
   };
   
-  const formatMonthYear = (date: any) => {
-    const parsedDate = new Date(date); // Ensure the date is converted to a Date object
-    return parsedDate.toLocaleDateString('en-AU', { month: 'short', year: 'numeric' });
+  const formatMonthYear = (date: string) => {
+    const dates = new Date(date); // Convert the string to a Date object
+    return dates.toLocaleDateString('en-AU', { month: 'short', year: 'numeric' });
   };
-  
 
-  
-
-  const statusColor = (data: string[], date: string, leaveStart: string, leaveEnd: string, eventStart: string, eventEnd: string, wddate: string, hours: number, eventDates: Event[], leaveDates: Leave[], wellnessDates: string[]) => {
-    const colorData: string[] = [];
-
-    const isLeaveInRange = isDateInRange(date, leaveStart, leaveEnd);
-    const isEventInRange = isDateInRange(date, eventStart, eventEnd);
-
-    const isWithinAnyEventDate = eventDates.some((item) =>
-      isDateInRange(date, item.startdate, item.enddate)
-    );
-
-    const isWithinAnyLeaveDate = leaveDates.some((item) =>
-      isDateInRange(date, item.leavestart, item.leaveend)
-    );
-
-     // Check if the date is in wellnessDates
-  const isWellnessDate = wellnessDates.some(
-    (wellnessDate) => wellnessDate === date
-  );;
-
-    if(data.includes('1')){
-      colorData.push('bg-red-500')
-    }
-    if(data.includes('2')){
-      colorData.push('bg-amber-500')
-    }
-    if(data.includes('3')){
-      colorData.push('bg-yellow-300')
-    }
-    if(data.includes('4')){
-      colorData.push('bg-green-500')
-    }
-    if(data.includes('5')){
-      colorData.push('bg-blue-500')
-    }
-    if(data.includes('6')){
-      colorData.push('bg-cyan-400')
-    }
-    if(isLeaveInRange){
-      colorData.push('bg-violet-300')
-    }
-    if(isWithinAnyEventDate){
-      colorData.push('bg-gray-300')
-    }
-    if(hours > 8){
-      colorData.push('bg-pink-500')
-    }
-
-    if(isWellnessDate){
-      colorData.push('bg-fuchsia-400')
-    }
-
-    return colorData; 
-  }
 
 
 
@@ -237,8 +208,18 @@ export default function Yourworkload() {
       <div className=' h-full w-full flex flex-col gap-2 max-w-[1920px]'>
       <div className=' w-full flex items-center gap-2 justify-end'>
         <label htmlFor="" className=' text-xs'>Filter by date:</label>
-        <input value={filter} onChange={(e) => setFilter(e.target.value)} type="date" name="" id="" className=' p-2 bg-primary text-xs rounded-sm' />
-        <button onClick={() => setFilter('')} className=' p-2 bg-red-600 text-white rounded-sm'><RefreshCcw size={15}/></button>
+        {/* <input value={filter} onChange={(e) => setFilter(e.target.value)} type="date" name="" id="" className=' p-2 bg-primary text-xs rounded-sm' /> */}
+        <div className=' relative z-50'>
+        <DatePicker
+          selected={filter}
+          onChange={(date) => setFilter(date)}
+          dateFormat="dd/MM/yyyy"
+          placeholderText="DD/MM/YYYY"
+          className="bg-primary text-xs p-2 w-fit z-[9999] relative"
+        />
+        </div>
+        
+        <button onClick={() => setFilter(null)} className=' p-2 bg-red-600 text-white rounded-sm'><RefreshCcw size={15}/></button>
 
 
       </div>
@@ -260,9 +241,9 @@ export default function Yourworkload() {
               graphItem.members.map((member, memberIndex) => (
                 <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
                   {memberIndex === 0 ?
-                  (<td onClick={() => router.push(`/pm/projects/teamprojects?teamid=${graphItem.teamid}`)} className="text-center text-red-500 underline cursor-pointer">{graphItem.name}</td>) :  (<td className="text-center"></td>)
+                  (<td  onClick={() => router.push(`/superadmin/projects/teamprojects?teamid=${graphItem.teamid}`)} className="text-center text-red-500 underline cursor-pointer">{graphItem.name}</td>) :  (<td className="text-center"></td>)
                   }
-                  <td onClick={() => router.push(`/pm/individualworkload?employeeid=${member.id}`)} className="text-center cursor-pointer underline text-blue-400">{member.name}</td>
+                  <td onClick={() => router.push(`/superadmin/individualworkload?employeeid=${member.id}`)} className="text-center cursor-pointer underline text-blue-400">{member.name}</td>
                   <td className="text-center">{member.initial}</td>
                   <td className="text-center">{member.resource}</td>
                  
@@ -276,28 +257,49 @@ export default function Yourworkload() {
           <div className=' overflow-x-auto w-full h-full'>
         
             <table className="table-auto w-full border-collapse ">
-              <thead className=' w-full bg-secondary h-[100px]'>
-                <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
-                
-                  {dates.map((dateObj, index) => (
-                    <>
-                      <th key={index} className=' relative font-normal w-[30px] border-[1px] border-zinc-700'>
-                      <div className="whitespace-nowrap transform -rotate-[90deg]">
-                            <p>{formatAustralianDate(dateObj)}</p>
-                            <p>{formatMonthYear(dateObj)}</p>
-                          </div>
+              
+            <thead className="w-full bg-white h-[100px]">
+              <tr className="text-[0.6rem] text-black font-normal">
+                {dates.map((dateObj, index) => {
+                  const date = new Date(dateObj)
+                  date.setHours(0, 0, 0, 0) // Normalize the date to remove time differences
+
+                  const today = new Date()
+                  today.setHours(0, 0, 0, 0) // Normalize today
+
+                  const tomorrow = new Date(today)
+                  tomorrow.setDate(today.getDate() + 1) // Get tomorrow's date
+
+                  // Determine background color
+                  let bgColor = "bg-white"
+                  if (date.getTime() < today.getTime()) bgColor = "bg-gray-300"
+                  else if (date.getTime() === today.getTime()) bgColor = "bg-pink-500"
+                  else if (date.getTime() === tomorrow.getTime()) bgColor = "bg-pink-300"
+
+                  return (
+                    <React.Fragment key={index}>
+                      <th
+                        className={`relative font-normal border-[1px] border-zinc-700 ${bgColor}`}
+                      >
+                        <div className="whitespace-nowrap transform -rotate-[90deg] w-[20px]">
+                          <p className="mt-4 font-bold">{formatAustralianDate(dateObj)}</p>
+                        </div>
                       </th>
                       {(index + 1) % 5 === 0 && (
-                        <th key={`total-${index}`} className='font-normal w-[30px] border-[1px] border-zinc-700'>
-                          <p className='-rotate-[90deg] w-[50px]'>Total Hours</p>
+                        <th
+                          key={`total-${index}`}
+                          className="font-normal w-[20px] border-[1px] bg-primary border-zinc-700"
+                        >
+                          <p className="-rotate-90 w-[20px] ml-[8px] font-bold text-white">Total Hours</p>
                         </th>
                       )}
-                    </>
-                  ))}
-                
-                  
-                </tr>
-              </thead>
+                    </React.Fragment>
+                  )
+                })}
+              </tr>
+            </thead>
+
+
               <tbody>
               {list.map((workItem, workIndex) => (
                 <React.Fragment key={workIndex}>
@@ -330,11 +332,11 @@ export default function Yourworkload() {
                               }`}
                             >
                               <div className="flex absolute top-0 w-full h-[40px] text-center">
-                                {statusData(hours, isWd, isEventDay, isLeave, date, member.leave, member.event, member.wellness).map((item, index) => (
+                                {statusData(hours, isWd, isEventDay, isLeave,member.wfh , date, member.leave, member.event, member.wellness).map((item, index) => (
                                   <div key={index} className={`w-full h-full ${item}`}></div>
                                 ))}
                               </div>
-                              <p className="relative text-black font-bold text-xs z-30">{!isEventDay && hours}</p>
+                              <p className="relative text-black font-bold text-[.6rem] z-30">{!isEventDay && hours}</p>
                             </td>
 
                             {/* Render total for every 5-day block */}
