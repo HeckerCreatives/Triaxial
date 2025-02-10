@@ -198,7 +198,8 @@ const Individualrequest = forwardRef<HTMLDivElement, Prop>(({ alldates, data }, 
         <tbody>
           {extractedmember.map((item, graphIndex) =>
               <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
-                <td onClick={() => router.push(`/pm/individualworkload?employeeid=${item.employee._id}`)} className="text-center cursor-pointer underline text-blue-400">{item.employee.fullname}</td>
+                <td  className="text-center">{item.employee.fullname}</td>
+
                 <td className="text-center">{item.employee.initials}</td>
                 <td className="text-center">{item.role}</td>
               </tr>
