@@ -69,79 +69,82 @@ export default function Pmcards() {
           <Dashboardlegends/>
 
           <div className=' w-full h-full'>
-            <Carousel className=' w-fit'
-              opts={{loop: false, align: 'start'}}
-              // plugins={[
-              //    Autoplay({
-              //    delay: 2000,
-              //    }),]
-              
-              //   }
-              >
-              <CarouselContent className=' w-full'>
-
-                {Object.values(list).map((item, index) => (
-                  <CarouselItem key={index} className="basis-1/2">
-                    <div className=' flex md:flex-row flex-col gap-6 w-[400px]  h-[210px] bg-secondary p-4'>
-                      <div className=' flex flex-col gap-2 w-full'>
-                        <h2 className=' uppercase font-semibold text-sm text-red-700'>CURRENT EVENT!</h2>
-                        <h2 className=' uppercase font-semibold text-sm'>{item.title}</h2>
-                        <p className=' text-sm text-zinc-400'>{formatDate(item.start)} to {formatDate(item.end)}</p>
-                        <p className=' text-zinc-300 text-xs'>Teams:</p>
-
-                        <div className=' flex flex-wrap gap-2'>
-                          {item.teams.map((item, index) => (
-                            <p key={index} className=' p-2 text-xs bg-zinc-900 rounded-sm'>{item.teamname}</p>
-
-                          ))}
-
-                        </div>
-                      </div>
-        
-                      <div className=' flex items-start'>
-                        <div className='  p-6 bg-primary'>
-                        <CalendarCheck size={30}/>
-        
-                        </div>
-                      </div>
+            <Carousel
+                     opts={{loop: false, align: 'start'}}
+                     // plugins={[
+                     //    Autoplay({
+                     //    delay: 2000,
+                     //    }),]
+                     
+                     //   }
+                     >
+                     <CarouselContent className=' w-full h-fit'>
+           
+                       {Object.values(list).map((item, index) => (
+                          <CarouselItem key={index} className="basis-1/2">
+                           <div className=' flex md:flex-row flex-col justify-between gap-6 w-full h-[90px] bg-secondary p-4 overflow-y-auto' >
+                             <div className=' flex flex-col gap-2'>
+                               <h2 className=' uppercase font-semibold text-[.6rem] text-red-700'>CURRENT EVENT!</h2>
+                               <h2 className=' uppercase font-semibold text-[.6rem]'>{item.title}</h2>
+                               <p className=' text-sm text-zinc-400'>{formatDate(item.start)} to {formatDate(item.end)}</p>
+                               <p className=' text-zinc-300 text-xs'>Teams:</p>
+           
+                               <div className=' flex flex-wrap gap-2'>
+                                 {item.teams.map((item, index) => (
+                                   <p key={index} className=' p-2 text-xs bg-zinc-900 rounded-sm'>{item.teamname}</p>
+           
+                                 ))}
+           
+                               </div>
+                             </div>
+               
+                             <div className=' flex items-center justify-center'>
+                               <div className=' w-full h-full p-6'>
+                               <CalendarCheck size={30}/>
+               
+                               </div>
+                             </div>
+                             
+                           </div>
+                          </CarouselItem>
+                       ))}
+           
+                       {Object.values(upcoming).map((item, index) => (
+                          <CarouselItem key={index} className="basis-1/2 ">
+                           <div className=' flex md:flex-row flex-col justify-between gap-6 w-full h-[90px] bg-secondary p-4 overflow-y-auto'>
+                             <div className=' flex flex-col gap-0'>
+                               <h2 className=' uppercase font-semibold text-[.7rem] text-red-700'>UPCOMING EVENT!</h2>
+                               <h2 className=' uppercase font-semibold text-[.7rem]'>{item.title}</h2>
+                               <p className=' text-[.6rem] text-zinc-400'>{formatDate(item.start)} to {formatDate(item.end)}</p>
+           
+                               <div className=' flex items-center gap-1'>
+                                 <p className=' text-zinc-300 text-[.6rem]'>Teams:</p>
+                                 <div className=' flex flex-wrap gap-2'>
+                                   {item.teams.map((item, index) => (
+                                     <p key={index} className=' text-[.6rem] rounded-sm'>{item.teamname}</p>
+           
+                                   ))}
+           
+                                 </div>
+                               </div>
+                              
+                             </div>
+               
+                             <div className=' flex items-center justify-center'>
+                               <div className=' w-full h-full p-6 bg-secondary'>
+                               <CalendarCheck size={30}/>
+               
+                               </div>
+                             </div>
+                             
+                           </div>
+                          </CarouselItem>
+                       ))}
                       
-                    </div>
-                  </CarouselItem>
-                ))}
-
-                {Object.values(upcoming).map((item, index) => (
-                  <CarouselItem key={index} className="basis-1/2 ">
-                    <div className=' flex md:flex-row flex-col gap-6 w-[400px]  h-[210px] bg-secondary p-4'>
-                      <div className=' w-full flex flex-col gap-2'>
-                        <h2 className=' uppercase font-semibold text-sm text-red-700'>UPCOMING EVENT!</h2>
-                        <h2 className=' uppercase font-semibold text-sm'>{item.title}</h2>
-                        <p className=' text-sm text-zinc-400'>{new Date(item.start).toLocaleString()} - {new Date(item.end).toLocaleString()}</p>
-                        <p className=' text-zinc-300 text-xs'>Teams:</p>
-
-                        <div className=' flex flex-wrap gap-2'>
-                          {item.teams.map((item, index) => (
-                            <p key={index} className=' p-2 text-xs bg-zinc-900 rounded-sm'>{item.teamname}</p>
-
-                          ))}
-
-                        </div>
-                      </div>
-        
-                      <div className=' flex items-start'>
-                        <div className='  p-6 bg-primary'>
-                        <CalendarCheck size={30}/>
-        
-                        </div>
-                      </div>
-                      
-                    </div>
-                  </CarouselItem>
-                ))}
-              
-              
-                
-              </CarouselContent>
-            </Carousel>
+                     
+                       
+                     </CarouselContent>
+                   </Carousel>
 
             {(Object.keys(upcoming).length === 0 && Object.keys(list).length === 0) && (
               <div className=' w-full flex items-center justify-center h-full'>
