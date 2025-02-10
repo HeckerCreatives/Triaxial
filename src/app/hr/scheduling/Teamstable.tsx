@@ -134,7 +134,7 @@ export default function Teamstable() {
             <TableHead className="">Team name</TableHead>
             <TableHead className="">Project Manager</TableHead>
             <TableHead className="">Team Leader</TableHead>
-            <TableHead>Job Components</TableHead>
+            <TableHead>Projects</TableHead>
             <TableHead>Individual Workload</TableHead>
             </TableRow>
         </TableHeader>
@@ -145,7 +145,7 @@ export default function Teamstable() {
             <TableCell className="font-medium">{item.manager}</TableCell>
             <TableCell>{item.teamleader}</TableCell>
             <TableCell className="">
-              <a href={`/hr/graph/jobcomponent?teamid=${item.teamid}`} className=' w-fit bg-red-700 rounded-sm p-1 text-white flex items-center gap-2'>Job Component<Eye size={15}/></a>
+              <a href={`/hr/graph/jobcomponent?teamid=${item.teamid}`} className=' w-fit bg-red-700 rounded-sm p-1 text-white flex items-center gap-2'>View<Eye size={15}/></a>
             </TableCell>
 
              <TableCell>

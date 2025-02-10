@@ -146,7 +146,7 @@ export default function Teamstable() {
             <TableCell className="font-medium">{item.manager}</TableCell>
             <TableCell>{item.teamleader}</TableCell>
             <TableCell className="">
-              <a href={`/pm/graph/jobcomponent?teamid=${item.teamid}`} className=' w-fit bg-red-700 rounded-sm p-1 text-white flex items-center gap-2'>Job Component<Eye size={15}/></a>
+              <a href={`/pm/graph/jobcomponent?teamid=${item.teamid}`} className=' w-fit bg-red-700 rounded-sm p-1 text-white flex items-center gap-2'>View<Eye size={15}/></a>
             </TableCell>
 {/* 
             <TableCell>
