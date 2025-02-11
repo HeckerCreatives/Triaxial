@@ -1120,8 +1120,8 @@ export default function Yourworkload() {
                   <tr 
                   key={`${graphItem._id}-${memberIndex}`}
                   data-invoice-id={graphItem._id} 
-                  className={`text-[.6rem] py-2 h-[50px] border-[1px] border-zinc-600 ${graphItem.isVariation === true ? 'text-red-600 font-black' : ' text-black'} ${clientColor(graphItem.clientname.priority)}`}>
-                      <td className="text-center text-white flex items-center justify-center gap-1 h-[50px] w-[30px]">
+                  className={`text-[.6rem] py-2 h-[35px] border-[1px] border-zinc-600 ${graphItem.isVariation === true ? 'text-red-600 font-black' : ' text-black'} ${clientColor(graphItem.clientname.priority)}`}>
+                      <td className="text-center text-white flex items-center justify-center gap-1 w-[30px]">
                         
 
                         {(memberIndex === 0 ) && (
@@ -1249,7 +1249,7 @@ export default function Yourworkload() {
                       return (
                         <tr
                           key={`${graphIndex}-${memberIndex}`}
-                          className="bg-primary text-[.6rem] py-2 h-[51px] border-[1px] border-zinc-600"
+                          className="bg-primary text-[.6rem] py-2 h-[35px] border-[1px] border-zinc-600"
                         >
                           {filteredDates.map((dateObj, index) => {
                             const date = new Date(dateObj);

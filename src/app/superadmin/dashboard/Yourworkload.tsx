@@ -296,7 +296,7 @@ export default function Yourworkload() {
             <tbody>
             {list.map((graphItem, graphIndex) =>
               graphItem.members.map((member, memberIndex) => (
-                <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
+                <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[45px] border-[1px] border-zinc-600">
                   {memberIndex === 0 ?
                   (<td  onClick={() => router.push(`/superadmin/projects/teamprojects?teamid=${graphItem.teamid}`)} className="text-center text-red-500 underline cursor-pointer">{graphItem.name}</td>) :  (<td className="text-center"></td>)
                   }
@@ -363,7 +363,7 @@ export default function Yourworkload() {
                   {workItem.members.map((member, memberIndex) => (
                     <tr
                       key={`${workIndex}-${memberIndex}`}
-                      className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600"
+                      className="bg-primary text-[.6rem] py-2 h-[45px] border-[1px] border-zinc-600"
                     >
                       {dates.map((date, dateIndex) => {
                         // Find date data for the current member and date

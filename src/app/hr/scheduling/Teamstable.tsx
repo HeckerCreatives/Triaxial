@@ -132,7 +132,7 @@ export default function Teamstable() {
         <TableHeader>
             <TableRow>
             <TableHead className="">Team name</TableHead>
-            <TableHead className="">Project Manager</TableHead>
+            <TableHead className=""> Manager</TableHead>
             <TableHead className="">Team Leader</TableHead>
             <TableHead>Projects</TableHead>
             <TableHead>Individual Workload</TableHead>

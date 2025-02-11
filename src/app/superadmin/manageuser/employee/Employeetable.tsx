@@ -107,6 +107,7 @@ export default function Employeetable() {
   const [dialog2, setDialog2] = useState(false)
   const [dialog3, setDialog3] = useState(false)
   const [dialog4, setDialog4] = useState(false)
+  const [dialog5, setDialog5] = useState(false)
   const router = useRouter()
   const search = useSearchParams()
   const active = search.get('active')
@@ -477,13 +478,14 @@ const banEmployee = async () => {
   router.push('?state=true')
   const selectedIds = selectedRows.map((row) => row.id);
   if(selectedIds.length === 0){
-    toast.error(`Please select an hr to proceed`)  
+    toast.error(`Please select a user to proceed`)  
     setLoading(false)
 
   } else{
     try {
       const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/users/banemployees`,{
-        employeeid: selectedIds
+        employeeid: selectedIds,
+        status: 'banned'
       },
           {
               withCredentials: true,
@@ -497,6 +499,75 @@ const banEmployee = async () => {
       loading: 'Banning employee....',
       success: `Banned successfully`,
       error: 'Error while banning employee',
+  });
+
+  if(response.data.message === 'success'){
+    
+    setDialog3(false)
+    setSelectedRows([])
+    router.push('?state=false')
+    setLoading(false)
+  }
+
+    
+    } catch (error) {
+      setLoading(false)
+        if (axios.isAxiosError(error)) {
+                const axiosError = error as AxiosError<{ message: string, data: string }>;
+                if (axiosError.response && axiosError.response.status === 401) {
+                    toast.error(`${axiosError.response.data.data}`)     
+                }
+  
+                if (axiosError.response && axiosError.response.status === 400) {
+                    toast.error(`${axiosError.response.data.data}`)     
+                      
+                }
+  
+                if (axiosError.response && axiosError.response.status === 402) {
+                    toast.error(`${axiosError.response.data.data}`)          
+                          
+                }
+  
+                if (axiosError.response && axiosError.response.status === 403) {
+                    toast.error(`${axiosError.response.data.data}`)              
+                  
+                }
+  
+                if (axiosError.response && axiosError.response.status === 404) {
+                    toast.error(`${axiosError.response.data.data}`)             
+                }
+        } 
+      
+    }
+  }
+}
+
+const unbanEmployee = async () => {
+  setLoading(true)
+  router.push('?state=true')
+  const selectedIds = selectedRows.map((row) => row.id);
+  if(selectedIds.length === 0){
+    toast.error(`Please select a user to proceed`)  
+    setLoading(false)
+
+  } else{
+    try {
+      const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/users/banemployees`,{
+        employeeid: selectedIds,
+        status: 'active'
+      },
+          {
+              withCredentials: true,
+              headers: {
+              'Content-Type': 'application/json'
+              }
+          }
+      )
+
+  const response = await toast.promise(request, {
+      loading: 'UnBanning employee....',
+      success: `UnBan successfully`,
+      error: 'Error while unbanning employee',
   });
 
   if(response.data.message === 'success'){
@@ -928,6 +999,52 @@ useEffect(() => {
                   
                     <div className=' w-full flex items-end justify-end gap-2 mt-8'>
                       <button disabled={loading} onClick={banEmployee} className=' btn-red flex items-center justify-center gap-2'>
+                        {loading === true && (
+                          <div className=' spinner2'></div>
+                        )}
+                        Ban</button>
+                    </div>
+
+                  </div>
+                  
+                </DialogContent>
+              </Dialog>
+
+              <Dialog open={dialog5} onOpenChange={setDialog5}>
+                <DialogTrigger>
+                  <button className=' bg-primary px-8 py-2 rounded-sm text-xs flex items-center gap-1 text-blue-400'><CircleAlert size={15}/>UnBan</button>
+                  
+                </DialogTrigger>
+                <DialogContent className=' bg-secondary border-none text-zinc-100 grid grid-cols-1 lg:grid-cols-[250px,1fr]'>
+                  <div className=' bg-blue-400 lg:block hidden'
+                  style={{backgroundImage: `url('/bg2.png')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat:"no-repeat"}}
+                  
+                  >
+                    <p className=' p-2 uppercase text-sm font-semibold mt-8 bg-gradient-to-r from-zinc-950 to-zinc-950/10'>UnBan</p>
+                  </div>
+
+                  <div className=' flex flex-col gap-2 p-4'>
+                    <DialogHeader>
+                    <DialogDescription>
+                      Are you sure you want to unban the selected employee?
+                    </DialogDescription>
+                    </DialogHeader>
+                  <form action="" className=' flex flex-col gap-4 '>
+                    <h2 className=' uppercase font-semibold text-xs'>Selected Employe</h2>
+                    <div className=' w-full flex flex-col gap-4'>
+                      {selectedRows.map((item, index) => (
+                        <p key={index} className=' text-sm font-semibold'><span className=' text-zinc-500'>Name:</span> {item.name}</p>
+                      ))}
+
+              
+                    </div>
+                   
+                  
+
+                  </form>
+                  
+                    <div className=' w-full flex items-end justify-end gap-2 mt-8'>
+                      <button disabled={loading} onClick={unbanEmployee} className=' btn-red flex items-center justify-center gap-2'>
                         {loading === true && (
                           <div className=' spinner2'></div>
                         )}
