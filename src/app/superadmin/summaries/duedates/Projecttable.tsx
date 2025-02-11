@@ -80,7 +80,7 @@ export default function Projecttable() {
     setLoading(true)
     const timer = setTimeout(() => {
       const getList = async () => {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teams/listprojectduedates?searchproject=${search}&page=${currentpage}&limit=10`,{
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teams/listprojectduedatesa?searchproject=${search}&page=${currentpage}&limit=10`,{
           withCredentials: true,
           headers: {
             'Content-Type': 'application/json'
@@ -99,7 +99,7 @@ export default function Projecttable() {
 
   const getList = async () => {
     setLoading(true)
-    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/projects/listprojects?searchproject=${search}&page=0&limit=10`,{
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/projects/listprojectsa?searchproject=${search}&page=0&limit=10`,{
       withCredentials: true,
       headers: {
         'Content-Type': 'application/json'

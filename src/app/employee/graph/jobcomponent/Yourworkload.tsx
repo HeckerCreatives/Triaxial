@@ -1009,14 +1009,17 @@ export default function Yourworkload() {
 
               <tr className=' text-[0.6rem] text-zinc-100 font-normal '>
                   <th className=' font-normal w-[40px]'>Action</th>
-                    <th className=' font-normal w-[100px] ' >Job Mgr.</th>
+                  <th className=' font-normal w-[100px] ' >Job no.</th>
+
                     <th className=' font-normal w-[100px] ' >Client Name</th>
                     <th className=' font-normal w-[100px] ' >Project Name</th>
-                    <th className=' font-normal w-[100px] ' >Job no.</th>
-                    <th className=' font-normal w-[100px] ' >Job Component</th>
+                    <th className=' font-normal w-[100px] ' >Job Mgr.</th>
+
                     <th className=' font-normal w-[100px] ' >Est. $</th>
                     <th className=' font-normal w-[100px] ' >Invoiced (%/hrs)</th>
                     <th className=' font-normal w-[100px] ' >Budget type</th>
+                    <th className=' font-normal w-[100px] ' >Job Component</th>
+
                     <th className=' font-normal w-[50px] ' >Members</th>
                     <th className=' font-normal w-[50px] ' >Role</th>
                     <th className=' font-normal w-[50px] ' >Notes</th>
@@ -1100,10 +1103,11 @@ export default function Yourworkload() {
 
                   <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
                     <th className=' font-normal'>Action</th>
-                    <th className=' font-normal w-[95px]'>Job Mgr.</th>
+                    <th className=' font-normal  w-[95px]'>Job no.</th>
                     <th className=' font-normal  w-[95px]'>Client Name</th>
                     <th className=' font-normal  w-[95px]'>Project Name</th>
-                    <th className=' font-normal  w-[95px]'>Job no.</th>
+                    <th className=' font-normal w-[95px]'>Job Mgr.</th>
+
                     <th className=' font-normal  w-[95px]'>Job Component</th>
                     <th className=' font-normal  w-[95px]'>Est. $</th>
                     <th className=' font-normal  w-[95px]'>Invoiced (%/hrs)</th>
@@ -1121,7 +1125,7 @@ export default function Yourworkload() {
                   key={`${graphItem._id}-${memberIndex}`}
                   data-invoice-id={graphItem._id} 
                   className={`text-[.6rem] py-2 h-[35px] border-[1px] border-zinc-600 ${graphItem.isVariation === true ? 'text-red-600 font-black' : ' text-black'} ${clientColor(graphItem.clientname.priority)}`}>
-                      <td className="text-center text-white flex items-center justify-center gap-1 w-[30px]">
+                      <td className="text-center text-white h-[30px] flex items-center justify-center gap-1 w-[30px]">
                         
 
                         {(memberIndex === 0 ) && (
@@ -1136,14 +1140,18 @@ export default function Yourworkload() {
                     </td>
                     {/* ${graphItem.status === null ? 'text-blue-400' :  'text-green-500'} */}
                     {/* <td className={` text-center`}>{memberIndex === 0 && `${graphItem.status === null ? 'Ongoing' :  'Completed'}`}</td> */}
-                      <td className="text-center">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
+                    <td className="text-center">{memberIndex === 0 && graphItem.jobno}</td>
+
                       <td className="text-center">{memberIndex === 0 && graphItem.clientname.name}</td>
                       <td className="text-center">{memberIndex === 0 && graphItem.projectname.name}</td>
-                      <td className="text-center">{memberIndex === 0 && graphItem.jobno}</td>
-                      <td className={` text-center ${scrollId === graphItem._id && 'text-black'}`}>{memberIndex === 0 && graphItem.jobcomponent}</td>
-                      <td className="text-center">{memberIndex === 0 && `$ ${graphItem.estimatedbudget?.toLocaleString()}`}</td>
+                      <td className="text-center">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
+                      <td className="text-center ">{memberIndex === 0 && `$ ${graphItem.estimatedbudget?.toLocaleString()}`}</td>
+
                       <td className="text-center">{memberIndex === 0 && `${graphItem.invoice.percentage} ${graphItem.budgettype === 'lumpsum' ? '%' : 'hrs'}`}</td>
-                      <td className="text-center">{memberIndex === 0 && graphItem.budgettype}</td>
+                      <td className="text-center">{memberIndex === 0 && graphItem.budgettype.charAt(0).toUpperCase() + graphItem.budgettype.slice(1)}</td>
+                      <td className={` text-center ${scrollId === graphItem._id && 'text-black'}`}>{memberIndex === 0 && graphItem.jobcomponent}</td>
+
+
           
                     <td className="text-center">{member.employee.initials}</td>
                     <td className="text-center text-[.5rem]">{member.role}</td>

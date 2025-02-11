@@ -79,7 +79,7 @@ export default function Projecttable() {
     setLoading(true)
     const timer = setTimeout(() => {
       const getList = async () => {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/projects/listprojects?searchproject=${search}&page=${currentpage}&limit=10`,{
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/projects/listprojectsa?searchproject=${search}&page=${currentpage}&limit=10`,{
           withCredentials: true,
           headers: {
             'Content-Type': 'application/json'
