@@ -248,7 +248,8 @@ export default function Createprojectcomponent( prop: Data) {
           jobno: jobno,
           start: start,
           end: end,
-          jobcomponentvalue: filteredFormData
+          jobcomponentvalue: filteredFormData,
+          isvariation: false
         }, {
           withCredentials: true,
           headers: {

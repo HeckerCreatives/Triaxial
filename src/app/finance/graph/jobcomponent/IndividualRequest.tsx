@@ -210,49 +210,50 @@ const Individualrequest = forwardRef<HTMLDivElement, Prop>(({ alldates, data }, 
         <table className="table-auto w-full border-collapse">
         <thead className="w-full h-[80px]">
         <tr className="text-[0.6rem] text-black font-bold">
-          {alldates
-            ?.filter((dateObj: any) => {
-              const day = new Date(dateObj).getDay()
-              return day >= 1 && day <= 5
-            })
-            .map((dateObj, index) => {
-              const date = new Date(dateObj)
-              const today = new Date()
-              today.setHours(0, 0, 0, 0) // Normalize today's date
-              const tomorrow = new Date(today)
-              tomorrow.setDate(today.getDate() + 1) // Get tomorrow's date
+        {dates?.map((dateObj, index) => {
+          const date = new Date(dateObj);
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          
+          const tomorrow = new Date(today);
+          tomorrow.setDate(today.getDate() + 1);
+          
+          const formattedDate = date.toLocaleDateString("en-CA");
+          const formattedToday = today.toLocaleDateString("en-CA");
+          const formattedTomorrow = tomorrow.toLocaleDateString("en-CA");
+          
+          let bgColor = "bg-white";
+          if (formattedDate < formattedToday) bgColor = "bg-gray-300"; 
+          else if (formattedDate === formattedToday) bgColor = "bg-pink-500"; 
+          else if (formattedDate === formattedTomorrow) bgColor = "bg-pink-300";
+          
 
-              // Determine background color
-              let bgColor = "bg-white"
-              if (date < today) bgColor = "bg-gray-300"
-              else if (date.getTime() === today.getTime()) bgColor = "bg-pink-500"
-              else if (date.getTime() === tomorrow.getTime()) bgColor = "bg-pink-300"
+            const isFriday = date.getDay() === 5
 
-              const isFriday = date.getDay() === 5
-
-              return (
-                <React.Fragment key={index}>
+            return (
+              <React.Fragment key={index}>
+                <th
+                  data-id={formatAustralianDate(dateObj)}
+                  className={`relative w-[20px] font-normal border-[1px] border-zinc-700 ${bgColor}`}
+                >
+                  <div className="whitespace-nowrap w-[20px] transform -rotate-[90deg]">
+                    <p className="mt-3 font-bold">{formatAustralianDate(dateObj)}</p>
+                  </div>
+                </th>
+                {isFriday && (
                   <th
-                    data-id={formatAustralianDate(dateObj)}
-                    className={`relative w-[20px] font-normal border-[1px] border-zinc-700 ${bgColor}`}
+                    key={`total-${index}`}
+                    className="font-normal w-[20px] px-1 border-[1px] border-zinc-700 bg-primary text-white"
                   >
-                    <div className="whitespace-nowrap w-[20px] transform -rotate-[90deg]">
-                      <p className="mt-3 font-bold">{formatAustralianDate(dateObj)}</p>
+                    <div className="transform w-[20px] -rotate-[90deg] font-semibold">
+                      <p>Total Hours</p>
                     </div>
                   </th>
-                  {isFriday && (
-                    <th
-                      key={`total-${index}`}
-                      className="font-normal w-[20px] px-1 border-[1px] border-zinc-700"
-                    >
-                      <div className="transform w-[20px] -rotate-[90deg] font-semibold">
-                        <p className=' text-white'>Total Hours</p>
-                      </div>
-                    </th>
-                  )}
-                </React.Fragment>
-              )
-            })}
+                )}
+              </React.Fragment>
+            )
+          })}
+
         </tr>
         </thead>
           <tbody>
@@ -260,20 +261,17 @@ const Individualrequest = forwardRef<HTMLDivElement, Prop>(({ alldates, data }, 
               <React.Fragment key={workIndex}>
                 {extractedmember.map((member, memberIndex) => (
                   <tr key={`${workIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[30px] border-[1px] w-[50px] border-zinc-600">
-                    {alldates
-                      ?.filter((dateObj: any) => {
-                        const day = new Date(dateObj).getDay()
-                        return day >= 2 && day <= 6
-                      })
-                      .map((date, dateIndex) => {
+                    {dates?.map((date, dateIndex) => {
                         const dateData = member.dates.find(d => d.date === date)
                         const hours = dateData ? dateData.totalhoursofjobcomponents : '-'
                         const isEventDay = dateData ? dateData.eventDay : false
                         const isWd = dateData ? dateData.wellnessDay : false
                         const isLeave = dateData ? dateData.leave : false
+                        const getdate = new Date(date)
 
-                        const day = new Date(date).getDay()
-                        const isFriday = day === 6
+
+                        const isFriday = getdate.getDay() === 5
+
 
                         const startIndex = Math.floor(dateIndex / 5) * 5
                         const endIndex = startIndex + 5

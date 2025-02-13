@@ -187,7 +187,7 @@ const Individualrequest = forwardRef<HTMLDivElement, Prop>(({ alldates, data }, 
 
   return (
     <div className='h-auto overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
-      <table className="table-auto w-[1600px] border-collapse">
+      <table className="table-auto w-full border-collapse">
         <thead className='bg-secondary h-[80px]'>
           <tr className='text-[0.6rem] text-zinc-100 font-normal'>
             <th className='w-[20px] font-normal'>Name</th>

@@ -215,7 +215,6 @@ export default function Createprojectcomponent( prop: Data) {
 
   },[dialog])
 
-  console.log(formData)
 
 
   //create job component
@@ -251,7 +250,9 @@ export default function Createprojectcomponent( prop: Data) {
           clientid: clientid === '' ? client : clientid,
           jobno: jobno,
           start: (today.toLocaleString()).split(',')[0],
-          jobcomponentvalue: filteredFormData //jobcomponentvalue, clientid, projectname, start, teamid, jobno, priority 
+          jobcomponentvalue: filteredFormData, //jobcomponentvalue, clientid, projectname, start, teamid, jobno, priority 
+          isvariation: false
+
         }, {
           withCredentials: true,
           headers: {

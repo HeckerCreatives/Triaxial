@@ -83,9 +83,9 @@ export default function Invoice( prop: Props) {
             try {
                 const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}${dynamicCreateInvoiceApiUrl}`,{
                     jobcomponentid: prop.jobcid,
-                    currentinvoice: currInvoice,
-                    newinvoice: newInvoice,
-                    invoiceamount: lumpsumCalculation,
+                    // currentinvoice: currInvoice,
+                    invoice: newInvoice,
+                    invoiceamount: lumpsumCalculation.toLocaleString(),
                     comments: notes
                 },{
                     withCredentials: true,

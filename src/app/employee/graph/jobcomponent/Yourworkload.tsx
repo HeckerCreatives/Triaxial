@@ -823,6 +823,8 @@ export default function Yourworkload() {
     return current.allDates.length > max.allDates.length ? current : max;
   }, list[0]);
 
+  console.log(longestAlldates?.allDates)
+
 
 
 
@@ -902,7 +904,7 @@ export default function Yourworkload() {
                 </div>
                 
               ) : (
-                <Copyprojectcomponent name={findJobComponent?.jobcomponent ?? ''} manager={findJobComponent?.jobmanager.employeeid ?? ''} budgettype={findJobComponent?.budgettype ?? ''} engr={findJobComponent?.members[0]?.employee._id} engrrvr={findJobComponent?.members[1]?.employee._id} drftr={findJobComponent?.members[2]?.employee._id} drftrrvr={findJobComponent?.members[3]?.employee._id} estbudget={findJobComponent?.estimatedbudget ?? 0} state={dialog3}>
+                <Copyprojectcomponent name={findJobComponent?.jobcomponent ?? ''} manager={findJobComponent?.jobmanager.employeeid ?? ''} budgettype={findJobComponent?.budgettype ?? ''} engr={findJobComponent?.members[0]?.employee._id} engrrvr={findJobComponent?.members[1]?.employee._id} drftr={findJobComponent?.members[2]?.employee._id} drftrrvr={findJobComponent?.members[3]?.employee._id} estbudget={findJobComponent?.estimatedbudget ?? 0} state={dialog3} client={findJobComponent?.clientname.name || ''} start={findJobComponent?.projectstart || ''} end={findJobComponent?.projectend || ''} pname={findJobComponent?.projectname.name || ''} clientid={findJobComponent?.clientname.clientid || ''}>
                 <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
                   <button onClick={() => setDialog3(!dialog3)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Copy size={12}/></button>
                   <p>Variation</p>
@@ -1004,7 +1006,7 @@ export default function Yourworkload() {
       className=' h-auto w-full flex flex-col max-w-[1920px]'>
         <div className=' h-auto overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
           
-            <table className="table-auto w-full borer-collapse ml-[6px] ">
+            <table className="table-auto w-[1600px] borer-collapse ml-[6px] ">
             <thead className='  bg-secondary h-[50px]'>
 
               <tr className=' text-[0.6rem] text-zinc-100 font-normal '>
@@ -1096,7 +1098,7 @@ export default function Yourworkload() {
 
               <table 
               
-              className="table-auto w-full borer-collapse ">
+              className="table-auto w-[1600px] borer-collapse ">
                  <thead className='  bg-secondary h-[100px]'
                  style={{ visibility: 'collapse' }}
                  >
@@ -1188,12 +1190,7 @@ export default function Yourworkload() {
                   >
                     <tr className=' text-[0.6rem] text-zinc-100 font-normal h-1'>
                     
-                    {longestAlldates?.allDates
-                    .filter((dateObj) => {
-                      const day = new Date(dateObj).getDay();
-                      return day >= 1 && day <= 5; // Filter to include only Monday through Friday
-                    })
-                    .map((dateObj, index) => {
+                    {longestAlldates?.allDates.map((dateObj, index) => {
                       const date = new Date(dateObj);
                       const day = date.getDay();
                       const isFriday = day === 5;
@@ -1230,27 +1227,22 @@ export default function Yourworkload() {
                   <tbody>
                   {list.map((graphItem, graphIndex) =>
                     graphItem.members.map((member, memberIndex) => {
-                      const filteredDates = longestAlldates?.allDates.filter((dateObj) => {
-                        const date = new Date(dateObj);
-                        const day = date.getUTCDay(); // Use getUTCDay() to avoid timezone issues
-                        return day >= 1 && day <= 5; // Ensure Monday (1) to Friday (5)
-                      });
-
-                      console.log('filter dates', filteredDates)
-                      
-
                       // Precompute weekly totals
                       const totalHoursForWeek: number[] = [];
                       let currentWeekTotal = 0;
-                      filteredDates.forEach((dateObj, index) => {
+                      let weekIndex = 0; // Track the current week's index
+
+                      longestAlldates.allDates.forEach((dateObj, index) => {
                         const memberDate = member.dates?.find(
                           (date) => formatDate(date.date) === formatDate(dateObj)
                         );
                         currentWeekTotal += memberDate?.hours || 0;
 
-                        if (new Date(dateObj).getDay() === 5 || index === filteredDates.length - 1) {
+                        // If it's Friday or the last date in the range, push the total for the week
+                        if (new Date(dateObj).getDay() === 5 || index === longestAlldates.allDates.length - 1) {
                           totalHoursForWeek.push(currentWeekTotal);
-                          currentWeekTotal = 0; // Reset total for next week
+                          currentWeekTotal = 0; // Reset for the next week
+                          weekIndex++; // Move to the next week
                         }
                       });
 
@@ -1259,9 +1251,9 @@ export default function Yourworkload() {
                           key={`${graphIndex}-${memberIndex}`}
                           className="bg-primary text-[.6rem] py-2 h-[35px] border-[1px] border-zinc-600"
                         >
-                          {filteredDates.map((dateObj, index) => {
+                          {longestAlldates.allDates.map((dateObj, index) => {
                             const date = new Date(dateObj);
-                            const isFriday = date.getDay() === 6;
+                            const isFriday = date.getDay() === 5;
                             const memberDate = member.dates?.find(
                               (date) => formatDate(date.date) === formatDate(dateObj)
                             );
@@ -1331,9 +1323,10 @@ export default function Yourworkload() {
                                   </p>
                                 </td>
 
-                                {isFriday && totalHoursForWeek.length > 0 && (
+                                {/* Display total hours next to Friday */}
+                                {isFriday && (
                                   <td className="text-center font-normal w-[40px] bg-primary border-[1px] border-zinc-700">
-                                    <p>{totalHoursForWeek[Math.floor(index / 5)]}</p>
+                                    <p>{totalHoursForWeek[weekIndex]}</p>
                                   </td>
                                 )}
                               </React.Fragment>
@@ -1343,6 +1336,7 @@ export default function Yourworkload() {
                       );
                     })
                   )}
+
 
 
 

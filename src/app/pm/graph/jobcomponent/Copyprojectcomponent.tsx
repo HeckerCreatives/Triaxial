@@ -55,6 +55,11 @@ interface Data {
   drftrrvr: any
   estbudget: number
   state: boolean
+  client: string
+  start: string
+  end: string
+  pname: string
+  clientid: string
 }
 
 type Member = {
@@ -92,12 +97,11 @@ export default function Copyprojectcomponent( prop: Data) {
   const [employee, setEmployee] = useState<Employee[]>([])
   const [manager, setManager] = useState<Manager[]>([])
   const params = useSearchParams()
-  const id = params.get('projectid')
+  const id = params.get('teamid')
   const [isValidated, setIsvalidated] = useState(false)
     const [projectid, setProjectId] = useState('')
   
 
-  console.log(prop)
 
   const [formData, setFormData] = useState<FormData[]>([]);
 
@@ -255,9 +259,14 @@ export default function Copyprojectcomponent( prop: Data) {
     }
 
       try {
-        const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/createvariationjobcomponent`,{
-          projectid: projectid,
-          jobcomponentvalue: filteredFormData
+        const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/createjobcomponent`,{
+          teamid: id,
+          projectname:  prop.pname,
+          clientid: prop.clientid,
+          jobno: jobno,
+          start: prop.start,
+          jobcomponentvalue: filteredFormData,
+          isvariation: true
         }, {
           withCredentials: true,
           headers: {
@@ -266,9 +275,9 @@ export default function Copyprojectcomponent( prop: Data) {
         })
   
         const response = await toast.promise(request, {
-          loading: 'Creating variation of job component....',
+          loading: 'Creating variation....',
           success: `Successfully created`,
-          error: 'Error while creating variation of job component',
+          error: 'Error while creating the variation',
       });
 
       if(response.data.message === 'success'){
@@ -291,7 +300,7 @@ export default function Copyprojectcomponent( prop: Data) {
           }
         ] }])
         setDialog(false)
-        window.location.reload()
+        // window.location.reload()
 
       }
       } catch (error) {
@@ -479,24 +488,63 @@ useEffect(() => {
                 <button onClick={handleAddForm} className=' px-4 py-2 bg-red-600 rounded-md text-[.6rem] text-white'>Add more</button>
             </div> */}
 
-            <Label className="mt-2 text-zinc-500">Select Project</Label>
-                                                <Select
-                                                 value={projectid} 
-                                                 onValueChange={setProjectId}
-                                                >
-                                                    <SelectTrigger className="text-xs h-[35px] bg-zinc-100">
-                                                    <SelectValue placeholder="Select Project" className="text-black" />
-                                                    </SelectTrigger>
-                                                    <SelectContent className="text-xs">
-                                                      {list.map((item, index) => (
-                                                        <SelectItem key={index} value={item._id}>{item.projectname}</SelectItem>
-                                                      ))}
-                                                    </SelectContent>
-                                                </Select>
+             <p className=' text-xs'>Project Details</p>
+                      
+                                    
+                      <div className=' flex flex-col'>
+                       <Label className=" text-zinc-500">Job Number</Label>
+                       <Input type='text' value={jobno} onChange={(e) => setJobno(e.target.value)} className=' text-xs bg-zinc-200' placeholder='Job no'/>
             
+                      </div>
+                                                          
+                                                                                  
+                                                                                  
+                          <div className=' bg-zinc-200 rounded-sm flex flex-col p-2'>
+                                                                                               
+                                <div className=' flex items-start gap-4 '>
+                                                                                                      
+                                                                                  
+                                  <div className=' w-full'>
+                                    <Label className=' text-zinc-500'>Project Name <span className=' text-red-700'>*</span></Label>
+                                    <Input type='text' value={prop.pname}  className=' text-xs h-[35px] bg-white' placeholder='Project name'/>
+                                                                                  
+                                                                                  
+                                  </div>
+                                                                                  
+                                                                                                     
+                                    <div className=' w-full'>
+                                      <Label className=' text-zinc-500'>Client<span className=' text-red-700'>*</span></Label>
+                                    <Input type='text' value={prop.client}  className=' text-xs h-[35px] bg-white' placeholder='Project name'/>
+            
+                                    
+                                                                                  
+                                    </div>
+                                                                                  
+                                </div>
+                                                                                  
+                                <div className=' flex items-start gap-4 '>
+                                                                                                      
+                                                                                  
+                                  <div className=' w-full'>
+                                    <Label className=' text-zinc-500'>Start Date <span className=' text-red-700'>*</span></Label>
+                                    <Input type='text' value={prop.start.split('T')[0]}  className=' text-xs h-[35px] bg-white' placeholder='Project name' />
+                                                                                  
+                                                                                  
+                                  </div>
+                                                                                  
+                                                                                                     
+                                    <div className=' w-full'>
+                                      <Label className=' text-zinc-500'>End date<span className=' text-red-700'>*</span></Label>
+                                      <Input type='text' value={prop.end.split('T')[0]}  className=' text-xs h-[35px] bg-white' placeholder='Project name'/>
+                                                                                  
+                                    </div>
+                                                                                  
+                                </div>
+                                                  
+                                                                                                    
+                         </div>
 
-
-          
+     
 
             {formData.map((item, index) => (
                 <div key={index} className="flex flex-col gap-2 bg-zinc-100 rounded-md p-4">
@@ -540,7 +588,8 @@ useEffect(() => {
                         </Select>
 
 
-                        <Label className="font-semibold mt-4">Job Component Budget</Label>
+                        <Label className="font-semibold mt-4">Job Component</Label>
+                        <Label className="mt-2 text-zinc-500">Budget Type</Label>
                         <Select
                             value={item.budgettype}
                             onValueChange={(value) => handleChange(index, 'budgettype', value)}
@@ -553,6 +602,16 @@ useEffect(() => {
                             <SelectItem value="lumpsum">Lump sum</SelectItem>
                             </SelectContent>
                         </Select>
+
+                        <Label className="mt-2 text-zinc-500">Estimated Budget $</Label>
+                        <Input
+                            type="number"
+                            className="text-xs h-[35px] bg-white"
+                            placeholder="0"
+                            value={item.estimatedbudget}
+                            onChange={(e) => handleChange(index, 'estimatedbudget', e.target.value)}
+                        />
+
 
                         <Label className="font-semibold mt-4">Members</Label>
                         <Label className="font-semibold mt-4">Engineer</Label>
@@ -620,15 +679,7 @@ useEffect(() => {
                             </SelectContent>
                         </Select>
 
-                        <Label className="mt-2 text-zinc-500">Estimated Budget $</Label>
-                        <Input
-                            type="number"
-                            className="text-xs h-[35px] bg-white"
-                            placeholder="0"
-                            value={item.estimatedbudget}
-                            onChange={(e) => handleChange(index, 'estimatedbudget', e.target.value)}
-                        />
-
+                        
                         </div>
 
                     </AccordionContent>

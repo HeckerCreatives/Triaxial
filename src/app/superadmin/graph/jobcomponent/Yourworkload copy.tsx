@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -31,8 +31,12 @@ import Invoice from '@/components/forms/Invoice'
 import Copyprojectcomponent from './Copyprojectcomponent'
 import JobComponentStatus from '@/components/forms/JobComponentStatus'
 import EditJobComponent from '@/components/forms/EditJobComponent'
-import Individualrequest from '../../scheduling/IndividualRequest'
 import DuplicateJobComponent from '@/components/forms/DuplicateJobComponent'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { clientColor } from '@/utils/helpers'
+import Individualrequest from './IndividualRequest'
+
+
 
 
 type Employee = {
@@ -65,9 +69,56 @@ type Leave = {
   leaveend: string
 }
 
+interface FormData {
+  date: string;
+  employeeid: string;
+  hours: number;
+  jobcomponentid: string;
+  status: string[];
+}
+
+type List = {
+  name: string
+  members: Workload[]
+}
+
+type Workload = {
+initial: string
+id: string,
+name: string
+resource: string
+dates: Dates[]
+leave: [
+  {
+    leavestart: string
+    leaveend: string
+    }
+],
+event: [
+  {
+    eventstart: string
+    eventend: string
+    }
+],
+wellness: [
+  {
+      wellnessdates: string
+  }
+],
+}
+
+type Dates = {
+  date: string
+  eventDay: boolean
+  leave: boolean
+  status: string[]
+  totalhoursofjobcomponents: number
+  wellnessDay: boolean
+}
 
 
-export default function YourworkloadTry() {
+
+export default function Yourworkload() {
   const [dialog, setDialog] = useState(false)
   const [dialog2, setDialog2] = useState(false)
   const [dialog3, setDialog3] = useState(false)
@@ -80,6 +131,7 @@ export default function YourworkloadTry() {
   const [projectid, setProjectid] = useState('')
   const params = useSearchParams()
   const id = params.get('teamid')
+  const scrollId= params.get('jobno')
   const refresh = params.get('state')
   const [addStatus, setAddstatus] = useState([])
   const [wdStatus, setWdstatus] = useState(false)
@@ -108,9 +160,9 @@ export default function YourworkloadTry() {
   const [tempData, setTempdata] = useState()
   const [list, setList] = useState<Graph[]>([])
 
-  const handleCheckboxChange = (id: string) => {
-    setComponentid((prevSelectedId) => (prevSelectedId === id ? '' : id));
-  };
+   const handleCheckboxChange = (id: string) => {
+     setComponentid((prevSelectedId) => (prevSelectedId === id ? '' : id));
+   };
 
   const findJobComponent = list.find((item) => item._id === componentid)
 
@@ -173,6 +225,7 @@ export default function YourworkloadTry() {
         error: 'Error while updating the workload',
     });
 
+
     if(response.data.message === 'success'){
       getList()
       setDialog(false)
@@ -207,6 +260,68 @@ export default function YourworkloadTry() {
       } 
     }
   }
+
+  const removeWorkload = async () => {
+    setHours(0)
+    setSelected([])
+  
+    try {
+      const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/editstatushours`,{
+        jobcomponentid:  projectid,
+        employeeid: employeeid,
+        date: date,
+        status: [],
+        hours: null
+      }, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json'
+          }
+      })
+
+      const response = await toast.promise(request, {
+        loading: 'Removing workload data....',
+        success: `Successfully removed`,
+        error: 'Error while removing workload data',
+    });
+
+
+    if(response.data.message === 'success'){
+      getList()
+      setDialog(false)
+      setSelectedRows([])
+    }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError<{ message: string, data: string }>;
+        if (axiosError.response && axiosError.response.status === 401) {
+            toast.error(`${axiosError.response.data.data}`) 
+            router.push('/')    
+        }
+
+        if (axiosError.response && axiosError.response.status === 400) {
+            toast.error(`Cannot remove an empty data`)     
+               
+        }
+
+        if (axiosError.response && axiosError.response.status === 402) {
+            toast.error(`${axiosError.response.data.data}`)          
+                   
+        }
+
+        if (axiosError.response && axiosError.response.status === 403) {
+            toast.error(`${axiosError.response.data.data}`)              
+           
+        }
+
+        if (axiosError.response && axiosError.response.status === 404) {
+            toast.error(`${axiosError.response.data.data}`)             
+        }
+      } 
+    }
+  }
+
+  
 
 
   const position = (jobManager: boolean, manager: boolean) => {
@@ -303,7 +418,7 @@ export default function YourworkloadTry() {
 
      // Check if the date is in wellnessDates
   const isWellnessDate = wellnessDates.some(
-    (wellnessDate) => wellnessDate === date
+    (wellnessDate) => wellnessDate.includes(date.split('T')[0])
   );;
 
     if(data.includes('1')){
@@ -330,7 +445,7 @@ export default function YourworkloadTry() {
     if(isWithinAnyEventDate){
       colorData.push('bg-gray-300')
     }
-    if(hours > 8){
+    if(hours > 9){
       colorData.push('bg-pink-500')
     }
 
@@ -456,224 +571,6 @@ export default function YourworkloadTry() {
     
   },[])
 
-  //update as manager
-  const updateJobComponenAsManager = async (id: string) => {
-  
-    try {
-      const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/editjobcomponentdetails`,{
-        jobcomponentid: componentid,
-        projectid: projectname,
-        jobmanagerid: jobmanager // employeeid
-      }, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json'
-          }
-      })
-
-      const response = await toast.promise(request, {
-        loading: 'Updating workload....',
-        success: `Successfully updated`,
-        error: 'Error while updating the workload',
-    });
-
-    if(response.data.message === 'success'){
-      getList()
-      setDialog(false)
-      setSelectedRows([])
-      setDialog2(false)
-
-    }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError<{ message: string, data: string }>;
-        if (axiosError.response && axiosError.response.status === 401) {
-            toast.error(`${axiosError.response.data.data}`) 
-            router.push('/')    
-        }
-
-        if (axiosError.response && axiosError.response.status === 400) {
-            toast.error(`${axiosError.response.data.data}`)     
-               
-        }
-
-        if (axiosError.response && axiosError.response.status === 402) {
-            toast.error(`${axiosError.response.data.data}`)          
-                   
-        }
-
-        if (axiosError.response && axiosError.response.status === 403) {
-            toast.error(`${axiosError.response.data.data}`)              
-           
-        }
-
-        if (axiosError.response && axiosError.response.status === 404) {
-            toast.error(`${axiosError.response.data.data}`)             
-        }
-      } 
-    }
-  }
-
-  //update as job manager
-  const updateJobComponenAsJobManager = async (id: string) => {
-
-    const members = [
-      {
-        employee: engr, 
-        role: "Engnr.",
-        notes: notes
-    },
-    {
-      employee: engrrvr, 
-      role: "Engr. Revr.",
-      notes: notes2
-  },
-  {
-    employee: drf, 
-    role: "Drft.", 
-    notes: notes3
-  },
-  {
-    employee: drfrvr, 
-    role: "Drft. Revr.", 
-    notes: notes4
-  },
-]
-  
-    try {
-      const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/editjobmanagercomponents`,{
-        jobcomponentid: componentid,
-        members: members
-      }, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json'
-          }
-      })
-
-      const response = await toast.promise(request, {
-        loading: 'Updating workload....',
-        success: `Successfully updated`,
-        error: 'Error while updating the workload',
-    });
-
-    if(response.data.message === 'success'){
-      getList()
-      setDialog(false)
-      setSelectedRows([])
-      setDialog2(false)
-
-    }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError<{ message: string, data: string }>;
-        if (axiosError.response && axiosError.response.status === 401) {
-            toast.error(`${axiosError.response.data.data}`) 
-            router.push('/')    
-        }
-
-        if (axiosError.response && axiosError.response.status === 400) {
-            toast.error(`${axiosError.response.data.data}`)     
-               
-        }
-
-        if (axiosError.response && axiosError.response.status === 402) {
-            toast.error(`${axiosError.response.data.data}`)          
-                   
-        }
-
-        if (axiosError.response && axiosError.response.status === 403) {
-            toast.error(`${axiosError.response.data.data}`)              
-           
-        }
-
-        if (axiosError.response && axiosError.response.status === 404) {
-            toast.error(`${axiosError.response.data.data}`)             
-        }
-      } 
-    }
-  }
-
-  //update as both
-  const updateJobComponenAsBoth = async (id: string) => {
-
-    const members = [
-      {
-        employee: engr, 
-        role: "Engnr.",
-        notes: notes
-    },
-    {
-      employee: engrrvr, 
-      role: "Engr. Revr.",
-      notes: notes2
-  },
-  {
-    employee: drf, 
-    role: "Drft.", 
-    notes: notes3
-  },
-  {
-    employee: drfrvr, 
-    role: "Drft. Revr.", 
-    notes: notes4
-  },
-]
-  
-    try {
-      const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/editalljobcomponentdetails`,{
-        jobcomponentid: componentid,
-        projectid: projectname,
-        jobmanagerid: jobmanager, // employeeid
-        members: members
-      }, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json'
-          }
-      })
-
-      const response = await toast.promise(request, {
-        loading: 'Updating workload....',
-        success: `Successfully updated`,
-        error: 'Error while updating the workload',
-    });
-
-    if(response.data.message === 'success'){
-      getList()
-      setDialog(false)
-      setSelectedRows([])
-      setDialog2(false)
-    }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError<{ message: string, data: string }>;
-        if (axiosError.response && axiosError.response.status === 401) {
-            toast.error(`${axiosError.response.data.data}`) 
-            router.push('/')    
-        }
-
-        if (axiosError.response && axiosError.response.status === 400) {
-            toast.error(`${axiosError.response.data.data}`)     
-               
-        }
-
-        if (axiosError.response && axiosError.response.status === 402) {
-            toast.error(`${axiosError.response.data.data}`)          
-                   
-        }
-
-        if (axiosError.response && axiosError.response.status === 403) {
-            toast.error(`${axiosError.response.data.data}`)              
-           
-        }
-
-        if (axiosError.response && axiosError.response.status === 404) {
-            toast.error(`${axiosError.response.data.data}`)             
-        }
-      } 
-    }
-  }
 
   const findMember = (data: Members[]) => {
     const role1 = data.find((item) => item.role.trim() === 'Engnr.')
@@ -707,59 +604,6 @@ export default function YourworkloadTry() {
     });
   };
 
-   //update as both
-     const archived = async () => {
-      try {
-        const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/archivejobcomponent`,{
-         jobcomponentId: componentid,
-        status: 'archived' // archived or "" to unarchive
-        }, {
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'application/json'
-            }
-        })
-  
-        const response = await toast.promise(request, {
-          loading: 'Archiving job component....',
-          success: `Successfully archived`,
-          error: 'Error while archiving the job component',
-      });
-  
-      if(response.data.message === 'success'){
-          window.location.reload()
-       
-      }
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          const axiosError = error as AxiosError<{ message: string, data: string }>;
-          if (axiosError.response && axiosError.response.status === 401) {
-              toast.error(`${axiosError.response.data.data}`) 
-              router.push('/')    
-          }
-  
-          if (axiosError.response && axiosError.response.status === 400) {
-              toast.error(`${axiosError.response.data.data}`)     
-                 
-          }
-  
-          if (axiosError.response && axiosError.response.status === 402) {
-              toast.error(`${axiosError.response.data.data}`)          
-                     
-          }
-  
-          if (axiosError.response && axiosError.response.status === 403) {
-              toast.error(`${axiosError.response.data.data}`)              
-             
-          }
-  
-          if (axiosError.response && axiosError.response.status === 404) {
-              toast.error(`${axiosError.response.data.data}`)             
-          }
-        } 
-      }
-    }
-
 
     const engrMember = findJobComponent?.members.find((item) => item.role === 'Engr.');
   const engrId = engrMember?._id;
@@ -773,15 +617,219 @@ export default function YourworkloadTry() {
   const drftMember = findJobComponent?.members.find((item) => item.role === 'Drft.');
   const draftId = drftMember?._id; 
 
-  const clientColor = (data: string) => {
-    if(data.includes('1')){
-      return 'bg-red-500'
-    } else if(data.includes('2')){
-      return 'bg-blue-500'
-    } else if(data.includes('3')){
-      return 'bg-green-500'
-    } 
+
+  const firstDivRef = useRef<HTMLDivElement>(null);
+  const secondDivRef = useRef<HTMLDivElement>(null);
+  const individualRequestRef = useRef<HTMLDivElement>(null); // New ref
+  
+  
+
+  const syncScroll = (source: HTMLDivElement, targets: HTMLDivElement[]) => {
+    const scrollLeft = source.scrollLeft;
+    targets.forEach((target) => {
+      if (Math.abs(target.scrollLeft - scrollLeft) > 1) { // Only update if there's a significant difference
+        target.scrollLeft = scrollLeft;
+      }
+    });
+  };
+  
+  
+
+  useEffect(() => {
+    const firstDiv = firstDivRef.current;
+    const secondDiv = secondDivRef.current;
+    const individualRequestDiv = individualRequestRef.current;
+  
+    if (!firstDiv || !secondDiv || !individualRequestDiv) return;
+  
+    let timeout: NodeJS.Timeout | null = null;
+  
+    const handleScroll = (source: HTMLDivElement, targets: HTMLDivElement[]) => {
+      return () => {
+        if (timeout) clearTimeout(timeout);
+        
+        timeout = setTimeout(() => {
+          syncScroll(source, targets);
+        }, 10); // Delay to prevent jittering
+      };
+    };
+  
+    const firstScroll = handleScroll(firstDiv, [secondDiv, individualRequestDiv]);
+    const secondScroll = handleScroll(secondDiv, [firstDiv, individualRequestDiv]);
+    const individualScroll = handleScroll(individualRequestDiv, [firstDiv, secondDiv]);
+  
+    firstDiv.addEventListener("scroll", firstScroll);
+    secondDiv.addEventListener("scroll", secondScroll);
+    individualRequestDiv.addEventListener("scroll", individualScroll);
+  
+    return () => {
+      firstDiv.removeEventListener("scroll", firstScroll);
+      secondDiv.removeEventListener("scroll", secondScroll);
+      individualRequestDiv.removeEventListener("scroll", individualScroll);
+    };
+  }, []);
+
+
+
+  const tableRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (scrollId && tableRef.current && list.length > 0) {
+      const row = tableRef.current.querySelector(`[data-invoice-id="${scrollId}"]`);
+      if (row) {
+        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else {
+        console.log('Row not found'); // Debugging
+      }
+    }
+  }, [scrollId, list]);
+
+
+
+
+
+
+
+  //multi form
+  const [forms, setForms] = useState<FormData[]>([
+    {
+      date: '',
+      employeeid: employeeid,
+      hours: 0,
+      jobcomponentid: projectid,
+      status: [],
+    },
+  ]);
+
+  // Add a new form
+  const addForm = () => {
+    setForms([
+      ...forms,
+      {
+        date: '',
+        employeeid: employeeid,
+        hours: 0,
+        jobcomponentid: projectid,
+        status: [],
+      },
+    ]);
+  };
+
+  const deleteForm = (index: number) => {
+    const newForms = forms.filter((_, i) => i !== index);
+    setForms(newForms);
+  };
+
+  const handleChange = (index: number, field: keyof FormData, value: string | number | string[]) => {
+    const newForms = [...forms];
+    (newForms[index][field] as typeof value) = value;
+    setForms(newForms);
+  };
+
+
+  const handleCheckbox = (index: number, id: string) => {
+    const newForms = [...forms];
+  
+    const currentStatus = newForms[index].status;
+  
+    if (id === statusData[0].id) {
+      newForms[index].status = currentStatus.includes(id)
+        ? currentStatus.filter((statusId) => statusId !== id)
+        : [...currentStatus, id]; 
+    } else {
+      if (currentStatus.includes(id)) {
+        newForms[index].status = currentStatus.filter((statusId) => statusId !== id);
+      } else {
+        const newStatus = [statusData[0].id, id].filter(
+          (value) => currentStatus.includes(value) || value === id
+        );
+        newForms[index].status = newStatus;
+      }
+    }
+  
+    setForms(newForms);
+  };
+
+  const handleSubmit = () => {
+    console.log('Submitted Forms:', forms);
+  };
+
+  const updateMultipleWorkload = async () => {
+  
+    try {
+      const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/editmultiplestatushours`,{
+        jobcomponentid:  projectid,
+        employeeid: employeeid,
+        updates: forms
+      }, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json'
+          }
+      })
+
+      const response = await toast.promise(request, {
+        loading: 'Updating workload....',
+        success: `Successfully updated`,
+        error: 'Error while updating the workload',
+    });
+
+
+    if(response.data.message === 'success'){
+      getList()
+      setDialog(false)
+      setSelectedRows([])
+      setForms([
+        {
+          date: '',
+          employeeid: employeeid,
+          hours: 0,
+          jobcomponentid: projectid,
+          status: [],
+        },
+      ]);
+    }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError<{ message: string, data: string }>;
+        if (axiosError.response && axiosError.response.status === 401) {
+            toast.error(`${axiosError.response.data.data}`) 
+            router.push('/')    
+        }
+
+        if (axiosError.response && axiosError.response.status === 400) {
+            toast.error(`${axiosError.response.data.data}`)     
+               
+        }
+
+        if (axiosError.response && axiosError.response.status === 402) {
+            toast.error(`${axiosError.response.data.data}`)          
+                   
+        }
+
+        if (axiosError.response && axiosError.response.status === 403) {
+            toast.error(`${axiosError.response.data.data}`)              
+           
+        }
+
+        if (axiosError.response && axiosError.response.status === 404) {
+            toast.error(`${axiosError.response.data.data}`)             
+        }
+      } 
+    }
   }
+
+  const longestAlldates = list.reduce((max, current) => {
+    return current.allDates.length > max.allDates.length ? current : max;
+  }, list[0]);
+
+  console.log(longestAlldates?.allDates)
+
+
+
+
+
+
 
 
 
@@ -791,24 +839,6 @@ export default function YourworkloadTry() {
       <div className=' w-full flex items-center justify-between h-auto bg-primary mb-2 p-4 text-xs'>
 
         <div className=' flex gap-12'>
-          
-          <div className=' flex flex-col gap-1 bg-primary p-2'>
-            {/* <p className=' text-sm font-semibold'>Project Details</p>
-            <p className=' text-xs text-zinc-400'>Project Name: <span className=' text-red-500'>{list[0]?.projectname.name}</span></p>
-            <p className=' text-xs text-zinc-400'>Client: <span className=' text-red-500'>{list[0]?.clientname.name}</span></p>
-            <p className=' text-xs text-zinc-400'>Team: <span className=' text-red-500'>{list[0]?.teamname}</span></p>
-            <p className=' text-xs text-zinc-400'>Job no.: <span className=' text-red-500'>{list[0]?.jobno}</span></p> */}
-
-            <p className=' text-sm font-semibold'>Team Members</p>
-
-            <div className=' flex items-center gap-2 flex-wrap'>
-              {list[0]?.members.map(( item, index) => (
-                <p key={index} className=' text-blue-500 underline'>{item.employee.initials}</p>
-              ))}
-            </div>
-            
-
-          </div>
 
           <div className=' flex flex-col gap-1 bg-primary rounded-sm text-xs'>
 
@@ -830,7 +860,7 @@ export default function YourworkloadTry() {
               ) : (
                 <>
                 {(isJobmamager === true || isMamager === true) ? (
-                   <EditJobComponent id={findJobComponent?.componentid} isManger={findJobComponent?.jobmanager.isManager} isJobManager={findJobComponent?.jobmanager.isJobManager} project={findJobComponent?.projectname.projectid} jobmanager={findJobComponent?.jobmanager.employeeid} engr={engrId} engrnotes={engrMember?.notes} engrrvr={engrrvrId} engrrvrnotes={engrrvrMember?.notes} drftr={draftId} drftrnotes={drftMember?.notes} drftrrvr={draftrvrId} drftrrvrnotes={drftrvrMember?.notes} members={findJobComponent?.members || []} pname={''} client={''} start={''} end={''}>
+                   <EditJobComponent id={findJobComponent?.componentid} isManger={findJobComponent?.jobmanager.isManager} isJobManager={findJobComponent?.jobmanager.isJobManager} project={findJobComponent?.projectname.projectid} jobmanager={findJobComponent?.jobmanager.employeeid} engr={engrId} engrnotes={engrMember?.notes} engrrvr={engrrvrId} engrrvrnotes={engrrvrMember?.notes} drftr={draftId} drftrnotes={drftMember?.notes} drftrrvr={draftrvrId} drftrrvrnotes={drftrvrMember?.notes} members={findJobComponent?.members || []} pname={findJobComponent?.projectname.name || ''} client={findJobComponent?.clientname.name || ''} start={findJobComponent?.projectstart || ''} end={findJobComponent?.projectend || ''}>
                                                                        <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
                                                                          <button onClick={() => setDialog2(true)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Pen size={12}/></button>
                                                                          <p>Edit</p>
@@ -853,7 +883,7 @@ export default function YourworkloadTry() {
                 </div>
                 
               ) : (
-                <DuplicateJobComponent name={findJobComponent?.jobcomponent} manager={findJobComponent?.jobmanager.employeeid} type={findJobComponent?.budgettype} id={findJobComponent?.projectname.projectid} pname={''} client={''} start={''} end={''} estbudget={0}>
+                <DuplicateJobComponent name={findJobComponent?.jobcomponent} manager={findJobComponent?.jobmanager.employeeid} type={findJobComponent?.budgettype} id={findJobComponent?.projectname.projectid} pname={findJobComponent?.projectname.name || ''} client={findJobComponent?.clientname.name || ''} start={findJobComponent?.projectstart || ''} end={findJobComponent?.projectend || ''} estbudget={findJobComponent?.estimatedbudget || 0}>
                   <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
                     <button onClick={() => setDialog2(true)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Layers2 size={12}/></button>
                     <p>Duplicate</p>
@@ -874,7 +904,7 @@ export default function YourworkloadTry() {
                 </div>
                 
               ) : (
-                <Copyprojectcomponent name={findJobComponent?.jobcomponent ?? ''} manager={findJobComponent?.jobmanager.employeeid ?? ''} budgettype={findJobComponent?.budgettype ?? ''} engr={findJobComponent?.members[0]?.employee._id} engrrvr={findJobComponent?.members[1]?.employee._id} drftr={findJobComponent?.members[2]?.employee._id} drftrrvr={findJobComponent?.members[3]?.employee._id} estbudget={findJobComponent?.estimatedbudget ?? 0} state={dialog3}>
+                <Copyprojectcomponent name={findJobComponent?.jobcomponent ?? ''} manager={findJobComponent?.jobmanager.employeeid ?? ''} budgettype={findJobComponent?.budgettype ?? ''} engr={findJobComponent?.members[0]?.employee._id} engrrvr={findJobComponent?.members[1]?.employee._id} drftr={findJobComponent?.members[2]?.employee._id} drftrrvr={findJobComponent?.members[3]?.employee._id} estbudget={findJobComponent?.estimatedbudget ?? 0} state={dialog3} client={findJobComponent?.clientname.name || ''} start={findJobComponent?.projectstart || ''} end={findJobComponent?.projectend || ''} pname={findJobComponent?.projectname.name || ''} clientid={findJobComponent?.clientname.clientid || ''}>
                 <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
                   <button onClick={() => setDialog3(!dialog3)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Copy size={12}/></button>
                   <p>Variation</p>
@@ -889,7 +919,7 @@ export default function YourworkloadTry() {
                 </div>
 
               ) : (
-                <JobComponentStatus name={findJobComponent?.jobcomponent ?? ''} status={findJobComponent?.status} client={findJobComponent?.clientname.name ?? ''} _id={findJobComponent?._id ?? ''} jobno={findJobComponent?.jobno ?? ''} teamname={findJobComponent?.teamname ?? ''} managerName={findJobComponent?.jobmanager.fullname ?? ''} projectname={findJobComponent?.projectname.name ?? ''} invoiced={`${findJobComponent?.invoice.amount ?? ''}`} budget={`${findJobComponent?.estimatedbudget}`} currinvoice={0}  >
+                <JobComponentStatus name={findJobComponent?.jobcomponent ?? ''} status={findJobComponent?.status} client={findJobComponent?.clientname.name ?? ''} _id={findJobComponent?._id ?? ''} jobno={findJobComponent?.jobno ?? ''} teamname={findJobComponent?.teamname ?? ''} managerName={findJobComponent?.jobmanager.fullname ?? ''} projectname={findJobComponent?.projectname.name ?? ''} invoiced={`${findJobComponent?.invoice.amount ?? ''}`} budget={`${findJobComponent?.estimatedbudget}`} currinvoice={findJobComponent?.invoice.amount || 0}  >
                   <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
                     <button className={`text-xs p-1 bg-red-600  rounded-sm`}><File size={12}/></button>
                     <p>Complete</p>
@@ -912,7 +942,7 @@ export default function YourworkloadTry() {
                 </Invoice>
               )}
 
-              {componentid === '' ? (
+              {/* {componentid === '' ? (
                  <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
                   <button onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><Folder size={12}/></button>
                   <p>Archive</p>
@@ -945,7 +975,7 @@ export default function YourworkloadTry() {
               </Dialog>
 
                 
-              )}
+              )} */}
 
 
              
@@ -962,226 +992,531 @@ export default function YourworkloadTry() {
           </div>
 
         </div>
-
-
         <Legends/>
 
       </div>
 
-      <Individualrequest alldates={list[0]?.allDates}/>
+      
 
-      <div className=' h-full w-full flex flex-col max-w-[1920px]'>
-        <div className=' h-full overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
-          {list.length !== 0 ? (
-            <>
-            <table className="table-auto w-full borer-collapse ">
-            <thead className='  bg-secondary h-[100px]'>
 
-              <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
-                <th className=' font-normal'>Action</th>
-                <th className=' font-normal'>Status</th>
-                <th className=' font-normal'>Job no.</th>
-                <th className=' font-normal'>Job Mgr.</th>
-                <th className=' font-normal'>Job Component</th>
-                <th className=' font-normal'>Est. $</th>
-                <th className=' font-normal'>Invoiced (%/hrs)</th>
-                <th className=' font-normal'>Budget type</th>
-                <th className=' font-normal'>Members</th>
-                <th className=' font-normal'>Role</th>
-                <th className=' font-normal'>Notes</th>
 
-                  {list[0]?.allDates
-                                  .filter((dateObj) => {
-                                    const day = new Date(dateObj).getDay();
-                                    return day >= 1 && day <= 5; // Filter to include only Monday through Friday
-                                  })
-                                  .map((dateObj, index) => {
-                                    const date = new Date(dateObj);
-                                    const day = date.getDay();
-                                    const isFriday = day === 5;
-                
-                                    // Format functions for Australian date
-                                    const formatAustralianDate = (date: Date) =>
-                                      date.toLocaleDateString('en-AU', { day: '2-digit', month: '2-digit', year: '2-digit' });
-                                    const formatMonthYear = (date: Date) =>
-                                      date.toLocaleDateString('en-AU', { month: 'short', year: 'numeric' });
-                
-                                    return (
-                                      <React.Fragment key={index}>
-                                        <th className="relative font-normal border-[1px] border-zinc-700">
-                                          <div className="whitespace-nowrap transform -rotate-[90deg]">
-                                            <p>{formatAustralianDate(date)}</p>
-                                            <p>{formatMonthYear(date)}</p>
-                                          </div>
-                                        </th>
-                                        {isFriday && (
-                                          <th className="font-normal px-1 border-[1px] border-zinc-700">
-                                            <div className="transform -rotate-[90deg]">
-                                              <p>Total Hours</p>
-                                            </div>
-                                          </th>
-                                        )}
-                                      </React.Fragment>
-                                    );
-                                  })}
+      <Individualrequest ref={individualRequestRef} alldates={longestAlldates?.allDates} data={list}/>
 
-               
+      <div
+      className=' h-auto w-full flex flex-col max-w-[1920px]'>
+        <div className=' h-auto overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
+          
+            <table className="table-auto w-[1600px] borer-collapse ml-[6px] ">
+            <thead className='  bg-secondary h-[50px]'>
+
+              <tr className=' text-[0.6rem] text-zinc-100 font-normal '>
+                  <th className=' font-normal w-[40px]'>Action</th>
+                  <th className=' font-normal w-[100px] ' >Job no.</th>
+
+                    <th className=' font-normal w-[100px] ' >Client Name</th>
+                    <th className=' font-normal w-[100px] ' >Project Name</th>
+                    <th className=' font-normal w-[100px] ' >Job Mgr.</th>
+
+                    <th className=' font-normal w-[100px] ' >Est. $</th>
+                    <th className=' font-normal w-[100px] ' >Invoiced (%/hrs)</th>
+                    <th className=' font-normal w-[100px] ' >Budget type</th>
+                    <th className=' font-normal w-[100px] ' >Job Component</th>
+
+                    <th className=' font-normal w-[50px] ' >Members</th>
+                    <th className=' font-normal w-[50px] ' >Role</th>
+                    <th className=' font-normal w-[50px] ' >Notes</th>
 
               </tr>
             </thead>
-            <tbody>
-            {list.map((graphItem, graphIndex) =>
-              graphItem.members.map((member, memberIndex) => (
-                <tr key={`${graphIndex}-${memberIndex}`} className={`text-[.6rem] py-2 h-[50px] border-[1px] border-zinc-600 ${clientColor(graphItem.clientname.priority)}`}>
-                    <td className="text-center text-white flex items-center justify-center gap-1 h-[50px] w-[30px]">
-                      
-
-                      {(memberIndex === 0 ) && (
-                        <input
-                        type="checkbox"
-                        checked={componentid === graphItem._id}
-                        onChange={() => {handleCheckboxChange(graphItem._id),setProjectname(graphItem.projectname.projectid), setJobmanager(graphItem.jobmanager.employeeid), setJobno(graphItem.jobno), findMember(graphItem.members), setNotes(graphItem.members[0].notes),setNotes2(graphItem.members[1].notes),setNotes3(graphItem.members[2].notes),setNotes4(graphItem.members[3].notes), setIsmanager(graphItem.jobmanager.isManager),setIsjobmanager(graphItem.jobmanager.isJobManager)}}
-                        />
-                      )}
-
-                                  
-                  </td>
-                  <td className={`${graphItem.status === null ? 'text-blue-400' :  'text-green-500'} text-center`}>{memberIndex === 0 && `${graphItem.status === null ? 'Ongoing' :  'Completed'}`}</td>
-                  <td className="text-center">{memberIndex === 0 && graphItem.jobno}</td>
-                    <td className="text-center">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
-                    <td className="text-center">{memberIndex === 0 && graphItem.jobcomponent}</td>
-                    <td className="text-center">{memberIndex === 0 && `$ ${graphItem.estimatedbudget?.toLocaleString()}`}</td>
-                    <td className="text-center">{memberIndex === 0 && `${graphItem.invoice.percentage} ${graphItem.budgettype === 'lumpsum' ? '%' : 'hrs'}`}</td>
-                    <td className="text-center">{memberIndex === 0 && graphItem.budgettype}</td>
-        
-                  <td className="text-center">{member.employee.fullname}</td>
-                  <td className="text-center text-[.5rem]">{member.role}</td>
-                  <td className="text-center">
-                    <Dialog>
-                      <DialogTrigger>{member.notes.slice(0, 25) || ''} ...</DialogTrigger>
-                      <DialogContent className=' bg-secondary p-6 border-none max-w-[600px] text-white'>
-                        <DialogHeader>
-                          <DialogTitle>Notes</DialogTitle>
-                          <DialogDescription>
-                            
-                          </DialogDescription>
-                        </DialogHeader>
-                        <p className=' text-xs text-zinc-400'>{member.notes}</p>
-                      </DialogContent>
-                    </Dialog>
-
-                    </td>
-
-
-                
-
-                </tr>
-              ))
-            )}
-          </tbody>
+         
             </table>
 
-
-          
-            </>
-          ) : (
-            <div className=' w-full h-full flex items-center justify-center'>
-              <p className=' text-xs text-zinc-400'>No job component's yet under this project, please create one to see the workload!</p>
-
-            </div>
-          )}
-          
-
-          
-
-        </div>
-
-        {isJobmamager === true ? (
-             <Dialog open={dialog} onOpenChange={setDialog}>
-                    <DialogContent className=' p-8 bg-secondary border-none text-white'>
-                      <DialogHeader>
-                        <DialogTitle>Update workload ({name} <span className=' text-xs text-red-500'>({role})</span> at {formatDate(date)})</DialogTitle>
-                        <DialogDescription>
-                          Note, you can only update the hours rendered if the employee is not on wellness day.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <div className=' w-full flex flex-col gap-2'>              
-
-                      <label htmlFor="" className=' text-xs mt-4'>Select Status</label>
-
-                      {/* <div className='w-full flex items-center gap-6'>
-                          {statusData.map((item) => (
-                            <div key={item.id} className='flex items-center gap-1 text-xs'>
-                              <input
-                              disabled={wdStatus}
-                                value={item.id}
-                                type="checkbox"
-                                checked={selectedRows.includes(item.id)}
-                                onChange={() => handleSelectRow(item.id)}
-                              />
-                              <p className=' p-1'>{item.name}</p>
-                            </div>
-                          ))}
-                        </div> */}
-
-                        <div className='w-full flex items-center gap-6'>
-                          {statusData.map((item) => (
-                            <div key={item.id} className='flex items-center gap-1 text-xs'>
-                              <input
-                              disabled={wdStatus || event || leave}
-                                value={item.id}
-                                type="checkbox"
-                                checked={selected.includes(item.id)}
-                               onChange={() => handleChangeCheckbox(item.id as any)}
-                              />
-                              <p className=' p-1'>{item.name}</p>
-                            </div>
-                          ))}
-                        </div>
-
-
-                      </div>
-
-                
-                      <div className=' flex flex-col gap-2 text-xs'>
-                        <label htmlFor="">Hours Rendered</label>
-                        <input disabled={wdStatus || event || leave} type="number" value={hours} onChange={(e) => setHours(e.target.valueAsNumber)} placeholder='Hours' id="" className=' bg-primary p-2 rounded-md text-xs' />
-                        
-                      </div>
-            
-                      <div className=' w-full flex items-end justify-end mt-4'>
-                        <button disabled={wdStatus || event || leave} onClick={() => updateWorkload()} className=' px-4 py-2 bg-red-600 text-xs text-white rounded-md'>Save</button>
-                      </div>
-
-                      {(wdStatus === true || event === true || leave === true) && (
-                        <p className=' text-xs text-red-500 flex items-center gap-2'><OctagonAlert size={15}/> Employee is in on wellness or event day, you can't update this selected workload</p>
-                      )}
-
-                      
+            <div ref={firstDivRef} 
+             style={{
+              overflowX: "hidden",
+            }}
+            className=' w-full'>
+              <table className="table-auto border-collapse "
+              style={{ visibility: 'collapse' }}
+              >
+                <thead className=' bg-secondary h-[100px]'>
+                  <tr 
+                 
+                  className=' text-[0.6rem] text-zinc-100 font-normal'>
                   
-                  
-                    </DialogContent>
-            </Dialog>
-           ): (
-            <Dialog open={dialog} onOpenChange={setDialog}>
-              <DialogContent className=' p-8 bg-secondary border-none text-white'>
-                      <DialogHeader>
-                        <DialogTitle>Update workload ({name} <span className=' text-xs text-red-500'>({role})</span> at {formatDate(date)})</DialogTitle>
-                        <DialogDescription>
-                         
-                        </DialogDescription>
-                      </DialogHeader>
+                  {longestAlldates?.allDates
+                  .filter((dateObj) => {
+                    const day = new Date(dateObj).getDay();
+                    return day >= 1 && day <= 5; // Filter to include only Monday through Friday
+                  })
+                  .map((dateObj, index) => {
+                    const date = new Date(dateObj);
+                    const day = date.getDay();
+                    const isFriday = day === 5;
 
-                      <p className=' text-lg text-red-500'>Only job manager can update a workload!</p>
+                    // Format functions for Australian date
+                    const formatAustralianDate = (date: Date) =>
+                      date.toLocaleDateString('en-AU', { day: '2-digit', month: '2-digit', year: '2-digit' });
+                    const formatMonthYear = (date: Date) =>
+                      date.toLocaleDateString('en-AU', { month: 'short', year: 'numeric' });
+
+                    return (
+                      <React.Fragment key={index}>
+                        <th 
+                         data-date={date} 
+                        className="relative  w-[20px] font-normal border-[1px] border-zinc-700">
+                          <div className="whitespace-nowrap  w-[20px] transform -rotate-[90deg]">
+                            <p className=' mt-3'>{formatAustralianDate(date)}</p>
+                            {/* <p>{formatMonthYear(date)}</p> */}
+                          </div>
+                        </th>
+                        {isFriday && (
+                          <th className="font-normal  w-[20px] px-1 border-[1px] border-zinc-700">
+                            <div className="transform  w-[20px] -rotate-[90deg]">
+                              <p>Total Hours</p>
+                            </div>
+                          </th>
+                        )}
+                      </React.Fragment>
+                    );
+                  })}
+
+
                     
-              </DialogContent>
-            </Dialog>
-           )}
-       
-        
+                  </tr>
+                </thead>
+               
+              </table>
+            </div>
+            </div>
       </div>
 
+         <div
+      ref={tableRef}
+      className=' h-[500px] w-full flex flex-col max-w-[1920px] overflow-y-auto ml-1'>
+        <div className=' h-[500px] flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
+
+              <table 
+              
+              className="table-auto w-[1600px] borer-collapse ">
+                 <thead className='  bg-secondary h-[100px]'
+                 style={{ visibility: 'collapse' }}
+                 >
+
+                  <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
+                    <th className=' font-normal'>Action</th>
+                    <th className=' font-normal  w-[95px]'>Job no.</th>
+                    <th className=' font-normal  w-[95px]'>Client Name</th>
+                    <th className=' font-normal  w-[95px]'>Project Name</th>
+                    <th className=' font-normal w-[95px]'>Job Mgr.</th>
+
+                    <th className=' font-normal  w-[95px]'>Job Component</th>
+                    <th className=' font-normal  w-[95px]'>Est. $</th>
+                    <th className=' font-normal  w-[95px]'>Invoiced (%/hrs)</th>
+                    <th className=' font-normal  w-[95px]'>Budget type</th>
+                    <th className=' font-normal  w-[50px]'>Members</th>
+                    <th className=' font-normal  w-[50px]'>Role</th>
+                    <th className=' font-normal  w-[50px]'>Notes</th>
+
+                  </tr>
+                  </thead>
+              <tbody>
+              {list.map((graphItem, graphIndex) =>
+                graphItem.members.map((member, memberIndex) => (
+                  <tr 
+                  key={`${graphItem._id}-${memberIndex}`}
+                  data-invoice-id={graphItem._id} 
+                  className={`text-[.6rem] py-2 h-[35px] border-[1px] border-zinc-600 ${graphItem.isVariation === true ? 'text-red-600 font-black' : ' text-black'} ${clientColor(graphItem.clientname.priority)}`}>
+                      <td className="text-center text-white h-[30px] flex items-center justify-center gap-1 w-[30px]">
+                        
+
+                        {(memberIndex === 0 ) && (
+                          <input
+                          type="checkbox"
+                          checked={componentid === graphItem._id}
+                          onChange={() => {handleCheckboxChange(graphItem._id),setProjectname(graphItem.projectname.projectid), setJobmanager(graphItem.jobmanager.employeeid), setJobno(graphItem.jobno), findMember(graphItem.members), setNotes(graphItem.members[0].notes),setNotes2(graphItem.members[1].notes),setNotes3(graphItem.members[2].notes),setNotes4(graphItem.members[3].notes), setIsmanager(graphItem.jobmanager.isManager),setIsjobmanager(graphItem.jobmanager.isJobManager)}}
+                          />
+                        )}
+
+                                    
+                    </td>
+                    {/* ${graphItem.status === null ? 'text-blue-400' :  'text-green-500'} */}
+                    {/* <td className={` text-center`}>{memberIndex === 0 && `${graphItem.status === null ? 'Ongoing' :  'Completed'}`}</td> */}
+                    <td className="text-center">{memberIndex === 0 && graphItem.jobno}</td>
+
+                      <td className="text-center">{memberIndex === 0 && graphItem.clientname.name}</td>
+                      <td className="text-center">{memberIndex === 0 && graphItem.projectname.name}</td>
+                      <td className="text-center">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
+                      <td className="text-center ">{memberIndex === 0 && `$ ${graphItem.estimatedbudget?.toLocaleString()}`}</td>
+
+                      <td className="text-center">{memberIndex === 0 && `${graphItem.invoice.percentage} ${graphItem.budgettype === 'lumpsum' ? '%' : 'hrs'}`}</td>
+                      <td className="text-center">{memberIndex === 0 && graphItem.budgettype.charAt(0).toUpperCase() + graphItem.budgettype.slice(1)}</td>
+                      <td className={` text-center ${scrollId === graphItem._id && 'text-black'}`}>{memberIndex === 0 && graphItem.jobcomponent}</td>
+
+
+          
+                    <td className="text-center">{member.employee.initials}</td>
+                    <td className="text-center text-[.5rem]">{member.role}</td>
+                    <td className="text-center">
+                      <Dialog>
+                        <DialogTrigger>{member.notes === '' ? '... ' : <button className=' text-[.5rem] bg-red-600 rounded-sm text-white p-1'>View</button>}</DialogTrigger>
+                        <DialogContent className=' bg-secondary p-6 border-none max-w-[600px] text-white'>
+                          <DialogHeader>
+                            <DialogTitle>Notes</DialogTitle>
+                            <DialogDescription>
+                              
+                            </DialogDescription>
+                          </DialogHeader>
+                          <p className=' text-xs text-zinc-400'>{member.notes}</p>
+                        </DialogContent>
+                      </Dialog>
+
+                      </td>
+
+
+                  
+
+                  </tr>
+                ))
+              )}
+            </tbody>
+              </table>
+
+              <div ref={secondDivRef} 
+              className=' w-full overflow-x-auto'>
+                <table className="table-auto border-collapse ">
+                  <thead className=' bg-secondary h-1'
+                  style={{ visibility: 'collapse' }}
+                  >
+                    <tr className=' text-[0.6rem] text-zinc-100 font-normal h-1'>
+                    
+                    {longestAlldates?.allDates.map((dateObj, index) => {
+                      const date = new Date(dateObj);
+                      const day = date.getDay();
+                      const isFriday = day === 5;
+
+                      // Format functions for Australian date
+                      const formatAustralianDate = (date: Date) =>
+                        date.toLocaleDateString('en-AU', { day: '2-digit', month: '2-digit', year: '2-digit' });
+                      const formatMonthYear = (date: Date) =>
+                        date.toLocaleDateString('en-AU', { month: 'short', year: 'numeric' });
+
+                      return (
+                        <React.Fragment key={index}>
+                         <th className="relative font-normal w-[20px] border-[1px] h-1 overflow-hidden border-zinc-700">
+                          <div className="whitespace-nowrap transform w-[20px] -rotate-[90deg]">
+                            <p>{formatAustralianDate(date)}</p>
+                            <p>{formatMonthYear(date)}</p>
+                          </div>
+                        </th>
+                        {isFriday && (
+                          <th className="font-normal  w-[20px] px-1 border-[1px] h-1 overflow-hidden border-zinc-700">
+                            <div className="transform  w-[20px] -rotate-[90deg]">
+                              <p>Total Hours</p>
+                            </div>
+                          </th>
+                        )}
+                        </React.Fragment>
+                      );
+                    })}
+
+
+                      
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {list.map((graphItem, graphIndex) =>
+                    graphItem.members.map((member, memberIndex) => {
+                      // Precompute weekly totals
+                      const totalHoursForWeek: number[] = [];
+                      let currentWeekTotal = 0;
+                      let weekIndex = 0; // Track the current week's index
+
+                      longestAlldates.allDates.forEach((dateObj, index) => {
+                        const memberDate = member.dates?.find(
+                          (date) => formatDate(date.date) === formatDate(dateObj)
+                        );
+                        currentWeekTotal += memberDate?.hours || 0;
+
+                        // If it's Friday or the last date in the range, push the total for the week
+                        if (new Date(dateObj).getDay() === 5 || index === longestAlldates.allDates.length - 1) {
+                          totalHoursForWeek.push(currentWeekTotal);
+                          currentWeekTotal = 0; // Reset for the next week
+                          weekIndex++; // Move to the next week
+                        }
+                      });
+
+                      return (
+                        <tr
+                          key={`${graphIndex}-${memberIndex}`}
+                          className="bg-primary text-[.6rem] py-2 h-[35px] border-[1px] border-zinc-600"
+                        >
+                          {longestAlldates.allDates.map((dateObj, index) => {
+                            const date = new Date(dateObj);
+                            const isFriday = date.getDay() === 5;
+                            const memberDate = member.dates?.find(
+                              (date) => formatDate(date.date) === formatDate(dateObj)
+                            );
+
+                            // Handle Click
+                            const handleClick = () => {
+                              setDialog(true);
+                              setDate(dateObj);
+                              setProjectid(graphItem._id);
+                              setName(member.employee.fullname);
+                              setEmployeeid(member.employee._id);
+                              setHours(memberDate?.hours || 0);
+                              setAddstatus(memberDate?.status || []);
+                              setSelectedRows(memberDate?.status || []);
+                              setSelected(memberDate?.status || []);
+                              setLeavestatus(
+                                isDateInRange(
+                                  dateObj,
+                                  member.leaveDates[0]?.leavestart,
+                                  member.leaveDates[0]?.leaveend
+                                )
+                              );
+                              setEvent(
+                                isDateInRange(
+                                  dateObj,
+                                  member.eventDates[0]?.startdate,
+                                  member.eventDates[0]?.enddate
+                                )
+                              );
+                              wdStatusChecker(member.wellnessDates, dateObj, member.eventDates);
+                              setIsjobmanager(graphItem.jobmanager.isJobManager);
+                              setLeave(
+                                isDateInRange(
+                                  dateObj,
+                                  member.leaveDates[0]?.leavestart,
+                                  member.leaveDates[0]?.leaveend
+                                )
+                              );
+                              setRole(member.role);
+                            };
+
+                            return (
+                              <React.Fragment key={index}>
+                                <td
+                                  className="relative text-center overflow-hidden bg-white cursor-pointer border-[1px]"
+                                  onClick={handleClick}
+                                >
+                                  <div className="w-full h-[50px] absolute flex top-0">
+                                    {statusColor(
+                                      memberDate?.status || [],
+                                      dateObj,
+                                      member.leaveDates[0]?.leavestart || "",
+                                      member.leaveDates[0]?.leaveend || "",
+                                      member.eventDates[0]?.startdate || "",
+                                      member.eventDates[0]?.enddate || "",
+                                      member.wellnessDates[0],
+                                      memberDate?.hours || 0,
+                                      member.eventDates,
+                                      member.leaveDates,
+                                      member.wellnessDates
+                                    ).map((item, index) => (
+                                      <div key={index} className={`w-full h-[50px] ${item}`}></div>
+                                    ))}
+                                  </div>
+                                  <p className="relative text-black font-bold text-xs z-30">
+                                    {memberDate ? memberDate.hours : "-"}
+                                  </p>
+                                </td>
+
+                                {/* Display total hours next to Friday */}
+                                {isFriday && (
+                                  <td className="text-center font-normal w-[40px] bg-primary border-[1px] border-zinc-700">
+                                    <p>{totalHoursForWeek[weekIndex]}</p>
+                                  </td>
+                                )}
+                              </React.Fragment>
+                            );
+                          })}
+                        </tr>
+                      );
+                    })
+                  )}
+
+
+
+
+                </tbody>
+                </table>
+              </div>
+          
+          
+           
+
+        {isJobmamager === true ? (
+              <Dialog open={dialog} onOpenChange={setDialog}>
+                      <DialogContent className=' p-8 bg-secondary border-none text-white max-h-[80%] overflow-y-auto'>
+                        
+                        <Tabs defaultValue="account" className=" w-full">
+                          <TabsList className=' text-xs bg-zinc-800'>
+                            <TabsTrigger value="single">Single</TabsTrigger>
+                            <TabsTrigger value="multiple">Multiple</TabsTrigger>
+                          </TabsList>
+                          <TabsContent value="single">
+                            <DialogHeader>
+                              <DialogTitle>Update workload ({name} <span className=' text-xs text-red-500'>({role})</span> at {formatDate(date)})</DialogTitle>
+                              <DialogDescription>
+                                Note, you can only update the hours rendered if the employee is not on wellness day.
+                              </DialogDescription>
+                            </DialogHeader>
+                            <div className=' w-full flex flex-col gap-2'>              
+                            <label htmlFor="" className=' text-xs mt-4'>Select Status</label>
+
+                              <div className='w-full flex items-center gap-6'>
+                                {statusData.map((item) => (
+                                  <div key={item.id} className='flex items-center gap-1 text-xs'>
+                                    <input
+                                    disabled={wdStatus || event || leave}
+                                      value={item.id}
+                                      type="checkbox"
+                                      checked={selected.includes(item.id)}
+                                    onChange={() => handleChangeCheckbox(item.id as any)}
+                                    />
+                                    <p className=' p-1'>{item.name}</p>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+
+                            <div className=' flex flex-col gap-2 text-xs'>
+                              <label htmlFor="">Hours Rendered</label>
+                              <input disabled={wdStatus || event || leave} type="number" value={hours} onChange={(e) => setHours(e.target.valueAsNumber)} placeholder='Hours' id="" className=' bg-primary p-2 rounded-md text-xs' />
+                              
+                            </div>
+
+                        
+                  
+                            <div className=' w-full flex items-end justify-end mt-4 gap-2'>
+                              <button disabled={wdStatus || event || leave} onClick={() => removeWorkload()} className=' px-4 py-2 bg-zinc-600 text-xs text-white rounded-md'>Remove</button>
+
+                              <button disabled={wdStatus || event || leave} onClick={() => updateWorkload()} className=' px-4 py-2 bg-red-600 text-xs text-white rounded-md'>Save</button>
+
+                            </div>
+                         
+                            {(wdStatus === true || event === true || leave === true) && (
+                              <p className=' text-xs text-red-500 flex items-center gap-2'><OctagonAlert size={15}/> Employee is in on wellness or event day, you can't update this selected workload</p>
+                            )}
+                          </TabsContent>
+                          <TabsContent value="multiple">
+
+                            <DialogHeader>
+                              <DialogTitle>Update workload ({name} <span className=' text-xs text-red-500'>({role})</span></DialogTitle>
+                              <DialogDescription>
+                                Note, you can only update the hours rendered if the employee is not on wellness day.
+                              </DialogDescription>
+                            </DialogHeader>
+                            {forms.map((form, index) => (
+                            <div key={index} className=" w-full mb-6 p-4 border border-zinc-700 rounded-lg text-xs">
+                              <h2 className="text-sm font-semibold mb-2">Form {index + 1}</h2>
+                              <div className="space-y-4">
+                                <div>
+                                  <label className="block text-sm font-medium">Date</label>
+                                  <input disabled={wdStatus || event || leave}
+                                    type="date"
+                                    value={form.date.split('T')[0]}
+                                    onChange={(e) => handleChange(index, 'date', e.target.value + 'T00:00:00.000Z')}
+                                  placeholder='Date'
+                                  className=' bg-primary p-2 rounded-md text-xs' />
+                                
+                                </div>
+
+                                <div>
+                                <label className="block text-sm font-medium">Hours Rendered</label>
+                                <input disabled={wdStatus || event || leave} type="number"
+                                  value={form.hours}
+                                  onChange={(e) => handleChange(index, 'hours', e.target.valueAsNumber)}
+                                placeholder='Hours' id="" className=' bg-primary p-2 rounded-md text-xs' />
+                                
+                                </div>
+
+                                <div>
+                                  <label className="block text-sm font-medium">Status</label>
+                                  <div className="flex space-x-4">
+                                    {statusData.map((option) => (
+                                      <label key={option.id} className="flex items-center">
+                                        <input
+                                          type="checkbox"
+                                          value={option.id}
+                                          checked={form.status.includes(option.id)}
+                                          onChange={() => handleCheckbox(index, option.id)}
+                                          className="mr-2"
+                                        />
+                                        {option.name}
+                                      </label>
+                                    ))}
+                                  </div>
+                                </div>
+
+                                {index !== 0 && (
+                                  <button
+                                  onClick={() => deleteForm(index)}
+                                  className="px-4 py-2 bg-red-500 text-white rounded-md text-[.6rem]"
+                                >
+                                  Delete Form
+                                </button>
+                                )}
+                                
+                              </div>
+                            </div>
+                            ))}
+
+                            <button
+                              onClick={addForm}
+                              className=" w-fit text-xs px-4 py-2 bg-blue-500 text-white rounded-md mr-2"
+                            >
+                              Add Form
+                            </button>
+
+                            <button
+                              onClick={updateMultipleWorkload}
+                              className=" w-fit text-xs px-4 py-2 bg-green-500 text-white rounded-md"
+                            >
+                              Save All
+                            </button>
+
+                          </TabsContent>
+                        </Tabs>
+                        
+
+                    
+                      </DialogContent>
+              </Dialog>
+            ): (
+              <Dialog open={dialog} onOpenChange={setDialog}>
+                <DialogContent className=' p-8 bg-secondary border-none text-white'>
+                        <DialogHeader>
+                          <DialogTitle>Update workload ({name} <span className=' text-xs text-red-500'>({role})</span> at {formatDate(date)})</DialogTitle>
+                          <DialogDescription>
+                          
+                          </DialogDescription>
+                        </DialogHeader>
+
+                        <p className=' text-lg text-red-500'>Only job manager can update a workload!</p>
+                      
+                </DialogContent>
+              </Dialog>
+            )}
+
+            
+
+        </div>
+        </div>
+
+        {list.length === 0 && (
+          <div className=' w-full h-full flex items-center justify-center'>
+            <p className=' text-xs text-zinc-400'>No job component's yet under this project, please create one to see the workload!</p>
+          </div>
+        )}
+  
+       
     
+
+     
+
         
     </div>
   )

@@ -452,9 +452,12 @@ export default function DuplicateJobComponent( prop: Data) {
           <p className=' text-xs'>Project Details</p>
           
                         
-          
+          <div className=' flex flex-col'>
+           <Label className=" text-zinc-500">Job Number</Label>
+           <Input type='text' value={jobno} onChange={(e) => setJobno(e.target.value)} className=' text-xs bg-zinc-200' placeholder='Job no'/>
+
+          </div>
                                               
-            <Input type='text' value={jobno} onChange={(e) => setJobno(e.target.value)} className=' text-xs h-[35px] bg-zinc-200' placeholder='Job no'/>
                                                                       
                                                                       
               <div className=' bg-zinc-200 rounded-sm flex flex-col p-2'>
@@ -551,7 +554,7 @@ export default function DuplicateJobComponent( prop: Data) {
                         </Select>
 
 
-                        <Label className="font-semibold mt-4">Job Component Budget</Label>
+                        <Label className="font-semibold mt-4">Job Component</Label>
                         <Label className="mt-2 text-zinc-500">Budget Type</Label>
                         <Select
                             value={item.budgettype}
@@ -565,6 +568,15 @@ export default function DuplicateJobComponent( prop: Data) {
                             <SelectItem value="lumpsum">Lump sum</SelectItem>
                             </SelectContent>
                         </Select>
+
+                        {/* <Label className="mt-2 text-zinc-500">Estimated Budget $</Label>
+                        <Input
+                            type="number"
+                            className="text-xs h-[35px] bg-white"
+                            placeholder="0"
+                            value={item.estimatedbudget}
+                            onChange={(e) => handleChange(index, 'estimatedbudget', e.target.value)}
+                        /> */}
 
                         <Label className="mt-2 text-zinc-500">Component Budget</Label>
                         <Input
@@ -639,14 +651,7 @@ export default function DuplicateJobComponent( prop: Data) {
                             </SelectContent>
                         </Select>
 
-                        <Label className="mt-2 text-zinc-500">Estimated Budget $</Label>
-                        <Input
-                            type="number"
-                            className="text-xs h-[35px] bg-white"
-                            placeholder="0"
-                            value={item.estimatedbudget}
-                            onChange={(e) => handleChange(index, 'estimatedbudget', e.target.value)}
-                        />
+                        
 
                         </div>
 
