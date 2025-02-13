@@ -210,7 +210,7 @@ const Individualrequest = forwardRef<HTMLDivElement, Prop>(({ alldates, data }, 
         <table className="table-auto w-full border-collapse">
         <thead className="w-full h-[80px]">
         <tr className="text-[0.6rem] text-black font-bold">
-        {dates?.map((dateObj, index) => {
+        {alldates?.map((dateObj, index) => {
           const date = new Date(dateObj);
           const today = new Date();
           today.setHours(0, 0, 0, 0);
@@ -261,7 +261,7 @@ const Individualrequest = forwardRef<HTMLDivElement, Prop>(({ alldates, data }, 
               <React.Fragment key={workIndex}>
                 {extractedmember.map((member, memberIndex) => (
                   <tr key={`${workIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[30px] border-[1px] w-[50px] border-zinc-600">
-                    {dates?.map((date, dateIndex) => {
+                    {alldates?.map((date, dateIndex) => {
                         const dateData = member.dates.find(d => d.date === date)
                         const hours = dateData ? dateData.totalhoursofjobcomponents : '-'
                         const isEventDay = dateData ? dateData.eventDay : false

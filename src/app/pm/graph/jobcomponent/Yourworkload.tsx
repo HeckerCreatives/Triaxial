@@ -1006,8 +1006,8 @@ export default function Yourworkload() {
       className=' h-auto w-full flex flex-col max-w-[1920px]'>
         <div className=' h-auto overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
           
-            <table className="table-auto w-[1600px] borer-collapse ml-[6px] ">
-            <thead className='  bg-secondary h-[50px]'>
+            <table className="table-auto w-full  borer-collapse ml-[6px] ">
+            <thead className='  h-[50px]  w-[1600px]'>
 
               <tr className=' text-[0.6rem] text-zinc-100 font-normal '>
                   <th className=' font-normal w-[40px]'>Action</th>
@@ -1036,10 +1036,10 @@ export default function Yourworkload() {
               overflowX: "hidden",
             }}
             className=' w-full'>
-              <table className="table-auto border-collapse "
+              <table className="table-auto w-full border-collapse "
               style={{ visibility: 'collapse' }}
               >
-                <thead className=' bg-secondary h-[100px]'>
+                <thead className=' bg-secondary h-[100px] '>
                   <tr 
                  
                   className=' text-[0.6rem] text-zinc-100 font-normal'>
@@ -1098,8 +1098,8 @@ export default function Yourworkload() {
 
               <table 
               
-              className="table-auto w-[1600px] borer-collapse ">
-                 <thead className='  bg-secondary h-[100px]'
+              className="table-auto w-full borer-collapse ">
+                 <thead className='  bg-secondary h-[100px] w-[1600px]'
                  style={{ visibility: 'collapse' }}
                  >
 
