@@ -144,12 +144,12 @@ export default function Login() {
                             {errors.password && <p className=' text-[.6em] text-red-500'>{errors.password.message}</p>}
 
                         </div>
-                        
+{/*                         
                         <div className=' flex items-center gap-2'>
                             <Checkbox />
                             <p className=' text-sm text-zinc-500'>Remember me</p>
 
-                        </div>
+                        </div> */}
 
                         <div className=' w-full flex items-center justify-center mt-8'>
                             

@@ -184,11 +184,11 @@ export default function Adminlogin() {
 
                         </div>
                         
-                        <div className=' flex items-center gap-2'>
+                        {/* <div className=' flex items-center gap-2'>
                             <Checkbox />
                             <p className=' text-sm text-zinc-500'>Remember me</p>
 
-                        </div>
+                        </div> */}
 
                         <div className=' w-full flex items-center justify-center mt-8'>
                             <button disabled={loading} className=' px-12 py-3 bg-red-600 rounded-full text-zinc-100 text-sm flex items-center gap-2 justify-center'>
