@@ -84,25 +84,15 @@ export default function Totalinvoice() {
     getList()
   },[])
 
-  const  getMonthName = (monthNumber: number) => {
-    const monthNames = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
   
-  return monthNames[monthNumber - 1] || "Invalid month";
-}
-  
+
+const getMonthName = (month: number) => {
+  const months = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+  ];
+  return months[month - 1];
+};
     
   
 
@@ -130,7 +120,7 @@ export default function Totalinvoice() {
             <TableHead>Project Manager</TableHead>
     
             {list[0]?.monthlyInvoices.map((item, index) => (
-            <TableHead key={index}>{getMonthName(item.month)}</TableHead>
+            <TableHead key={index}>{getMonthName(item.month)} {item.year}</TableHead>
             ))}
             
             </TableRow>
@@ -138,9 +128,8 @@ export default function Totalinvoice() {
         <TableBody>
           {list.map((item, index) => (
             <TableRow>
-              <TableCell className=" ">
-              {/* <a href={`/finance/graph/jobcomponent?teamid=${id}&jobno=${item.componentid}`} className=' '>{item.jobnumber}</a> */}
-              <p className=' '>{item.jobnumber}</p>
+              <TableCell className=" underline cursor-pointer">
+              <a href={`/finance/graph/jobcomponent?teamid=${id}&jobno=${item.componentid}`} className=' '>{item.jobnumber}</a>
 
               </TableCell>
               <TableCell>{item.jobcomponent}</TableCell>

@@ -1,14 +1,10 @@
 "use client"
 import React, { useEffect, useMemo, useState } from 'react'
 import axios, { AxiosError } from 'axios'
-import toast from 'react-hot-toast'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { RefreshCcw } from 'lucide-react'
-import { string } from 'zod'
-import { formatDate } from '@/utils/functions'
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { fileURLToPath } from 'url'
 
 type Dates = {
   date: string
@@ -57,28 +53,12 @@ wfh: [
 ]
 }
 
-type Leave = {
-  leavestart: string
-  leaveend: string
-}
-
-type Event = {
-  startdate: string
-  enddate: string
-}
-
-type Wellnessday = {
-  startdate: string
-  enddate: string
-}
-
 type Wfh = {
   requestdate: string
   requestend: string
 }
 
 export default function Yourworkload() {
-  const [memberIndex, setMemberIndex] = useState(0)
   const [list, setList] = useState<List[]>([])
   const [dates, setDates] = useState<string[]>([])
   const [filter, setFilter] = useState<Date | null>(null)
@@ -147,20 +127,20 @@ export default function Yourworkload() {
      
     );
 
-    if(hours <= 7){
+    if(hours <= 7.00){
       data.push('bg-green-500')
     }
 
-    if(hours <= 9 && hours >= 7){
+    if(hours <= 9.00 && hours >= 7.01){
       data.push('bg-orange-500')
     }
 
-    if(hours > 9){
+    if(hours > 9.01){
       data.push('bg-pink-500')
     }
 
     if(isWellnessDay){
-      data.push('bg-fuchsia-500')
+      data.push('bg-fuchsia-300')
     }
     // if(hours < 40){
     //   data.push('bg-cyan-500')
@@ -189,15 +169,10 @@ export default function Yourworkload() {
 
 
   const formatAustralianDate = (date: string) => {
-    const dates = new Date(date); // Convert the string to a Date object
+    const dates = new Date(date);
     return dates.toLocaleDateString('en-AU', { day: '2-digit', month: '2-digit', year: '2-digit' });
   };
   
-  const formatMonthYear = (date: string) => {
-    const dates = new Date(date); // Convert the string to a Date object
-    return dates.toLocaleDateString('en-AU', { month: 'short', year: 'numeric' });
-  };
-
 
 
 
@@ -208,7 +183,6 @@ export default function Yourworkload() {
       <div className=' h-full w-full flex flex-col gap-2 max-w-[1920px]'>
       <div className=' w-full flex items-center gap-2 justify-end'>
         <label htmlFor="" className=' text-xs'>Filter by date:</label>
-        {/* <input value={filter} onChange={(e) => setFilter(e.target.value)} type="date" name="" id="" className=' p-2 bg-primary text-xs rounded-sm' /> */}
         <div className=' relative z-50'>
         <DatePicker
           selected={filter}
@@ -229,23 +203,23 @@ export default function Yourworkload() {
             <thead className=' bg-secondary h-[100px]'>
 
               <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
-                <th className=' w-[20px] font-normal'>Team</th>
-                <th className=' w-[20px] font-normal'>Name</th>
-                <th className=' w-[50px] font-normal'>Initial</th>
-                <th className=' font-normal w-[50px]'>Resource</th>
+                <th className=' text-left w-[20px] font-normal'>Team</th>
+                <th className=' text-left w-[20px] font-normal'>Name</th>
+                <th className=' text-left w-[50px] font-normal'>Initial</th>
+                <th className=' text-left font-normal w-[50px]'>Resource</th>
             
               </tr>
             </thead>
             <tbody>
             {list.map((graphItem, graphIndex) =>
               graphItem.members.map((member, memberIndex) => (
-                <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
+                <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600 text-left">
                   {memberIndex === 0 ?
-                  (<td  onClick={() => router.push(`/superadmin/projects/teamprojects?teamid=${graphItem.teamid}`)} className="text-center text-red-500 underline cursor-pointer">{graphItem.name}</td>) :  (<td className="text-center"></td>)
+                  (<td  onClick={() => router.push(`/pm/graph/jobcomponent?teamid=${graphItem.teamid}&teamname=${graphItem.name}`)} className="text-left text-red-500 underline cursor-pointer">{graphItem.name}</td>) :  (<td className="text-center"></td>)
                   }
-                  <td onClick={() => router.push(`/superadmin/individualworkload?employeeid=${member.id}`)} className="text-center cursor-pointer underline text-blue-400">{member.name}</td>
-                  <td className="text-center">{member.initial}</td>
-                  <td className="text-center">{member.resource}</td>
+                  <td onClick={() => router.push(`/pm/individualworkload?employeeid=${member.id}&name=${member.name}&teamname=${graphItem.name}`)} className="text-left cursor-pointer underline text-blue-400">{member.name}</td>
+                  <td className="text-left">{member.initial}</td>
+                  <td className="text-left">{member.resource}</td>
                  
               
                 </tr>
@@ -261,26 +235,38 @@ export default function Yourworkload() {
             <thead className="w-full bg-white h-[100px]">
               <tr className="text-[0.6rem] text-black font-normal">
                 {dates.map((dateObj, index) => {
-                  const date = new Date(dateObj)
-                  date.setHours(0, 0, 0, 0) // Normalize the date to remove time differences
+                  const date = new Date(dateObj);
+                  date.setHours(0, 0, 0, 0);
 
-                  const today = new Date()
-                  today.setHours(0, 0, 0, 0) // Normalize today
+                  const today = new Date();
+                  today.setHours(0, 0, 0, 0);
 
-                  const tomorrow = new Date(today)
-                  tomorrow.setDate(today.getDate() + 1) // Get tomorrow's date
+                  const startOfWeek = new Date(today);
+                  startOfWeek.setDate(today.getDate() - (today.getDay() - 1));
 
-                  // Determine background color
-                  let bgColor = "bg-white"
-                  if (date.getTime() < today.getTime()) bgColor = "bg-gray-300"
-                  else if (date.getTime() === today.getTime()) bgColor = "bg-pink-500"
-                  else if (date.getTime() === tomorrow.getTime()) bgColor = "bg-pink-300"
+                  const endOfWeek = new Date(startOfWeek);
+                  endOfWeek.setDate(startOfWeek.getDate() + 4);
+
+                  let bgColor = "bg-white";
+                  if (date >= startOfWeek && date <= endOfWeek) {
+                    const prevDay = new Date(today);
+                    prevDay.setDate(today.getDate() - 1);
+
+                    const nextDay = new Date(today);
+                    nextDay.setDate(today.getDate() + 1);
+
+                    if (date.getTime() < today.getTime()) {
+                      bgColor = "bg-gray-300"; 
+                    } else if (date.getTime() === today.getTime()) {
+                      bgColor = "bg-pink-500";
+                    } else if (date.getTime() >= nextDay.getTime()) {
+                      bgColor = "bg-pink-200";
+                    }
+                  }
 
                   return (
                     <React.Fragment key={index}>
-                      <th
-                        className={`relative font-normal border-[1px] border-zinc-700 ${bgColor}`}
-                      >
+                      <th className={`relative font-normal border-[1px] border-zinc-700 ${bgColor}`}>
                         <div className="whitespace-nowrap transform -rotate-[90deg] w-[20px]">
                           <p className="mt-4 font-bold">{formatAustralianDate(dateObj)}</p>
                         </div>
@@ -294,10 +280,12 @@ export default function Yourworkload() {
                         </th>
                       )}
                     </React.Fragment>
-                  )
+                  );
                 })}
               </tr>
             </thead>
+
+
 
 
               <tbody>
@@ -309,14 +297,14 @@ export default function Yourworkload() {
                       className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600"
                     >
                       {dates.map((date, dateIndex) => {
-                        // Find date data for the current member and date
+                      
                         const dateData = member.dates.find(d => d.date === date);
                         const hours = dateData ? dateData.totalhoursofjobcomponents : '-';
                         const isEventDay = dateData ? dateData.eventDay : false;
                         const isWd = dateData ? dateData.wellnessDay : false;
                         const isLeave = dateData ? dateData.leave : false;
 
-                        // Calculate total hours for every 5-day block
+                     
                         const startIndex = Math.floor(dateIndex / 5) * 5;
                         const endIndex = startIndex + 5;
                         const totalHours = member.dates
@@ -325,7 +313,7 @@ export default function Yourworkload() {
 
                         return (
                           <React.Fragment key={dateIndex}>
-                            {/* Render date cell */}
+                         
                             <td
                               className={`relative text-center overflow-hidden bg-white border-[1px] ${
                                 isEventDay ? 'bg-red-200' : isWd ? 'bg-blue-200' : isLeave ? 'bg-yellow-200' : ''
@@ -339,7 +327,6 @@ export default function Yourworkload() {
                               <p className="relative text-black font-bold text-[.6rem] z-30">{!isEventDay && hours}</p>
                             </td>
 
-                            {/* Render total for every 5-day block */}
                             {(dateIndex + 1) % 5 === 0 && (
                               <th
                                 key={`total-${dateIndex}`}

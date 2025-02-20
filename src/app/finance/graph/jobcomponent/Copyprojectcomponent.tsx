@@ -27,6 +27,7 @@ import toast from 'react-hot-toast'
 import axios, { AxiosError } from 'axios'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 
 type Project = {
   createdAt: string
@@ -99,7 +100,8 @@ export default function Copyprojectcomponent( prop: Data) {
   const params = useSearchParams()
   const id = params.get('teamid')
   const [isValidated, setIsvalidated] = useState(false)
-    const [projectid, setProjectId] = useState('')
+  const [adminnotes, setAdminnotes] = useState('')
+  const [desc, setDesc] = useState('')
   
 
 
@@ -266,7 +268,9 @@ export default function Copyprojectcomponent( prop: Data) {
           jobno: jobno,
           start: prop.start,
           jobcomponentvalue: filteredFormData,
-          isvariation: true
+          isvariation: true,
+          adminnotes: adminnotes,
+          description:desc
         }, {
           withCredentials: true,
           headers: {
@@ -300,7 +304,7 @@ export default function Copyprojectcomponent( prop: Data) {
           }
         ] }])
         setDialog(false)
-        // window.location.reload()
+        window.location.reload()
 
       }
       } catch (error) {
@@ -443,13 +447,6 @@ export default function Copyprojectcomponent( prop: Data) {
     
   },[])
 
-//   useEffect(() => {
-//     if(id === '' || id === undefined || id === null){
-//       router.push('/pm/projects')
-//     }
-//   },[id])
-
-// console.log(prop)
 
 
 const [list, setList] = useState<Project[]>([])
@@ -481,7 +478,7 @@ useEffect(() => {
     </DialogTrigger>
     <DialogContent className=' max-h-[90%] overflow-y-auto'>
       <div className=' w-full p-4 flex flex-col gap-4'>
-        <p className=' text-sm uppercase font-semibold text-red-700 flex items-center gap-2'><span className=' bg-red-700 px-4 py-1 text-zinc-100 text-xs'>Variation</span>Job Component</p>
+        <p className=' text-sm uppercase font-semibold text-red-700 flex items-center gap-2'><span className=' bg-red-700 px-4 py-1 text-zinc-100 text-xs'>Variation</span>Project</p>
         <div className=' w-full flex flex-col gap-4'>
 {/* 
             <div className=' w-full flex items-end justify-end'>
@@ -492,7 +489,7 @@ useEffect(() => {
                       
                                     
                       <div className=' flex flex-col'>
-                       <Label className=" text-zinc-500">Job Number</Label>
+                       <Label className=" text-zinc-500">Job Number<span className=' text-red-500 text-lg'>*</span></Label>
                        <Input type='text' value={jobno} onChange={(e) => setJobno(e.target.value)} className=' text-xs bg-zinc-200' placeholder='Job no'/>
             
                       </div>
@@ -505,7 +502,7 @@ useEffect(() => {
                                                                                                       
                                                                                   
                                   <div className=' w-full'>
-                                    <Label className=' text-zinc-500'>Project Name <span className=' text-red-700'>*</span></Label>
+                                    <Label className=' text-zinc-500'>Project Name <span className=' text-red-500 text-lg'>*</span></Label>
                                     <Input type='text' value={prop.pname}  className=' text-xs h-[35px] bg-white' placeholder='Project name'/>
                                                                                   
                                                                                   
@@ -513,7 +510,7 @@ useEffect(() => {
                                                                                   
                                                                                                      
                                     <div className=' w-full'>
-                                      <Label className=' text-zinc-500'>Client<span className=' text-red-700'>*</span></Label>
+                                      <Label className=' text-zinc-500'>Client<span className=' text-red-500 text-lg'>*</span></Label>
                                     <Input type='text' value={prop.client}  className=' text-xs h-[35px] bg-white' placeholder='Project name'/>
             
                                     
@@ -521,26 +518,13 @@ useEffect(() => {
                                     </div>
                                                                                   
                                 </div>
+                                
+                                                    <div className=' w-full'>
+                                                          <Label className=' text-zinc-500'>If other, please input the client name.</Label>
+                                                          <Input type='text' className=' text-xs h-[35px] bg-white' placeholder='Client Name'/>                                           
+                                                        </div>
                                                                                   
-                                <div className=' flex items-start gap-4 '>
-                                                                                                      
-                                                                                  
-                                  <div className=' w-full'>
-                                    <Label className=' text-zinc-500'>Start Date <span className=' text-red-700'>*</span></Label>
-                                    <Input type='text' value={prop.start.split('T')[0]}  className=' text-xs h-[35px] bg-white' placeholder='Project name' />
-                                                                                  
-                                                                                  
-                                  </div>
-                                                                                  
-                                                                                                     
-                                    <div className=' w-full'>
-                                      <Label className=' text-zinc-500'>End date<span className=' text-red-700'>*</span></Label>
-                                      <Input type='text' value={prop.end.split('T')[0]}  className=' text-xs h-[35px] bg-white' placeholder='Project name'/>
-                                                                                  
-                                    </div>
-                                                                                  
-                                </div>
-                                                  
+                            
                                                                                                     
                          </div>
 
@@ -555,7 +539,7 @@ useEffect(() => {
                     <AccordionContent>
                         <div className="bg-zinc-200 flex flex-col gap-1 p-2">
 
-                        <Label className="mt-2 text-zinc-500">Variation Name</Label>
+                        <Label className="mt-2 text-zinc-500">Variation Name<span className=' text-red-500 text-lg'>*</span></Label>
                         <Input
                             type="text"
                             className="text-xs h-[35px] bg-white"
@@ -563,6 +547,22 @@ useEffect(() => {
                             value={item.jobcomponent}
                             onChange={(e) => handleChange(index, 'jobcomponent', e.target.value)}
                         />
+
+                        <Label className="mt-2 text-zinc-500">Description</Label>
+                        <Textarea
+                            className="text-xs h-[35px] bg-white"
+                            placeholder="Description"
+                            value={desc}
+                            onChange={(e) => setDesc( e.target.value)}
+                        />
+
+                        <Label className="mt-2 text-zinc-500">Admin Notes</Label>
+                          <Textarea
+                              className="text-xs h-[35px] bg-white"
+                              placeholder="Admin Notes"
+                              value={adminnotes}
+                              onChange={(e) => setAdminnotes(e.target.value)}
+                          />
 
                         {/* <Label className="mt-2 text-zinc-500">Job no.</Label>
                         <Input
@@ -572,7 +572,7 @@ useEffect(() => {
                             value={item.jobno}
                             onChange={(e) => handleChange(index, 'jobno', e.target.value)}
                         /> */}
-                        <Label className="mt-2 text-zinc-500">Job Manager</Label>
+                        <Label className="mt-2 text-zinc-500">Job Manager<span className=' text-red-500 text-lg'>*</span></Label>
                         <Select
                             value={item.jobmanager}
                             onValueChange={(value) => handleChange(index, 'jobmanager', value)}
@@ -588,8 +588,8 @@ useEffect(() => {
                         </Select>
 
 
-                        <Label className="font-semibold mt-4">Job Component</Label>
-                        <Label className="mt-2 text-zinc-500">Budget Type</Label>
+                        {/* <Label className="font-semibold mt-4">Job Component</Label> */}
+                        <Label className="mt-2 text-zinc-500">Budget Type<span className=' text-red-500 text-lg'>*</span></Label>
                         <Select
                             value={item.budgettype}
                             onValueChange={(value) => handleChange(index, 'budgettype', value)}
@@ -603,7 +603,7 @@ useEffect(() => {
                             </SelectContent>
                         </Select>
 
-                        <Label className="mt-2 text-zinc-500">Estimated Budget $</Label>
+                        <Label className="mt-2 text-zinc-500">Job Component Budget<span className=' text-red-500 text-lg'>*</span></Label>
                         <Input
                             type="number"
                             className="text-xs h-[35px] bg-white"

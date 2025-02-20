@@ -14,7 +14,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Textarea } from '../ui/textarea'
 import { Checkbox } from '../ui/checkbox'
 import { Bell, Plus } from 'lucide-react'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { wdSchema, WdSchema } from '@/schema/schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { boolean } from 'zod'
@@ -50,19 +50,20 @@ export default function WDform( prop: Data) {
     handleSubmit,
     reset,
     unregister,
+    control,
+    setValue,
     formState: { errors },
   } = useForm<WdSchema>({
     resolver: zodResolver(wdSchema),
   });
 
   const onSubmit = async (data: WdSchema) => {
-    const { declaration, ...filteredData } = data;
     setLoading(true)
     router.push('?state=true')
 
     try {
       const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/wellnessday/wellnessdayrequest`,{
-       requestdate: data.startdate // Format YYYY-MM
+       requestdate: friday.split('T')[0] // Format YYYY-MM
        
       },
           {
@@ -133,7 +134,6 @@ export default function WDform( prop: Data) {
           }
       })
 
-    console.log(response.data)
     setFriday(response.data.data)
        
       
@@ -166,15 +166,28 @@ export default function WDform( prop: Data) {
           <div className=' flex items-center gap-2 w-full'>
             <div  className=' w-full'>
               <Label className=' mt-2 text-zinc-500'>Start Day Of Wellness Day Cycle: <span className=' text-red-700'>*</span></Label>
-              <Input type='date' className=' text-xs h-[35px] bg-zinc-200' placeholder='Name' {...register('startdate')}/>
+              <Controller
+                  name="startdate"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      {...field}
+                      disabled
+                      type="date"
+                      className="text-xs h-[35px] bg-zinc-200"
+                      placeholder="Name"
+                      value={friday ? friday.split('T')[0] : ''} // Ensure value is a valid string
+                    />
+                  )}
+                />
               {errors.startdate && <p className=' text-[.6em] text-red-500'>{errors.startdate.message}</p>}
 
 
             </div>
 
             <div  className=' w-full'>
-              <Label className=' mt-2 text-zinc-500'>Last friday of the a 2-week cycle <span className=' text-red-700'>*</span></Label>
-              <Input type='date' value={friday.split('T')[0]} className=' text-xs h-[35px] bg-zinc-200'/>
+              <Label className=' mt-2 text-zinc-500'>This is your Wellness Day. <span className=' text-red-700'>*</span></Label>
+              <Input disabled type='date' value={friday.split('T')[0]} className=' text-xs h-[35px] bg-zinc-200'/>
 
 
             </div>
@@ -207,9 +220,9 @@ export default function WDform( prop: Data) {
           <div className=' flex flex-col gap-2 mt-6'>
             <p className=' text-xs font-semibold italic flex items-center gap-1'><Bell size={15} color='red'/>Reminder</p>
             <p className=' text-xs text-zinc-500'>• Wellness Day's won't occur on fortnights with public holidays. Normal 7.6hr days will apply during those fortnights.</p>
-            <p className=' text-xs text-zinc-500'>• For staff who are working towards a Wellnes Day, any leave (sick or other) formightly cycle will be deducted in 8.5hr days (not 7.6hr days).</p>
+            <p className=' text-xs text-zinc-500'>• For staff who are working towards a Wellness Day, any leave (sick or other) fornightly cycle will be deducted in 8.5hr days (not 7.6hr days).</p>
             <p className=' text-xs text-zinc-500'>• Unless approved, a minimum of 8 hours must be spent on billable project work each day to qualify for the
-Weines Day.</p>
+Wellness Day.</p>
 
           </div>
 

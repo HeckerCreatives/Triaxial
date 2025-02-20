@@ -33,6 +33,8 @@ type Props = {
     jobcid: any
     isJobmanager: any
     currinvoice: any
+    manager: string
+    client: string
 }
 
 export default function Invoice( prop: Props) {
@@ -150,9 +152,8 @@ export default function Invoice( prop: Props) {
         try {
             const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}${dynamicCreateInvoiceApiUrl}`,{
                 jobcomponentid: prop.jobcid,
-                currentinvoice: currInvoice,
-                newinvoice: newInvoice,
-                invoiceamount: ratesCalculation,
+                invoice: newInvoice,
+                invoiceamount: amount,
                 comments: notes
             },{
                 withCredentials: true,
@@ -215,15 +216,21 @@ export default function Invoice( prop: Props) {
         }
     },[prop])
 
+    const formatBudgetType = (budgetType: string) => {
+        return budgetType.toLowerCase() === "lumpsum" ? "Lump Sum" : 
+               budgetType.toLowerCase() === "rates" ? "Rates" : budgetType;
+      };
 
-    
+      useEffect(() => {
+        setNewInvoice(prop.currinvoice)
+      }, [prop])
 
   return (
     <Dialog open={dialog} onOpenChange={setDialog} >
                     <DialogTrigger>
                       {prop.children}
                     </DialogTrigger>
-                    <DialogContent className=' bg-white border-none w-[95%] md:w-full max-w-[600px] overflow-hidden'>
+                    <DialogContent className=' text-sm bg-white border-none w-[95%] md:w-full max-w-[600px] overflow-hidden'>
                     <div id='invoice-container' className=" bg-white px-6 py-8 h-full w-full  mx-auto">
                           <div className=' flex items-center justify-center gap-2 text-white w-full'>
                               <img src="/logo.webp" alt="" width={50} />
@@ -244,44 +251,56 @@ export default function Invoice( prop: Props) {
                           {/* <h2 className="text-lg font-bold mb-4">To:</h2>
                           <div className="text-gray-700 mb-2">John Doe</div>
                           <div className="text-gray-700 mb-2">123 Main St.</div> */}
-                          <div className="text-gray-700 mb-2">Project Name - {prop.projectname}</div>
-                          <div className="text-gray-700 mb-2">Job Component Name - {prop.jobcname}</div>
-                          <div className="text-gray-700 mb-2">Job No. - {prop.jobno}</div>
+                          <div className="text-gray-700 mb-1 text-sm">Job No. - {prop.jobno}</div>
+                          <div className="text-gray-700 mb-1 text-sm">Client Name. - {prop.client}</div>
+                          <div className="text-gray-700 mb-1 text-sm">Project Name - {prop.projectname}</div>
+                          <div className="text-gray-700 mb-1 text-sm">Job Manager - {prop.manager}</div>
+                          <div className="text-gray-700 mb-1 text-sm">Job Component - {prop.jobcname}</div>
+                          <div className="text-gray-700 mb-1 text-sm">Budget Type - {formatBudgetType(prop.budgettype)}</div>
                           {/* <div className="text-gray-700 mb-2">Admin Notes : {prop.notes}</div> */}
 
-                          <label htmlFor="">Type</label>
-                          <Select value={prop.budgettype} disabled={true}>
-                            <SelectTrigger className="w-[180px] bg-zinc-200">
-                                <SelectValue placeholder="Select" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="rates">Rates</SelectItem>
-                                <SelectItem value="lumpsum">lump sum</SelectItem>
-                            </SelectContent>
-                            </Select>
+                          
 
                       </div>
                       <table className="w-full mb-4">
                           <thead>
                               <tr>
                                   <th className="text-left font-bold text-gray-700">Job Component Budget</th>
-                                  <th className="text-left font-bold text-gray-700">Curr. Invoice</th>
-                                  <th className="text-right font-bold text-gray-700">New Invoice ({prop.budgettype === 'lumpsum' ?  '%' : 'hours'})</th>
+                                  {prop.budgettype !== 'rates' && (
+                                    <>
+                                    <th className="text-left font-bold text-gray-700">Curr. Invoice</th>
+                                    <th className="text-right font-bold text-gray-700">New Invoice ({prop.budgettype === 'lumpsum' ?  '%' : 'hours'})</th>
+                                    </>
+                                  )}
+                                  
                               </tr>
                           </thead>
                           <tbody>
                               <tr>
-                                  <td className="text-left text-gray-700">
+                                  
+
+                                  {prop.budgettype !== 'rates' ? (
+                                    <>
+                                    <td className="text-left text-gray-700">
                                   <Input value={prop.estimatedbudget} placeholder='Amount' className=' bg-zinc-200'/>
                                   </td>
 
-                                  <td className="text-left text-gray-700">
-                                  <Input defaultValue={prop.currinvoice}  value={currInvoice} placeholder='Amount' className=' bg-zinc-200'/>
-                                  </td>
+                                    <td className="text-left text-gray-700">
+                                    <Input defaultValue={prop.currinvoice}  value={currInvoice} placeholder='Amount' className=' bg-zinc-200'/>
+                                    </td>
 
-                                  <td className="text-left text-gray-700">
-                                  <Input max={100} type='number'  value={newInvoice} onChange={(e) => setNewInvoice(e.target.valueAsNumber)} placeholder='Amount' className=' bg-zinc-200'/>
-                                  </td>
+                                    <td className="text-left text-gray-700">
+                                    <Input max={100} type='number'  value={newInvoice} onChange={(e) => setNewInvoice(e.target.valueAsNumber)} placeholder='Amount' className=' bg-zinc-200'/>
+                                    </td>
+                                    </>
+                                  ) : (
+                                    <td className="text-left text-gray-700">
+                                    <Input disabled placeholder='Amount' className=' bg-zinc-200'/>
+                                    </td>
+                                  )}
+
+
+                                  
                               </tr>
                             
                           </tbody>
@@ -293,8 +312,22 @@ export default function Invoice( prop: Props) {
                     
                       <hr className="my-2"/>
 
-                      <label htmlFor="">This invoice amount</label>
-                    < Input value={prop.budgettype === 'rates' ? ratesCalculation : lumpsumCalculation} placeholder=' Amount' className=' bg-zinc-200'/>
+                      {prop.budgettype !== 'rates' ? (
+                        <>
+                            <label htmlFor="">This invoice amount</label>
+                            < Input value={prop.budgettype === 'rates' ? ratesCalculation : lumpsumCalculation} placeholder=' Amount' className=' bg-zinc-200'/>
+                        </>
+                        ) : (
+                            <>
+                            <label htmlFor="">This invoice amount</label>
+                            <Input type='number' value={amount} onChange={(e) => setAmount(e.target.valueAsNumber)} placeholder=' Amount' className=' bg-zinc-200'/>  
+                            </>
+                            
+                        )}
+
+                       
+
+                    
 
                       <label htmlFor="" className=' mt-8'>Please insert an instruction or comments for the invoice</label>
                       <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder=' Please input here' className=' bg-zinc-200'/>

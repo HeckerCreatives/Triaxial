@@ -50,7 +50,6 @@ export default function Teamlist() {
         setList(response.data.data)
         setTotalpage(response.data.data.totalpages)
         setLoading(false)
-        console.log(response.data)
     }
     getList()
   },[])

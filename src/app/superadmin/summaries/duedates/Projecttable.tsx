@@ -174,7 +174,7 @@ export default function Projecttable() {
             <TableCell>{item.teamLeaderFullname}</TableCell>
             <TableCell>{item.projectCount}</TableCell>
             <TableCell>
-              <a href={`/pm/summaries/duedates/viewduedates?projectid=${item._id}`} className=' w-fit bg-red-700 rounded-sm p-1 text-white flex items-center gap-2'><Eye size={15}/> View</a>
+              <a href={`/superadmin/summaries/duedates/viewduedates?projectid=${item._id}`} className=' w-fit bg-red-700 rounded-sm p-1 text-white flex items-center gap-2'><Eye size={15}/> View</a>
             </TableCell>
             
 

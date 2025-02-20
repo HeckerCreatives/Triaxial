@@ -2,11 +2,8 @@
 import { any, z } from "zod";
 
 export const leaveSchema = z.object({
-// name: z
-//     .string()
-//     .nonempty("Name is empty"),
  details: z
-    .string(),
+    .string().optional(),
 startdate: z
     .string()
     .nonempty("Start date is empty"),
@@ -35,8 +32,7 @@ export const wdSchema = z.object({
 //     .string()
 //     .nonempty("Name is empty"),
 startdate: z
-    .string()
-    .nonempty("Start date is empty"),
+    .string().optional(),
 // enddate: z
 //     .string(),
 // totalworkingdays: z
@@ -56,9 +52,7 @@ export const wfhSchema = z.object({
 startdate: z
     .string()
     .nonempty("Start date is empty"),
-enddate: z
-    .string()
-    .nonempty("End date is empty"),
+
 totalhoursonleave: z
     .number(),
 duringleave: z

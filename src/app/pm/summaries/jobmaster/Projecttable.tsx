@@ -139,7 +139,7 @@ export default function Projecttable() {
             <TableHead>Job Manager</TableHead>
             <TableHead>Component Budget</TableHead>
             <TableHead>% Invoice</TableHead>
-            <TableHead>Job Component</TableHead>
+            <TableHead>Job Component Budget</TableHead>
             <TableHead>Job Members</TableHead>
             <TableHead>Team</TableHead>
    
@@ -156,7 +156,7 @@ export default function Projecttable() {
               <TableCell className={` ${clientColor(project.priority)} text-black`}>{project.client}</TableCell>
               <TableCell className={` ${clientColor(project.priority)} text-black`}>{project.projectname}</TableCell>
               <TableCell className={` ${clientColor(project.priority)} text-black`}>{project.managerName}</TableCell>
-              <TableCell className={` ${clientColor(project.priority)} text-black`}>{job.estimatedBudget}</TableCell>
+              <TableCell className={` ${clientColor(project.priority)} text-black`}>${job.estimatedBudget}</TableCell>
               <TableCell className={` ${clientColor(project.priority)} text-black`}>{project.invoiced}</TableCell>
               <TableCell className={` ${clientColor(project.priority)} text-black`}>{job.name}</TableCell>
               <TableCell className={` flex items-center gap-2 h-[50px] ${clientColor(project.priority)} text-black`}>{job.members.map((item, index) => (

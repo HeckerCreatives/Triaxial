@@ -227,7 +227,9 @@ export default function Emailtable() {
                     </div>
 
                   </div>
-                  <p className=' mt-4 whitespace-pre-wrap'>{content}</p>
+                  {/* <p className=' mt-4 whitespace-pre-wrap'>{content}</p> */}
+                  <pre className=' text-xs'>{content}</pre>
+
                 </div>
               </DialogContent>
             </Dialog>

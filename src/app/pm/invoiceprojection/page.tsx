@@ -27,7 +27,6 @@ export default function page() {
         })
   
         setTeamlist(response.data.data.teams)
-        console.log('daskfjh',teamlist)
        
       }
       getList()

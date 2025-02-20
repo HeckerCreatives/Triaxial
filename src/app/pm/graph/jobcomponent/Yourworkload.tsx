@@ -20,7 +20,7 @@ import axios, { AxiosError } from 'axios'
 import toast from 'react-hot-toast'
 import { useRouter, useSearchParams } from 'next/navigation'
 import {statusData} from '@/types/data'
-import { Check, Copy, File, Folder, Layers2, OctagonAlert, Pen, Plus, X } from 'lucide-react'
+import { Check, Copy, Eye, File, Folder, Layers2, OctagonAlert, Pen, Plus, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import Createprojectcomponent from './Createprojectcomponent'
@@ -35,6 +35,9 @@ import DuplicateJobComponent from '@/components/forms/DuplicateJobComponent'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { clientColor } from '@/utils/helpers'
 import Individualrequest from './IndividualRequest'
+import DatePicker from 'react-datepicker'
+import "react-datepicker/dist/react-datepicker.css";
+
 
 
 
@@ -70,7 +73,8 @@ type Leave = {
 }
 
 interface FormData {
-  date: string;
+  startdate: string;
+  enddate: string;
   employeeid: string;
   hours: number;
   jobcomponentid: string;
@@ -159,6 +163,7 @@ export default function Yourworkload() {
   const [componentid, setComponentid] = useState('')
   const [tempData, setTempdata] = useState()
   const [list, setList] = useState<Graph[]>([])
+  const [search, setSearch] = useState('')
 
    const handleCheckboxChange = (id: string) => {
      setComponentid((prevSelectedId) => (prevSelectedId === id ? '' : id));
@@ -340,7 +345,7 @@ export default function Yourworkload() {
     try {
       const timer = setTimeout(() => {
         const getList = async () => {
-          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/listteamjobcomponent?teamid=${id}`,{
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/listteamjobcomponent?teamid=${id}&search=${search}`,{
             withCredentials: true,
             headers: {
               'Content-Type': 'application/json'
@@ -386,7 +391,7 @@ export default function Yourworkload() {
   }
     
     
-  },[refresh])
+  },[refresh, search])
 
 
   const isDateInRange = (dateToCheck: string, startDate: string, endDate: string): boolean => {
@@ -450,7 +455,7 @@ export default function Yourworkload() {
     }
 
     if(isWellnessDate){
-      colorData.push('bg-fuchsia-400')
+      colorData.push('bg-fuchsia-300')
     }
 
     return colorData; 
@@ -679,7 +684,6 @@ export default function Yourworkload() {
       if (row) {
         row.scrollIntoView({ behavior: 'smooth', block: 'center' });
       } else {
-        console.log('Row not found'); // Debugging
       }
     }
   }, [scrollId, list]);
@@ -693,7 +697,8 @@ export default function Yourworkload() {
   //multi form
   const [forms, setForms] = useState<FormData[]>([
     {
-      date: '',
+      startdate: '',
+      enddate:'',
       employeeid: employeeid,
       hours: 0,
       jobcomponentid: projectid,
@@ -706,7 +711,8 @@ export default function Yourworkload() {
     setForms([
       ...forms,
       {
-        date: '',
+        startdate: '',
+        enddate: '',
         employeeid: employeeid,
         hours: 0,
         jobcomponentid: projectid,
@@ -751,7 +757,6 @@ export default function Yourworkload() {
   };
 
   const handleSubmit = () => {
-    console.log('Submitted Forms:', forms);
   };
 
   const updateMultipleWorkload = async () => {
@@ -781,7 +786,8 @@ export default function Yourworkload() {
       setSelectedRows([])
       setForms([
         {
-          date: '',
+          startdate: '',
+          enddate: '',
           employeeid: employeeid,
           hours: 0,
           jobcomponentid: projectid,
@@ -823,184 +829,138 @@ export default function Yourworkload() {
     return current.allDates.length > max.allDates.length ? current : max;
   }, list[0]);
 
-  console.log(longestAlldates?.allDates)
-
-
-
-
-
-
-
+  const formatBudgetType = (budgetType: string) => {
+    return budgetType.toLowerCase() === "lumpsum" ? "Lump Sum" : 
+           budgetType.toLowerCase() === "rates" ? "Rates" : budgetType;
+  };
 
 
   return (
    <div className=' w-full h-full flex flex-col justify-center bg-secondary p-4 text-zinc-100'>
+    <div className=' flex flex-col bg-primary mb-2 p-4'>
+        <div className=' w-full flex items-end justify-end'>
+          <input value={search} onChange={(e) => setSearch(e.target.value)} type="text" placeholder='Search project' className=' p-2 text-black bg-white rounded-sm text-xs' />
+        </div>
 
-      <div className=' w-full flex items-center justify-between h-auto bg-primary mb-2 p-4 text-xs'>
+        <div className=' w-full flex items-center justify-between h-auto bg-primary text-xs'>
 
-        <div className=' flex gap-12'>
+          <div className=' flex gap-12'>
 
-          <div className=' flex flex-col gap-1 bg-primary rounded-sm text-xs'>
+            <div className=' flex flex-col gap-1 bg-primary rounded-sm text-xs'>
 
-            <p className=' text-xs mt-2'>Project Component:</p>
-            <div className='flex items-center gap-2 bg-primary rounded-sm text-xs mt-2'>
-              <Createprojectcomponent>
-                <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                  <button className={`text-xs p-1 bg-red-600  rounded-sm`}><Plus size={12}/></button>
-                  <p>Create</p>
-                </div>
-              </Createprojectcomponent>
+              
 
-              {componentid === '' ? (
-                 <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                  <button onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><Pen size={12}/></button>
-                  <p>Edit</p>
-                </div>
-                
-              ) : (
-                <>
-                {(isJobmamager === true || isMamager === true) ? (
-                   <EditJobComponent id={findJobComponent?.componentid} isManger={findJobComponent?.jobmanager.isManager} isJobManager={findJobComponent?.jobmanager.isJobManager} project={findJobComponent?.projectname.projectid} jobmanager={findJobComponent?.jobmanager.employeeid} engr={engrId} engrnotes={engrMember?.notes} engrrvr={engrrvrId} engrrvrnotes={engrrvrMember?.notes} drftr={draftId} drftrnotes={drftMember?.notes} drftrrvr={draftrvrId} drftrrvrnotes={drftrvrMember?.notes} members={findJobComponent?.members || []} pname={findJobComponent?.projectname.name || ''} client={findJobComponent?.clientname.name || ''} start={findJobComponent?.projectstart || ''} end={findJobComponent?.projectend || ''}>
-                                                                       <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                                                                         <button onClick={() => setDialog2(true)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Pen size={12}/></button>
-                                                                         <p>Edit</p>
-                                                                       </div>
-                                                                     </EditJobComponent>
-                ):(
+              <p className=' text-xs mt-2'>Project Component:</p>
+              <div className='flex items-center gap-2 bg-primary rounded-sm text-xs mt-2'>
+                <Createprojectcomponent>
                   <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                    <button onClick={() => toast.error('Only job manager & project manager can edit this job component.')} className={`text-xs p-1 bg-red-600  rounded-sm`}><Pen size={12}/></button>
+                    <button className={`text-xs p-1 bg-red-600  rounded-sm`}><Plus size={20}/></button>
+                    <p>Create</p>
+                  </div>
+                </Createprojectcomponent>
+
+                {componentid === '' ? (
+                  <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                    <button onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><Pen size={20}/></button>
                     <p>Edit</p>
                   </div>
+                  
+                ) : (
+                  <>
+                  {(isJobmamager === true || isMamager === true) ? (
+                    <EditJobComponent id={findJobComponent?.componentid} isManger={findJobComponent?.jobmanager.isManager} isJobManager={findJobComponent?.jobmanager.isJobManager} project={findJobComponent?.projectname.projectid} jobmanager={findJobComponent?.jobmanager.employeeid} engr={engrId} engrnotes={engrMember?.notes} engrrvr={engrrvrId} engrrvrnotes={engrrvrMember?.notes} drftr={draftId} drftrnotes={drftMember?.notes} drftrrvr={draftrvrId} drftrrvrnotes={drftrvrMember?.notes} members={findJobComponent?.members || []} pname={findJobComponent?.projectname.name || ''} client={findJobComponent?.clientname.name || ''} start={findJobComponent?.projectstart || ''} end={findJobComponent?.projectend || ''} component={findJobComponent?.jobcomponent || ''} adminnotes={findJobComponent?.adminnotes || ''}>
+                                                                        <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                                                                          <button onClick={() => setDialog2(true)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Pen size={20}/></button>
+                                                                          <p>Edit</p>
+                                                                        </div>
+                                                                      </EditJobComponent>
+                  ):(
+                    <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                      <button onClick={() => toast.error('Only job manager & project manager can edit this job component.')} className={`text-xs p-1 bg-red-600  rounded-sm`}><Pen size={20}/></button>
+                      <p>Edit</p>
+                    </div>
+                  )}
+                  </>
+                  
                 )}
-                </>
-                
-              )}
 
-              {componentid === '' ? (
-                 <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                  <button  onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><Layers2 size={12}/></button>
-                  <p>Duplicate</p>
-                </div>
-                
-              ) : (
-                <DuplicateJobComponent name={findJobComponent?.jobcomponent} manager={findJobComponent?.jobmanager.employeeid} type={findJobComponent?.budgettype} id={findJobComponent?.projectname.projectid} pname={findJobComponent?.projectname.name || ''} client={findJobComponent?.clientname.name || ''} start={findJobComponent?.projectstart || ''} end={findJobComponent?.projectend || ''} estbudget={findJobComponent?.estimatedbudget || 0}>
+                {componentid === '' ? (
                   <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                    <button onClick={() => setDialog2(true)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Layers2 size={12}/></button>
+                    <button  onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><Layers2 size={20}/></button>
                     <p>Duplicate</p>
                   </div>
-                </DuplicateJobComponent>
-                
-              )}
-
-            
-
-
-             
-
-              {componentid === '' ? (
-                <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                  <button onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><Copy size={12}/></button>
-                  <p>Variation</p>
-                </div>
-                
-              ) : (
-                <Copyprojectcomponent name={findJobComponent?.jobcomponent ?? ''} manager={findJobComponent?.jobmanager.employeeid ?? ''} budgettype={findJobComponent?.budgettype ?? ''} engr={findJobComponent?.members[0]?.employee._id} engrrvr={findJobComponent?.members[1]?.employee._id} drftr={findJobComponent?.members[2]?.employee._id} drftrrvr={findJobComponent?.members[3]?.employee._id} estbudget={findJobComponent?.estimatedbudget ?? 0} state={dialog3} client={findJobComponent?.clientname.name || ''} start={findJobComponent?.projectstart || ''} end={findJobComponent?.projectend || ''} pname={findJobComponent?.projectname.name || ''} clientid={findJobComponent?.clientname.clientid || ''}>
-                <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                  <button onClick={() => setDialog3(!dialog3)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Copy size={12}/></button>
-                  <p>Variation</p>
-                </div>
-              </Copyprojectcomponent>
-              )}
-
-              {componentid === '' ? (
-                 <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                  <button onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><File size={12}/></button>
-                  <p>Complete</p>
-                </div>
-
-              ) : (
-                <JobComponentStatus name={findJobComponent?.jobcomponent ?? ''} status={findJobComponent?.status} client={findJobComponent?.clientname.name ?? ''} _id={findJobComponent?._id ?? ''} jobno={findJobComponent?.jobno ?? ''} teamname={findJobComponent?.teamname ?? ''} managerName={findJobComponent?.jobmanager.fullname ?? ''} projectname={findJobComponent?.projectname.name ?? ''} invoiced={`${findJobComponent?.invoice.amount ?? ''}`} budget={`${findJobComponent?.estimatedbudget}`} currinvoice={findJobComponent?.invoice.amount || 0}  >
-                  <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                    <button className={`text-xs p-1 bg-red-600  rounded-sm`}><File size={12}/></button>
-                    <p>Complete</p>
-                  </div>
-                </JobComponentStatus>
-              )}
-
-              {componentid === '' ? (
-                 <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                  <button onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><File size={12}/></button>
-                  <p>Invoice</p>
-                </div>
-
-              ) : (
-                <Invoice projectname={findJobComponent?.projectname.name} jobcname={findJobComponent?.jobcomponent} jobno={findJobComponent?.jobno} budgettype={findJobComponent?.budgettype} estimatedbudget={findJobComponent?.estimatedbudget} jobcid={findJobComponent?.componentid} isJobmanager={findJobComponent?.jobmanager.isJobManager} currinvoice={findJobComponent?.invoice.percentage}>
-                  <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                    <button className={`text-xs p-1 bg-red-600  rounded-sm`}><File size={12}/></button>
-                    <p>Invoice</p>
-                  </div>       
-                </Invoice>
-              )}
-
-              {/* {componentid === '' ? (
-                 <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                  <button onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><Folder size={12}/></button>
-                  <p>Archive</p>
-                </div>
-
-              ) : (
-
-                <Dialog>
-                <DialogTrigger>
-                <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                  <button className={`text-xs p-1 bg-red-600  rounded-sm`}><Folder size={12}/></button>
-                  <p>Archive</p>
-                </div>
-                </DialogTrigger>
-                <DialogContent className=' bg-secondary p-6 text-white border-none'>
-                  <DialogHeader>
-                    <DialogTitle>Move to archived.</DialogTitle>
-                    <DialogDescription>
-                      Are you sure you to archived the selected job component?
-                    </DialogDescription>
-                  </DialogHeader>
-
-                  <p>Job Component: {findJobComponent?.jobcomponent} </p>
-
-                  <div className=' flex items-center justify-end gap-4 mt-4'>
-                    <button onClick={archived} className=' bg-red-700 text-zinc-100 px-4 py-2 text-xs rounded-sm mt-4 w-auto'>Continue</button>
-
-                  </div>
-                </DialogContent>
-              </Dialog>
-
-                
-              )} */}
-
-
-             
-
-                
-
-                
+                  
+                ) : (
+                  <DuplicateJobComponent name={findJobComponent?.jobcomponent} manager={findJobComponent?.jobmanager.employeeid} type={findJobComponent?.budgettype} id={id} pname={findJobComponent?.projectname.name || ''} client={findJobComponent?.clientname.name || ''} start={findJobComponent?.projectstart || ''} end={findJobComponent?.projectend || ''} estbudget={findJobComponent?.estimatedbudget || 0} clientid={findJobComponent?.clientname.clientid || ''}>
+                    <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                      <button onClick={() => setDialog2(true)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Layers2 size={20}/></button>
+                      <p>Duplicate</p>
+                    </div>
+                  </DuplicateJobComponent>
+                  
+                )}
 
               
 
 
+              
+
+                {componentid === '' ? (
+                  <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                    <button onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><Copy size={20}/></button>
+                    <p>Variation</p>
+                  </div>
+                  
+                ) : (
+                  <Copyprojectcomponent name={findJobComponent?.jobcomponent ?? ''} manager={findJobComponent?.jobmanager.employeeid ?? ''} budgettype={findJobComponent?.budgettype ?? ''} engr={findJobComponent?.members[0]?.employee._id} engrrvr={findJobComponent?.members[1]?.employee._id} drftr={findJobComponent?.members[2]?.employee._id} drftrrvr={findJobComponent?.members[3]?.employee._id} estbudget={findJobComponent?.estimatedbudget ?? 0} state={dialog3} client={findJobComponent?.clientname.name || ''} start={findJobComponent?.projectstart || ''} end={findJobComponent?.projectend || ''} pname={findJobComponent?.projectname.name || ''} clientid={findJobComponent?.clientname.clientid || ''}>
+                  <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                    <button onClick={() => setDialog3(!dialog3)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Copy size={20}/></button>
+                    <p>Variation</p>
+                  </div>
+                </Copyprojectcomponent>
+                )}
+
+                {componentid === '' ? (
+                  <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                    <button onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><File size={20}/></button>
+                    <p>Complete</p>
+                  </div>
+
+                ) : (
+                  <JobComponentStatus name={findJobComponent?.jobcomponent ?? ''} status={findJobComponent?.status} client={findJobComponent?.clientname.name ?? ''} _id={findJobComponent?._id ?? ''} jobno={findJobComponent?.jobno ?? ''} teamname={findJobComponent?.teamname ?? ''} managerName={findJobComponent?.jobmanager.fullname ?? ''} projectname={findJobComponent?.projectname.name ?? ''} invoiced={`${findJobComponent?.invoice.amount ?? ''}`} budget={`${findJobComponent?.estimatedbudget}`} currinvoice={findJobComponent?.invoice.amount || 0} adminnotes={findJobComponent?.adminnotes || ''}  >
+                    <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                      <button className={`text-xs p-1 bg-red-600  rounded-sm`}><File size={20}/></button>
+                      <p>Complete</p>
+                    </div>
+                  </JobComponentStatus>
+                )}
+
+                {componentid === '' ? (
+                  <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                    <button onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><File size={20}/></button>
+                    <p>Invoice</p>
+                  </div>
+
+                ) : (
+                  <Invoice projectname={findJobComponent?.projectname.name} jobcname={findJobComponent?.jobcomponent} jobno={findJobComponent?.jobno} budgettype={findJobComponent?.budgettype} estimatedbudget={findJobComponent?.estimatedbudget} jobcid={findJobComponent?.componentid} isJobmanager={findJobComponent?.jobmanager.isJobManager} currinvoice={findJobComponent?.invoice.percentage} manager={findJobComponent?.jobmanager.fullname || ''} client={findJobComponent?.clientname.name || ''}>
+                    <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                      <button className={`text-xs p-1 bg-red-600  rounded-sm`}><File size={20}/></button>
+                      <p>Invoice</p>
+                    </div>       
+                  </Invoice>
+                )}
+
+              </div>
+              
             </div>
-            
+
           </div>
+          <Legends/>
 
         </div>
-        <Legends/>
+    </div>
 
-      </div>
-
-      
-
-
-
-      <Individualrequest ref={individualRequestRef} alldates={longestAlldates?.allDates} data={list}/>
+      <Individualrequest ref={individualRequestRef} alldates={longestAlldates?.allDates} data={list} />
 
       <div
       className=' h-auto w-full flex flex-col max-w-[1920px]'>
@@ -1009,21 +969,23 @@ export default function Yourworkload() {
             <table className="table-auto w-full  borer-collapse ml-[6px] ">
             <thead className='  h-[50px]  w-[1600px]'>
 
-              <tr className=' text-[0.6rem] text-zinc-100 font-normal '>
-                  <th className=' font-normal w-[40px]'>Action</th>
-                  <th className=' font-normal w-[100px] ' >Job no.</th>
+              <tr className=' text-[0.6rem] text-zinc-100 font-normal text-left '>
+                <th className=' font-normal w-[30px]'>Action</th>
 
-                    <th className=' font-normal w-[100px] ' >Client Name</th>
-                    <th className=' font-normal w-[100px] ' >Project Name</th>
-                    <th className=' font-normal w-[100px] ' >Job Mgr.</th>
+                  <th className=' font-normal w-[100px] ' >Job Manager</th>
 
-                    <th className=' font-normal w-[100px] ' >Est. $</th>
-                    <th className=' font-normal w-[100px] ' >Invoiced (%/hrs)</th>
-                    <th className=' font-normal w-[100px] ' >Budget type</th>
-                    <th className=' font-normal w-[100px] ' >Job Component</th>
+                  <th className='  font-normal w-[100px] ' >Job Number</th>
+                    <th className='  font-normal w-[100px] ' >Client Name</th>
+                  <th className='  font-normal w-[100px] ' >Job Component</th>
 
-                    <th className=' font-normal w-[50px] ' >Members</th>
-                    <th className=' font-normal w-[50px] ' >Role</th>
+                    <th className='  font-normal w-[100px] ' >Project Name</th>
+
+                    <th className='  font-normal w-[100px] ' >Invoiced (%)</th>
+                    <th className='  font-normal w-[100px] ' >Est. $</th>
+                    <th className='   font-normal w-[110px] ' >Budget type</th>
+
+                    <th className='  font-normal w-[55px] ' >Members</th>
+                    <th className='   font-normal w-[50px] ' >Role</th>
                     <th className=' font-normal w-[50px] ' >Notes</th>
 
               </tr>
@@ -1103,20 +1065,24 @@ export default function Yourworkload() {
                  style={{ visibility: 'collapse' }}
                  >
 
-                  <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
-                    <th className=' font-normal'>Action</th>
-                    <th className=' font-normal  w-[95px]'>Job no.</th>
-                    <th className=' font-normal  w-[95px]'>Client Name</th>
-                    <th className=' font-normal  w-[95px]'>Project Name</th>
-                    <th className=' font-normal w-[95px]'>Job Mgr.</th>
+                <tr className=' text-[0.6rem] text-zinc-100 font-normal text-left '>
+                    <th className=' font-normal w-[30px]'>Action</th>
 
-                    <th className=' font-normal  w-[95px]'>Job Component</th>
-                    <th className=' font-normal  w-[95px]'>Est. $</th>
-                    <th className=' font-normal  w-[95px]'>Invoiced (%/hrs)</th>
-                    <th className=' font-normal  w-[95px]'>Budget type</th>
-                    <th className=' font-normal  w-[50px]'>Members</th>
-                    <th className=' font-normal  w-[50px]'>Role</th>
-                    <th className=' font-normal  w-[50px]'>Notes</th>
+                      <th className='  font-normal w-[100px] ' >Job Manager</th>
+
+                      <th className=' font-normal w-[100px] ' >Job Number</th>
+                        <th className=' font-normal w-[100px] ' >Client Name</th>
+                      <th className=' font-normal w-[100px] ' >Job Component</th>
+
+                        <th className=' font-normal w-[100px] ' >Project Name</th>
+
+                        <th className='  font-normal w-[100px] ' >Invoiced (%/hrs)</th>
+                        <th className='  font-normal w-[100px] ' >Est. $</th>
+                        <th className='   font-normal w-[100px] ' >Budget type</th>
+
+                        <th className='  font-normal w-[50px] ' >Members</th>
+                        <th className=' font-normal w-[50px] ' >Role</th>
+                        <th className=' font-normal w-[50px] ' >Notes</th>
 
                   </tr>
                   </thead>
@@ -1126,7 +1092,7 @@ export default function Yourworkload() {
                   <tr 
                   key={`${graphItem._id}-${memberIndex}`}
                   data-invoice-id={graphItem._id} 
-                  className={`text-[.6rem] py-2 h-[35px] border-[1px] border-zinc-600 ${graphItem.isVariation === true ? 'text-red-600 font-black' : ' text-black'} ${clientColor(graphItem.clientname.priority)}`}>
+                  className={`  text-left text-[.6rem] py-2 h-[35px] border-[1px] border-zinc-600 ${graphItem.isVariation === true ? 'text-red-600 font-black' : ' text-black'} ${clientColor(graphItem.clientname.priority)}`}>
                       <td className="text-center text-white h-[30px] flex items-center justify-center gap-1 w-[30px]">
                         
 
@@ -1142,34 +1108,42 @@ export default function Yourworkload() {
                     </td>
                     {/* ${graphItem.status === null ? 'text-blue-400' :  'text-green-500'} */}
                     {/* <td className={` text-center`}>{memberIndex === 0 && `${graphItem.status === null ? 'Ongoing' :  'Completed'}`}</td> */}
-                    <td className="text-center">{memberIndex === 0 && graphItem.jobno}</td>
+                    <td className=" text-wrap">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
+                    <td className=" text-wrap">{memberIndex === 0 && graphItem.clientname.name}</td>
 
-                      <td className="text-center">{memberIndex === 0 && graphItem.clientname.name}</td>
-                      <td className="text-center">{memberIndex === 0 && graphItem.projectname.name}</td>
-                      <td className="text-center">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
-                      <td className="text-center ">{memberIndex === 0 && `$ ${graphItem.estimatedbudget?.toLocaleString()}`}</td>
 
-                      <td className="text-center">{memberIndex === 0 && `${graphItem.invoice.percentage} ${graphItem.budgettype === 'lumpsum' ? '%' : 'hrs'}`}</td>
-                      <td className="text-center">{memberIndex === 0 && graphItem.budgettype.charAt(0).toUpperCase() + graphItem.budgettype.slice(1)}</td>
-                      <td className={` text-center ${scrollId === graphItem._id && 'text-black'}`}>{memberIndex === 0 && graphItem.jobcomponent}</td>
+                    <td className=" text-wrap">{memberIndex === 0 && graphItem.jobno}</td>
+                    <td className=" text-wrap">{memberIndex === 0 && graphItem.jobcomponent}</td>
+
+
+                    <td className=" text-wrap">{memberIndex === 0 && graphItem.projectname.name}</td>
+                    <td className=" text-wrap">{memberIndex === 0 && ` ${graphItem.budgettype === 'lumpsum' ? `${graphItem.invoice.pendinginvoice}%` : '-'}`}</td>
+                    <td className=" text-wrap ">{memberIndex === 0 && `${graphItem.budgettype === 'lumpsum' ? `$ ${graphItem.estimatedbudget}` : '-'}`}</td>
+                    <td className=" text-wrap">{memberIndex === 0 && formatBudgetType(graphItem.budgettype)}</td>
 
 
           
-                    <td className="text-center">{member.employee.initials}</td>
-                    <td className="text-center text-[.5rem]">{member.role}</td>
-                    <td className="text-center">
+                    <td className=" text-wrap">{member.employee.initials}</td>
+                    <td className=" text-wrap text-[.5rem]">{member.role}</td>
+                    <td className=" text-wrap">
                       <Dialog>
-                        <DialogTrigger>{member.notes === '' ? '... ' : <button className=' text-[.5rem] bg-red-600 rounded-sm text-white p-1'>View</button>}</DialogTrigger>
-                        <DialogContent className=' bg-secondary p-6 border-none max-w-[600px] text-white'>
-                          <DialogHeader>
-                            <DialogTitle>Notes</DialogTitle>
-                            <DialogDescription>
-                              
-                            </DialogDescription>
-                          </DialogHeader>
-                          <p className=' text-xs text-zinc-400'>{member.notes}</p>
-                        </DialogContent>
-                      </Dialog>
+                      <DialogTrigger className=' bg-red-600 p-1 rounded-sm flex items-center text-white text-[.5rem]'>
+                        <Eye size={10} /> View
+                      </DialogTrigger>
+                      <DialogContent className=' bg-secondary p-6 border-none max-w-[600px] text-white'>
+                        <DialogHeader>
+                          <DialogTitle>Notes</DialogTitle>
+                          <DialogDescription>
+                            
+                          </DialogDescription>
+                        </DialogHeader>
+                        {member.notes === '' ? (
+                          <p className=' text-xs text-zinc-400 h-full w-full text-center'>No notes.</p>
+                        ):(
+                        <p className=' text-xs text-zinc-400'>{member.notes}</p>
+                        )}
+                      </DialogContent>
+                    </Dialog>
 
                       </td>
 
@@ -1230,7 +1204,7 @@ export default function Yourworkload() {
                       // Precompute weekly totals
                       const totalHoursForWeek: number[] = [];
                       let currentWeekTotal = 0;
-                      let weekIndex = 0; // Track the current week's index
+                      let weekCounter = 0;
 
                       longestAlldates.allDates.forEach((dateObj, index) => {
                         const memberDate = member.dates?.find(
@@ -1238,11 +1212,12 @@ export default function Yourworkload() {
                         );
                         currentWeekTotal += memberDate?.hours || 0;
 
-                        // If it's Friday or the last date in the range, push the total for the week
-                        if (new Date(dateObj).getDay() === 5 || index === longestAlldates.allDates.length - 1) {
+                        // If it's Friday or last date, store the week's total
+                        const isLastDate = index === longestAlldates.allDates.length - 1;
+                        if (new Date(dateObj).getDay() === 5 || isLastDate) {
                           totalHoursForWeek.push(currentWeekTotal);
-                          currentWeekTotal = 0; // Reset for the next week
-                          weekIndex++; // Move to the next week
+                          currentWeekTotal = 0; // Reset for next week
+                          weekCounter++; // Move to next week
                         }
                       });
 
@@ -1254,6 +1229,8 @@ export default function Yourworkload() {
                           {longestAlldates.allDates.map((dateObj, index) => {
                             const date = new Date(dateObj);
                             const isFriday = date.getDay() === 5;
+                            const weekIndex = Math.floor(index / 5); // Ensure correct indexing
+                            
                             const memberDate = member.dates?.find(
                               (date) => formatDate(date.date) === formatDate(dateObj)
                             );
@@ -1301,6 +1278,8 @@ export default function Yourworkload() {
                                   className="relative text-center overflow-hidden bg-white cursor-pointer border-[1px]"
                                   onClick={handleClick}
                                 >
+
+                                  
                                   <div className="w-full h-[50px] absolute flex top-0">
                                     {statusColor(
                                       memberDate?.status || [],
@@ -1323,10 +1302,9 @@ export default function Yourworkload() {
                                   </p>
                                 </td>
 
-                                {/* Display total hours next to Friday */}
                                 {isFriday && (
                                   <td className="text-center font-normal w-[40px] bg-primary border-[1px] border-zinc-700">
-                                    <p>{totalHoursForWeek[weekIndex]}</p>
+                                    <p className=' text-white'>{totalHoursForWeek[weekIndex] ?? 0}</p>
                                   </td>
                                 )}
                               </React.Fragment>
@@ -1340,6 +1318,8 @@ export default function Yourworkload() {
 
 
 
+
+
                 </tbody>
                 </table>
               </div>
@@ -1347,7 +1327,7 @@ export default function Yourworkload() {
           
            
 
-        {isJobmamager === true ? (
+         {isJobmamager === true ? (
               <Dialog open={dialog} onOpenChange={setDialog}>
                       <DialogContent className=' p-8 bg-secondary border-none text-white max-h-[80%] overflow-y-auto'>
                         
@@ -1414,13 +1394,37 @@ export default function Yourworkload() {
                               <h2 className="text-sm font-semibold mb-2">Form {index + 1}</h2>
                               <div className="space-y-4">
                                 <div>
-                                  <label className="block text-sm font-medium">Date</label>
-                                  <input disabled={wdStatus || event || leave}
+                                  <label className="block text-sm font-medium">Start Date</label>
+                                  {/* <input disabled={wdStatus || event || leave}
                                     type="date"
                                     value={form.date.split('T')[0]}
                                     onChange={(e) => handleChange(index, 'date', e.target.value + 'T00:00:00.000Z')}
                                   placeholder='Date'
-                                  className=' bg-primary p-2 rounded-md text-xs' />
+                                  className=' bg-primary p-2 rounded-md text-xs' /> */}
+
+                                    <DatePicker
+                                      selected={form.startdate ? new Date(form.startdate) : null} // Ensure a valid Date object
+                                      onChange={(date) =>
+                                        handleChange(index, "startdate", date ? date.toISOString() : "")
+                                      }
+                                      dateFormat="dd/MM/yyyy"
+                                      placeholderText="DD/MM/YYYY"
+                                      className="bg-primary text-xs p-2 w-fit z-[9999] relative"
+                                    />
+
+                                  <label className="block text-sm font-medium">End Date</label>
+
+
+                                    <DatePicker
+                                      selected={form.enddate ? new Date(form.enddate) : null} // Ensure a valid Date object
+                                      onChange={(date) =>
+                                        handleChange(index, "enddate", date ? date.toISOString() : "")
+                                      }
+                                      dateFormat="dd/MM/yyyy"
+                                      placeholderText="DD/MM/YYYY"
+                                      className="bg-primary text-xs p-2 w-fit z-[9999] relative"
+                                    />
+
                                 
                                 </div>
 
@@ -1512,12 +1516,7 @@ export default function Yourworkload() {
           </div>
         )}
   
-       
-    
 
-     
-
-        
     </div>
   )
 }

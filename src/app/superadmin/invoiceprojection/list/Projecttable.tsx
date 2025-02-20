@@ -107,7 +107,6 @@ export default function Projecttable() {
           withCredentials: true
         })
 
-        console.log(response.data)
         setList(response.data.data.teams)
 
       } catch (error) {

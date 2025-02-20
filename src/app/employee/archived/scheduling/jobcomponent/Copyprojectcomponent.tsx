@@ -81,7 +81,6 @@ export default function Copyprojectcomponent( prop: Data) {
   const id = params.get('projectid')
   const [isValidated, setIsvalidated] = useState(false)
 
-  console.log(prop)
 
   const [formData, setFormData] = useState<FormData[]>([]);
 
@@ -424,7 +423,6 @@ export default function Copyprojectcomponent( prop: Data) {
 //     }
 //   },[id])
 
-// console.log(prop)
   
   return (
     <Dialog open={dialog} onOpenChange={setDialog} >

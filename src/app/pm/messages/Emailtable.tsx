@@ -22,10 +22,12 @@ import {
 import ButtonSecondary from '@/components/common/ButtonSecondary'
 import Button from '@/components/common/Button'
 import { Textarea } from '@/components/ui/textarea'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import PaginitionComponent from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
 import refreshStore from '@/zustand/refresh'
+import { usePathname, useRouter } from 'next/navigation'
+import toast from 'react-hot-toast'
 
 type Message = {
   _id: string
@@ -35,6 +37,8 @@ type Message = {
   receiverfullname: string
   createdAt: string
   isRead: boolean
+  foreignid: string
+  status: string
 }
 
 
@@ -51,6 +55,12 @@ export default function Emailtable() {
   const [name, setName] = useState('')
   const [content, setContent] = useState('')
   const { refresh, setRefresh, clearRefresh} = refreshStore()
+
+  const [loading1, setLoading1] = useState(false)
+  const [comments, setComments] = useState('')
+  const router = useRouter()
+  const path = usePathname()
+  const apiUrl = path.includes('/superadmin') && '/leave/superadminprocessleaverequest' || path.includes('/pm') && '/leave/managerprocessleaverequest'
 
 
   //messages
@@ -115,59 +125,146 @@ export default function Emailtable() {
   }
 
 
+  const approved = async (id: string) => {
+    setLoading(true)
+    router.push('?state=true')
+
+    try {
+      const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}${apiUrl}`,{
+      requestid: id,
+      status: "Approved",
+      comment : comments
+       
+      },
+          {
+              withCredentials: true,
+              headers: {
+              'Content-Type': 'application/json'
+              }
+          }
+      )
+
+    const response = await toast.promise(request, {
+        loading: 'Approving leave request....',
+        success: `Successfully approved`,
+        error: 'Error while approving leave request',
+    });
+
+   if(response.data.message === 'success'){
+    
+     setDialog(false)
+     router.push('?state=false')
+     setLoading(false)
+
+   }
+
+  } catch (error) {
+      setLoading(false)
+
+       if (axios.isAxiosError(error)) {
+              const axiosError = error as AxiosError<{ message: string, data: string }>;
+              if (axiosError.response && axiosError.response.status === 401) {
+                  toast.error(`${axiosError.response.data.data}`) 
+                  router.push('/')    
+              }
+
+              if (axiosError.response && axiosError.response.status === 400) {
+                  toast.error(`${axiosError.response.data.data}`)     
+                     
+              }
+
+              if (axiosError.response && axiosError.response.status === 402) {
+                  toast.error(`${axiosError.response.data.data}`)          
+                         
+              }
+
+              if (axiosError.response && axiosError.response.status === 403) {
+                  toast.error(`${axiosError.response.data.data}`)              
+                 
+              }
+
+              if (axiosError.response && axiosError.response.status === 404) {
+                  toast.error(`${axiosError.response.data.data}`)             
+              }
+      } 
+     
+  }
+  }
+
+  const reject = async (id: string) => {
+    setLoading1(true)
+    router.push('?state=true')
+
+    try {
+      const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}${apiUrl}`,{
+      requestid: id,
+      status: "Denied",
+      comment : comments
+       
+      },
+          {
+              withCredentials: true,
+              headers: {
+              'Content-Type': 'application/json'
+              }
+          }
+      )
+
+    const response = await toast.promise(request, {
+        loading: 'Approving leave request....',
+        success: `Successfully approved`,
+        error: 'Error while approving leave request',
+    });
+
+   if(response.data.message === 'success'){
+    
+     setDialog(false)
+     router.push('?state=false')
+     setLoading1(false)
+
+   }
+
+  } catch (error) {
+      setLoading1(false)
+
+       if (axios.isAxiosError(error)) {
+              const axiosError = error as AxiosError<{ message: string, data: string }>;
+              if (axiosError.response && axiosError.response.status === 401) {
+                  toast.error(`${axiosError.response.data.data}`) 
+                  router.push('/')    
+              }
+
+              if (axiosError.response && axiosError.response.status === 400) {
+                  toast.error(`${axiosError.response.data.data}`)     
+                     
+              }
+
+              if (axiosError.response && axiosError.response.status === 402) {
+                  toast.error(`${axiosError.response.data.data}`)          
+                         
+              }
+
+              if (axiosError.response && axiosError.response.status === 403) {
+                  toast.error(`${axiosError.response.data.data}`)              
+                 
+              }
+
+              if (axiosError.response && axiosError.response.status === 404) {
+                  toast.error(`${axiosError.response.data.data}`)             
+              }
+      } 
+     
+  }
+  }
+
+
 
   return (
     <div className=' w-full h-full flex justify-center bg-secondary p-6 text-zinc-100'>
 
       <div className=' w-full flex flex-col max-w-[1520px]'>
         <div className=' flex md:flex-row flex-col items-center justify-between gap-4'>
-            {/* <div className=' flex  items-center gap-4'>
-                <Dialog open={dialog} onOpenChange={setDialog}>
-                <DialogTrigger>
-                  <button className=' bg-red-700 text-xs px-6 py-2 rounded-sm flex items-center gap-1'><Plus size={15}/>Create</button>
-                </DialogTrigger>
-                <DialogContent className=' bg-secondary border-none text-zinc-100 grid grid-cols-1 lg:grid-cols-[250px,1fr]'>
-                  <div className=' bg-blue-400 lg:block hidden'
-                  style={{backgroundImage: `url('/bg2.png')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat:"no-repeat"}}
-                  
-                  >
-                    <p className=' p-2 uppercase text-sm font-semibold mt-8 bg-gradient-to-r from-zinc-950 to-zinc-950/10'>Create Mail</p>
-                  </div>
-
-                  <div className=' flex flex-col gap-2 p-4'>
-                    <DialogHeader>
-                    <DialogDescription>
-                    </DialogDescription>
-                    </DialogHeader>
-                  <form action="" className=' flex flex-col '>
-                    <h2 className=' uppercase font-semibold text-sm'>Mail</h2>
-                    <div className=' grid grid-cols-1 gap-4'>
-                      <div className=' flex flex-col gap-1'>
-                        <label htmlFor="" className=' mt-2 text-xs'>Subject</label>
-                        <Input placeholder='Subject' type='text' className=' bg-primary text-xs h-[35px]'/>
-
-                        <label htmlFor="" className=' mt-2 text-xs'>Content</label>
-                        <Textarea placeholder='Content' className=' bg-primary border-none text-xs'/>
-                      </div>
-
-                      
-                    </div>
-                      
-
-                  </form>
-                  
-                    <div className=' w-full flex items-end justify-end gap-2 mt-8'>
-                      <ButtonSecondary onClick={() => setDialog(false)}  name={'Cancel'}/>
-                      <Button onClick={() => setDialog(false)} name={'Save'}/>
-                    </div>
-
-                  </div>
-                  
-                </DialogContent>
-                </Dialog>
-
-            </div> */}
-            
+           
         </div>
 
         <Table className=' mt-4'>
@@ -207,7 +304,7 @@ export default function Emailtable() {
             <DialogTrigger className=' w-full'>
              
             </DialogTrigger>
-              <DialogContent className=' max-w-[600px] p-6 bg-secondary border-none text-white overflow-y-auto'>
+              <DialogContent className=' max-w-[600px] p-6 bg-secondary border-none text-white'>
                 <DialogHeader>
                   <DialogTitle></DialogTitle>
                   <DialogDescription>
@@ -215,7 +312,7 @@ export default function Emailtable() {
                 </DialogHeader>
 
                 <div className=' flex flex-col gap-4 w-full'>
-                  <p className=' text-sm font-semibold'>{title}</p>
+                  <p className=' text-lg font-semibold'>{title}</p>
                   <div className=' flex items-center gap-2'>
                     <div className=' flex items-center justify-center w-8 h-8 rounded-full bg-primary'>
                       <p className=' uppercase text-lg text-red-600'>{name.slice(0,1)}</p>
@@ -227,7 +324,21 @@ export default function Emailtable() {
                     </div>
 
                   </div>
-                  <p className=' whitespace-pre-wrap text-xs text-slate-300'>{content}</p>
+                  <pre className=' text-xs'>{content}</pre>
+                  {/* <p className=' mt-4 whitespace-pre-wrap text-xs'>{content}</p> */}
+
+                  {(title.includes('Leave Request') && item.status === 'Pending') && (
+                  <div className=' w-full flex items-center justify-end gap-2'>
+                  <button onClick={() => reject(item.foreignid)} className=' text-xs bg-zinc-950 text-white px-3 py-1 rounded-md'>Denied</button>
+                  <button onClick={() => approved(item.foreignid)} className=' text-xs bg-red-600 text-white px-3 py-1 rounded-md'>Approved</button>
+
+                  </div>
+                  )}
+
+                  {(item.status === 'Approved' || item.status === 'Denied') && (
+                    <p className={` text-xs w-full text-end ${item.status === 'Approved' ? 'text-green-500' : 'text-red-500'}`}>{item.status}</p>
+                  )}
+                  
                 </div>
               </DialogContent>
             </Dialog>

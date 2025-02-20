@@ -147,10 +147,8 @@ const Individualrequest = forwardRef<HTMLDivElement, Prop>(({ alldates, data }, 
         });
   
         if (header) {
-          console.log('Found column by text:', header);  // Debugging
           header.scrollIntoView({ behavior: 'smooth', block: 'center' });
         } else {
-          console.log('Column not found by text'); // Debugging
         }
       }
     };
@@ -181,24 +179,21 @@ const Individualrequest = forwardRef<HTMLDivElement, Prop>(({ alldates, data }, 
   // Example usage
   const extractedmember = extractUniqueTeamMembers(data);
 
-  console.log(extractedmember)
-
-
 
   return (
-    <div className='h-auto overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
+    <div className='h-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
       <table className="table-auto w-full border-collapse">
         <thead className='bg-secondary h-[80px]'>
           <tr className='text-[0.6rem] text-zinc-100 font-normal'>
-            <th className='w-[20px] font-normal'>Name</th>
-            <th className='w-[50px] font-normal'>Initial</th>
-            <th className='font-normal w-[50px]'>Resource</th>
+            <th className=' text-center w-[20px] font-normal'>Name</th>
+            <th className=' text-center w-[50px] font-normal'>Initial</th>
+            <th className=' text-center font-normal w-[50px]'>Resource</th>
           </tr>
         </thead>
         <tbody>
           {extractedmember.map((item, graphIndex) =>
               <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[30px] border-[1px] border-zinc-600">
-                <td onClick={() => router.push(`/pm/individualworkload?employeeid=${item.employee._id}`)} className="text-center cursor-pointer underline text-blue-400">{item.employee.fullname}</td>
+                <td onClick={() => router.push(`/pm/individualworkload?employeeid=${item.employee._id}&name=${item.employee.fullname}&teamname=${list[0].name}`)} className="text-center cursor-pointer underline text-blue-400">{item.employee.fullname}</td>
                 <td className="text-center">{item.employee.initials}</td>
                 <td className="text-center">{item.role}</td>
               </tr>
@@ -215,17 +210,29 @@ const Individualrequest = forwardRef<HTMLDivElement, Prop>(({ alldates, data }, 
           const today = new Date();
           today.setHours(0, 0, 0, 0);
           
-          const tomorrow = new Date(today);
-          tomorrow.setDate(today.getDate() + 1);
-          
-          const formattedDate = date.toLocaleDateString("en-CA");
-          const formattedToday = today.toLocaleDateString("en-CA");
-          const formattedTomorrow = tomorrow.toLocaleDateString("en-CA");
-          
-          let bgColor = "bg-white";
-          if (formattedDate < formattedToday) bgColor = "bg-gray-300"; 
-          else if (formattedDate === formattedToday) bgColor = "bg-pink-500"; 
-          else if (formattedDate === formattedTomorrow) bgColor = "bg-pink-300";
+      
+                  const startOfWeek = new Date(today);
+                  startOfWeek.setDate(today.getDate() - (today.getDay() - 1));
+
+                  const endOfWeek = new Date(startOfWeek);
+                  endOfWeek.setDate(startOfWeek.getDate() + 4);
+
+                  let bgColor = "bg-white";
+                  if (date >= startOfWeek && date <= endOfWeek) {
+                    const prevDay = new Date(today);
+                    prevDay.setDate(today.getDate() - 1);
+
+                    const nextDay = new Date(today);
+                    nextDay.setDate(today.getDate() + 1);
+
+                    if (date.getTime() < today.getTime()) {
+                      bgColor = "bg-gray-300"; 
+                    } else if (date.getTime() === today.getTime()) {
+                      bgColor = "bg-pink-500";
+                    } else if (date.getTime() >= nextDay.getTime()) {
+                      bgColor = "bg-pink-200";
+                    }
+                  }
           
 
             const isFriday = date.getDay() === 5

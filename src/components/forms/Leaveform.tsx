@@ -20,6 +20,9 @@ import axios, { AxiosError } from 'axios'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
 import { start } from 'repl'
+import DatePicker from 'react-datepicker'
+import "react-datepicker/dist/react-datepicker.css";
+
 
 
 interface Data {
@@ -44,6 +47,10 @@ type Caculate = {
   workinghoursduringleave: number
 }
 
+type Holidays = {
+  grandTotal: number
+}
+
 
 export default function Leaveform( prop: Data) {
   const [dialog, setDialog] = useState(false)
@@ -51,7 +58,7 @@ export default function Leaveform( prop: Data) {
   const router = useRouter()
   const [start, setStart] = useState('')
   const [end, setEnd] = useState('')
-  const [wd, setWd] = useState('Yes')
+  const [wd, setWd] = useState('No')
   const [total, setTotal] = useState(0)
 
 
@@ -145,7 +152,7 @@ export default function Leaveform( prop: Data) {
 
   const [holidays, setHolidays] = useState(0)
   const [onLeave, setOnleave] = useState(0)
-  const hours = wd === 'Yes' ? 8.44 : 7.6
+  const hours = wd === 'No' ?  7.6 : 8.44 
 
 
   function totalWorkingDays(): number {
@@ -176,7 +183,29 @@ export default function Leaveform( prop: Data) {
     setValue('totalhoursonleave', hoursonleave)
 }, [workingDays, setValue, hoursonleave, wd]);
 
+  const startDateValue = watch("startdate")
+  ? new Date(watch("startdate"))
+  : null;
+
+  const endDateValue = watch("enddate")
+  ? new Date(watch("enddate"))
+  : null;
+
+  useEffect(() => {
+    const getData = async () => {
+      if(start !== '' && end !== ''){
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/events/gettotalholidays?startdate=${start}&enddate=${end}`,{
+          withCredentials: true
+        }
+          
+        )
   
+        setHolidays(response.data.data.grandTotal)
+      }
+    
+    }
+    getData()
+  },[start, end])
 
   
   return (
@@ -184,7 +213,7 @@ export default function Leaveform( prop: Data) {
     <DialogTrigger>
        {prop.children}
     </DialogTrigger>
-    <DialogContent className=' max-h-[90%] overflow-y-auto'>
+    <DialogContent className=' max-h-[90%] overflow-y-auto overflow-auto'>
       <form className=' w-full p-4 flex flex-col gap-4' onSubmit={handleSubmit(onSubmit)}>
         <p className=' text-sm uppercase font-semibold text-red-700'>Leave request form</p>
         <div className=' w-full flex flex-col gap-1'>
@@ -255,20 +284,34 @@ export default function Leaveform( prop: Data) {
              
             </RadioGroup>
 
-          <Label className=' mt-2 text-zinc-500'>Details:</Label>
-          <Textarea placeholder='Please input text here' className=' text-xs bg-zinc-200' {...register('details')}/>
+          <Label className=' mt-2 text-zinc-500'>Other Leave:</Label>
+          <Textarea disabled={watch('type') !== '10'} placeholder='Please input text here' className=' text-xs bg-zinc-200' {...register('details')}/>
 
           <Label className=' mt-4 font-semibold'>Period Of Leave</Label>
           <div className=' flex items-center gap-4'>
             <div>
               <Label className=' mt-2 text-zinc-500'>First Day Of Leave: <span className=' text-red-500'>*</span></Label>
-              <Input type='date' className=' text-xs h-[35px] bg-zinc-200'  placeholder='Name' {...register('startdate',{ onChange: (e) => setStart(e.target.value)})}/>
+              {/* <Input type='date' className=' text-xs h-[35px] bg-zinc-200'  placeholder='Name' {...register('startdate',{ onChange: (e) => setStart(e.target.value)})}/> */}
+              <DatePicker
+                selected={startDateValue} // Convert string to Date
+                onChange={(date) =>{ setValue("startdate", date?.toISOString().split("T")[0] || ''); setStart(date?.toISOString().split("T")[0] || '')}} // Store as string
+                dateFormat="dd/MM/yyyy"
+                placeholderText="DD/MM/YYYY"
+                className="bg-zinc-100 text-xs p-2 w-fit z-[9999] relative rounded-md"
+              />
               {errors.startdate && <p className=' text-[.6em] text-red-500'>{errors.startdate.message}</p>}
             </div>
 
             <div>
               <Label className=' mt-2 text-zinc-500'>Last Day Of Leave: <span className=' text-red-500'>*</span></Label>
-              <Input type='date' className=' text-xs h-[35px] bg-zinc-200' placeholder='Name' {...register('enddate', { onChange: (e) => setEnd(e.target.value)})}/>
+              {/* <Input type='date' className=' text-xs h-[35px] bg-zinc-200' placeholder='Name' {...register('enddate', { onChange: (e) => setEnd(e.target.value)})}/> */}
+              <DatePicker
+                selected={endDateValue} // Convert string to Date
+                onChange={(date) => {setValue("enddate", date?.toISOString().split("T")[0] || ''); setEnd(date?.toISOString().split("T")[0] || '')}} // Store as string
+                dateFormat="dd/MM/yyyy"
+                placeholderText="DD/MM/YYYY"
+                className="bg-zinc-100 text-xs p-2 w-fit z-[9999] relative rounded-md"
+              />
               {errors.enddate && <p className=' text-[.6em] text-red-500'>{errors.enddate.message}</p>}
 
             </div>

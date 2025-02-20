@@ -72,7 +72,7 @@ export default function Legends() {
 
             <div className=' flex items-center gap-2'>
               <div className=' bg-pink-500'>
-                <p className=' text-[.7em] text-black font-semibold px-1'>"Greater than 9 hours/day</p>
+                <p className=' text-[.7em] text-black font-semibold px-1'>Greater than 9 hours/day</p>
               </div>
               
 
@@ -88,7 +88,7 @@ export default function Legends() {
             </div>
 
             <div className=' flex items-center gap-2'>
-              <div className=' bg-fuchsia-400'>
+              <div className=' bg-fuchsia-300'>
               <p className=' text-[.7em] text-black font-semibold px-1'>Wellness Day</p>
 
               </div>
@@ -98,7 +98,7 @@ export default function Legends() {
 
             <div className=' flex items-center gap-2'>
               <div className=' bg-gray-400'>
-              <p className=' text-[.7em] text-black font-semibold px-1'>Events</p>
+              <p className=' text-[.7em] text-black font-semibold px-1'>Holidays</p>
 
               </div>
 

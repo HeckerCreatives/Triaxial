@@ -28,6 +28,7 @@ import axios, { AxiosError } from 'axios'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { formatAustralianDate } from '@/utils/helpers'
+import { Textarea } from '@/components/ui/textarea'
 
 type Project = {
   createdAt: string
@@ -81,21 +82,17 @@ type Manager = {
 export default function Createprojectcomponent( prop: Data) {
   const [dialog, setDialog] = useState(false)
   const [clientid, setClientid] = useState('')
-  const [pm, setPm] = useState('')
   const router = useRouter()
   const [employee, setEmployee] = useState<Employee[]>([])
   const [manager, setManager] = useState<Manager[]>([])
   const params = useSearchParams()
   const id = params.get('teamid')
   const [isValidated, setIsvalidated] = useState(false)
-  const [projectid, setProjectId] = useState('')
-
   const [jobno, setJobno] = useState('')
   const [projectname, setProjectname] = useState('')
-  const [start, setStart] = useState('')
-  const [end, setEnd] = useState('')
   const [client, setClient] = useState('')
   const today = new Date()
+  const [adminotes, setAdminnotes] = useState('')
 
 
 
@@ -202,20 +199,6 @@ export default function Createprojectcomponent( prop: Data) {
     });
   };
   
-  
-  useEffect(() => {
-    function generateJobNumber() {
-      const prefix = "TX";
-      const randomNumber = Math.floor(1000000 + Math.random() * 9000000); // Generates a random 7-digit number
-      const jobNumber = `${prefix}${randomNumber}`;
-      setJobno(jobNumber)
-      return jobNumber;
-    }
-    generateJobNumber()
-
-  },[dialog])
-
-  console.log(formData)
 
 
   //create job component
@@ -251,6 +234,7 @@ export default function Createprojectcomponent( prop: Data) {
           clientid: clientid === '' ? client : clientid,
           jobno: jobno,
           start: (today.toLocaleString()).split(',')[0],
+          adminnotes: adminotes,
           jobcomponentvalue: filteredFormData //jobcomponentvalue, clientid, projectname, start, teamid, jobno, priority 
         }, {
           withCredentials: true,
@@ -493,7 +477,7 @@ export default function Createprojectcomponent( prop: Data) {
     </DialogTrigger>
     <DialogContent className=' max-h-[90%] overflow-y-auto'>
       <div className=' w-full p-4 flex flex-col gap-4'>
-        <p className=' text-sm uppercase font-semibold text-red-700 flex items-center gap-2'><span className=' bg-red-700 px-4 py-1 text-zinc-100 text-xs'>Create</span>Job Components</p>
+        <p className=' text-sm uppercase font-semibold text-red-700 flex items-center gap-2'><span className=' bg-red-700 px-4 py-1 text-zinc-100 text-xs'>Create</span>Project</p>
         <div className=' w-full flex flex-col gap-4'>
 
             
@@ -516,8 +500,8 @@ export default function Createprojectcomponent( prop: Data) {
                                     </Select> */}
 
                                     <div className=' flex flex-col'>
-                                      <label htmlFor="" className=' text-xs'>Job Number</label>
-                                      <Input type='text' value={jobno} onChange={(e) => setJobno(e.target.value)} className=' text-xs h-[35px] bg-zinc-200' placeholder='Job no'/>
+                                      <label htmlFor="" className=' text-xs'>Job Number<span className=' text-red-500 text-lg'>*</span></label>
+                                      <Input type='text' value={jobno} onChange={(e) => setJobno(e.target.value)} className=' text-xs h-[35px] bg-zinc-200' placeholder='Job Number'/>
                                     </div>
 
                                     
@@ -530,7 +514,7 @@ export default function Createprojectcomponent( prop: Data) {
                                                                                 
                                                             
                                                                                 <div className=' w-full'>
-                                                                                  <Label className=' text-zinc-500'>Project Name <span className=' text-red-700'>*</span></Label>
+                                                                                  <Label className=' text-zinc-500'>Project Name <span className=' text-red-500 text-lg'>*</span></Label>
                                                                                   <Input type='text' value={projectname} onChange={(e) => setProjectname(e.target.value)} className=' text-xs h-[35px] bg-white' placeholder='Project name'/>
                                                             
                                                             
@@ -538,7 +522,7 @@ export default function Createprojectcomponent( prop: Data) {
                                                             
                                                                                
                                                                                   <div className=' w-full'>
-                                                                                    <Label className=' text-zinc-500'>Client<span className=' text-red-700'>*</span></Label>
+                                                                                    <Label className=' text-zinc-500'>Client Name<span className=' text-red-500 text-lg'>*</span></Label>
                                                                                     <Select value={clientid} onValueChange={setClientid}>
                                                                                     <SelectTrigger className=" text-xs h-[35px] bg-white">
                                                                                       <SelectValue placeholder="Select Client" className=' text-black'  />
@@ -602,13 +586,22 @@ export default function Createprojectcomponent( prop: Data) {
                     <AccordionContent>
                         <div className="bg-zinc-200 flex flex-col gap-1 p-2">
 
-                        <Label className="mt-2 text-zinc-500">Job Component Name</Label>
+                        <Label className="mt-2 text-zinc-500">Job Component Name<span className=' text-red-500 text-lg'>*</span></Label>
                         <Input
                             type="text"
                             className="text-xs h-[35px] bg-white"
                             placeholder="Job Component Name"
                             value={item.jobcomponent}
                             onChange={(e) => handleChange(index, 'jobcomponent', e.target.value)}
+                        />
+
+                      <Label className="mt-2 text-zinc-500">Admin Notes</Label>
+                        <Textarea
+                          
+                            className="text-xs h-[35px] bg-white"
+                            placeholder="Admin Notes"
+                            value={adminotes}
+                            onChange={(e) => setAdminnotes(e.target.value)}
                         />
 
                         {/* <Label className="mt-2 text-zinc-500">Job no.</Label>
@@ -619,7 +612,7 @@ export default function Createprojectcomponent( prop: Data) {
                             value={item.jobno}
                             onChange={(e) => handleChange(index, 'jobno', e.target.value)}
                         /> */}
-                        <Label className="mt-2 text-zinc-500">Job Manager</Label>
+                        <Label className="mt-2 text-zinc-500">Job Manager<span className=' text-lg text-red-500'>*</span></Label>
                         <Select
                             value={item.jobmanager}
                             onValueChange={(value) => handleChange(index, 'jobmanager', value)}
@@ -636,7 +629,7 @@ export default function Createprojectcomponent( prop: Data) {
 
 
                         <Label className="font-semibold mt-4">Job Component Budget</Label>
-                        <Label className="mt-2 text-zinc-500">Budget Type</Label>
+                        <Label className="mt-2 text-zinc-500">Budget Type<span className=' text-lg text-red-500'>*</span></Label>
                         <Select
                             value={item.budgettype}
                             onValueChange={(value) => handleChange(index, 'budgettype', value)}
@@ -649,7 +642,7 @@ export default function Createprojectcomponent( prop: Data) {
                             <SelectItem value="lumpsum">Lump sum</SelectItem>
                             </SelectContent>
                         </Select>
-                        <Label className="mt-2 text-zinc-500">Estimated Budget $</Label>
+                        <Label className="mt-2 text-zinc-500">Job Component Budget $</Label>
                         <Input
                             type="number"
                             className="text-xs h-[35px] bg-white"

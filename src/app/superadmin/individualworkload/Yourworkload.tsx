@@ -15,6 +15,7 @@ import { Workload } from '@/types/types';
 import { formatDate } from '@/utils/functions';
 import Legends from '@/components/common/Legends';
 import { formatAustralianDate } from '@/utils/helpers';
+import { Eye } from 'lucide-react';
 
 type Event = {
   startdate: string
@@ -98,7 +99,7 @@ export default function Indiviualworkloads() {
       colorData.push('bg-violet-300')
     }
     if(isWellnessDate){
-      colorData.push('bg-fuchsia-500')
+      colorData.push('bg-fuchsia-300')
     }
 
     return colorData; 
@@ -111,7 +112,7 @@ export default function Indiviualworkloads() {
   useEffect(() => {
     const getMembers = async () => {
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/individualworkloadsuperadmin?employeeid=${id}&filterDate=${dateFilter}`,{
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/individualworkloadmanager?employeeid=${id}&filterDate=${dateFilter}`,{
           withCredentials: true
         })
 
@@ -132,14 +133,7 @@ export default function Indiviualworkloads() {
     <div className=' w-full h-full flex flex-col justify-center bg-secondary text-zinc-100 p-4'>
 
       <div className=' w-full flex justify-between items-end gap-8 h-auto bg-primary mb-2 p-4 text-xs'>
-        <div className=' w-auto flex flex-col gap-1'>
-          {/* <p className=' text-zinc-400'>Project Name: <span className=' text-red-500 underline'>{list.length !== 0 ? list[0].projectname : ''}</span></p> */}
-          <p className=' text-zinc-400'>Employee Name: <span className=' text-red-500 underline'>{list.length !== 0 ? list[0].members[0].employee.fullname : ''}</span></p>
-          <p className=' text-zinc-400'>Initial: <span className=' text-red-500 underline'>{list.length !== 0 ? list[0].members[0].employee.fullname : ''}</span></p>
-          {/* <p className=' text-zinc-400'>Manager Name: <span className=' text-red-500 underline'>{list.length !== 0 ? list[0].jobmanager.fullname : ''}</span></p> */}
-          {/* <p className=' text-zinc-400'>Client Name: <span className=' text-zinc-100 underline'>test@gmail.com</span></p> */}
-
-        </div>
+       
 
         <Legends/>
 
@@ -160,13 +154,15 @@ export default function Indiviualworkloads() {
           <thead className=' bg-secondary h-[100px]'>
 
             <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
-              <th className=' font-normal w-[70px]'>Job Mgr.</th>
-              <th className=' font-normal w-[70px]'>Job Component</th>
-              <th className=' w-[70px] font-normal'>Members</th>
-              <th className=' font-normal w-[70px]'>Role</th>
-              <th className=' font-normal w-[70px]'>Notes</th>
-
-            
+              <th className=' text-left font-normal w-[70px]'>Team.</th>
+              <th className=' text-left font-normal w-[70px]'>Job No.</th>
+              <th className=' text-left font-normal w-[70px]'>Client Name</th>
+              <th className=' text-left font-normal w-[70px]'>Project name</th>
+              <th className=' text-left font-normal w-[70px]'>Job Mgr.</th>
+              <th className=' text-left font-normal w-[70px]'>Job Component</th>
+              <th className=' text-left w-[70px] font-normal'>Other Members</th>
+              <th className=' text-left font-normal w-[70px]'>Role</th>
+              <th className=' text-left font-normal w-[70px]'>Notes</th>
             </tr>
           </thead>
           <tbody>
@@ -174,14 +170,22 @@ export default function Indiviualworkloads() {
             graphItem.members.map((member, memberIndex) => (
               <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
                  
-                  <td className="text-center">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
-                  <td className="text-center">{memberIndex === 0 && graphItem.jobcomponent}</td>
-      
-                <td className="text-center">{member.employee.fullname}</td>
-                <td className="text-center text-[.5rem]">{member.role}</td>
-                <td className="text-center">
+                <td className="text-left ">{graphItem.teamname}</td>
+                <td className="text-left underline ">
+                  <a href={`/pm/graph/jobcomponent?teamid=${graphItem.teamid}&jobno=${graphItem._id}`}>{memberIndex === 0 && graphItem.jobno}</a>
+                </td>
+                <td className="text-left ">{memberIndex === 0 && graphItem.clientname}</td>
+                <td className="text-left ">{memberIndex === 0 && graphItem.projectname}</td>
+                <td className="text-left">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
+                <td className="text-left">{memberIndex === 0 && graphItem.jobcomponent}</td>
+    
+                <td className="text-left">{graphItem.teammembers.join(", ")}</td>
+                <td className="text-left text-[.5rem]">{member.role}</td>
+                <td className="text-left">
                   <Dialog>
-                    <DialogTrigger>{member.notes.slice(0, 25) || ''} ...</DialogTrigger>
+                    <DialogTrigger className=' bg-red-600 p-1 rounded-sm flex items-center'>
+                      <Eye size={12} className=' text-[.6rem]'/> View
+                    </DialogTrigger>
                     <DialogContent className=' bg-secondary p-6 border-none max-w-[600px] text-white'>
                       <DialogHeader>
                         <DialogTitle>Notes</DialogTitle>
@@ -189,7 +193,11 @@ export default function Indiviualworkloads() {
                           
                         </DialogDescription>
                       </DialogHeader>
+                      {member.notes === '' ? (
+                        <p className=' text-xs text-zinc-400 h-full w-full text-center'>No notes.</p>
+                      ):(
                       <p className=' text-xs text-zinc-400'>{member.notes}</p>
+                      )}
                     </DialogContent>
                   </Dialog>
 
@@ -213,14 +221,29 @@ export default function Indiviualworkloads() {
                                               const today = new Date()
                                               today.setHours(0, 0, 0, 0) // Normalize today
                             
-                                              const tomorrow = new Date(today)
-                                              tomorrow.setDate(today.getDate() + 1) // Get tomorrow's date
-                            
-                                              // Determine background color
-                                              let bgColor = "bg-white"
-                                              if (date.getTime() < today.getTime()) bgColor = "bg-gray-300"
-                                              else if (date.getTime() === today.getTime()) bgColor = "bg-pink-500"
-                                              else if (date.getTime() === tomorrow.getTime()) bgColor = "bg-pink-300"
+                                             
+                                                const startOfWeek = new Date(today);
+                                                startOfWeek.setDate(today.getDate() - (today.getDay() - 1));
+
+                                                const endOfWeek = new Date(startOfWeek);
+                                                endOfWeek.setDate(startOfWeek.getDate() + 4);
+
+                                                let bgColor = "bg-white";
+                                                if (date >= startOfWeek && date <= endOfWeek) {
+                                                  const prevDay = new Date(today);
+                                                  prevDay.setDate(today.getDate() - 1);
+
+                                                  const nextDay = new Date(today);
+                                                  nextDay.setDate(today.getDate() + 1);
+
+                                                  if (date.getTime() < today.getTime()) {
+                                                    bgColor = "bg-gray-300"; 
+                                                  } else if (date.getTime() === today.getTime()) {
+                                                    bgColor = "bg-pink-500";
+                                                  } else if (date.getTime() >= nextDay.getTime()) {
+                                                    bgColor = "bg-pink-200";
+                                                  }
+                                                }
                             
                                               return (
                                                 <React.Fragment key={index}>

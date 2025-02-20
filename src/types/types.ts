@@ -116,10 +116,14 @@ _id:string
 status: any
 isVariation: boolean
 budgettype: string
+comments: string,
+adminnotes: string,
 estimatedbudget: number
 invoice: {
     percentage: number,
     amount: number
+    pendinginvoice: number,
+    pendinginvoice1: number,
 }
 }
 
@@ -129,9 +133,13 @@ export type Workload = {
     jobmanager: {employeeid: string, fullname: string}
     componentid:  string
     clientname: string
+    clientid: string
+    clientpriority: string
     teamname:  string
+    teamid: string
     projectname:  string
     jobcomponent: string
+    teammembers: string[]
     members: Members[]
     jobno: string
 }

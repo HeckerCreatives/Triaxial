@@ -345,7 +345,7 @@ const totalsByDate = allDates.map((dateObj) => {
                 </div>
 
               ) : (
-                <Invoice projectname={findJobComponent?.projectname} jobcname={findJobComponent?.jobcomponent} jobno={findJobComponent?.jobnumber} budgettype={findJobComponent?.budgettype} estimatedbudget={findJobComponent?.estimatedbudget} jobcid={findJobComponent?.componentid} isJobmanager={findJobComponent?.jobmanager.employeeid} currinvoice={findJobComponent?.invoice.percentage}>
+                <Invoice projectname={findJobComponent?.projectname} jobcname={findJobComponent?.jobcomponent} jobno={findJobComponent?.jobnumber} budgettype={findJobComponent?.budgettype} estimatedbudget={findJobComponent?.estimatedbudget} jobcid={findJobComponent?.componentid} isJobmanager={findJobComponent?.jobmanager.employeeid} currinvoice={findJobComponent?.invoice.percentage}  manager={findJobComponent?.jobmanager.fullname || ''} client={findJobComponent?.clientname || ``}>
                   <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
                     <button className={`text-xs p-1 bg-red-600  rounded-sm`}><File size={12}/></button>
                     <p>Invoice</p>
@@ -380,7 +380,7 @@ const totalsByDate = allDates.map((dateObj) => {
               <th className=' w-[70px] font-normal'>Job Mngr.</th>
                 <th className=' w-[70px] font-normal'>Job Component</th>
                 <th className=' w-[70px] font-normal'>Est. $</th>
-                <th className=' w-[70px] font-normal'>Invoice (%/hr)</th>
+                <th className=' w-[70px] font-normal'>Invoice (%)</th>
                 <th className=' w-[70px] font-normal'>Invoiced $</th>
                 <th className=' w-[70px] font-normal'>Remaining $</th>
                 <th className=' w-[70px] font-normal'>Sub-cont. costs</th>
@@ -409,15 +409,13 @@ const totalsByDate = allDates.map((dateObj) => {
                   <td className="text-center ">{graphItem.projectname}</td>
                   <td className="text-center ">{graphItem.jobmanager.fullname}</td>
                   <td className="text-center ">{graphItem.jobcomponent}</td>
-                  <td className="text-center ">$ {graphItem.estimatedbudget?.toLocaleString()}</td>
-                  <td className="text-center ">{graphItem.budgettype === 'rates' ? `${ graphItem.invoice.percentage.toLocaleString()} hrs` : `% ${ graphItem.invoice.percentage.toLocaleString()}` }</td>
+                  <td className="text-center ">{graphItem.budgettype === 'rates' ? `Rates` : `$ ${ graphItem.estimatedbudget.toLocaleString()}` }</td>
+                  <td className="text-center ">{graphItem.budgettype === 'rates' ? `` : ` ${ graphItem.invoice.percentage.toLocaleString()}%` }</td>
                   <td className="text-center ">$ {graphItem.budgettype === 'rates' ? `${ graphItem.rates.invoiced.toLocaleString()}` : `${ graphItem.lumpsum.invoiced.toLocaleString()}` }</td>
                   <td className="text-center ">{graphItem.budgettype === 'rates' ? `-` : `$ ${ graphItem.lumpsum.remaining.toLocaleString()}`}</td>
-                  <td onClick={() => {setDialog2(graphItem.budgettype === 'lumpsum' && true), setComponentid(graphItem.componentid), setSubAmount(graphItem.lumpsum.subconts)}} className={`text-center cursor-pointer text-red-600 font-semibold ${graphItem.budgettype === 'lumpsum' && ''}`}> {graphItem.budgettype === 'rates' ? '-' : `$ ${graphItem.lumpsum.subconts.toLocaleString()}`}</td>
+                  <td onClick={() => {setDialog2(graphItem.budgettype === 'lumpsum' && true), setComponentid(graphItem.componentid), setSubAmount(graphItem.lumpsum.subconts)}} className={`text-center cursor-pointer font-semibold ${graphItem.budgettype === 'lumpsum' && ''}`}> {graphItem.budgettype === 'rates' ? '-' : `$ ${graphItem.lumpsum.subconts.toLocaleString()}`}</td>
                   <td className="text-center ">$ {graphItem.budgettype === 'rates' ? `${ graphItem.rates.wip.toLocaleString()}` : ` ${ graphItem.lumpsum.wip.toLocaleString()}`}</td>
                   <td className="text-center ">{graphItem.budgettype === 'rates' ? `-` : `$ ${ graphItem.lumpsum.catchupinv.toLocaleString()}`}</td>
-
-
                 </tr>
               );
             })}
@@ -450,7 +448,7 @@ const totalsByDate = allDates.map((dateObj) => {
                   return (
                     <React.Fragment key={index}>
                       <th className="relative font-normal border-[1px] px-6 border-zinc-700">
-                        <p className="whitespace-nowrap">{year} <span className=' text-red-600'>{monthName.slice(0,3)}</span></p>
+                        <p className="whitespace-nowrap"><span className=' text-red-600'>{monthName.slice(0,3)}</span> {year} </p>
                       </th>
                     
                     </React.Fragment>

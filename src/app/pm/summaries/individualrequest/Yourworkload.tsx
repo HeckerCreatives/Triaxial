@@ -148,7 +148,6 @@ export default function Yourworkload() {
             withCredentials: true
           })
 
-        console.log(response.data)
         setTeam(response.data.data)
         setId(response.data.data[0].teamid)
         } catch (error) {
@@ -240,7 +239,7 @@ export default function Yourworkload() {
                 <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
 
 
-                  <td onClick={() => router.push(`/pm/individualworkload?employeeid=${member.id}`)} className="text-center cursor-pointer underline text-blue-400">{member.name}</td>
+                  <td onClick={() => router.push(`/pm/individualworkload?employeeid=${member.id}&name=${member.name}`)} className="text-center cursor-pointer underline text-blue-400">{member.name}</td>
                   <td className="text-center">{member.initial}</td>
                   <td className="text-center">{member.resource}</td>
                   <td className="text-center">{graphItem.name}</td>
@@ -259,21 +258,57 @@ export default function Yourworkload() {
               <thead className=' w-full bg-secondary h-[100px]'>
                 <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
 
-                  {dates.map((dateObj, index) => (
-                    <>
-                      <th key={index} className=' relative font-normal w-[30px] border-[1px] border-zinc-700'>
-                      <div className="whitespace-nowrap transform -rotate-[90deg]">
-                            <p>{formatAustralianDate(dateObj)}</p>
-                            <p>{formatMonthYear(dateObj)}</p>
-                          </div>
-                      </th>
-                      {(index + 1) % 5 === 0 && (
-                        <th key={`total-${index}`} className='font-normal w-[30px] border-[1px] border-zinc-700'>
-                          <p className='-rotate-90 w-[50px]'>Total Hours</p>
-                        </th>
-                      )}
-                    </>
-                  ))}
+                {dates
+                    .filter(dateObj => {
+                      const date = new Date(dateObj);
+                      return date.getDay() !== 0 && date.getDay() !== 6; // Exclude Sundays (0) & Saturdays (6)
+                    })
+                    .map((dateObj, index) => {
+                      const date = new Date(dateObj);
+                      const today = new Date();
+                      today.setHours(0, 0, 0, 0);
+
+                      const startOfWeek = new Date(today);
+                      startOfWeek.setDate(today.getDate() - (today.getDay() - 1));
+
+                      const endOfWeek = new Date(startOfWeek);
+                      endOfWeek.setDate(startOfWeek.getDate() + 4);
+
+                      const prevDay = new Date(today);
+                      prevDay.setDate(today.getDate() - 1);
+
+                      const nextDay = new Date(today);
+                      nextDay.setDate(today.getDate() + 1);
+
+                      let bgColor = "bg-white";
+                      if (date >= startOfWeek && date <= endOfWeek) {
+                        if (date.getTime() < today.getTime()) {
+                          bgColor = "bg-gray-300"; // Past days
+                        } else if (date.toDateString() === today.toDateString()) {
+                          bgColor = "bg-pink-500"; // Today
+                        } else if (date.getTime() >= nextDay.getTime()) {
+                          bgColor = "bg-pink-200"; // Future days
+                        }
+                      }
+
+                      return (
+                        <React.Fragment key={index}>
+                          <th className={`relative font-normal w-[30px] border-[1px] border-zinc-700 ${bgColor}`}>
+                            <div className="whitespace-nowrap w-[20px] transform -rotate-[90deg]">
+                              <p className="mt-3 font-bold text-black">{formatAustralianDate(dateObj)}</p>
+                            </div>
+                          </th>
+
+                          {(index + 1) % 5 === 0 && (
+                            <th key={`total-${index}`} className="font-normal w-[30px] border-[1px] border-zinc-700">
+                              <p className="-rotate-90 w-[30px] text-black">Total Hours</p>
+                            </th>
+                          )}
+                        </React.Fragment>
+                      );
+                    })}
+
+
 
 
                 </tr>

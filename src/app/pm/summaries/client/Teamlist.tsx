@@ -50,7 +50,6 @@ export default function Teamlist() {
         setList(response.data.data)
         setTotalpage(response.data.data.totalpages)
         setLoading(false)
-        console.log(response.data)
     }
     getList()
   },[])
@@ -74,7 +73,7 @@ export default function Teamlist() {
         <TableHeader>
             <TableRow>
             <TableHead className="">Client</TableHead>
-            <TableHead>priority</TableHead>
+            <TableHead>Priority</TableHead>
             <TableHead>WIP</TableHead>
             <TableHead>Action</TableHead>
             

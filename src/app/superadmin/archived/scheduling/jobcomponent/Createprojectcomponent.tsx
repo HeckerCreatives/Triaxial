@@ -185,8 +185,6 @@ export default function Createprojectcomponent( prop: Data) {
 
   },[dialog])
 
-  console.log(formData)
-
 
   //create job component
   const createProjectcomponent = async () => {

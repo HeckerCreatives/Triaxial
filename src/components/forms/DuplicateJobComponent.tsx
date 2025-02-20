@@ -38,6 +38,7 @@ interface Data {
   id: any
   pname: string
   client: string
+  clientid: string
   start: string
   end: string
   estbudget: number
@@ -80,6 +81,8 @@ export default function DuplicateJobComponent( prop: Data) {
   const params = useSearchParams()
   const id = params.get('projectid')
   const [isValidated, setIsvalidated] = useState(false)
+  const today = new Date()
+
 
   const [formData, setFormData] = useState<FormData[]>([{ jobmanager: prop.manager,jobno: '123', budgettype: prop.type, estimatedbudget:` ${prop.estbudget}`, jobcomponent: prop.name, members: [
                 {
@@ -195,7 +198,6 @@ export default function DuplicateJobComponent( prop: Data) {
 
   },[dialog])
 
-  console.log(formData)
 
 
   //create job component
@@ -226,7 +228,12 @@ export default function DuplicateJobComponent( prop: Data) {
 
       try {
         const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/createjobcomponent`,{
-          projectid: prop.id,
+          teamid: prop.id,
+          projectname:  prop.pname,
+          clientid: prop.clientid,
+          jobno: jobno,
+          start: (today.toLocaleString()).split(',')[0],
+          adminnotes: '',
           jobcomponentvalue: filteredFormData
         }, {
           withCredentials: true,
@@ -236,9 +243,9 @@ export default function DuplicateJobComponent( prop: Data) {
         })
   
         const response = await toast.promise(request, {
-          loading: 'Creating job component....',
-          success: `Successfully created`,
-          error: 'Error while creating the job component',
+          loading: 'Duplicating job component....',
+          success: `Successfully duplicated`,
+          error: 'Error while duplicating the job component',
       });
 
       if(response.data.message === 'success'){
@@ -432,7 +439,6 @@ export default function DuplicateJobComponent( prop: Data) {
 ]}]);
   }
 
-  console.log(prop.estbudget)
 
   
 
@@ -446,7 +452,7 @@ export default function DuplicateJobComponent( prop: Data) {
     </DialogTrigger>
     <DialogContent className=' max-h-[90%] overflow-y-auto'>
       <div className=' w-full p-4 flex flex-col gap-4'>
-        <p className=' text-sm uppercase font-semibold text-red-700 flex items-center gap-2'><span className=' bg-red-700 px-4 py-1 text-zinc-100 text-xs'>Duplicate</span>Job Component</p>
+        <p className=' text-sm uppercase font-semibold text-red-700 flex items-center gap-2'><span className=' bg-red-700 px-4 py-1 text-zinc-100 text-xs'>Duplicate</span>Project</p>
         <div className=' w-full flex flex-col gap-4'>
 
           <p className=' text-xs'>Project Details</p>
@@ -466,7 +472,7 @@ export default function DuplicateJobComponent( prop: Data) {
                                                                                           
                                                                       
                       <div className=' w-full'>
-                        <Label className=' text-zinc-500'>Project Name <span className=' text-red-700'>*</span></Label>
+                        <Label className=' text-zinc-500'>Project Name <span className=' text-red-500 text-lg'>*</span></Label>
                         <Input type='text' value={prop.pname}  className=' text-xs h-[35px] bg-white' placeholder='Project name'/>
                                                                       
                                                                       
@@ -474,16 +480,18 @@ export default function DuplicateJobComponent( prop: Data) {
                                                                       
                                                                                          
                         <div className=' w-full'>
-                          <Label className=' text-zinc-500'>Client<span className=' text-red-700'>*</span></Label>
-                        <Input type='text' value={prop.client}  className=' text-xs h-[35px] bg-white' placeholder='Project name'/>
-
-                        
-                                                                      
+                          <Label className=' text-zinc-500'>Client Name<span className=' text-red-500 text-lg'>*</span></Label>
+                          <Input type='text' value={prop.client}  className=' text-xs h-[35px] bg-white' placeholder='Project name'/>                                           
                         </div>
                                                                       
                     </div>
+
+                    <div className=' w-full'>
+                          <Label className=' text-zinc-500'>If other, please input the client name.</Label>
+                          <Input type='text' className=' text-xs h-[35px] bg-white' placeholder='Client Name'/>                                           
+                        </div>
                                                                       
-                    <div className=' flex items-start gap-4 '>
+                    {/* <div className=' flex items-start gap-4 '>
                                                                                           
                                                                       
                       <div className=' w-full'>
@@ -500,7 +508,7 @@ export default function DuplicateJobComponent( prop: Data) {
                                                                       
                         </div>
                                                                       
-                    </div>
+                    </div> */}
                                       
                                                                                         
              </div>
@@ -521,7 +529,7 @@ export default function DuplicateJobComponent( prop: Data) {
                     <AccordionContent>
                         <div className="bg-zinc-200 flex flex-col gap-1 p-2">
 
-                        <Label className="mt-2 text-zinc-500">Job Component Name</Label>
+                        <Label className="mt-2 text-zinc-500">Job Component Name<span className=' text-red-500 text-lg'>*</span></Label>
                         <Input
                             type="text"
                             className="text-xs h-[35px] bg-white"
@@ -538,7 +546,7 @@ export default function DuplicateJobComponent( prop: Data) {
                             value={item.jobno}
                             onChange={(e) => handleChange(index, 'jobno', e.target.value)}
                         /> */}
-                        <Label className="mt-2 text-zinc-500">Job Manager</Label>
+                        <Label className="mt-2 text-zinc-500">Job Manager<span className=' text-red-500 text-lg'>*</span></Label>
                         <Select
                             value={item.jobmanager}
                             onValueChange={(value) => handleChange(index, 'jobmanager', value)}
@@ -554,8 +562,8 @@ export default function DuplicateJobComponent( prop: Data) {
                         </Select>
 
 
-                        <Label className="font-semibold mt-4">Job Component</Label>
-                        <Label className="mt-2 text-zinc-500">Budget Type</Label>
+                        {/* <Label className="font-semibold mt-4">Job Component</Label> */}
+                        <Label className="mt-2 text-zinc-500">Budget Type<span className=' text-red-500 text-lg'>*</span></Label>
                         <Select
                             value={item.budgettype}
                             onValueChange={(value) => handleChange(index, 'budgettype', value)}
@@ -569,16 +577,9 @@ export default function DuplicateJobComponent( prop: Data) {
                             </SelectContent>
                         </Select>
 
-                        {/* <Label className="mt-2 text-zinc-500">Estimated Budget $</Label>
-                        <Input
-                            type="number"
-                            className="text-xs h-[35px] bg-white"
-                            placeholder="0"
-                            value={item.estimatedbudget}
-                            onChange={(e) => handleChange(index, 'estimatedbudget', e.target.value)}
-                        /> */}
+                      
 
-                        <Label className="mt-2 text-zinc-500">Component Budget</Label>
+                        <Label className="mt-2 text-zinc-500">Job Component Budget<span className=' text-red-500 text-lg'>*</span></Label>
                         <Input
                             type="text"
                             className="text-xs h-[35px] bg-white"
@@ -659,19 +660,12 @@ export default function DuplicateJobComponent( prop: Data) {
                     </AccordionItem>
                 </Accordion>
 
-                {/* <Label className="mt-2 text-zinc-500">Admin Notes: </Label>
-                <Textarea
-                    placeholder="Please input text here"
-                    className="text-xs bg-zinc-200"
-                    value={item.adminNotes}
-                    onChange={(e) => handleChange(index, 'adminNotes', e.target.value)}
-                /> */}
                 </div>
             ))}
-
+{/* 
             <div className=' w-full flex items-end justify-end'>
               <button onClick={remove} className='  bg-red-700 text-zinc-100 px-4 py-2 text-xs rounded-sm w-auto'>Remove Members</button>
-            </div>
+            </div> */}
            
          
           

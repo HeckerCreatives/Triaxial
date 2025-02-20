@@ -42,6 +42,7 @@ type Project = {
   invoiced: string
   budget: string
   currinvoice: number
+  adminnotes: string
   }
 
 export default function JobComponentStatus( prop: Project) {
@@ -136,7 +137,7 @@ export default function JobComponentStatus( prop: Project) {
 
       <div id='invoice-container' className=" bg-white px-6 py-8 w-full flex flex-col gap-2  mx-auto">
           <p className=' text-lg font-semibold flex items-center gap-1'><TriangleAlert size={18}/>Complete Project</p>
-          <p className=' text-zinc-500 text-xs'>You're about to delete a Component of a Project in this Workload. This will removed permanently on this tab and will be tranferred to archive.</p>
+          <p className=' text-zinc-500 text-xs'>You're about to delete a Component of a Project in this Workload. This will be removed permanently on this tab and will be tranferred to archive.</p>
 
           <p className=' text-xs flex items-center gap-1'><TriangleAlert size={15}/>This execution is <span className=' uppercase text-red-600'>irreversable.</span></p>
           <p className=' text-xs flex items-center gap-1'><TriangleAlert size={15}/>Please check information below and proceed with caution. </p>
@@ -176,7 +177,7 @@ export default function JobComponentStatus( prop: Project) {
                 <p className=' '>:  {'100%'}</p>
                 <p className=' '>:  {'100%'}</p>
                 <p className=' '>:  ${prop.budget}</p>
-                <p className=' '>:  <input value={notes} onChange={(e) => setNotes(e.target.value)} placeholder='Admin notes' className=' py-2'/></p>
+                <p className=' '>:  {prop.adminnotes}</p>
                 {/* <p className=' text-sm '>:  Complete %Invoice</p>
                 <p className=' text-sm '>:  This claim %Invoice</p>
                 <p className=' text-sm '>:  This claim amount</p>   
@@ -192,7 +193,7 @@ export default function JobComponentStatus( prop: Project) {
             <p className=' text-xs mt-4'>Please insert instructions or comments for the invoicer</p>
             <textarea  value={comments} onChange={(e) => setComments(e.target.value)} placeholder='Please input here' className=' bg-gray-200 text-xs p-2' />
 
-            <p className=' text-xs mt-4 text-end'>Note: An email notification will be sent to the Job Manager and Invoicing.</p>
+            <p className=' text-xs mt-4 text-end'>A message will be sent to the Job Manager and Invoicing.</p>
             <p className=' text-xs mt-2 text-end'>Would you like to continue?</p>
 
       

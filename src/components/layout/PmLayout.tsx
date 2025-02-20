@@ -89,7 +89,6 @@ export default function PmLayout({
         {withCredentials: true}
       )
 
-      console.log(response.data)
       setData(response.data.data)
     }
     getData()
@@ -103,7 +102,6 @@ export default function PmLayout({
         {withCredentials: true}
       )
 
-      console.log(response.data)
       setUnread(response.data.unreademails)
     }
     getData()
@@ -282,7 +280,7 @@ export default function PmLayout({
                         </DropdownMenu>
                         </div>
           </header>
-          <main className=" relative flex flex-1 flex-col items-center gap-4 ">
+          <main className={`relative flex flex-1 flex-col items-center gap-4 overflow-hidden ${path.includes('/pm/graph/jobcomponent') && ' overflow-hidden'}`}>
               {children}
           </main>
         </div>

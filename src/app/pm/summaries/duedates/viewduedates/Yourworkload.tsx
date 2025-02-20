@@ -27,6 +27,7 @@ import { Graph, Members } from '@/types/types'
 import { formatDate } from '@/utils/functions'
 import { any } from 'zod'
 import Invoice from '@/components/forms/Invoice'
+import { formatAustralianDate } from '@/utils/helpers'
 
 
 type Employee = {
@@ -367,7 +368,7 @@ export default function Yourworkload() {
 
             <div className=' flex items-center gap-2 flex-wrap'>
               {list[0]?.members.map(( item, index) => (
-                <p key={index} className=' text-blue-500 underline'>{item.employee.initials}</p>
+                <a href={`/pm/individualworkload?employeeid=${item.employee._id}&name=${item.employee.initials}&teamname=${''}`} key={index} className=' text-blue-500 underline'>{item.employee.initials}</a>
               ))}
             </div>
           </div>
@@ -402,7 +403,7 @@ export default function Yourworkload() {
                 <div className=' w-fit flex items-center gap-2'>
                   <div className=' flex items-center gap-2'>
                     <div className=' bg-gray-400'>
-                      <p className=' text-[.7em] text-black font-semibold px-1'>Events</p>
+                      <p className=' text-[.7em] text-black font-semibold px-1'>Holidays</p>
                     </div>
 
 
@@ -423,17 +424,20 @@ export default function Yourworkload() {
       <div className=' h-full w-full flex flex-col max-w-[1920px]'>
         <div className=' h-full overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
           {list.length !== 0 ? (
-            <>
-            <table className="table-auto w-[900px] border-collapse ">
-            <thead className=' bg-secondary h-[100px]'>
+            <div className=' w-full flex'>
+            <table className=" table-auto border-collapse">
+            <thead className=' h-[100px]'>
 
-              <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
-                <th className=' font-normal w-[70px]'>Job No.</th>
-                <th className=' font-normal w-[70px]'>Client</th>
-                <th className=' font-normal w-[70px]'>Job Mgr.</th>
-                <th className=' font-normal w-[70px]'>Proj. Name</th>
-                <th className=' font-normal w-[70px]'>Job Component</th>
-                <th className=' w-[70px] font-normal'>Members</th>
+              <tr className=' text-left text-[0.6rem] text-zinc-100 font-normal'>
+                <th className=' w-[500px] font-normal'>Job No.</th>
+                <th className=' w-[500px] font-normal'>Client Name</th>
+                <th className=' w-[500px] font-normal'>Proj. Name</th>
+
+
+                <th className=' w-[500px] font-normal'>Job Mgr.</th>
+
+                <th className=' w-[500px] font-normal'>Job Component</th>
+                <th className=' w-[500px] font-normal'>Members</th>
               
               </tr>
             </thead>
@@ -443,173 +447,190 @@ export default function Yourworkload() {
                 .filter(member => member.employee.fullname !== "N/A") // Filter out members with fullname "N/A"
                 .map((member, memberIndex) => (
                   <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
-                    <td className="text-center">{graphItem.jobno}</td>
-                    <td className="text-center">{graphItem.clientname.name}</td>
-                    <td className="text-center">{graphItem.projectname.name}</td>
-                    <td className="text-center">{graphItem.jobmanager.fullname}</td>
-                    <td className="text-center">{graphItem.jobcomponent}</td>
-                    <td className="text-center">{member.employee.fullname}</td>
+                    <td className="text-left w-[500px]">{graphItem.jobno}</td>
+                    <td className="text-left w-[500px]">{graphItem.clientname.name}</td>
+                    <td className="text-left w-[500px]">{graphItem.projectname.name}</td>
+                    <td className="text-left w-[500px]">{graphItem.jobmanager.fullname}</td>
+                    <td className="text-left w-[500px]">{graphItem.jobcomponent}</td>
+                    <td className="text-left w-[500px]">{member.employee.fullname}</td>
                   </tr>
                 ))
             )}
           </tbody>
             </table>
 
-            <div className=' overflow-x-auto'>
-              <table className="table-auto border-collapse ">
-                <thead className='w-full bg-secondary h-[100px]'>
-                  <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
+              <div className=' overflow-x-auto'>
+                <table className=" border-collapse ">
+                <thead className="w-full bg-white h-[100px]">
+                  <tr className="text-[0.6rem] text-black font-normal">
+                    {list[0].allDates
+                      ?.filter((dateObj) => {
+                        const day = new Date(dateObj).getDay();
+                        return day !== 0 && day !== 6; // Exclude Sundays (0) and Saturdays (6)
+                      })
+                      .map((dateObj, index, filteredDates) => {
+                        const date = new Date(dateObj);
+                        date.setHours(0, 0, 0, 0);
 
-                 
-                  
-                  {list[0]?.allDates
-                  .filter((dateObj) => {
-                    const day = new Date(dateObj).getDay();
-                    return day >= 1 && day <= 5; // Filter to include only Monday through Friday
-                  })
-                  .map((dateObj, index) => {
-                    const day = new Date(dateObj).getDay();
-                    const isFriday = day === 5;
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
 
-                    return (
-                      <React.Fragment key={index}>
-                        <th className="relative font-normal w-[30px] px-3 border-[1px] border-zinc-700">
-                          <p className="w-[50px] -translate-x-6 -translate-y-2 absolute rotate-90 top-10'">{formatDate(dateObj)}</p>
-                        </th>
-                        {isFriday && (
-                          <th className="font-normal px-1 border-[1px] border-zinc-700">
-                            <p className="rotate-90 w-[40px]">Total Hours</p>
-                          </th>
-                        )}
-                      </React.Fragment>
-                    );
-                  })}
+                        let bgColor = "bg-white";
+                        if (date.getTime() === today.getTime()) {
+                          bgColor = "bg-pink-500"; // Highlight today
+                        } else if (date.getTime() < today.getTime()) {
+                          bgColor = "bg-gray-300"; // Past dates
+                        }
 
-                    
+                        const isFriday = date.getDay() === 5; // Check if this column is Friday
+
+                        return (
+                          <React.Fragment key={index}>
+                            {/* Weekday Header */}
+                            <th className={`relative font-normal border-[1px] border-zinc-700 ${bgColor}`}>
+                              <div className="whitespace-nowrap transform -rotate-[90deg] w-[20px]">
+                                <p className="mt-4 font-bold">{formatAustralianDate(dateObj)}</p>
+                              </div>
+                            </th>
+
+                            {/* Add "Total Hours" column immediately after Friday */}
+                            {isFriday && (
+                              <th
+                                key={`total-${index}`}
+                                className="font-normal w-[20px] border-[1px] bg-primary border-zinc-700"
+                              >
+                                <p className="-rotate-90 w-[20px] ml-[8px] font-bold text-white">Total Hours</p>
+                              </th>
+                            )}
+                          </React.Fragment>
+                        );
+                      })}
                   </tr>
                 </thead>
-                <tbody>
-                {list.map((graphItem, graphIndex) =>
-                    graphItem.members
-                    .filter(member => member.employee.fullname !== "N/A")
-                    .map((member, memberIndex) => (
-                      <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
-                        
-                  
-                        {list[0]?.allDates
-                        .filter((dateObj) => {
-                          const day = new Date(dateObj).getDay();
-                          return day >= 1 && day <= 5; // Filter to include only Monday through Friday
-                        })
-                        .map((dateObj, index) => {
-                          const day = new Date(dateObj).getDay();
-                          const isFriday = day === 5;
-                          const memberDate = member.dates?.find((date) => formatDate(date.date) === formatDate(dateObj));
 
-                           
-                          const totalHoursForWeek = list[0]?.allDates
-                            .filter((dateObj) => {
-                              const day = new Date(dateObj).getDay();
-                              return day >= 1 && day <= 5; // Only include Monday to Friday
-                            })
-                            .reduce<{ weeklyTotals: number[]; currentWeekTotal: number }>((accumulated, dateObj, index, array) => {
-                              const day = new Date(dateObj).getDay();
-                              const memberDate = member.dates?.find((date) => formatDate(date.date) === formatDate(dateObj));
-                              const hoursForDay = memberDate?.hours || 0;
 
-                              // Add current day's hours
-                              accumulated.currentWeekTotal += hoursForDay;
-
-                              // Reset total on Friday
-                              if (day === 5 || index === array.length - 1) { // On Friday or last day of the range
-                                accumulated.weeklyTotals.push(accumulated.currentWeekTotal);
-                                accumulated.currentWeekTotal = 0; // Reset total for next week
-                              }
-
-                              return accumulated;
-                            }, { weeklyTotals: [], currentWeekTotal: 0 }).weeklyTotals;
-   
+                  <tbody>
+                  {list.map((graphItem, graphIndex) =>
+                      graphItem.members
+                      .filter(member => member.employee.fullname !== "N/A")
+                      .map((member, memberIndex) => (
+                        <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
                           
-                          return (
-                            <React.Fragment key={index}>
-                              <td 
-                                key={index} 
-                                className="relative text-center w-[30px] overflow-hidden bg-white border-[1px]"
-                                onClick={() => {
-                              
-                                    setDialog(true);
-                                    // setHours(memberDate.hours);
-                                    setDate(dateObj);
-                                    setProjectid(graphItem._id);
-                                    setName(member.employee.fullname);
-                                    setEmployeeid(member.employee._id);
-                                    setHours(memberDate?.hours || 0)
-                                    setAddstatus(memberDate?.status || [])
-                                    setSelectedRows(memberDate?.status || [])
-                                    setSelected(memberDate?.status || [])
-                                    setLeavestatus(isDateInRange(dateObj,member.leaveDates[0]?.leavestart,member.leaveDates[0]?.leaveend))
-                                    setEvent(isDateInRange(dateObj,member.eventDates[0]?.startdate,member.eventDates[0]?.enddate))
-                                    wdStatusChecker(member.wellnessDates, dateObj, member.eventDates)
-                                    setIsjobmanager(graphItem.jobmanager.isJobManager)
-                                    setLeave(isDateInRange(dateObj,member.leaveDates[0]?.leavestart,member.leaveDates[0]?.leaveend))
-                                  
-                                    setRole(member.role)
-          
-                                  }
-                                }
-                              >
-                                <div className=' w-full h-[40px] absolute flex top-0 '>
-                                  {statusColor(
-                                    memberDate?.status || [],
-                                    dateObj,
-                                    member.leaveDates.length !== 0 ? member.leaveDates[0]?.leavestart : '', 
-                                    member.leaveDates.length !== 0 ? member.leaveDates[0]?.leaveend : '', 
-                                    member.eventDates.length !== 0 ? member.eventDates[0].startdate : '', 
-                                    member.eventDates.length !== 0 ? member.eventDates[0].enddate : '', 
-                                    member.wellnessDates[0],
-                                    memberDate?.hours || 0,
-                                    member.eventDates,
-                                    member.leaveDates,
-                                    member.wellnessDates
-                                  ).map((item, index) => (
-                                    <div key={index} className={`w-full h-[40px] ${item}`}>
+                    
+                          {list[0]?.allDates
+                          .filter((dateObj) => {
+                            const day = new Date(dateObj).getDay();
+                            return day >= 1 && day <= 5; // Filter to include only Monday through Friday
+                          })
+                          .map((dateObj, index) => {
+                            const day = new Date(dateObj).getDay();
+                            const isFriday = day === 5;
+                            const memberDate = member.dates?.find((date) => formatDate(date.date) === formatDate(dateObj));
 
-                                    </div>
-
-                                  ))}
-
-                                </div>
                             
-                                <p className='relative text-black font-bold text-xs z-30'>
-                                  {/* {memberDate ? memberDate.hours : '-'} */}
-                                 -
-                                </p>
-                              </td>
+                            const totalHoursForWeek = list[0]?.allDates
+                              .filter((dateObj) => {
+                                const day = new Date(dateObj).getDay();
+                                return day >= 1 && day <= 5; // Only include Monday to Friday
+                              })
+                              .reduce<{ weeklyTotals: number[]; currentWeekTotal: number }>((accumulated, dateObj, index, array) => {
+                                const day = new Date(dateObj).getDay();
+                                const memberDate = member.dates?.find((date) => formatDate(date.date) === formatDate(dateObj));
+                                const hoursForDay = memberDate?.hours || 0;
 
-                             
-                              {isFriday && totalHoursForWeek.length > 0 && (
-                                  <td
-                                    key={`total-${index}`}
-                                    className="text-center font-normal w-[40px] bg-primary border-[1px] border-zinc-700"
-                                  >
-                                    <p className="text-center">
-                                    {totalHoursForWeek[Math.floor(index / 5)]} {/* Display the week's total on Friday */}
-                                    </p>
-                                  </td>
-                                )}
-                            </React.Fragment>
-                          );
-                        })}
+                                // Add current day's hours
+                                accumulated.currentWeekTotal += hoursForDay;
 
-                      </tr>
-                    ))
-                  )}
+                                // Reset total on Friday
+                                if (day === 5 || index === array.length - 1) { // On Friday or last day of the range
+                                  accumulated.weeklyTotals.push(accumulated.currentWeekTotal);
+                                  accumulated.currentWeekTotal = 0; // Reset total for next week
+                                }
+
+                                return accumulated;
+                              }, { weeklyTotals: [], currentWeekTotal: 0 }).weeklyTotals;
+    
+                            
+                            return (
+                              <React.Fragment key={index}>
+                                <td 
+                                  key={index} 
+                                  className="relative text-center w-[30px] overflow-hidden bg-white border-[1px]"
+                                  onClick={() => {
+                                
+                                      setDialog(true);
+                                      // setHours(memberDate.hours);
+                                      setDate(dateObj);
+                                      setProjectid(graphItem._id);
+                                      setName(member.employee.fullname);
+                                      setEmployeeid(member.employee._id);
+                                      setHours(memberDate?.hours || 0)
+                                      setAddstatus(memberDate?.status || [])
+                                      setSelectedRows(memberDate?.status || [])
+                                      setSelected(memberDate?.status || [])
+                                      setLeavestatus(isDateInRange(dateObj,member.leaveDates[0]?.leavestart,member.leaveDates[0]?.leaveend))
+                                      setEvent(isDateInRange(dateObj,member.eventDates[0]?.startdate,member.eventDates[0]?.enddate))
+                                      wdStatusChecker(member.wellnessDates, dateObj, member.eventDates)
+                                      setIsjobmanager(graphItem.jobmanager.isJobManager)
+                                      setLeave(isDateInRange(dateObj,member.leaveDates[0]?.leavestart,member.leaveDates[0]?.leaveend))
+                                    
+                                      setRole(member.role)
+            
+                                    }
+                                  }
+                                >
+                                  <div className=' w-full h-[40px] absolute flex top-0 '>
+                                    {statusColor(
+                                      memberDate?.status || [],
+                                      dateObj,
+                                      member.leaveDates.length !== 0 ? member.leaveDates[0]?.leavestart : '', 
+                                      member.leaveDates.length !== 0 ? member.leaveDates[0]?.leaveend : '', 
+                                      member.eventDates.length !== 0 ? member.eventDates[0].startdate : '', 
+                                      member.eventDates.length !== 0 ? member.eventDates[0].enddate : '', 
+                                      member.wellnessDates[0],
+                                      memberDate?.hours || 0,
+                                      member.eventDates,
+                                      member.leaveDates,
+                                      member.wellnessDates
+                                    ).map((item, index) => (
+                                      <div key={index} className={`w-full h-[40px] ${item}`}>
+
+                                      </div>
+
+                                    ))}
+
+                                  </div>
+                              
+                                  <p className='relative text-black font-bold text-xs z-30'>
+                                    {/* {memberDate ? memberDate.hours : '-'} */}
+                                  -
+                                  </p>
+                                </td>
+
+                              
+                                {isFriday && totalHoursForWeek.length > 0 && (
+                                    <td
+                                      key={`total-${index}`}
+                                      className="text-center font-normal w-[40px] bg-primary border-[1px] border-zinc-700"
+                                    >
+                                      <p className="text-center">
+                                      {totalHoursForWeek[Math.floor(index / 5)]} {/* Display the week's total on Friday */}
+                                      </p>
+                                    </td>
+                                  )}
+                              </React.Fragment>
+                            );
+                          })}
+
+                        </tr>
+                      ))
+                    )}
 
 
-              </tbody>
-              </table>
+                </tbody>
+                </table>
+              </div>
             </div>
-            </>
           ) : (
             <div className=' w-full h-full flex items-center justify-center'>
               <p className=' text-xs text-zinc-400'>No job component's yet under this project, please create one to see the workload!</p>

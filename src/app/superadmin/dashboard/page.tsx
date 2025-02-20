@@ -14,7 +14,6 @@ export default function page() {
   const [tab, setTab] = useState('')
   const router = useRouter()
 
-  //team list
   useEffect(() => {
     const getList = async () => {
       const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teams/teamsearchlist?teamname`,{
@@ -27,7 +26,6 @@ export default function page() {
       setTeams(response.data.data.teamlist)
       setTab(response.data.data.teamlist[0].teamid)
       router.push(`?team=${response.data.data.teamlist[0].teamid}`)
-      // setTab(response.data.data.teamlist[0].teamid)
     }
     getList()
   },[])

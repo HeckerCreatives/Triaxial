@@ -53,6 +53,8 @@ type Prop = {
     client: string
     start: string
     end: string
+    component: string
+    adminnotes: string
 }
 
 type Employee = {
@@ -88,7 +90,6 @@ export default function EditJobComponent( prop: Prop) {
   const [notes3, setNotes3] = useState('')
   const [notes4, setNotes4] = useState('')
 
-  console.log(prop)
 
 //employee list
   useEffect(() => {
@@ -436,9 +437,9 @@ export default function EditJobComponent( prop: Prop) {
                           <DialogTrigger className=''>
                            {prop.children}
                           </DialogTrigger>
-                          <DialogContent className=' max-w-[600px] max-h-[80%] h-auto bg-secondary border-none p-6 text-white overflow-y-auto'>
+                          <DialogContent className=' max-w-[600px] max-h-[80%] h-auto bg-white border-none p-6 text-black overflow-y-auto'>
                             <DialogHeader>
-                              <DialogTitle>Edit Project <span className=' text-xs text-zinc-400'></span></DialogTitle>
+                              <DialogTitle className=' text-sm'><span className=' bg-red-600 px-2 py-1 text-white'>Edit</span> Project <span className=' text-xs text-zinc-400'></span></DialogTitle>
                               <DialogDescription className={` ${prop.isManger === true ? 'text-white' : ' text-red-500'}`}>
                                 {/* {graphItem.jobmanager.isManager === true ? 'Your the project manager of this project, you are allowed to edit this project' : ' Your are not the project manager of this project, you are not allowed to edit this project'} */}
                                 
@@ -459,7 +460,7 @@ export default function EditJobComponent( prop: Prop) {
                                       <div className=' w-full'>
                                         <Label className=' text-zinc-500'>Project Name</Label>
                                         <Select value={projectname} onValueChange={setProjectname}>
-                                          <SelectTrigger className="text-xs h-[35px] bg-primary">
+                                          <SelectTrigger className="text-xs h-[35px] bg-zinc-100">
                                           <SelectValue placeholder="Select" className="text-black" />
                                           </SelectTrigger>
                                           <SelectContent className="text-xs">
@@ -475,8 +476,8 @@ export default function EditJobComponent( prop: Prop) {
                                                                                                                                           
                                                                                                                                                              
                                         <div className=' w-full'>
-                                          <Label className=' text-zinc-500'>Client</Label>
-                                        <Input type='text' value={prop.client}  className=' text-xs h-[35px] bg-primary' placeholder='Project name'/>
+                                          <Label className=' text-zinc-500'>Client Name</Label>
+                                        <Input type='text' value={prop.client}  className=' text-xs h-[35px] bg-zinc-100' placeholder='Project name'/>
                                                                     
                                                                                             
                                                                                                                                           
@@ -489,7 +490,7 @@ export default function EditJobComponent( prop: Prop) {
                                                                                                                                           
                                       <div className=' w-full'>
                                         <Label className=' text-zinc-500'>Start Date</Label>
-                                        <Input type='text' value={prop.start.split('T')[0]}  className=' text-xs h-[35px] bg-primary' placeholder='Project name' />
+                                        <Input type='text' value={prop.start.split('T')[0]}  className=' text-xs h-[35px] bg-zinc-100' placeholder='Project name' />
                                                                                                                                           
                                                                                                                                           
                                       </div>
@@ -497,7 +498,7 @@ export default function EditJobComponent( prop: Prop) {
                                                                                                                                                              
                                         <div className=' w-full'>
                                           <Label className=' text-zinc-500'>End date</Label>
-                                          <Input type='text' value={prop.end.split('T')[0]}  className=' text-xs h-[35px] bg-primary' placeholder='Project name'/>
+                                          <Input type='text' value={prop.end.split('T')[0]}  className=' text-xs h-[35px] bg-zinc-100' placeholder='Project name'/>
                                                                                                                                           
                                         </div>
                                                                                                                                           
@@ -505,11 +506,17 @@ export default function EditJobComponent( prop: Prop) {
 
                                   <div>
 
+                                  <Label className=' text-zinc-500'>Job Component</Label>
+                                  <Input type='text' value={prop.component}  className=' text-xs h-[35px] bg-zinc-100 mb-2' placeholder='Project name'/>
+
+                                  <Label className=' text-zinc-500'>Admin Notes</Label>
+                                  <Textarea value={prop.adminnotes}  className=' text-xs h-[35px] bg-zinc-100' placeholder='Project name'/>
+
                                   </div>
 
                                 <label htmlFor="">Job Manager</label>
                                 <Select value={jobmanager} onValueChange={setJobmanager}>
-                                          <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
+                                          <SelectTrigger className="text-xs h-[35px] bg-zinc-100 mt-2">
                                           <SelectValue placeholder="Select" className="text-black" />
                                           </SelectTrigger>
                                           <SelectContent className="text-xs">
@@ -525,22 +532,7 @@ export default function EditJobComponent( prop: Prop) {
 
                               </div>
 
-                                {/* <label htmlFor="">Job no</label>
-                                <Input value={jobno} onChange={(e) => setJobno(e.target.value)} type='text' className=' text-xs h-[35px] bg-primary' placeholder='Job no' /> */}
-
-                                <label htmlFor="">Job Manager</label>
-                                <Select value={jobmanager} onValueChange={setJobmanager}>
-                                          <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
-                                          <SelectValue placeholder="Select" className="text-black" />
-                                          </SelectTrigger>
-                                          <SelectContent className="text-xs">
-                                            {employee.map((item, index) => (
-                                            <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
-
-                                            ))}
-                                          
-                                          </SelectContent>
-                                  </Select>
+                           
 
                                   <div className=' w-full flex items-end justify-end mt-4 text-xs'>
                                     <button onClick={() => updateJobComponenAsManager()} className=' bg-red-600 px-4 py-2 rounded-md w-fit'>Save</button>
@@ -556,71 +548,69 @@ export default function EditJobComponent( prop: Prop) {
                               <div className=' flex flex-col w-full gap-2 text-xs'>
 
                               <label htmlFor="">Engineer (Engr.)</label>
-                                <Select value={engr} onValueChange={setEngr}>
-                                      <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
-                                      <SelectValue placeholder="Select" className="text-black" />
-                                      </SelectTrigger>
-                                      <SelectContent className="text-xs">
-                                        {employee.map((item, index) => (
-                                        <SelectItem key={item.employeeid} value={item.employeeid}>{item.name}</SelectItem>
+                                  <Select value={engr} onValueChange={setEngr}>
+                                        <SelectTrigger className="text-xs h-[35px] bg-zinc-100 mt-2">
+                                        <SelectValue placeholder="Select" className="text-black" />
+                                        </SelectTrigger>
+                                        <SelectContent className="text-xs">
+                                          {employee.map((item, index) => (
+                                          <SelectItem key={item.employeeid} value={item.employeeid}>{item.name}</SelectItem>
 
-                                        ))}
-                                      
-                                      </SelectContent>
-                              </Select>
+                                          ))}
+                                        
+                                        </SelectContent>
+                                </Select>
+                                <label htmlFor="">Notes</label>
+                                <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} className=' text-xs h-[15px] bg-zinc-100' placeholder='Notes' />
 
-                              <label htmlFor="">Notes</label>
-                              <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} className=' text-xs h-[25px] bg-primary' placeholder='Notes' />
+                                <label htmlFor="">Engineer Reviewer (Engr. Revr.)</label>
+                                <Select value={engrrvr} onValueChange={(setEngrrvr)}>
+                                        <SelectTrigger className="text-xs h-[35px] bg-zinc-100 mt-2">
+                                        <SelectValue placeholder="Select" className="text-black" />
+                                        </SelectTrigger>
+                                        <SelectContent className="text-xs">
+                                          {employee.map((item, index) => (
+                                          <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
 
-                              <label htmlFor="">Engineer Reviewer (Engr. Revr.)</label>
-                              <Select value={engrrvr} onValueChange={setEngrrvr}>
-                                      <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
-                                      <SelectValue placeholder="Select" className="text-black" />
-                                      </SelectTrigger>
-                                      <SelectContent className="text-xs">
-                                        {employee.map((item, index) => (
-                                        <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
+                                          ))}
+                                        
+                                        </SelectContent>
+                                </Select>
+                                <label htmlFor="">Notes</label>
+                                <Textarea value={notes2} onChange={(e) => setNotes2(e.target.value)} className=' text-xs h-[15px] bg-zinc-100' placeholder='Notes' />
 
-                                        ))}
-                                      
-                                      </SelectContent>
-                              </Select>
+                                <label htmlFor="">Drafter (Drft.)</label>
+                                <Select value={drf} onValueChange={(setDrf)}>
+                                        <SelectTrigger className="text-xs h-[35px] bg-zinc-100 mt-2">
+                                        <SelectValue placeholder="Select" className="text-black" />
+                                        </SelectTrigger>
+                                        <SelectContent className="text-xs">
+                                          {employee.map((item, index) => (
+                                          <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
 
-                              <label htmlFor="">Notes</label>
-                              <Textarea value={notes2} onChange={(e) => setNotes(e.target.value)} className=' text-xs h-[25px] bg-primary' placeholder='Notes' />
+                                          ))}
+                                        
+                                        </SelectContent>
+                                </Select>
+                                <label htmlFor="">Notes</label>
+                                <Textarea value={notes3} onChange={(e) => setNotes3(e.target.value)} className=' text-xs h-[15px]  bg-zinc-100' placeholder='Notes' />
 
-                              <label htmlFor="">Drafter (Drft.)</label>
-                              <Select value={drf} onValueChange={(setDrf)}>
-                                      <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
-                                      <SelectValue placeholder="Select" className="text-black" />
-                                      </SelectTrigger>
-                                      <SelectContent className="text-xs">
-                                        {employee.map((item, index) => (
-                                        <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
+                                <label htmlFor="">Drafter Reviewer (Drft. Revr.)	</label>
+                                <Select value={drfrvr} onValueChange={(setDrfrvr)}>
+                                        <SelectTrigger className="text-xs h-[35px] bg-zinc-100 mt-2">
+                                        <SelectValue placeholder="Select" className="text-black" />
+                                        </SelectTrigger>
+                                        <SelectContent className="text-xs">
+                                          {employee.map((item, index) => (
+                                          <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
 
-                                        ))}
-                                      
-                                      </SelectContent>
-                              </Select>
-                              <label htmlFor="">Notes</label>
-                              <Textarea value={notes3} onChange={(e) => setNotes(e.target.value)} className=' text-xs h-[25px] bg-primary' placeholder='Notes' />
-
-                              <label htmlFor="">Drafter Reviewer (Drft. Revr.)	</label>
-                              <Select value={drfrvr} onValueChange={(setDrfrvr)}>
-                                      <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
-                                      <SelectValue placeholder="Select" className="text-black" />
-                                      </SelectTrigger>
-                                      <SelectContent className="text-xs">
-                                        {employee.map((item, index) => (
-                                        <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
-
-                                        ))}
-                                      
-                                      </SelectContent>
-                              </Select>
-
-                              <label htmlFor="">Notes</label>
-                              <Textarea value={notes4} onChange={(e) => setNotes(e.target.value)} className=' text-xs h-[25px] bg-primary' placeholder='Notes' />
+                                          ))}
+                                        
+                                        </SelectContent>
+                                </Select>
+                                <label htmlFor="">Notes</label>
+                                <Textarea value={notes4} onChange={(e) => setNotes4(e.target.value)} className=' text-xs h-[15px] bg-zinc-100' placeholder='Notes' />
+                             
 
                                 <div className=' w-full flex items-end justify-end mt-4 text-xs'>
                                   <button onClick={() => updateJobComponenAsJobManager()} className=' bg-red-600 px-4 py-2 rounded-md w-fit'>Save</button>
@@ -643,7 +633,7 @@ export default function EditJobComponent( prop: Prop) {
                                       <div className=' w-full'>
                                         <Label className=' text-zinc-500'>Project Name</Label>
                                         <Select value={projectname} onValueChange={setProjectname}>
-                                          <SelectTrigger className="text-xs h-[35px] bg-primary">
+                                          <SelectTrigger className="text-xs h-[35px] bg-zinc-100">
                                           <SelectValue placeholder="Select" className="text-black" />
                                           </SelectTrigger>
                                           <SelectContent className="text-xs">
@@ -659,8 +649,8 @@ export default function EditJobComponent( prop: Prop) {
                                                                                                                                           
                                                                                                                                                              
                                         <div className=' w-full'>
-                                          <Label className=' text-zinc-500'>Client</Label>
-                                        <Input type='text' value={prop.client}  className=' text-xs h-[35px] bg-primary' placeholder='Project name'/>
+                                          <Label className=' text-zinc-500'>Client Name</Label>
+                                        <Input type='text' value={prop.client}  className=' text-xs h-[35px] bg-zinc-100' placeholder='Project name'/>
                                                                     
                                                                                             
                                                                                                                                           
@@ -673,7 +663,7 @@ export default function EditJobComponent( prop: Prop) {
                                                                                                                                           
                                       <div className=' w-full'>
                                         <Label className=' text-zinc-500'>Start Date</Label>
-                                        <Input type='text' value={prop.start.split('T')[0]}  className=' text-xs h-[35px] bg-primary' placeholder='Project name' />
+                                        <Input type='text' value={prop.start.split('T')[0]}  className=' text-xs h-[35px] bg-zinc-100' placeholder='Project name' />
                                                                                                                                           
                                                                                                                                           
                                       </div>
@@ -681,7 +671,7 @@ export default function EditJobComponent( prop: Prop) {
                                                                                                                                                              
                                         <div className=' w-full'>
                                           <Label className=' text-zinc-500'>End date</Label>
-                                          <Input type='text' value={prop.end.split('T')[0]}  className=' text-xs h-[35px] bg-primary' placeholder='Project name'/>
+                                          <Input type='text' value={prop.end.split('T')[0]}  className=' text-xs h-[35px] bg-zinc-100' placeholder='Project name'/>
                                                                                                                                           
                                         </div>
                                                                                                                                           
@@ -689,11 +679,17 @@ export default function EditJobComponent( prop: Prop) {
 
                                   <div>
 
+                                  <Label className=' text-zinc-500'>Job Component</Label>
+                                  <Input type='text' value={prop.component}  className=' text-xs h-[35px] bg-zinc-100 mb-2' placeholder='Project name'/>
+
+                                  <Label className=' text-zinc-500'>Admin Notes</Label>
+                                  <Textarea value={prop.adminnotes}  className=' text-xs h-[35px] bg-zinc-100' placeholder='Project name'/>
+
                                   </div>
 
                                 <label htmlFor="">Job Manager</label>
                                 <Select value={jobmanager} onValueChange={setJobmanager}>
-                                          <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
+                                          <SelectTrigger className="text-xs h-[35px] bg-zinc-100 mt-2">
                                           <SelectValue placeholder="Select" className="text-black" />
                                           </SelectTrigger>
                                           <SelectContent className="text-xs">
@@ -713,7 +709,7 @@ export default function EditJobComponent( prop: Prop) {
 
                                   <label htmlFor="">Engineer (Engr.)</label>
                                     <Select value={engr} onValueChange={setEngr}>
-                                          <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
+                                          <SelectTrigger className="text-xs h-[35px] bg-zinc-100 mt-2">
                                           <SelectValue placeholder="Select" className="text-black" />
                                           </SelectTrigger>
                                           <SelectContent className="text-xs">
@@ -725,11 +721,11 @@ export default function EditJobComponent( prop: Prop) {
                                           </SelectContent>
                                   </Select>
                                   <label htmlFor="">Notes</label>
-                                  <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} className=' text-xs h-[15px] bg-primary' placeholder='Notes' />
+                                  <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} className=' text-xs h-[15px] bg-zinc-100' placeholder='Notes' />
 
                                   <label htmlFor="">Engineer Reviewer (Engr. Revr.)</label>
                                   <Select value={engrrvr} onValueChange={(setEngrrvr)}>
-                                          <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
+                                          <SelectTrigger className="text-xs h-[35px] bg-zinc-100 mt-2">
                                           <SelectValue placeholder="Select" className="text-black" />
                                           </SelectTrigger>
                                           <SelectContent className="text-xs">
@@ -741,11 +737,11 @@ export default function EditJobComponent( prop: Prop) {
                                           </SelectContent>
                                   </Select>
                                   <label htmlFor="">Notes</label>
-                                  <Textarea value={notes2} onChange={(e) => setNotes2(e.target.value)} className=' text-xs h-[15px] bg-primary' placeholder='Notes' />
+                                  <Textarea value={notes2} onChange={(e) => setNotes2(e.target.value)} className=' text-xs h-[15px] bg-zinc-100' placeholder='Notes' />
 
                                   <label htmlFor="">Drafter (Drft.)</label>
                                   <Select value={drf} onValueChange={(setDrf)}>
-                                          <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
+                                          <SelectTrigger className="text-xs h-[35px] bg-zinc-100 mt-2">
                                           <SelectValue placeholder="Select" className="text-black" />
                                           </SelectTrigger>
                                           <SelectContent className="text-xs">
@@ -757,11 +753,11 @@ export default function EditJobComponent( prop: Prop) {
                                           </SelectContent>
                                   </Select>
                                   <label htmlFor="">Notes</label>
-                                  <Textarea value={notes3} onChange={(e) => setNotes3(e.target.value)} className=' text-xs h-[15px] bg-primary' placeholder='Notes' />
+                                  <Textarea value={notes3} onChange={(e) => setNotes3(e.target.value)} className=' text-xs h-[15px]  bg-zinc-100' placeholder='Notes' />
 
                                   <label htmlFor="">Drafter Reviewer (Drft. Revr.)	</label>
                                   <Select value={drfrvr} onValueChange={(setDrfrvr)}>
-                                          <SelectTrigger className="text-xs h-[35px] bg-primary mt-2">
+                                          <SelectTrigger className="text-xs h-[35px] bg-zinc-100 mt-2">
                                           <SelectValue placeholder="Select" className="text-black" />
                                           </SelectTrigger>
                                           <SelectContent className="text-xs">
@@ -773,7 +769,7 @@ export default function EditJobComponent( prop: Prop) {
                                           </SelectContent>
                                   </Select>
                                   <label htmlFor="">Notes</label>
-                                  <Textarea value={notes4} onChange={(e) => setNotes4(e.target.value)} className=' text-xs h-[15px] bg-primary' placeholder='Notes' />
+                                  <Textarea value={notes4} onChange={(e) => setNotes4(e.target.value)} className=' text-xs h-[15px] bg-zinc-100' placeholder='Notes' />
 
                               
                                   

@@ -88,7 +88,6 @@ export default function EmployeeLayout({
         {withCredentials: true}
       )
 
-      console.log(response.data)
       setData(response.data.data)
     }
     getData()
@@ -102,7 +101,6 @@ export default function EmployeeLayout({
           {withCredentials: true}
         )
   
-        console.log(response.data)
         setUnread(response.data.unreademails)
       }
       getData()

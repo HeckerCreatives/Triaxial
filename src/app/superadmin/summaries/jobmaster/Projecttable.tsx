@@ -150,7 +150,7 @@ export default function Projecttable() {
           project.jobComponents.map((job, index) => (
             <TableRow key={index} className=' text-white'>
               <TableCell className={` ${clientColor(project.priority)} text-black underline cursor-pointer`}>
-                <a href={`/pm/graph/jobcomponent?teamid=${project.teamid}&jobno=${job.id}`} className=' '>{project.jobno}</a>
+                <a href={`/superadmin/graph/jobcomponent?teamid=${project.teamid}&jobno=${job.id}`} className=' '>{project.jobno}</a>
 
               </TableCell>
               <TableCell className={` ${clientColor(project.priority)} text-black`}>{project.client}</TableCell>

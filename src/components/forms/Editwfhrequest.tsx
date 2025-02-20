@@ -67,7 +67,6 @@ export default function Editwfhrequest( prop: Data) {
     defaultValues:{
       wdcycle: prop.wellnessdaycycle === true ? 'Yes' : 'No',
       startdate: prop.requestdate,
-      enddate: prop.requestend,
       totalhoursonleave: prop.totalhourswfh,
 
 
@@ -82,7 +81,6 @@ export default function Editwfhrequest( prop: Data) {
       const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/wfh/editrequestwfh`,{
         requestid: prop.requestid,
         requestdate: data.startdate, // Format YYYY-MM-DD
-        requestend: data.enddate, // Format YYYY-MM-DD
         wellnessdaycycle: data.wdcycle === 'Yes' ? true : false ,
         totalhourswfh: hoursonleave,
         hoursofleave: data.duringleave,
@@ -198,12 +196,12 @@ export default function Editwfhrequest( prop: Data) {
               {errors.startdate && <p className=' text-[.6em] text-red-500'>{errors.startdate.message}</p>}
             </div>
 
-            <div>
+            {/* <div>
               <Label className=' mt-2 text-zinc-500'>Last Day Of Leave: <span className=' text-red-500'>*</span></Label>
               <Input type='date' value={end} className=' text-xs h-[35px] bg-zinc-200' placeholder='Name' {...register('enddate', { onChange: (e) => setEnd(e.target.value)})}/>
               {errors.enddate && <p className=' text-[.6em] text-red-500'>{errors.enddate.message}</p>}
 
-            </div>
+            </div> */}
 
   
 

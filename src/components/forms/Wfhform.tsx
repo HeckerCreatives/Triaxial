@@ -62,7 +62,7 @@ export default function Wfhform( prop: Data) {
     try {
       const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/wfh/requestwfh`,{
         requestdate: data.startdate,
-        requestend: data.enddate,
+        // requestend: data.enddate,
         reason: data.reason,
         wellnessdaycycle:  data.wdcycle === 'Yes' ? true : false ,
         totalhourswfh: data.totalhoursonleave,
@@ -136,7 +136,7 @@ export default function Wfhform( prop: Data) {
 
    function totalWorkingDays(): number {
      const startDate = new Date(start)
-     const endDate = new Date(end)
+     const endDate = new Date(start)
      let workingDays = 0;
  
      for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
@@ -174,20 +174,20 @@ export default function Wfhform( prop: Data) {
         <p className=' text-sm uppercase font-semibold text-red-700'>Work from home application form</p>
         <div className=' w-full flex flex-col gap-1'>
 
-        <Label className=' mt-4 font-semibold'>Wfh</Label>
+        {/* <Label className=' mt-4 font-semibold'>Wfh</Label> */}
           <div className=' flex items-center gap-4'>
             <div>
-              <Label className=' mt-2 text-zinc-500'>First Day Of Leave: <span className=' text-red-500'>*</span></Label>
+              <Label className=' mt-2 text-zinc-500'>Day Of Leave: <span className=' text-red-500'>*</span></Label>
               <Input type='date' className=' text-xs h-[35px] bg-zinc-200'  placeholder='Name' {...register('startdate',{ onChange: (e) => setStart(e.target.value)})}/>
               {errors.startdate && <p className=' text-[.6em] text-red-500'>{errors.startdate.message}</p>}
             </div>
 
-            <div>
+            {/* <div>
               <Label className=' mt-2 text-zinc-500'>Last Day Of Leave: <span className=' text-red-500'>*</span></Label>
               <Input type='date' className=' text-xs h-[35px] bg-zinc-200' placeholder='Name' {...register('enddate', { onChange: (e) => setEnd(e.target.value)})}/>
               {errors.enddate && <p className=' text-[.6em] text-red-500'>{errors.enddate.message}</p>}
 
-            </div>
+            </div> */}
 
   
 
@@ -210,7 +210,7 @@ export default function Wfhform( prop: Data) {
 
           <div className=' w-full flex items-start gap-2 mt-4'>
             <div className=' w-full'>
-              <Label className=' text-zinc-500'>Total Working Hours</Label>
+              <Label className=' text-zinc-500'>Total Hours Working from Home</Label>
             < Input type='number' value={hoursonleave.toLocaleString()} defaultValue={0} className=' text-xs h-[35px] bg-zinc-200' placeholder='0' {...register('totalhoursonleave',{ valueAsNumber: true})}/>
               {errors.totalhoursonleave && <p className=' text-[.6em] text-red-500'>{errors.totalhoursonleave.message}</p>}
 
@@ -224,7 +224,7 @@ export default function Wfhform( prop: Data) {
             </div>
           </div>
 
-          <Label className=' mt-2 text-zinc-500'>Reason for Work From Home: <span className=' text-red-700'>*</span></Label>
+          <Label className=' mt-2 text-zinc-500'>Reason's for Work From Home: <span className=' text-red-700'>*</span></Label>
           <Textarea placeholder='Please input text here' className=' text-xs bg-zinc-200' {...register('reason')}/>
           {errors.reason && <p className=' text-[.6em] text-red-500'>{errors.reason.message}</p>}
 

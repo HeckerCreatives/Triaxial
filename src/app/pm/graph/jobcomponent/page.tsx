@@ -13,6 +13,7 @@ type Team = {
 export default function page() {
   const params = useSearchParams()
   const id = params.get('teamid')
+  const teamname = params.get('teamname')
 
   const [teamlist, setTeamlist] = useState<Team[]>([])
   useEffect(() => {
@@ -26,7 +27,6 @@ export default function page() {
         })
   
         setTeamlist(response.data.data.teams)
-        console.log('daskfjh',teamlist)
        
       }
       getList()
@@ -37,17 +37,19 @@ export default function page() {
 
   const findTeam = teamlist.find((item) => item._id === id)
 
-  console.log(findTeam)
 
   return (
    
       <PmLayout>
-      <div className=' p-6 top-0 left-0 w-full h-[100px] bg-zinc-800'
-      style={{backgroundImage: `url('/dbbg.png')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat:"no-repeat"}}
+       
+          <div className=' p-6 top-0 left-0 w-full h-[40px] bg-zinc-800'
+          style={{backgroundImage: `url('/dbbg.png')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat:"no-repeat"}}
+          
+          >
+            <Breadcrumbdb page={`Scheduling / ${teamname}`}/>
+          </div>
       
-      >
-        <Breadcrumbdb page={`Scheduling / ${findTeam?.teamname}`}/>
-      </div>
+     
       <Yourworkload/>
     </PmLayout>
 
