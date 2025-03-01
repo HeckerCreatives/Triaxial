@@ -53,8 +53,8 @@ export default function Invoice( prop: Props) {
     const id = params.get('jobcid')
     const [hasFetched, setHasFetched] = useState(false);
 
-    // const lumpsumCalculation = ((newInvoice / 100 ) * prop.estimatedbudget) -  (currInvoice / 100) * prop.estimatedbudget
-    const lumpsumCalculation = ((newInvoice / 100 ) * prop.estimatedbudget)
+    const lumpsumCalculation = ((newInvoice / 100 ) * prop.estimatedbudget) -  (currInvoice / 100) * prop.estimatedbudget
+    // const lumpsumCalculation = ((newInvoice / 100 ) * prop.estimatedbudget)
 
 
 
