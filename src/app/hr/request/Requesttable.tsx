@@ -58,7 +58,7 @@ export default function Requesttable() {
   const [dialog, setDialog] = useState(false)
   const [tab, setTab] = useState('Leave')
   const [list, setLiest] = useState<Wellnessday[]>([])
-  const [active, setActive] = useState('Leaves')
+  const [active, setActive] = useState('Leave')
   const router = useRouter()
   const params = useSearchParams()
   const refresh = params.get('state')

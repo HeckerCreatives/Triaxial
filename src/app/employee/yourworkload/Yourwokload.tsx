@@ -16,6 +16,8 @@ import { formatDate } from '@/utils/functions'
 import Leaveform from '@/components/forms/Leaveform'
 import WDform from '@/components/forms/Wellnessday'
 import Wfhform from '@/components/forms/Wfhform'
+import { Eye } from 'lucide-react'
+import { clientColor } from '@/utils/helpers'
 
 
 type Event = {
@@ -175,16 +177,16 @@ export default function Yourworkload() {
           <table className="table-auto w-[800px] border-collapse ">
           <thead className=' bg-secondary h-[100px]'>
 
-            <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
-              <th className=' font-normal w-[70px]'>Team.</th>
-              <th className=' font-normal w-[70px]'>Job No.</th>
-              <th className=' font-normal w-[70px]'>Client</th>
-              <th className=' font-normal w-[70px]'>Project name</th>
-              <th className=' font-normal w-[70px]'>Job Mgr.</th>
-              <th className=' font-normal w-[70px]'>Job Component</th>
-              <th className=' w-[70px] font-normal'>Members</th>
-              <th className=' font-normal w-[70px]'>Role</th>
-              <th className=' font-normal w-[70px]'>Notes</th>
+            <tr className=' text-[0.6rem] text-zinc-100 font-normal border-collapse'>
+              <th className=' text-left font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Team.</th>
+              <th className=' text-left font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Job No.</th>
+              <th className=' text-left font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Client Name</th>
+              <th className=' text-left font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Project name</th>
+              <th className=' text-left font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Job Mgr.</th>
+              <th className=' text-left font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Job Component</th>
+              <th className=' text-left min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 font-normal px-2'>Other Members</th>
+              <th className=' text-left font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Role</th>
+              <th className=' text-left font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Notes</th>
 
             
             </tr>
@@ -192,20 +194,22 @@ export default function Yourworkload() {
           <tbody>
           {list.map((graphItem, graphIndex) =>
             graphItem.members.map((member, memberIndex) => (
-              <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
+              <tr key={`${graphIndex}-${memberIndex}`} className={` text-black text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600 ${clientColor(graphItem.clientpriority)}`}>
                  
-                  <td className="text-center ">{graphItem.teamname}</td>
-                  <td className="text-center text-red-500">{memberIndex === 0 && graphItem.jobno}</td>
-                  <td className="text-center ">{memberIndex === 0 && graphItem.clientname}</td>
-                  <td className="text-center ">{memberIndex === 0 && graphItem.projectname}</td>
-                  <td className="text-center">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
-                  <td className="text-center">{memberIndex === 0 && graphItem.jobcomponent}</td>
+                  <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">{graphItem.teamname}</td>
+                  <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.jobno}</td>
+                  <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.clientname}</td>
+                  <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.projectname}</td>
+                  <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
+                  <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.jobcomponent}</td>
       
-                <td className="text-center">{member.employee.fullname}</td>
-                <td className="text-center text-[.5rem]">{member.role}</td>
-                <td className="text-center">
+                  <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">{graphItem.teammembers.join(", ")}</td>
+                <td className="text-left text-[.5rem whitespace-normal break-all border-[1px] border-zinc-600 px-2]">{member.role}</td>
+                <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">
                   <Dialog>
-                    <DialogTrigger>{member.notes.slice(0, 25) || ''} ...</DialogTrigger>
+                    <DialogTrigger className=' bg-red-600 p-1 rounded-sm flex items-center'>
+                      <Eye size={12} className=' text-[.6rem]'/> View
+                    </DialogTrigger>
                     <DialogContent className=' bg-secondary p-6 border-none max-w-[600px] text-white'>
                       <DialogHeader>
                         <DialogTitle>Notes</DialogTitle>
@@ -213,7 +217,11 @@ export default function Yourworkload() {
                           
                         </DialogDescription>
                       </DialogHeader>
+                      {member.notes === '' ? (
+                        <p className=' text-xs text-zinc-400 h-full w-full text-center'>No notes.</p>
+                      ):(
                       <p className=' text-xs text-zinc-400'>{member.notes}</p>
+                      )}
                     </DialogContent>
                   </Dialog>
 
@@ -229,22 +237,38 @@ export default function Yourworkload() {
           <div className=' overflow-x-auto'>
             <table className="table-auto border-collapse ">
               <thead className="w-full bg-white h-[100px]">
-                <tr className="text-[0.6rem] text-black font-normal">
+                <tr className={`text-[0.6rem] text-black font-normal`}>
                               {dates.map((dateObj, index) => {
                                 const date = new Date(dateObj)
                                 date.setHours(0, 0, 0, 0) // Normalize the date to remove time differences
               
-                                const today = new Date()
-                                today.setHours(0, 0, 0, 0) // Normalize today
+                               
               
-                                const tomorrow = new Date(today)
-                                tomorrow.setDate(today.getDate() + 1) // Get tomorrow's date
-              
-                                // Determine background color
-                                let bgColor = "bg-white"
-                                if (date.getTime() < today.getTime()) bgColor = "bg-gray-300"
-                                else if (date.getTime() === today.getTime()) bgColor = "bg-pink-500"
-                                else if (date.getTime() === tomorrow.getTime()) bgColor = "bg-pink-300"
+                                const today = new Date();
+                                today.setHours(0, 0, 0, 0);
+
+                                const startOfWeek = new Date(today);
+                                startOfWeek.setDate(today.getDate() - (today.getDay() - 1));
+
+                                const endOfWeek = new Date(startOfWeek);
+                                endOfWeek.setDate(startOfWeek.getDate() + 4);
+
+                                let bgColor = "bg-white";
+                                if (date >= startOfWeek && date <= endOfWeek) {
+                                  const prevDay = new Date(today);
+                                  prevDay.setDate(today.getDate() - 1);
+
+                                  const nextDay = new Date(today);
+                                  nextDay.setDate(today.getDate() + 1);
+
+                                  if (date.getTime() < today.getTime()) {
+                                    bgColor = "bg-gray-300"; 
+                                  } else if (date.getTime() === today.getTime()) {
+                                    bgColor = "bg-pink-500";
+                                  } else if (date.getTime() >= nextDay.getTime()) {
+                                    bgColor = "bg-pink-200";
+                                  }
+                                }
               
                                 return (
                                   <React.Fragment key={index}>
@@ -340,6 +364,9 @@ export default function Yourworkload() {
           </div>
         )}
         
+
+        
+
       </div>
      
       

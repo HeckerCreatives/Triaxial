@@ -202,24 +202,24 @@ export default function Yourworkload() {
           <table className="table-auto w-auto border-collapse ">
             <thead className=' bg-secondary h-[100px]'>
 
-              <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
-                <th className=' text-left min-w-[50px] font-normal'>Team</th>
-                <th className=' text-left min-w-[100px] font-normal'>Name</th>
-                <th className=' text-left min-w-[50px] font-normal'>Initial</th>
-                <th className=' text-left font-normal w-[100px]'>Resource</th>
+              <tr className=' text-[0.6rem] text-zinc-100 font-normal border-collapse'>
+                <th className=' text-left min-w-[100px] font-normal whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Team</th>
+                <th className=' text-left min-w-[100px] font-normal whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Name</th>
+                <th className=' text-left min-w-[100px] font-normal whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Initial</th>
+                <th className=' text-left font-normal min-w-[100px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Resource</th>
             
               </tr>
             </thead>
             <tbody>
             {list.map((graphItem, graphIndex) =>
               graphItem.members.map((member, memberIndex) => (
-                <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600 text-left">
+                <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[48px] border-[1px] border-zinc-600 text-left border-collapse">
                   {memberIndex === 0 ?
-                  (<td  onClick={() => router.push(`/pm/graph/jobcomponent?teamid=${graphItem.teamid}&teamname=${graphItem.name}`)} className="text-left text-red-500 underline cursor-pointer">{graphItem.name}</td>) :  (<td className="text-center"></td>)
+                  (<td  onClick={() => router.push(`/pm/graph/jobcomponent?teamid=${graphItem.teamid}&teamname=${graphItem.name}`)} className=" whitespace-normal break-all border-[1px] border-zinc-600 px-2 text-left text-red-500 underline cursor-pointer">{graphItem.name}</td>) :  (<td className="text-center"></td>)
                   }
-                  <td onClick={() => router.push(`/pm/individualworkload?employeeid=${member.id}&name=${member.name}&teamname=${graphItem.name}`)} className="text-left cursor-pointer underline text-blue-400">{member.name}</td>
-                  <td className="text-left">{member.initial}</td>
-                  <td className="text-left">{member.resource}</td>
+                  <td onClick={() => router.push(`/pm/individualworkload?employeeid=${member.id}&name=${member.name}&teamname=${graphItem.name}`)} className=" whitespace-normal break-all border-[1px] border-zinc-600 px-2 text-left cursor-pointer underline text-blue-400">{member.name}</td>
+                  <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">{member.initial}</td>
+                  <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">{member.resource}</td>
                  
               
                 </tr>
@@ -294,7 +294,7 @@ export default function Yourworkload() {
                   {workItem.members.map((member, memberIndex) => (
                     <tr
                       key={`${workIndex}-${memberIndex}`}
-                      className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600"
+                      className="bg-primary text-[.6rem] py-2 h-[48px] border-[1px] border-zinc-600"
                     >
                       {dates.map((date, dateIndex) => {
                       
@@ -319,7 +319,7 @@ export default function Yourworkload() {
                                 isEventDay ? 'bg-red-200' : isWd ? 'bg-blue-200' : isLeave ? 'bg-yellow-200' : ''
                               }`}
                             >
-                              <div className="flex absolute top-0 w-full h-[40px] text-center">
+                              <div className="flex absolute top-0 w-full h-[48px] text-center">
                                 {statusData(hours, isWd, isEventDay, isLeave,member.wfh , date, member.leave, member.event, member.wellness).map((item, index) => (
                                   <div key={index} className={`w-full h-full ${item}`}></div>
                                 ))}

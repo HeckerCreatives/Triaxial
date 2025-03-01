@@ -334,10 +334,10 @@ const totalsByDate = allDates.map((dateObj) => {
             
           <table className="table-auto w-[1240px] border-collapse ">
         
-          <thead className=' bg-primary h-[50px]'>
+          <thead className=' bg-primary h-[50px] border-collapse'>
 
-            <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
-            <th className=' w-[70px] font-normal'>
+            <tr className=' text-[0.6rem] text-zinc-100 font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>
+            <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>
             {componentid === '' ? (
                <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
                 <button onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><File size={12}/></button>
@@ -353,39 +353,39 @@ const totalsByDate = allDates.map((dateObj) => {
               </Invoice>
             )}
             </th>
-            <th className=' w-[70px] font-normal'></th>
-            <th className=' w-[70px] font-normal'></th>
-            <th className=' w-[70px] font-normal'></th>
-            <th className=' w-[70px] font-normal'></th>
-              <th className=' w-[70px] font-normal'>Totals</th>
-              <th className=' w-[70px] font-normal'>$ {totalEstimatedBudget.toLocaleString()}</th>
-              <th className=' w-[70px] font-normal'></th>
-              <th className=' w-[70px] font-normal'>$ {totalInvoiced.toLocaleString()}</th>
-              <th className=' w-[70px] font-normal'>$ {totalRemaining.toLocaleString()}</th>
-              <th className=' w-[70px] font-normal'>$ {totalSubAmount.toLocaleString()}</th>
-              <th className=' font-normal w-[70px]'>$ {totalWIP.toLocaleString()}</th>
-              <th className=' font-normal w-[70px]'>$ {totalCatchupInv.toLocaleString()}</th>
+              <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'></th>
+              <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'></th>
+              <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'></th>
+              <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'></th>
+              <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Totals</th>
+              <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>$ {totalEstimatedBudget.toLocaleString()}</th>
+              <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'></th>
+              <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>$ {totalInvoiced.toLocaleString()}</th>
+              <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>$ {totalRemaining.toLocaleString()}</th>
+              <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>$ {totalSubAmount.toLocaleString()}</th>
+              <th className=' font-normal w-[70px] border-[1px] border-zinc-600 whitespace-normal break-all px-2'>$ {totalWIP.toLocaleString()}</th>
+              <th className=' font-normal w-[70px] border-[1px] border-zinc-600 whitespace-normal break-all px-2'>$ {totalCatchupInv.toLocaleString()}</th>
 
             
             </tr>
           </thead>
 
-          <thead className=' bg-secondary h-[80px]'>
+          <thead className=' bg-secondary h-[80px] border-collapse'>
 
-            <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
-            <th className=' w-[70px] font-normal'>Action</th>
-            <th className=' w-[70px] font-normal'>Job no:</th>
-            <th className={` w-[70px] font-normal`}>Client</th>
-            <th className=' w-[70px] font-normal'>Project Name</th>
-            <th className=' w-[70px] font-normal'>Job Mngr.</th>
-              <th className=' w-[70px] font-normal'>Job Component</th>
-              <th className=' w-[70px] font-normal'>Est. $</th>
-              <th className=' w-[70px] font-normal'>Invoice (%)</th>
-              <th className=' w-[70px] font-normal'>Invoiced $</th>
-              <th className=' w-[70px] font-normal'>Remaining $</th>
-              <th className=' w-[70px] font-normal'>Sub-cont. costs</th>
-              <th className=' font-normal w-[70px]'>Wip</th>
-              <th className=' font-normal w-[70px]'>Catchup inv.</th>
+              <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
+              <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Action</th>
+              <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Job no:</th>
+              <th className={`w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2`}>Client</th>
+              <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Project Name</th>
+              <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Job Mngr.</th>
+              <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Job Component</th>
+              <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Est. $</th>
+              <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Invoice (%)</th>
+              <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Invoiced $</th>
+              <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Remaining $</th>
+              <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Sub-cont. costs</th>
+              <th className=' font-normal w-[70px] border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Wip</th>
+              <th className=' font-normal w-[70px] border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Catchup inv.</th>
 
             
             </tr>
@@ -394,28 +394,28 @@ const totalsByDate = allDates.map((dateObj) => {
           {list.map((graphItem, graphIndex) => {
             return (
               <tr key={`${graphIndex}`} className={`text-[.6rem] text-black py-2 h-[40px] border-[1px] border-zinc-600 ${clientColor(graphItem.priority)}`}>
-                <td className="text-center  text-red-600">
+                <td className="text-center  text-red-600 border-[1px] border-zinc-600 whitespace-normal break-all px-2 ">
                   <input 
                    type="checkbox"
                    checked={selectedId === graphItem.componentid}
                    onChange={() => {handleSelect(graphItem.componentid), setComponentid(graphItem.componentid)}}
                   />
                 </td>
-                <td className="text-center underline cursor-pointer">
+                <td className="text-center underline cursor-pointer border-[1px] border-zinc-600 whitespace-normal break-all px-2 ">
                 <a href={`/pm/graph/jobcomponent?teamid=${id}&jobno=${graphItem.componentid}`} className=' '>{graphItem.jobnumber}</a>
 
                 </td>
-                <td className={`text-center  ${clientColor(graphItem.priority)}`}>{graphItem.clientname}</td>
-                <td className="text-center ">{graphItem.projectname}</td>
-                <td className="text-center ">{graphItem.jobmanager.fullname}</td>
-                <td className="text-center ">{graphItem.jobcomponent}</td>
-                <td className="text-center ">{graphItem.budgettype === 'rates' ? `Rates` : `$ ${ graphItem.estimatedbudget.toLocaleString()}` }</td>
-                <td className="text-center ">{graphItem.budgettype === 'rates' ? `` : ` ${ graphItem.invoice.percentage.toLocaleString()}%` }</td>
-                <td className="text-center ">$ {graphItem.budgettype === 'rates' ? `${ graphItem.rates.invoiced.toLocaleString()}` : `${ graphItem.lumpsum.invoiced.toLocaleString()}` }</td>
-                <td className="text-center ">{graphItem.budgettype === 'rates' ? `-` : `$ ${ graphItem.lumpsum.remaining.toLocaleString()}`}</td>
-                <td onClick={() => {setDialog2(graphItem.budgettype === 'lumpsum' && true), setComponentid(graphItem.componentid), setSubAmount(graphItem.lumpsum.subconts)}} className={`text-center cursor-pointer font-semibold ${graphItem.budgettype === 'lumpsum' && ''}`}> {graphItem.budgettype === 'rates' ? '-' : `$ ${graphItem.lumpsum.subconts.toLocaleString()}`}</td>
-                <td className="text-center ">$ {graphItem.budgettype === 'rates' ? `${ graphItem.rates.wip.toLocaleString()}` : ` ${ graphItem.lumpsum.wip.toLocaleString()}`}</td>
-                <td className="text-center ">{graphItem.budgettype === 'rates' ? `-` : `$ ${ graphItem.lumpsum.catchupinv.toLocaleString()}`}</td>
+                <td className={`text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2   ${clientColor(graphItem.priority)}`}>{graphItem.clientname}</td>
+                <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">{graphItem.projectname}</td>
+                <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">{graphItem.jobmanager.fullname}</td>
+                <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">{graphItem.jobcomponent}</td>
+                <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">{graphItem.budgettype === 'rates' ? `Rates` : `$ ${ graphItem.estimatedbudget.toLocaleString()}` }</td>
+                <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">{graphItem.budgettype === 'rates' ? `` : ` ${ graphItem.invoice.percentage.toLocaleString()}%` }</td>
+                <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">$ {graphItem.budgettype === 'rates' ? `${ graphItem.rates.invoiced.toLocaleString()}` : `${ graphItem.lumpsum.invoiced.toLocaleString()}` }</td>
+                <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">{graphItem.budgettype === 'rates' ? `-` : `$ ${ graphItem.lumpsum.remaining.toLocaleString()}`}</td>
+                <td onClick={() => {setDialog2(graphItem.budgettype === 'lumpsum' && true), setComponentid(graphItem.componentid), setSubAmount(graphItem.lumpsum.subconts)}} className={` border-[1px] border-zinc-600 whitespace-normal break-all px-2 text-center cursor-pointer font-semibold ${graphItem.budgettype === 'lumpsum' && ''}`}> {graphItem.budgettype === 'rates' ? '-' : `$ ${graphItem.lumpsum.subconts.toLocaleString()}`}</td>
+                <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">$ {graphItem.budgettype === 'rates' ? `${ graphItem.rates.wip.toLocaleString()}` : ` ${ graphItem.lumpsum.wip.toLocaleString()}`}</td>
+                <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">{graphItem.budgettype === 'rates' ? `-` : `$ ${ graphItem.lumpsum.catchupinv.toLocaleString()}`}</td>
               </tr>
             );
           })}
@@ -426,9 +426,9 @@ const totalsByDate = allDates.map((dateObj) => {
         <div className=' overflow-x-auto'>
           <table className="table-auto border-collapse ">
             <thead className=' w-[800px] bg-primary h-[50px] border-none'>
-              <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
+              <tr className=' text-[0.6rem] text-zinc-100 font-normal border-collapse'>
                 {totalsByDate.map((item, index) => (
-                  <th key={index} className="relative font-normal px-6 ">
+                  <th key={index} className="relative font-normal px-6 border-[1px] border-zinc-600 whitespace-normal break-all px-2 ">
                     $ {item.toLocaleString()}
                   </th>
                 ))}

@@ -304,7 +304,7 @@ export default function Emailtable() {
             <DialogTrigger className=' w-full'>
              
             </DialogTrigger>
-              <DialogContent className=' max-w-[600px] p-6 bg-secondary border-none text-white'>
+              <DialogContent className=' max-w-[800px] p-6 bg-secondary border-none text-white'>
                 <DialogHeader>
                   <DialogTitle></DialogTitle>
                   <DialogDescription>

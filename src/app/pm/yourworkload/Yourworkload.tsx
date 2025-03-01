@@ -177,16 +177,16 @@ export default function Yourworkload() {
           <table className="table-auto w-[800px] border-collapse ">
           <thead className=' bg-secondary h-[100px]'>
 
-            <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
-              <th className=' text-left font-normal w-[70px]'>Team.</th>
-              <th className=' text-left font-normal w-[70px]'>Job No.</th>
-              <th className=' text-left font-normal w-[70px]'>Client Name</th>
-              <th className=' text-left font-normal w-[70px]'>Project name</th>
-              <th className=' text-left font-normal w-[70px]'>Job Mgr.</th>
-              <th className=' text-left font-normal w-[70px]'>Job Component</th>
-              <th className=' text-left w-[70px] font-normal'>Other Members</th>
-              <th className=' text-left font-normal w-[70px]'>Role</th>
-              <th className=' text-left font-normal w-[70px]'>Notes</th>
+            <tr className=' text-[0.6rem] text-zinc-100 font-normal border-collapse'>
+              <th className=' text-left font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Team.</th>
+              <th className=' text-left font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Job No.</th>
+              <th className=' text-left font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Client Name</th>
+              <th className=' text-left font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Project name</th>
+              <th className=' text-left font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Job Mgr.</th>
+              <th className=' text-left font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Job Component</th>
+              <th className=' text-left min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 font-normal px-2'>Other Members</th>
+              <th className=' text-left font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Role</th>
+              <th className=' text-left font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Notes</th>
 
             
             </tr>
@@ -196,16 +196,16 @@ export default function Yourworkload() {
             graphItem.members.map((member, memberIndex) => (
               <tr key={`${graphIndex}-${memberIndex}`} className={` text-black text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600 ${clientColor(graphItem.clientpriority)}`}>
                  
-                  <td className="text-left ">{graphItem.teamname}</td>
-                  <td className="text-left ">{memberIndex === 0 && graphItem.jobno}</td>
-                  <td className="text-left ">{memberIndex === 0 && graphItem.clientname}</td>
-                  <td className="text-left ">{memberIndex === 0 && graphItem.projectname}</td>
-                  <td className="text-left">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
-                  <td className="text-left">{memberIndex === 0 && graphItem.jobcomponent}</td>
+                  <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">{graphItem.teamname}</td>
+                  <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.jobno}</td>
+                  <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.clientname}</td>
+                  <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.projectname}</td>
+                  <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
+                  <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.jobcomponent}</td>
       
-                  <td className="text-left">{graphItem.teammembers.join(", ")}</td>
-                <td className="text-left text-[.5rem]">{member.role}</td>
-                <td className="text-left">
+                  <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">{graphItem.teammembers.join(", ")}</td>
+                <td className="text-left text-[.5rem whitespace-normal break-all border-[1px] border-zinc-600 px-2]">{member.role}</td>
+                <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">
                   <Dialog>
                     <DialogTrigger className=' bg-red-600 p-1 rounded-sm flex items-center'>
                       <Eye size={12} className=' text-[.6rem]'/> View

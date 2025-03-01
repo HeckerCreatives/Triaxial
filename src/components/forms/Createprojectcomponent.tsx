@@ -605,7 +605,7 @@ export default function Createprojectcomponent( prop: Data) {
                         </Select>
 
 
-                        <Label className="font-semibold mt-4">Job Component Budget</Label>
+                        {/* <Label className="font-semibold mt-4">Job Component Budget</Label> */}
                         <Label className="mt-2 text-zinc-500">Budget Type<span className=' text-lg text-red-500'>*</span></Label>
                         <Select
                             value={item.budgettype}

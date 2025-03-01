@@ -12,7 +12,7 @@ import {
 import axios from 'axios';
 import { useSearchParams } from 'next/navigation';
 import { Workload } from '@/types/types';
-import { formatAustralianDate, formatDate, formatMonthYear } from '@/utils/functions';
+import { formatDate } from '@/utils/functions';
 import Legends from '@/components/common/Legends';
 
 type Event = {
@@ -130,12 +130,13 @@ export default function Indiviualworkloads() {
     <div className=' w-full h-full flex flex-col justify-center bg-secondary text-zinc-100 p-4'>
 
       <div className=' w-full flex justify-between items-end gap-8 h-auto bg-primary mb-2 p-4 text-xs'>
-        {/* <div className=' w-auto flex flex-col gap-1'>
+        <div className=' w-auto flex flex-col gap-1'>
           <p className=' text-zinc-400'>Project Name: <span className=' text-red-500 underline'>{list.length !== 0 ? list[0].projectname : ''}</span></p>
           <p className=' text-zinc-400'>Employee Name: <span className=' text-red-500 underline'>{list.length !== 0 ? list[0].members[0].employee.fullname : ''}</span></p>
           <p className=' text-zinc-400'>Manager Name: <span className=' text-red-500 underline'>{list.length !== 0 ? list[0].jobmanager.fullname : ''}</span></p>
+          {/* <p className=' text-zinc-400'>Client Name: <span className=' text-zinc-100 underline'>test@gmail.com</span></p> */}
 
-        </div> */}
+        </div>
 
         <Legends/>
 
@@ -155,12 +156,12 @@ export default function Indiviualworkloads() {
           <table className="table-auto w-[800px] border-collapse ">
           <thead className=' bg-secondary h-[100px]'>
 
-            <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
-              <th className=' font-normal w-[70px]'>Job Mgr.</th>
-              <th className=' font-normal w-[70px]'>Job Component</th>
-              <th className=' w-[70px] font-normal'>Members</th>
-              <th className=' font-normal w-[70px]'>Role</th>
-              <th className=' font-normal w-[70px]'>Notes</th>
+            <tr className=' text-[0.6rem] text-zinc-100 font-normal border-collapse'>
+              <th className=' font-normal w-[70px] border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Job Mgr.</th>
+              <th className=' font-normal w-[70px] border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Job Component</th>
+              <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Members</th>
+              <th className=' font-normal w-[70px] border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Role</th>
+              <th className=' font-normal w-[70px] border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Notes</th>
 
             
             </tr>
@@ -168,28 +169,27 @@ export default function Indiviualworkloads() {
           <tbody>
           {list.map((graphItem, graphIndex) =>
             graphItem.members.map((member, memberIndex) => (
-              <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
+              <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600 border-collapse">
                  
-                  <td className="text-center">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
-                  <td className="text-center">{memberIndex === 0 && graphItem.jobcomponent}</td>
-      
-                <td className="text-center">{member.employee.fullname}</td>
-                <td className="text-center text-[.5rem]">{member.role}</td>
-                <td className="text-center">
-                  <Dialog>
-                    <DialogTrigger>{member.notes.slice(0, 25) || ''} ...</DialogTrigger>
-                    <DialogContent className=' bg-secondary p-6 border-none max-w-[600px] text-white'>
-                      <DialogHeader>
-                        <DialogTitle>Notes</DialogTitle>
-                        <DialogDescription>
-                          
-                        </DialogDescription>
-                      </DialogHeader>
-                      <p className=' text-xs text-zinc-400'>{member.notes}</p>
-                    </DialogContent>
-                  </Dialog>
+                  <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
+                  <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2">{memberIndex === 0 && graphItem.jobcomponent}</td>
+                  <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2">{member.employee.fullname}</td>
+                  <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2 text-[.5rem]">{member.role}</td>
+                  <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2">
+                    <Dialog>
+                      <DialogTrigger>{member.notes.slice(0, 25) || ''} ...</DialogTrigger>
+                      <DialogContent className=' bg-secondary p-6 border-none max-w-[600px] text-white'>
+                        <DialogHeader>
+                          <DialogTitle>Notes</DialogTitle>
+                          <DialogDescription>
+                            
+                          </DialogDescription>
+                        </DialogHeader>
+                        <p className=' text-xs text-zinc-400'>{member.notes}</p>
+                      </DialogContent>
+                    </Dialog>
 
-                  </td>
+                    </td>
               
 
               </tr>
@@ -200,46 +200,31 @@ export default function Indiviualworkloads() {
 
           <div className=' overflow-x-auto'>
             <table className="table-auto border-collapse ">
-                <thead className="w-full bg-white h-[100px]">
-                    <tr className="text-[0.6rem] text-black font-normal">
-                                            {dates.map((dateObj, index) => {
-                                              const date = new Date(dateObj)
-                                              date.setHours(0, 0, 0, 0) // Normalize the date to remove time differences
-                            
-                                              const today = new Date()
-                                              today.setHours(0, 0, 0, 0) // Normalize today
-                            
-                                              const tomorrow = new Date(today)
-                                              tomorrow.setDate(today.getDate() + 1) // Get tomorrow's date
-                            
-                                              // Determine background color
-                                              let bgColor = "bg-white"
-                                              if (date.getTime() < today.getTime()) bgColor = "bg-gray-300"
-                                              else if (date.getTime() === today.getTime()) bgColor = "bg-pink-500"
-                                              else if (date.getTime() === tomorrow.getTime()) bgColor = "bg-pink-300"
-                            
-                                              return (
-                                                <React.Fragment key={index}>
-                                                  <th
-                                                    className={`relative font-normal border-[1px] border-zinc-700 ${bgColor}`}
-                                                  >
-                                                    <div className="whitespace-nowrap transform -rotate-[90deg] w-[20px]">
-                                                      <p className="mt-4 font-bold">{formatAustralianDate(dateObj)}</p>
-                                                    </div>
-                                                  </th>
-                                                  {(index + 1) % 5 === 0 && (
-                                                    <th
-                                                      key={`total-${index}`}
-                                                      className="font-normal bg-primary w-[20px] border-[1px] border-zinc-700"
-                                                    >
-                                                      <p className="-rotate-90 w-[20px] ml-[2px] font-bold text-white">Total Hours</p>
-                                                    </th>
-                                                  )}
-                                                </React.Fragment>
-                                              )
-                                            })}
-                    </tr>
-                  </thead>
+              <thead className=' w-[800px] bg-secondary h-[100px]'>
+                <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
+                
+                {dates
+                .map((dateObj, index) => {
+                  const day = new Date(dateObj).getDay();
+                  const isFriday = day === 5;
+
+                  return (
+                    <React.Fragment key={index}>
+                      <th className="relative font-normal border-[1px] border-zinc-700">
+                        <p className="whitespace-nowrap rotate-90">{formatDate(dateObj)}</p>
+                      </th>
+                      {(index + 1) % 5 === 0 && (
+                        <th className="font-normal px-1 border-[1px] border-zinc-700">
+                          <p className="rotate-90">Total Hours</p>
+                        </th>
+                      )}
+                    </React.Fragment>
+                  );
+                })}
+
+                  
+                </tr>
+              </thead>
               <tbody>
               {list.map((graphItem, graphIndex) =>
                   graphItem.members.map((member, memberIndex) => (

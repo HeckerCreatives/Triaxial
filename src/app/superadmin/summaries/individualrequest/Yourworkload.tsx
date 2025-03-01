@@ -228,10 +228,10 @@ export default function Yourworkload() {
             <thead className=' bg-secondary h-[100px]'>
 
               <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
-                <th className=' w-[20px] font-normal'>Name</th>
-                <th className=' w-[50px] font-normal'>Initial</th>
-                <th className=' font-normal w-[50px]'>Resource</th>
-                <th className=' w-[20px] font-normal'>Team</th>
+                <th className=' min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 font-normal'>Name</th>
+                <th className=' min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 font-normal'>Initial</th>
+                <th className=' font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600'>Resource</th>
+                <th className=' min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 font-normal'>Team</th>
 
               </tr>
             </thead>
@@ -241,10 +241,10 @@ export default function Yourworkload() {
                 <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
 
 
-                  <td onClick={() => router.push(`/superadmin/individualworkload?employeeid=${member.id}&name=${member.name}`)} className="text-center cursor-pointer underline text-blue-400">{member.name}</td>
-                  <td className="text-center">{member.initial}</td>
-                  <td className="text-center">{member.resource}</td>
-                  <td className="text-center">{graphItem.name}</td>
+                  <td onClick={() => router.push(`/superadmin/individualworkload?employeeid=${member.id}&name=${member.name}`)} className=" whitespace-normal break-all border-[1px] border-zinc-600 text-center cursor-pointer underline text-blue-400">{member.name}</td>
+                  <td className="text-center whitespace-normal break-all border-[1px] border-zinc-600 ">{member.initial}</td>
+                  <td className="text-center whitespace-normal break-all border-[1px] border-zinc-600 ">{member.resource}</td>
+                  <td className="text-center whitespace-normal break-all border-[1px] border-zinc-600 ">{graphItem.name}</td>
 
 
 

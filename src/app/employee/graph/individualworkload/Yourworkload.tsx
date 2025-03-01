@@ -156,12 +156,12 @@ export default function Indiviualworkloads() {
           <table className="table-auto w-[800px] border-collapse ">
           <thead className=' bg-secondary h-[100px]'>
 
-            <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
-              <th className=' font-normal w-[70px]'>Job Mgr.</th>
-              <th className=' font-normal w-[70px]'>Job Component</th>
-              <th className=' w-[70px] font-normal'>Members</th>
-              <th className=' font-normal w-[70px]'>Role</th>
-              <th className=' font-normal w-[70px]'>Notes</th>
+            <tr className=' text-[0.6rem] text-zinc-100 font-normal border-collapse'>
+              <th className=' font-normal w-[70px] border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Job Mgr.</th>
+              <th className=' font-normal w-[70px] border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Job Component</th>
+              <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Members</th>
+              <th className=' font-normal w-[70px] border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Role</th>
+              <th className=' font-normal w-[70px] border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Notes</th>
 
             
             </tr>
@@ -169,28 +169,27 @@ export default function Indiviualworkloads() {
           <tbody>
           {list.map((graphItem, graphIndex) =>
             graphItem.members.map((member, memberIndex) => (
-              <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
+              <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600 border-collapse">
                  
-                  <td className="text-center">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
-                  <td className="text-center">{memberIndex === 0 && graphItem.jobcomponent}</td>
-      
-                <td className="text-center">{member.employee.fullname}</td>
-                <td className="text-center text-[.5rem]">{member.role}</td>
-                <td className="text-center">
-                  <Dialog>
-                    <DialogTrigger>{member.notes.slice(0, 25) || ''} ...</DialogTrigger>
-                    <DialogContent className=' bg-secondary p-6 border-none max-w-[600px] text-white'>
-                      <DialogHeader>
-                        <DialogTitle>Notes</DialogTitle>
-                        <DialogDescription>
-                          
-                        </DialogDescription>
-                      </DialogHeader>
-                      <p className=' text-xs text-zinc-400'>{member.notes}</p>
-                    </DialogContent>
-                  </Dialog>
+                  <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
+                  <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2">{memberIndex === 0 && graphItem.jobcomponent}</td>
+                  <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2">{member.employee.fullname}</td>
+                  <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2 text-[.5rem]">{member.role}</td>
+                  <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2">
+                    <Dialog>
+                      <DialogTrigger>{member.notes.slice(0, 25) || ''} ...</DialogTrigger>
+                      <DialogContent className=' bg-secondary p-6 border-none max-w-[600px] text-white'>
+                        <DialogHeader>
+                          <DialogTitle>Notes</DialogTitle>
+                          <DialogDescription>
+                            
+                          </DialogDescription>
+                        </DialogHeader>
+                        <p className=' text-xs text-zinc-400'>{member.notes}</p>
+                      </DialogContent>
+                    </Dialog>
 
-                  </td>
+                    </td>
               
 
               </tr>

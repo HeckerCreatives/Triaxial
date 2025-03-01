@@ -213,7 +213,7 @@ export default function Yourworkload() {
             <tbody>
             {list.map((graphItem, graphIndex) =>
               graphItem.members.map((member, memberIndex) => (
-                <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600 text-left">
+                <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[48px] border-[1px] border-zinc-600 text-left">
                   {memberIndex === 0 ?
                   (<td  onClick={() => router.push(`/pm/graph/jobcomponent?teamid=${graphItem.teamid}&teamname=${graphItem.name}`)} className=" border-[1px] border-zinc-600 px-2  min-w-[150px] text-left text-red-500 underline cursor-pointer">{graphItem.name}</td>) :  (<td className="text-center"></td>)
                   }
@@ -294,7 +294,7 @@ export default function Yourworkload() {
                   {workItem.members.map((member, memberIndex) => (
                     <tr
                       key={`${workIndex}-${memberIndex}`}
-                      className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600"
+                      className="bg-primary text-[.6rem] py-2 h-[48px] border-[1px] border-zinc-600"
                     >
                       {dates.map((date, dateIndex) => {
                       

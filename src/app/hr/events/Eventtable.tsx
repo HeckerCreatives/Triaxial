@@ -418,7 +418,7 @@ export default function Eventtable() {
                     <div className=' grid grid-cols-1 gap-4'>
                       <div className=' flex flex-col gap-1'>
                         <label htmlFor="" className=' mt-2 text-xs'>Event Title</label>
-                        <Input placeholder='Event Title' type='text' className=' bg-primary h-[35px] text-xs' {...register('eventitle')}/>
+                        <Input placeholder='Event Title' maxLength={50} type='text' className=' bg-primary h-[35px] text-xs' {...register('eventitle')}/>
                         {errors.eventitle && <p className=' text-[.6em] text-red-500'>{errors.eventitle.message}</p>}
 
 

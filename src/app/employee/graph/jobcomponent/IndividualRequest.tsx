@@ -184,20 +184,20 @@ const Individualrequest = forwardRef<HTMLDivElement, Prop>(({ alldates, data }, 
 
   return (
     <div className='h-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
-      <table className="table-auto w-full border-collapse">
+      <table className="table-auto min-w-[963px] border-collapse">
         <thead className='bg-secondary h-[80px]'>
-          <tr className='text-[0.6rem] text-zinc-100 font-normal'>
-            <th className=' text-center w-[20px] font-normal'>Name</th>
-            <th className=' text-center w-[50px] font-normal'>Initial</th>
-            <th className=' text-center font-normal w-[50px]'>Resource</th>
+          <tr className='text-[0.6rem] text-zinc-100 font-normal border-collapse'>
+            <th className=' text-center w-[20px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all'>Name</th>
+            <th className=' text-center w-[50px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all'>Initial</th>
+            <th className=' text-center font-normal w-[50px] border-[1px] border-zinc-600 whitespace-normal break-all'>Resource</th>
           </tr>
         </thead>
         <tbody>
           {extractedmember.map((item, graphIndex) =>
-              <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[30px] border-[1px] border-zinc-600">
-                <td onClick={() => router.push(`/pm/individualworkload?employeeid=${item.employee._id}&name=${item.employee.fullname}&teamname=${list[0].name}`)} className="text-center cursor-pointer underline text-blue-400">{item.employee.fullname}</td>
-                <td className="text-center">{item.employee.initials}</td>
-                <td className="text-center">{item.role}</td>
+              <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[30px] border-[1px] border-zinc-600 border-collapse">
+                <td onClick={() => router.push(`/employee/individualworkload?employeeid=${item.employee._id}&name=${item.employee.fullname}&teamname=${list[0].name}`)} className="text-center cursor-pointer underline text-blue-400 border-[1px] border-zinc-600 whitespace-normal break-all">{item.employee.fullname}</td>
+                <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all">{item.employee.initials}</td>
+                <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all">{item.role}</td>
               </tr>
           )}
         </tbody>

@@ -60,6 +60,7 @@ export default function Leaveform( prop: Data) {
   const [end, setEnd] = useState('')
   const [wd, setWd] = useState('No')
   const [total, setTotal] = useState(0)
+  const [isWellnessday, setIswellnessday] = useState(false)
 
 
    const {
@@ -81,73 +82,78 @@ export default function Leaveform( prop: Data) {
     const { declaration, ...filteredData } = data;
     setLoading(true)
     router.push('?state=true')
-    try {
-      const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/leave/requestleave`,{
-      leavetype: data.type, // 0 to total number of types
-      details: data.details,
-      leavestart: data.startdate, // YYYY-MM-DD
-      leaveend: data.enddate, // YYYY-MM-DD
-      comments: '',
-      totalworkingdays: data.workingdays,
-      totalpublicholidays: data.holidays,
-      wellnessdaycycle: data.wdcycle === 'Yes' ? true : false,
-      workinghoursonleave: data.totalhoursonleave,
-      workinghoursduringleave: data.duringleave
+    if(isWellnessday === false){
+      try {
+        const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/leave/requestleave`,{
+        leavetype: data.type, // 0 to total number of types
+        details: data.details,
+        leavestart: data.startdate, // YYYY-MM-DD
+        leaveend: data.enddate, // YYYY-MM-DD
+        comments: '',
+        totalworkingdays: data.workingdays,
+        totalpublicholidays: data.holidays,
+        wellnessdaycycle: data.wdcycle === 'Yes' ? true : false,
+        workinghoursonleave: data.totalhoursonleave,
+        workinghoursduringleave: data.duringleave
+         
+        },
+            {
+                withCredentials: true,
+                headers: {
+                'Content-Type': 'application/json'
+                }
+            }
+        )
+  
+      const response = await toast.promise(request, {
+          loading: 'Requesting a leave....',
+          success: `Successfully rquested`,
+          error: 'Error while requesting a leave',
+      });
+  
+     if(response.data.message === 'success'){
+       reset()
+       setDialog(false)
+       router.push('?state=false')
+       setLoading(false)
+  
+     }
+  
+    } catch (error) {
+        setLoading(false)
+  
+         if (axios.isAxiosError(error)) {
+                const axiosError = error as AxiosError<{ message: string, data: string }>;
+                if (axiosError.response && axiosError.response.status === 401) {
+                    toast.error(`${axiosError.response.data.data}`) 
+                    router.push('/')    
+                }
+  
+                if (axiosError.response && axiosError.response.status === 400) {
+                    toast.error(`${axiosError.response.data.data}`)     
+                       
+                }
+  
+                if (axiosError.response && axiosError.response.status === 402) {
+                    toast.error(`${axiosError.response.data.data}`)          
+                           
+                }
+  
+                if (axiosError.response && axiosError.response.status === 403) {
+                    toast.error(`${axiosError.response.data.data}`)              
+                   
+                }
+  
+                if (axiosError.response && axiosError.response.status === 404) {
+                    toast.error(`${axiosError.response.data.data}`)             
+                }
+        } 
        
-      },
-          {
-              withCredentials: true,
-              headers: {
-              'Content-Type': 'application/json'
-              }
-          }
-      )
-
-    const response = await toast.promise(request, {
-        loading: 'Requesting a leave....',
-        success: `Successfully rquested`,
-        error: 'Error while requesting a leave',
-    });
-
-   if(response.data.message === 'success'){
-     reset()
-     setDialog(false)
-     router.push('?state=false')
-     setLoading(false)
-
-   }
-
-  } catch (error) {
-      setLoading(false)
-
-       if (axios.isAxiosError(error)) {
-              const axiosError = error as AxiosError<{ message: string, data: string }>;
-              if (axiosError.response && axiosError.response.status === 401) {
-                  toast.error(`${axiosError.response.data.data}`) 
-                  router.push('/')    
-              }
-
-              if (axiosError.response && axiosError.response.status === 400) {
-                  toast.error(`${axiosError.response.data.data}`)     
-                     
-              }
-
-              if (axiosError.response && axiosError.response.status === 402) {
-                  toast.error(`${axiosError.response.data.data}`)          
-                         
-              }
-
-              if (axiosError.response && axiosError.response.status === 403) {
-                  toast.error(`${axiosError.response.data.data}`)              
-                 
-              }
-
-              if (axiosError.response && axiosError.response.status === 404) {
-                  toast.error(`${axiosError.response.data.data}`)             
-              }
-      } 
-     
-  }
+    }
+    }else {
+      toast.error('The dates you entered falls within the wellnessday dates.')
+    }
+    
   };
 
   const [holidays, setHolidays] = useState(0)
@@ -177,7 +183,7 @@ export default function Leaveform( prop: Data) {
   },[dialog])
 
   const workingDays = totalWorkingDays() - holidays;
-  const hoursonleave = ((totalWorkingDays() - holidays) * hours) - onLeave
+  const hoursonleave = (((totalWorkingDays() - holidays) * hours) - onLeave)
   useEffect(() => {
     setValue('workingdays', workingDays); // Update form value whenever workingDays changes
     setValue('totalhoursonleave', hoursonleave)
@@ -206,6 +212,26 @@ export default function Leaveform( prop: Data) {
     }
     getData()
   },[start, end])
+
+  useEffect(() => {
+    const getData = async () => {
+      if(start !== '' && end !== ''){
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/leave/checkwellnessdayinleave?startdate=${start}&enddate=${end}`,{
+          withCredentials: true
+        }
+
+          
+        )
+
+        setIswellnessday(response.data.data.inwellnessday)
+
+  
+      }
+    
+    }
+    getData()
+  },[start, end])
+
 
   
   return (
@@ -289,7 +315,7 @@ export default function Leaveform( prop: Data) {
 
           <Label className=' mt-4 font-semibold'>Period Of Leave</Label>
           <div className=' flex items-center gap-4'>
-            <div>
+            <div className=''>
               <Label className=' mt-2 text-zinc-500'>First Day Of Leave: <span className=' text-red-500'>*</span></Label>
               {/* <Input type='date' className=' text-xs h-[35px] bg-zinc-200'  placeholder='Name' {...register('startdate',{ onChange: (e) => setStart(e.target.value)})}/> */}
               <DatePicker
@@ -302,7 +328,7 @@ export default function Leaveform( prop: Data) {
               {errors.startdate && <p className=' text-[.6em] text-red-500'>{errors.startdate.message}</p>}
             </div>
 
-            <div>
+            <div className=''>
               <Label className=' mt-2 text-zinc-500'>Last Day Of Leave: <span className=' text-red-500'>*</span></Label>
               {/* <Input type='date' className=' text-xs h-[35px] bg-zinc-200' placeholder='Name' {...register('enddate', { onChange: (e) => setEnd(e.target.value)})}/> */}
               <DatePicker
@@ -316,15 +342,12 @@ export default function Leaveform( prop: Data) {
 
             </div>
 
-            {/* <div className=' w-full flex items-start flex-col gap-1 mt-2'>
-              <Label className=' text-zinc-500'>Attach file</Label>
-              <input type="file" 
-              accept=".pdf, .doc, .docx" 
-              className=' bg-zinc-200 text-xs p-2 rounded-sm' />
-            </div> */}
-
-
+            {isWellnessday && (
+              <p className=' text-[.7rem] max-w-[200px] text-zinc-500'>Note: The date you entered falls within the wellnessday, Please enter another dates.</p>
+            )}
           </div>
+
+          
 
           <div className=' w-full flex items-start gap-2'>
             <div className=' w-full'>
@@ -359,7 +382,7 @@ export default function Leaveform( prop: Data) {
           <div className=' w-full flex items-start gap-2 mt-4'>
             <div className=' w-full'>
               <Label className=' text-zinc-500'>Total Working Hours on Leave:</Label>
-            < Input type='number' value={hoursonleave.toFixed(2)} defaultValue={0} className=' text-xs h-[35px] bg-zinc-200' placeholder='0' {...register('totalhoursonleave',{ valueAsNumber: true})}/>
+            < Input type='number' value={hoursonleave.toLocaleString(undefined,{minimumFractionDigits: 2, maximumFractionDigits: 2,})} defaultValue={0} className=' text-xs h-[35px] bg-zinc-200' placeholder='0' {...register('totalhoursonleave',{ valueAsNumber: true})}/>
               {errors.totalhoursonleave && <p className=' text-[.6em] text-red-500'>{errors.totalhoursonleave.message}</p>}
 
             </div>

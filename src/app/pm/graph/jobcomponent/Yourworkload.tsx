@@ -27,7 +27,6 @@ import { Graph, Members } from '@/types/types'
 import { formatDate } from '@/utils/functions'
 import { any } from 'zod'
 import Invoice from '@/components/forms/Invoice'
-import Copyprojectcomponent from './Copyprojectcomponent'
 import JobComponentStatus from '@/components/forms/JobComponentStatus'
 import EditJobComponent from '@/components/forms/EditJobComponent'
 import DuplicateJobComponent from '@/components/forms/DuplicateJobComponent'
@@ -995,19 +994,19 @@ export default function Yourworkload() {
             <table className="table-auto w-auto  borer-collapse ml-1 ">
             <thead className='  h-[50px] text-nowrap '>
 
-              <tr className=' text-[0.6rem] text-zinc-100 font-normal text-left '>
-                <th className=' text-left font-normal min-w-[40px]'>Action</th>
-                <th className=' text-left  font-normal min-w-[80px] ' >Job Number</th>
-                  <th className=' text-left font-normal min-w-[80px] ' >Job Manager</th>
-                    <th className=' text-left  font-normal min-w-[100px] ' >Client Name</th>
-                  <th className=' text-left font-normal min-w-[120px] ' >Job Component</th>
-                    <th className=' text-left  font-normal min-w-[120px] ' >Project Name</th>
-                    <th className=' text-left  font-normal min-w-[80px] ' >Invoiced (%)</th>
-                    <th className='  text-left font-normal min-w-[80px] ' >Est. $</th>
-                    <th className=' text-left  font-normal min-w-[80px] ' >Budget type</th>
-                    <th className=' text-left  font-normal min-w-[80px] ' >Members</th>
-                    <th className=' text-left  font-normal min-w-[50px] ' >Role</th>
-                    <th className=' text-left font-normal min-w-[50px] ' >Notes</th>
+              <tr className=' text-[0.6rem] text-zinc-100 font-normal text-left border-collapse'>
+                <th className=' text-left font-normal min-w-[40px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Action</th>
+                <th className=' text-left  font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2 ' >Job Number</th>
+                  <th className=' text-left font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2 ' >Job Manager</th>
+                    <th className=' text-left  font-normal min-w-[100px] whitespace-normal break-all border-[1px] border-zinc-600 px-2 ' >Client Name</th>
+                  <th className=' text-left font-normal min-w-[120px] whitespace-normal break-all border-[1px] border-zinc-600 px-2' >Job Component</th>
+                    <th className=' text-left  font-normal min-w-[120px]  whitespace-normal break-all border-[1px] border-zinc-600 px-2' >Project Name</th>
+                    <th className=' text-left  font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2 ' >Invoiced (%)</th>
+                    <th className='  text-left font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2 ' >Est. $</th>
+                    <th className=' text-left  font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2 ' >Budget type</th>
+                    <th className=' text-left  font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2 ' >Members</th>
+                    <th className=' text-left  font-normal min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2 ' >Role</th>
+                    <th className=' text-left font-normal min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2 ' >Notes</th>
 
               </tr>
             </thead>
@@ -1106,8 +1105,8 @@ export default function Yourworkload() {
                   <tr 
                   key={`${graphItem._id}-${memberIndex}`}
                   data-invoice-id={graphItem._id} 
-                  className={`  text-left text-[.6rem] py-2 h-[35px] border-[1px] border-zinc-600 ${graphItem.isVariation === true ? 'text-red-600 font-black' : ' text-black'} ${clientColor(graphItem.clientname.priority)}`}>
-                      <td className="text-center text-white h-[30px] flex items-center justify-center gap-1 min-w-[40px]">
+                  className={`  text-left text-[.6rem] py-2 h-[48px] border-[1px] border-zinc-600 border-collapse ${graphItem.isVariation === true ? 'text-red-600 font-black' : ' text-black'} ${clientColor(graphItem.clientname.priority)}`}>
+                      <td className="text-center text-white h-[48px] flex items-center justify-center gap-1 min-w-[40px]  px-2">
                         
 
                         {(memberIndex === 0 ) && (
@@ -1122,28 +1121,28 @@ export default function Yourworkload() {
                     </td>
                     {/* ${graphItem.status === null ? 'text-blue-400' :  'text-green-500'} */}
                     {/* <td className={` text-center`}>{memberIndex === 0 && `${graphItem.status === null ? 'Ongoing' :  'Completed'}`}</td> */}
-                    <td className=" text-wrap min-w-[80px]">{memberIndex === 0 && graphItem.jobno}</td>
+                    <td className=" text-wrap min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.jobno}</td>
 
-                    <td className=" text-wrap min-w-[80px]">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
-                    <td className=" text-wrap min-w-[100px]">{memberIndex === 0 && graphItem.clientname.name}</td>
-
-
-                    <td className=" text-wrap min-w-[120px]">{memberIndex === 0 && graphItem.jobcomponent}</td>
+                    <td className=" text-wrap min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
+                    <td className=" text-wrap min-w-[100px] whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.clientname.name}</td>
 
 
-                    <td className=" text-wrap min-w-[120px]">{memberIndex === 0 && graphItem.projectname.name}</td>
-                    <td className=" text-wrap min-w-[80px]">{memberIndex === 0 && ` ${graphItem.budgettype === 'lumpsum' ? `${graphItem.invoice.pendinginvoice}%` : '-'}`}</td>
-                    <td className=" text-wrap min-w-[80px] ">{memberIndex === 0 && `${graphItem.budgettype === 'lumpsum' ? `$ ${graphItem.estimatedbudget}` : '-'}`}</td>
-                    <td className=" text-wrap min-w-[80px]">{memberIndex === 0 && formatBudgetType(graphItem.budgettype)}</td>
+                    <td className=" text-wrap min-w-[120px] whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.jobcomponent}</td>
+
+
+                    <td className=" text-wrap min-w-[120px] whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.projectname.name}</td>
+                    <td className=" text-wrap min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && ` ${graphItem.budgettype === 'lumpsum' ? `${graphItem.invoice.pendinginvoice}%` : '-'}`}</td>
+                    <td className=" text-wrap min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2 ">{memberIndex === 0 && `${graphItem.budgettype === 'lumpsum' ? `$ ${graphItem.estimatedbudget}` : '-'}`}</td>
+                    <td className=" text-wrap min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && formatBudgetType(graphItem.budgettype)}</td>
 
 
           
-                    <td className=" text-wrap min-w-[80px]">{member.employee.initials}</td>
-                    <td className=" text-wrap min-w-[50px] text-[.5rem]">{member.role}</td>
-                    <td className=" text-wrap min-w-[50px]">
+                    <td className=" text-wrap min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2">{member.employee.initials}</td>
+                    <td className=" text-wrap min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2 text-[.5rem]">{member.role}</td>
+                    <td className=" text-wrap min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2">
                       <Dialog>
                       <DialogTrigger className=' bg-red-600 p-1 rounded-sm flex items-center text-white text-[.5rem]'>
-                        <Eye size={10} /> View
+                        <Eye size={10} />
                       </DialogTrigger>
                       <DialogContent className=' bg-secondary p-6 border-none max-w-[600px] text-white'>
                         <DialogHeader>
@@ -1241,7 +1240,7 @@ export default function Yourworkload() {
                       return (
                         <tr
                           key={`${graphIndex}-${memberIndex}`}
-                          className="bg-primary text-[.6rem] py-2 h-[35px] border-[1px] border-zinc-600"
+                          className="bg-primary text-[.6rem] py-2 h-[49px] border-[1px] border-zinc-600"
                         >
                           {longestAlldates.allDates.map((dateObj, index) => {
                             const date = new Date(dateObj);
