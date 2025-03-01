@@ -428,16 +428,13 @@ export default function Yourworkload() {
             <table className=" table-auto border-collapse">
             <thead className=' h-[100px]'>
 
-              <tr className=' text-left text-[0.6rem] text-zinc-100 font-normal'>
-                <th className=' w-[500px] font-normal'>Job No.</th>
-                <th className=' w-[500px] font-normal'>Client Name</th>
-                <th className=' w-[500px] font-normal'>Proj. Name</th>
-
-
-                <th className=' w-[500px] font-normal'>Job Mgr.</th>
-
-                <th className=' w-[500px] font-normal'>Job Component</th>
-                <th className=' w-[500px] font-normal'>Members</th>
+              <tr className=' text-left text-[0.6rem] text-zinc-100 font-normal border-collapse '>
+                <th className=' min-w-[150px] font-normal border-[1px] border-zinc-600 px-2'>Job No.</th>
+                <th className=' min-w-[150px] font-normal border-[1px] border-zinc-600 px-2'>Client Name</th>
+                <th className=' min-w-[150px] font-normal border-[1px] border-zinc-600 px-2'>Proj. Name</th>
+                <th className=' min-w-[100px] font-normal border-[1px] border-zinc-600 px-2'>Job Mgr.</th>
+                <th className=' min-w-[100px] font-normal border-[1px] border-zinc-600 px-2'>Job Component</th>
+                <th className=' min-w-[100px] font-normal border-[1px] border-zinc-600 px-2'>Members</th>
               
               </tr>
             </thead>
@@ -446,13 +443,13 @@ export default function Yourworkload() {
               graphItem.members
                 .filter(member => member.employee.fullname !== "N/A") // Filter out members with fullname "N/A"
                 .map((member, memberIndex) => (
-                  <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
-                    <td className="text-left w-[500px]">{graphItem.jobno}</td>
-                    <td className="text-left w-[500px]">{graphItem.clientname.name}</td>
-                    <td className="text-left w-[500px]">{graphItem.projectname.name}</td>
-                    <td className="text-left w-[500px]">{graphItem.jobmanager.fullname}</td>
-                    <td className="text-left w-[500px]">{graphItem.jobcomponent}</td>
-                    <td className="text-left w-[500px]">{member.employee.fullname}</td>
+                  <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600 border-collapse">
+                    <td className="text-left min-w-[150px] break-all whitespace-normal border-r-[1px] border-zinc-600 px-2 ">{graphItem.jobno}</td>
+                    <td className="text-left min-w-[150px] break-all whitespace-normal border-r-[1px] border-zinc-600 px-2 ">{graphItem.clientname.name}</td>
+                    <td className="text-left min-w-[150px] break-all whitespace-normal border-r-[1px] border-zinc-600 px-2 ">{graphItem.projectname.name}</td>
+                    <td className="text-left min-w-[150px] break-all whitespace-normal border-r-[1px] border-zinc-600 px-2 ">{graphItem.jobmanager.fullname}</td>
+                    <td className="text-left min-w-[150px] break-all whitespace-normal border-r-[1px] border-zinc-600 px-2 ">{graphItem.jobcomponent}</td>
+                    <td className="text-left min-w-[150px] break-all whitespace-normal border-r-[1px] border-zinc-600 px-2 ">{member.employee.fullname}</td>
                   </tr>
                 ))
             )}

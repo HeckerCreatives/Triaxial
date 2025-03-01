@@ -353,18 +353,18 @@ const totalsByDate = allDates.map((dateObj) => {
               </Invoice>
             )}
             </th>
-            <th className=' w-[70px] font-normal'></th>
-            <th className=' w-[70px] font-normal'></th>
-            <th className=' w-[70px] font-normal'></th>
-            <th className=' w-[70px] font-normal'></th>
-              <th className=' w-[70px] font-normal'>Totals</th>
-              <th className=' w-[70px] font-normal'>$ {totalEstimatedBudget.toLocaleString()}</th>
-              <th className=' w-[70px] font-normal'></th>
-              <th className=' w-[70px] font-normal'>$ {totalInvoiced.toLocaleString()}</th>
-              <th className=' w-[70px] font-normal'>$ {totalRemaining.toLocaleString()}</th>
-              <th className=' w-[70px] font-normal'>$ {totalSubAmount.toLocaleString()}</th>
-              <th className=' font-normal w-[70px]'>$ {totalWIP.toLocaleString()}</th>
-              <th className=' font-normal w-[70px]'>$ {totalCatchupInv.toLocaleString()}</th>
+            <th className=' min-w-[100px] font-normal'></th>
+            <th className=' min-w-[100px] font-normal'></th>
+            <th className=' min-w-[100px] font-normal'></th>
+            <th className=' min-w-[100px] font-normal'></th>
+              <th className=' min-w-[100px] font-normal'>Totals</th>
+              <th className=' min-w-[100px] font-normal'>$ {totalEstimatedBudget.toLocaleString()}</th>
+              <th className=' min-w-[100px] font-normal'></th>
+              <th className=' min-w-[100px] font-normal'>$ {totalInvoiced.toLocaleString()}</th>
+              <th className=' min-w-[100px] font-normal'>$ {totalRemaining.toLocaleString()}</th>
+              <th className=' min-w-[100px] font-normal'>$ {totalSubAmount.toLocaleString()}</th>
+              <th className=' font-normal min-w-[100px]'>$ {totalWIP.toLocaleString()}</th>
+              <th className=' font-normal min-w-[100px]'>$ {totalCatchupInv.toLocaleString()}</th>
 
             
             </tr>
