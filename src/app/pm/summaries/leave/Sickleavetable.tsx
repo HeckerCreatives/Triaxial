@@ -83,7 +83,7 @@ export default function Sickleavetable() {
     try {
       const timer = setTimeout(() => {
         const getList = async () => {
-          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/leave/superadminleaverequestlist?page=0&limit=10&status=Pending`,{
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/leave/managerleaverequestlist?page=0&limit=10&status=Pending`,{
             withCredentials: true,
             headers: {
               'Content-Type': 'application/json'
@@ -146,7 +146,7 @@ export default function Sickleavetable() {
         setLoading(true);
         try {
           const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_URL}/leave/superadminleaverequestlist?page=${currentpage}&limit=10&status=${status}&employeenamefilter=${searchName}`,
+            `${process.env.NEXT_PUBLIC_API_URL}/leave/managerleaverequestlist?page=${currentpage}&limit=10&status=${status}&employeenamefilter=${searchName}`,
             {
               withCredentials: true,
               headers: {

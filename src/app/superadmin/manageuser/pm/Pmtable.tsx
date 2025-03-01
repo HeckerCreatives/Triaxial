@@ -119,7 +119,7 @@ export default function Pmtable() {
     defaultValues: {
       resource: findResource,
       firstname:  employeedata?.firstname  || '',
-      lasttname:  employeedata?.lastname || '',
+      lastname:  employeedata?.lastname || '',
       initial:  employeedata?.initial || '',
       email:  employeedata?.email || '',
       reportingto:  employeedata?.reportingto.employeeid || '',
@@ -261,7 +261,7 @@ export default function Pmtable() {
           password: data.password,
           firstname: data.firstname,
           initial: data.initial,
-          lastname: data.lasttname,
+          lastname: data.lastname,
           contactnumber: data.contactno,
           reportingto: data.reportingto, // employee id
           position: data.position.toLocaleLowerCase(), // employee, manager, hr, finance
@@ -516,7 +516,7 @@ export default function Pmtable() {
     if (id !== '') {
       reset({
         firstname:  employeedata?.firstname  || '',
-        lasttname:  employeedata?.lastname || '',
+        lastname:  employeedata?.lastname || '',
         initial:  employeedata?.initial || '',
         email:  employeedata?.email || '',
         reportingto:  employeedata?.reportingto.employeeid || '',
@@ -526,7 +526,7 @@ export default function Pmtable() {
     } else {
       reset({
         firstname:  '',
-        lasttname:  '',
+        lastname:  '',
         initial:'',
         email:'',
         reportingto:'',
@@ -547,7 +547,7 @@ export default function Pmtable() {
       reset({
         resource: findResource,
         firstname:  employeedata?.firstname  || '',
-        lasttname:  employeedata?.lastname || '',
+        lastname:  employeedata?.lastname || '',
         initial:  employeedata?.initial || '',
         email:  employeedata?.email || '',
         reportingto:  employeedata?.reportingto.employeeid || '',
@@ -833,8 +833,8 @@ export default function Pmtable() {
 
                           
                             <label htmlFor="" className=' mt-2 text-xs'>Last name</label>
-                            <Input placeholder='Last name' type='text' className=' bg-primary text-xs h-[35px]' {...register('lasttname')}/>
-                            {errors.lasttname && <p className=' text-[.6em] text-red-500'>{errors.lasttname.message}</p>}
+                            <Input placeholder='Last name' type='text' className=' bg-primary text-xs h-[35px]' {...register('lastname')}/>
+                            {errors.lastname && <p className=' text-[.6em] text-red-500'>{errors.lastname.message}</p>}
 
 
                             <label htmlFor="" className=' mt-2 text-xs'>Initial*</label>

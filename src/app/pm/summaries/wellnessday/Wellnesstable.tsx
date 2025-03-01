@@ -37,7 +37,7 @@ export default function Wellnesstable() {
     setLoading(true)
     const timer = setTimeout(() => {
       const getList = async () => {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/wellnessday/wellnessdaylistrequest?page=${currentpage}&limit=10&fullnamefilter=${search}`,{
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/wellnessday/wellnessdaylistrequestmanager?page=${currentpage}&limit=10&fullnamefilter=${search}`,{
           withCredentials: true,
           headers: {
             'Content-Type': 'application/json'

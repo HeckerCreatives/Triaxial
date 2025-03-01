@@ -140,7 +140,7 @@ export default function Employeetable() {
     defaultValues: {
       resource: findResource,
       firstname:  employeedata?.firstname  || '',
-      lasttname:  employeedata?.lastname || '',
+      lastname:  employeedata?.lastname || '',
       initial:  employeedata?.initial || '',
       email:  employeedata?.email || '',
       reportingto:  employeedata?.reportingto.employeeid || '',
@@ -161,7 +161,7 @@ const onSubmit = async (data: CreateEmployee) => {
           password: data.password,
           firstname: data.firstname,
           initial: data.initial,
-          lastname: data.lasttname,
+          lastname: data.lastname,
           contactnumber: data.contactno,
           reportingto: data.reportingto, // employee id
           position: data.position.toLocaleLowerCase(), // employee, manager, hr, finance
@@ -234,7 +234,7 @@ const editEmployee = async (data: CreateEmployee) => {
         password: data.password,
         firstname: data.firstname,
         initial: data.initial,
-        lastname: data.lasttname,
+        lastname: data.lastname,
         contactnumber: data.contactno,
         reportingto: data.reportingto, // employee id
         position: data.position.toLocaleLowerCase(), // employee, manager, hr, finance
@@ -636,7 +636,7 @@ useEffect(() => {
   if (id !== '') {
     reset({
       firstname:  employeedata?.firstname  || '',
-      lasttname:  employeedata?.lastname || '',
+      lastname:  employeedata?.lastname || '',
       initial:  employeedata?.initial || '',
       email:  employeedata?.email || '',
       reportingto:  employeedata?.reportingto.employeeid || '',
@@ -646,7 +646,7 @@ useEffect(() => {
   } else {
     reset({
       firstname:  '',
-      lasttname:  '',
+      lastname:  '',
       initial:'',
       email:'',
       reportingto:'',
@@ -688,7 +688,7 @@ useEffect(() => {
     reset({
       resource: findResource,
       firstname:  employeedata?.firstname  || '',
-      lasttname:  employeedata?.lastname || '',
+      lastname:  employeedata?.lastname || '',
       initial:  employeedata?.initial || '',
       email:  employeedata?.email || '',
       reportingto:  employeedata?.reportingto.employeeid || '',
@@ -736,13 +736,13 @@ useEffect(() => {
                         <div className=' grid grid-cols-2 gap-4'>
                           <div className=' flex flex-col gap-1'>
                             <label htmlFor="" className=' mt-2 text-xs'>First name</label>
-                            <Input placeholder='First name' type='text' className=' bg-primary text-xs h-[35px]' {...register('firstname')}/>
+                            <Input placeholder='First name' maxLength={25} type='text' className=' bg-primary text-xs h-[35px]' {...register('firstname')}/>
                             {errors.firstname && <p className=' text-[.6em] text-red-500'>{errors.firstname.message}</p>}
 
                           
                             <label htmlFor="" className=' mt-2 text-xs'>Last name</label>
-                            <Input placeholder='Last name' type='text' className=' bg-primary text-xs h-[35px]' {...register('lasttname')}/>
-                            {errors.lasttname && <p className=' text-[.6em] text-red-500'>{errors.lasttname.message}</p>}
+                            <Input placeholder='Last name' maxLength={25} type='text' className=' bg-primary text-xs h-[35px]' {...register('lastname')}/>
+                            {errors.lastname && <p className=' text-[.6em] text-red-500'>{errors.lastname.message}</p>}
 
 
                             <label htmlFor="" className=' mt-2 text-xs'>Initial*</label>
@@ -751,7 +751,7 @@ useEffect(() => {
 
 
                             <label htmlFor="" className=' mt-2 text-xs'>Contact no</label>
-                            <Input placeholder='Contact no' type='number' className=' bg-primary text-xs h-[35px]' {...register('contactno')}/>
+                            <Input placeholder='Contact no' maxLength={20} type='number' className=' bg-primary text-xs h-[35px]' {...register('contactno')}/>
                             {errors.contactno && <p className=' text-[.6em] text-red-500'>{errors.contactno.message}</p>}
 
                            
@@ -784,7 +784,7 @@ useEffect(() => {
                             {errors.email && <p className=' text-[.6em] text-red-500'>{errors.email.message}</p>}
 
                             <label htmlFor="" className=' mt-2 text-xs'>Password *</label>
-                            <Input placeholder='Password' type='text' className=' bg-primary text-xs h-[35px]' {...register('password')}/>
+                            <Input placeholder='Password' maxLength={15} type='text' className=' bg-primary text-xs h-[35px]' {...register('password')}/>
                             {errors.password && <p className=' text-[.6em] text-red-500'>{errors.password.message}</p>}
 
 
@@ -1185,8 +1185,8 @@ useEffect(() => {
 
                           
                             <label htmlFor="" className=' mt-2 text-xs'>Last name</label>
-                            <Input placeholder='Last name' type='text' className=' bg-primary text-xs h-[35px]' {...register('lasttname')}/>
-                            {errors.lasttname && <p className=' text-[.6em] text-red-500'>{errors.lasttname.message}</p>}
+                            <Input placeholder='Last name' type='text' className=' bg-primary text-xs h-[35px]' {...register('lastname')}/>
+                            {errors.lastname && <p className=' text-[.6em] text-red-500'>{errors.lastname.message}</p>}
 
 
                             <label htmlFor="" className=' mt-2 text-xs'>Initial*</label>

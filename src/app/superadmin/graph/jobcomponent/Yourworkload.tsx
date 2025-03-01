@@ -8,25 +8,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import Legends from '@/components/common/Legends'
 import axios, { AxiosError } from 'axios'
 import toast from 'react-hot-toast'
 import { useRouter, useSearchParams } from 'next/navigation'
 import {statusData} from '@/types/data'
 import { Check, Copy, Eye, File, Folder, Layers2, OctagonAlert, Pen, Plus, X } from 'lucide-react'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import Createprojectcomponent from './Createprojectcomponent'
 import { Graph, Members } from '@/types/types'
 import { formatDate } from '@/utils/functions'
-import { any } from 'zod'
 import Invoice from '@/components/forms/Invoice'
 import Copyprojectcomponent from './Copyprojectcomponent'
 import JobComponentStatus from '@/components/forms/JobComponentStatus'
@@ -37,6 +26,9 @@ import { clientColor } from '@/utils/helpers'
 import Individualrequest from './IndividualRequest'
 import DatePicker from 'react-datepicker'
 import "react-datepicker/dist/react-datepicker.css";
+import Createprojectcomponent from '@/components/forms/Createprojectcomponent'
+import Duplicatecomponent from '@/components/forms/DuplicateComponent'
+import Variationcomponent from '@/components/forms/Variationcomponent'
 
 
 
@@ -829,10 +821,29 @@ export default function Yourworkload() {
     return current.allDates.length > max.allDates.length ? current : max;
   }, list[0]);
 
+  const getStartAndEndDate = (list: { allDates: string[] }[]) => {
+    if (!list.length) return { startDate: null, endDate: null };
+  
+    const longestAlldates = list.reduce((max, current) => {
+      return current.allDates.length > max.allDates.length ? current : max;
+    }, list[0]);
+  
+    if (!longestAlldates.allDates.length) return { startDate: null, endDate: null };
+  
+    const sortedDates = longestAlldates.allDates.sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+  
+    return {
+      startDate: sortedDates[0], 
+      endDate: sortedDates[sortedDates.length - 1] 
+    };
+  };
+
+
   const formatBudgetType = (budgetType: string) => {
     return budgetType.toLowerCase() === "lumpsum" ? "Lump Sum" : 
            budgetType.toLowerCase() === "rates" ? "Rates" : budgetType;
   };
+
 
 
   return (
@@ -891,12 +902,12 @@ export default function Yourworkload() {
                   </div>
                   
                 ) : (
-                  <DuplicateJobComponent name={findJobComponent?.jobcomponent} manager={findJobComponent?.jobmanager.employeeid} type={findJobComponent?.budgettype} id={id} pname={findJobComponent?.projectname.name || ''} client={findJobComponent?.clientname.name || ''} start={findJobComponent?.projectstart || ''} end={findJobComponent?.projectend || ''} estbudget={findJobComponent?.estimatedbudget || 0} clientid={findJobComponent?.clientname.clientid || ''}>
+                  <Duplicatecomponent name={findJobComponent?.jobcomponent ?? ''} manager={findJobComponent?.jobmanager.employeeid ?? ''} budgettype={findJobComponent?.budgettype ?? ''} engr={findJobComponent?.members[0]?.employee._id} engrrvr={findJobComponent?.members[1]?.employee._id} drftr={findJobComponent?.members[2]?.employee._id} drftrrvr={findJobComponent?.members[3]?.employee._id} estbudget={findJobComponent?.estimatedbudget ?? 0} state={dialog3} client={findJobComponent?.clientname.name || ''} start={findJobComponent?.projectstart || ''} end={findJobComponent?.projectend || ''} pname={findJobComponent?.projectname.name || ''} clientid={findJobComponent?.clientname.clientid || ''}>
                     <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
                       <button onClick={() => setDialog2(true)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Layers2 size={20}/></button>
                       <p>Duplicate</p>
                     </div>
-                  </DuplicateJobComponent>
+                  </Duplicatecomponent>
                   
                 )}
 
@@ -912,12 +923,12 @@ export default function Yourworkload() {
                   </div>
                   
                 ) : (
-                  <Copyprojectcomponent name={findJobComponent?.jobcomponent ?? ''} manager={findJobComponent?.jobmanager.employeeid ?? ''} budgettype={findJobComponent?.budgettype ?? ''} engr={findJobComponent?.members[0]?.employee._id} engrrvr={findJobComponent?.members[1]?.employee._id} drftr={findJobComponent?.members[2]?.employee._id} drftrrvr={findJobComponent?.members[3]?.employee._id} estbudget={findJobComponent?.estimatedbudget ?? 0} state={dialog3} client={findJobComponent?.clientname.name || ''} start={findJobComponent?.projectstart || ''} end={findJobComponent?.projectend || ''} pname={findJobComponent?.projectname.name || ''} clientid={findJobComponent?.clientname.clientid || ''}>
+                  <Variationcomponent name={findJobComponent?.jobcomponent ?? ''} manager={findJobComponent?.jobmanager.employeeid ?? ''} budgettype={findJobComponent?.budgettype ?? ''} engr={findJobComponent?.members[0]?.employee._id} engrrvr={findJobComponent?.members[1]?.employee._id} drftr={findJobComponent?.members[2]?.employee._id} drftrrvr={findJobComponent?.members[3]?.employee._id} estbudget={findJobComponent?.estimatedbudget ?? 0} state={dialog3} client={findJobComponent?.clientname.name || ''} start={findJobComponent?.projectstart || ''} end={findJobComponent?.projectend || ''} pname={findJobComponent?.projectname.name || ''} clientid={findJobComponent?.clientname.clientid || ''}>
                   <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
                     <button onClick={() => setDialog3(!dialog3)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Copy size={20}/></button>
                     <p>Variation</p>
                   </div>
-                </Copyprojectcomponent>
+                </Variationcomponent>
                 )}
 
                 {componentid === '' ? (
@@ -1117,7 +1128,13 @@ export default function Yourworkload() {
 
 
                     <td className=" text-wrap">{memberIndex === 0 && graphItem.projectname.name}</td>
-                    <td className=" text-wrap">{memberIndex === 0 && ` ${graphItem.budgettype === 'lumpsum' ? `${graphItem.invoice.pendinginvoice}%` : '-'}`}</td>
+                    <td className=" text-wrap">{memberIndex === 0 && ` ${graphItem.budgettype === 'lumpsum' 
+                      ? (graphItem.invoice.pendinginvoice > 0 
+                          ? `${graphItem.invoice.pendinginvoice }%`
+                          : `${graphItem.invoice.percentage}%`) 
+                      : '-'}
+
+                    `}</td>
                     <td className=" text-wrap ">{memberIndex === 0 && `${graphItem.budgettype === 'lumpsum' ? `$ ${graphItem.estimatedbudget}` : '-'}`}</td>
                     <td className=" text-wrap">{memberIndex === 0 && formatBudgetType(graphItem.budgettype)}</td>
 
@@ -1422,6 +1439,8 @@ export default function Yourworkload() {
                                       }
                                       dateFormat="dd/MM/yyyy"
                                       placeholderText="DD/MM/YYYY"
+                                      // minDate={}
+                                      // maxDate={}
                                       className="bg-primary text-xs p-2 w-fit z-[9999] relative"
                                     />
 

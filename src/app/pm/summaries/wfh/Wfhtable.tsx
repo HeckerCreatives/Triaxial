@@ -58,7 +58,7 @@ export default function Wfhtable() {
     try {
       const timer = setTimeout(() => {
         const getList = async () => {
-          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/wfh/listwfhrequestadmin?statusfilter=Pending&fullnamefilter&page=0&limit=10`,{
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/wfh/listwfhrequestmanager?statusfilter=Approved&fullnamefilter&page=0&limit=10`,{
             withCredentials: true,
             headers: {
               'Content-Type': 'application/json'
@@ -121,7 +121,7 @@ export default function Wfhtable() {
         setLoading(true);
         try {
           const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_URL}/wfh/listwfhrequestadmin?page=${currentpage}&limit=10&statusfilter=Approved&fullnamefilter=${searchName}`,
+            `${process.env.NEXT_PUBLIC_API_URL}/wfh/listwfhrequestmanager?page=${currentpage}&limit=10&statusfilter=Approved&fullnamefilter=${searchName}`,
             {
               withCredentials: true,
               headers: {

@@ -53,7 +53,8 @@ export default function Invoice( prop: Props) {
     const id = params.get('jobcid')
     const [hasFetched, setHasFetched] = useState(false);
 
-    const lumpsumCalculation = ((newInvoice / 100 ) * prop.estimatedbudget) -  (currInvoice / 100) * prop.estimatedbudget
+    // const lumpsumCalculation = ((newInvoice / 100 ) * prop.estimatedbudget) -  (currInvoice / 100) * prop.estimatedbudget
+    const lumpsumCalculation = ((newInvoice / 100 ) * prop.estimatedbudget)
 
 
 
@@ -87,7 +88,7 @@ export default function Invoice( prop: Props) {
                     jobcomponentid: prop.jobcid,
                     // currentinvoice: currInvoice,
                     invoice: newInvoice,
-                    invoiceamount: lumpsumCalculation.toLocaleString(),
+                    invoiceamount: lumpsumCalculation,
                     comments: notes
                 },{
                     withCredentials: true,
@@ -153,7 +154,7 @@ export default function Invoice( prop: Props) {
             const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}${dynamicCreateInvoiceApiUrl}`,{
                 jobcomponentid: prop.jobcid,
                 invoice: newInvoice,
-                invoiceamount: amount,
+                invoiceamount: amount as number,
                 comments: notes
             },{
                 withCredentials: true,
@@ -295,7 +296,7 @@ export default function Invoice( prop: Props) {
                                     </>
                                   ) : (
                                     <td className="text-left text-gray-700">
-                                    <Input disabled placeholder='Amount' className=' bg-zinc-200'/>
+                                    <Input disabled value={prop.estimatedbudget} placeholder='Amount' className=' bg-zinc-200'/>
                                     </td>
                                   )}
 

@@ -123,12 +123,12 @@ export default function Teamstable() {
   const search = useSearchParams()
   const tab = search.get('active')
 
+  const [inputValue, setInputValue] = React.useState<string>("");
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [open, setOpen] = React.useState(false);
   const [selected, setSelected] = React.useState<Members[]>([]);
-  const [inputValue, setInputValue] = React.useState("");
   const [loading, setLoading] = useState(false)
-  const [employee, setEmployee] = useState<Members[]>([])
+  const [employee, setEmployee] = React.useState<Members[]>([]);
   const state = search.get('state')
   const [totalpage, setTotalpage] = useState(0)
   const [currentpage, setCurrentpage] = useState(0)
@@ -163,8 +163,13 @@ export default function Teamstable() {
   );
 
   const selectables = employee.filter(
-    (member) => !selected.includes(member)
+    (member) => !selected.some((s) => s.employeeid === member.employeeid)
   );
+
+  console.log('Employees',employee)
+  console.log('Selcttables',selectables)
+  console.log('Selected',selected)
+  
 
 
 
@@ -616,7 +621,7 @@ export default function Teamstable() {
                     <form onSubmit={handleSubmit(onSubmit)} action="" className=' flex flex-col '>
                         <div className=' flex flex-col'>
                           <label htmlFor="" className=' mt-2 text-xs'>Team name</label>
-                          <Input placeholder='Team Name' type='text' className=' bg-primary text-xs' {...register('teamname')}/>
+                          <Input placeholder='Team Name' maxLength={25} type='text' className=' bg-primary text-xs' {...register('teamname')}/>
                           {errors.teamname && <p className=' text-[.6em] text-red-500'>{errors.teamname.message}</p>}
 
 
@@ -716,7 +721,7 @@ export default function Teamstable() {
                                     </Badge>
                                   );
                                 })}
-                                {/* Avoid having the "Search" Icon */}
+                             
                                 <CommandPrimitive.Input
                                   ref={inputRef}
                                   value={inputValue}
@@ -729,11 +734,11 @@ export default function Teamstable() {
                               </div>
                             </div>
 
-                            {/* Dropdown Container */}
+                   
                             <div className="relative mt-2">
-                              {open && selectables.length > 0 && (
+                              {open  && (
                                 <div className="absolute top-0 z-10 w-full h-[200px] rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in">
-                                  {/* Close Button */}
+                                
                                   <button
                                     className="absolute z-30 top-2 right-2 p-1 rounded-full bg-zinc-200 text-white "
                                     onClick={() => setOpen(false)}
@@ -742,26 +747,30 @@ export default function Teamstable() {
                                   </button>
 
                                   <CommandList>
-                                    <CommandGroup className="h-full overflow-auto mt-4">
-                                      {selectables.map((list) => {
-                                        return (
-                                          <CommandItem
-                                            key={list.employeeid}
-                                            onMouseDown={(e) => {
-                                              e.preventDefault();
-                                              e.stopPropagation();
-                                            }}
-                                            onSelect={() => {
-                                              setInputValue("");
-                                              setSelected((prev) => [...prev, list]);
-                                            }}
-                                            className="cursor-pointer"
-                                          >
-                                            {list.name}
-                                          </CommandItem>
-                                        );
-                                      })}
+                                  {selectables.length !== 0 && (
+                                    <CommandGroup className="h-full overflow-auto">
+                                      {selectables.map((list) => (
+                                        <CommandItem
+                                          key={list.employeeid}
+                                          onMouseDown={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                          }}
+                                          onSelect={() => {
+                                            if (!list || !list.employeeid) return;
+                                            setInputValue("");
+                                            setSelected((prev = []) => [...prev, list]); // Default prev to an empty array if undefined
+                                          }}
+                                          
+                                          
+                                          className="cursor-pointer"
+                                        >
+                                          {list.name}
+                                        </CommandItem>
+                                      ))}
                                     </CommandGroup>
+                                  )}
+
                                   </CommandList>
                                 </div>
                               )}

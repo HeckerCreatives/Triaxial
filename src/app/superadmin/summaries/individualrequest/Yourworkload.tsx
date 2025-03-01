@@ -74,17 +74,19 @@ export default function Yourworkload() {
 
   useEffect(() => {
     const getList = async () => {
-    
-        try {
-          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/listemployeeindividualrequests?teamid=${id}`,{
-            withCredentials: true
-          })
+    if(id !== ''){
+      try {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/listemployeeindividualrequests?teamid=${id}`,{
+          withCredentials: true
+        })
 
-          setDates(response.data.data.alldates)
-          setList(response.data.data.teams)
-        } catch (error) {
+        setDates(response.data.data.alldates)
+        setList(response.data.data.teams)
+      } catch (error) {
 
-        }
+      }
+    }
+        
       }
 
     getList()

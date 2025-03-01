@@ -1,4 +1,3 @@
-// schemas/userSchema.ts
 import { any, z } from "zod";
 
 export const leaveSchema = z.object({
@@ -108,21 +107,40 @@ export const login = z.object({
 
 
 export const createEmployee = z.object ({
-    firstname: z.string().nonempty('Please enter a firstname'),
-    lasttname: z.string().nonempty('Please enter a lastname'),
-    initial: z.string().nonempty('Please enter a initial'),
-    contactno: z.string().nonempty('Please enter a contact no.'),
-    team: z.string().nonempty('Please enter a contact no.'),
-    reportingto: z.string().nonempty('Please enter a contact no.'),
-    email: z.string().email("Invalid email address"),
-    position: z.string().nonempty("Please enter a position"),
-    resource: z.string().nonempty("Please select a resource"),
-    img: any(),
-    password: z.string()
+    firstname: z
+    .string()
+    .nonempty("Please enter a firstname")
+    .max(25, "First Name cannot exceed 25 characters")
+    .regex(/^[A-Za-z]+$/, "First Name must contain only letters"),
+  lastname: z
+    .string()
+    .nonempty("Please enter a lastname")
+    .max(15, "Last Name cannot exceed 15 characters")
+    .regex(/^[A-Za-z]+$/, "Last Name must contain only letters"),
+  initial: z
+    .string()
+    .nonempty("Please enter an initial")
+    .max(10, "Initial cannot exceed 10 characters")
+    .regex(/^[A-Za-z]+$/, "Initial must contain only letters"),
+  contactno: z
+    .string()
+    .nonempty("Please enter a contact number")
+    .max(20, "Contact number cannot exceed 20 characters")
+    .regex(/^\d+$/, "Contact number must contain only numbers"),
+  team: z.string().nonempty("Please enter a team"),
+  reportingto: z.string().nonempty("Please enter a reporting person"),
+  email: z.string().email("Invalid email address"),
+  position: z.string().nonempty("Please enter a position"),
+  resource: z.string().nonempty("Please select a resource"),  
+  password: z.string(),
 })
 
 export const createTeam = z.object({
-    teamname: z.string().nonempty('Please enter a team name'),
+    teamname: z
+    .string()
+    .nonempty("Please enter a team name")
+    .max(25, "Team Name cannot exceed 25 characters")
+    .regex(/^[A-Za-z0-9\s]+$/, "Team Name can only contain letters and numbers"),
     directorpartner: z.string().nonempty('Please enter a director partner'),
     associate: z.string(),
     manager: z.string().nonempty('Please enter a manager'),
