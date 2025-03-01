@@ -10,7 +10,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+
 import { Plus, Delete, Trash, Eye, Pen, Trash2 } from 'lucide-react'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Dialog,
   DialogContent,
@@ -28,6 +30,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Command as CommandPrimitive } from "cmdk";
+import { selectTeams } from '@/types/data'
 import axios, { AxiosError } from 'axios'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -36,7 +39,6 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { createEvent, CreateEvent } from '@/schema/schema'
 import Spinner from '@/components/common/Spinner'
 import PaginitionComponent from '@/components/common/Pagination'
-import { formatDateTime } from '@/utils/functions'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -49,7 +51,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 
-type Team = Record<"teamname" | "teamid", string>;
+type Team = Record<"teamname" | "_id", string>;
 
 type Events = {
   enddate: string
@@ -70,14 +72,12 @@ _id: string
 export default function Eventtable() {
   const [dialog, setDialog] = useState(false)
   const [dialog2, setDialog2] = useState(false)
-  const [dialog3, setDialog3] = useState(false)
-  const [dialoghover, setDialoghover] = useState(false)
 
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [open, setOpen] = React.useState(false);
   const [selected, setSelected] = React.useState<Team[]>([]);
   const [inputValue, setInputValue] = React.useState("");
-  const [teams, setTeams] = useState<Team[]>([])
+  const [teams, setTeams] = React.useState<Team[]>([])
 
 
   const [list, setList] = useState<Events[]>([])
@@ -90,9 +90,8 @@ export default function Eventtable() {
   const state = params.get('state')
   const [id, setId] = useState('')
 
-
   const handleUnselect = React.useCallback((team: Team) => {
-    setSelected((prev) => prev.filter((s) => s.teamid !== team.teamid));
+    setSelected((prev) => prev.filter((s) => s._id !== team._id));
   }, []);
 
   const handleKeyDown = React.useCallback(
@@ -118,39 +117,57 @@ export default function Eventtable() {
   );
 
   const selectables = teams.filter(
-    (team) => !selected.includes(team)
+    (team) => !selected.some((selectedTeam) => selectedTeam._id === team._id)
   );
+  
 
 
   //event list
-   useEffect(() => {
-     setLoading(true)
-     const timer = setTimeout(() => {
-       const getList = async () => {
-         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/events/listeventshr?page=${currentpage}&limit=10&eventtitlefilter=${search}`,{
-           withCredentials: true,
-           headers: {
-             'Content-Type': 'application/json'
-             }
-         })
+  useEffect(() => {
+    setLoading(true)
+    const timer = setTimeout(() => {
+      const getList = async () => {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/events/listeventshr?page=${currentpage}&limit=10&eventtitlefilter=${search}`,{
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json'
+            }
+        })
   
-         setList(response.data.data.eventlist)
-         setTotalpage(response.data.data.totalpages)
-         setLoading(false)
+        setList(response.data.data.eventlist)
+        setTotalpage(response.data.data.totalpages)
+        setLoading(false)
 
-         if(search !== ''){
-           setCurrentpage(0)
-         }
+        if(search !== ''){
+          setCurrentpage(0)
+        }
        
-       }
-       getList()
-     }, 500)
-     return () => clearTimeout(timer)
+      }
+      getList()
+    }, 500)
+    return () => clearTimeout(timer)
     
-   },[search, currentpage, state])
+  },[search, currentpage, state])
 
+  const getList = async () => {
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/events/listeventshr?page=${currentpage}&limit=10&eventtitlefilter=${search}`,{
+      withCredentials: true,
+      headers: {
+        'Content-Type': 'application/json'
+        }
+    })
 
-   //create 
+    setList(response.data.data.eventlist)
+    setTotalpage(response.data.data.totalpages)
+    setLoading(false)
+
+    if(search !== ''){
+      setCurrentpage(0)
+    }
+   
+  }
+
+   //create events
    const {
     register,
     handleSubmit,
@@ -164,7 +181,7 @@ export default function Eventtable() {
 
   const onSubmit = async (data: CreateEvent) => {
     setLoading(true)
-    const selectedIds = selected.map((row) => row.teamid);
+    const selectedIds = selected.map((row) => row._id);
     router.push('?state=true')
     try {
       const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/events/createeventshr`,{
@@ -197,7 +214,6 @@ export default function Eventtable() {
 
    }
 
-     
   } catch (error) {
       setLoading(false)
 
@@ -233,7 +249,7 @@ export default function Eventtable() {
 
   const editEvent = async (data: CreateEvent) => {
     setLoading(true)
-    const selectedIds = selected.map((row) => row.teamid);
+    const selectedIds = selected.map((row) => row._id);
     router.push('?state=true')
     try {
       const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/events/editeventshr`,{
@@ -275,7 +291,7 @@ export default function Eventtable() {
               const axiosError = error as AxiosError<{ message: string, data: string }>;
               if (axiosError.response && axiosError.response.status === 401) {
                   toast.error(`${axiosError.response.data.data}`) 
-                  router.push('/')    
+                 router.push('/')    
               }
 
               if (axiosError.response && axiosError.response.status === 400) {
@@ -301,7 +317,6 @@ export default function Eventtable() {
   }
   };
 
-  
   //delete
   const deleteEvent = async (id: string) => {
     setLoading(true)
@@ -328,9 +343,11 @@ export default function Eventtable() {
    if(response.data.message === 'success'){
      router.push('?state=false')
      setLoading(false)
+     getList()
 
    }
 
+     
   } catch (error) {
       setLoading(false)
 
@@ -364,7 +381,6 @@ export default function Eventtable() {
   }
   };
 
-  
 
 
   //team list
@@ -386,6 +402,15 @@ export default function Eventtable() {
   const handlePageChange = (page: number) => {
     setCurrentpage(page)
   }
+
+  const formatDate = (date: string) => {
+    const newDate = date.split('T')
+
+    return newDate[0]
+  }
+
+  console.log(selected, selectables, teams)
+
 
 
 
@@ -418,7 +443,7 @@ export default function Eventtable() {
                     <div className=' grid grid-cols-1 gap-4'>
                       <div className=' flex flex-col gap-1'>
                         <label htmlFor="" className=' mt-2 text-xs'>Event Title</label>
-                        <Input placeholder='Event Title' maxLength={50} type='text' className=' bg-primary h-[35px] text-xs' {...register('eventitle')}/>
+                        <Input placeholder='Event Title' type='text' className=' bg-primary h-[35px] text-xs' {...register('eventitle')}/>
                         {errors.eventitle && <p className=' text-[.6em] text-red-500'>{errors.eventitle.message}</p>}
 
 
@@ -451,7 +476,7 @@ export default function Eventtable() {
                           <div className="flex flex-wrap gap-1">
                             {selected.map((framework) => {
                               return (
-                                <Badge key={framework.teamid} variant="secondary" className=' text-white'>
+                                <Badge key={framework._id} variant="secondary" className=' text-white'>
                                   {framework.teamname}
                                   <button
                                     className="ml-1 rounded-full text-white outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
@@ -491,7 +516,7 @@ export default function Eventtable() {
                                   {selectables.map((framework) => {
                                     return (
                                       <CommandItem
-                                        key={framework.teamid}
+                                        key={framework._id}
                                         onMouseDown={(e) => {
                                           e.preventDefault();
                                           e.stopPropagation();
@@ -574,11 +599,11 @@ export default function Eventtable() {
           {list.map((item, index) => (
              <TableRow key={index}>
              <TableCell className="font-medium">{item.title}</TableCell>
-             <TableCell className="font-medium">{formatDateTime(item.startdate)}</TableCell>
-             <TableCell className="font-medium">{formatDateTime(item.enddate)}</TableCell>
+             <TableCell className="font-medium">{new Date(item.startdate).toLocaleString()}</TableCell>
+             <TableCell className="font-medium">{new Date(item.enddate).toLocaleString()}</TableCell>
              <TableCell className=' '>
              
-                <Dialog>
+              <Dialog>
                 <DialogTrigger><button className=' bg-red-700 p-2 rounded-sm text-white flex items-center gap-2'><Eye size={15}/>View Team</button></DialogTrigger>
                 <DialogContent className=' p-6 bg-secondary text-white border-none'>
                   <DialogHeader>
@@ -609,12 +634,12 @@ export default function Eventtable() {
               </Dialog>
  
              </TableCell>
-             <TableCell className="  flex items-center gap-2">
+             <TableCell className=" flex items-center gap-2">
                
 
                <Dialog >
                 <DialogTrigger>
-                <button onClick={() => {setValue('eventitle', item.title), setValue('startdate', item.startdate),setValue('enddate', item.enddate), setSelected(item.teams.map(team => ({ teamname: team.teamname, teamid: team._id }))), setId(item.eventid)}} className=' p-2 rounded-sm bg-red-700 text-white'><Pen size={15}/></button>
+                <button onClick={() => { setId(item.eventid),setValue('eventitle', item.title), setValue('startdate',formatDate(item.startdate)),setValue('enddate', formatDate(item.enddate)), setSelected(item.teams.map(team => ({ teamname: team.teamname, _id: team._id })))}} className=' p-2 rounded-sm bg-red-700 text-white'><Pen size={15}/></button>
                 </DialogTrigger>
                 <DialogContent className=' bg-secondary border-none text-zinc-100 grid grid-cols-1 lg:grid-cols-[250px,1fr]'>
                   <div className=' bg-blue-400 lg:block hidden'
@@ -659,7 +684,7 @@ export default function Eventtable() {
                           <div className="flex flex-wrap gap-1">
                             {selected.map((framework) => {
                               return (
-                                <Badge key={framework.teamid} variant="secondary" className=' text-white'>
+                                <Badge key={framework._id} variant="secondary" className=' text-white'>
                                   {framework.teamname}
                                   <button
                                     className="ml-1 rounded-full text-white outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
@@ -698,7 +723,7 @@ export default function Eventtable() {
                                   {selectables.map((framework) => {
                                     return (
                                       <CommandItem
-                                        key={framework.teamid}
+                                        key={framework._id}
                                         onMouseDown={(e) => {
                                           e.preventDefault();
                                           e.stopPropagation();

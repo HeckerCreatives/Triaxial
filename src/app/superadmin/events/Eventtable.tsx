@@ -410,6 +410,8 @@ export default function Eventtable() {
   }
 
 
+  console.log(selected, selectables)
+
 
 
 

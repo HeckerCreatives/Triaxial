@@ -61,6 +61,8 @@ export default function Emailtable() {
   const router = useRouter()
   const path = usePathname()
   const apiUrl = path.includes('/superadmin') && '/leave/superadminprocessleaverequest' || path.includes('/pm') && '/leave/managerprocessleaverequest'
+  const [foreignId, setForeignId] = useState('')
+  const [status, setStatus] = useState('')
 
 
   //messages
@@ -131,10 +133,10 @@ export default function Emailtable() {
 
     try {
       const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}${apiUrl}`,{
-      requestid: id,
       status: "Approved",
-      comment : comments
-       
+      comment : comments,
+      requestid: foreignId,
+
       },
           {
               withCredentials: true,
@@ -197,7 +199,7 @@ export default function Emailtable() {
 
     try {
       const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}${apiUrl}`,{
-      requestid: id,
+      requestid: foreignId,
       status: "Denied",
       comment : comments
        
@@ -287,7 +289,7 @@ export default function Emailtable() {
         </TableHeader>
         <TableBody>
           {list.map((item, index) => (
-            <TableRow onClick={() => {openMessage(item.title,item.content, item.createdAt, item.senderfullname); readmessages(item._id)}} key={index} className=' w-full cursor-pointer'>
+            <TableRow onClick={() => {openMessage(item.title,item.content, item.createdAt, item.senderfullname); readmessages(item._id); setForeignId(item.foreignid); setStatus(item.status)}} key={index} className=' w-full cursor-pointer'>
             {/* <TableCell className="font-medium"><Checkbox/></TableCell> */}
               <TableCell className=' relative'>{item.senderfullname}
                 {item.isRead === false && (
@@ -327,16 +329,18 @@ export default function Emailtable() {
                   <pre className=' text-xs'>{content}</pre>
                   {/* <p className=' mt-4 whitespace-pre-wrap text-xs'>{content}</p> */}
 
-                  {(title.includes('Leave Request') && item.status === 'Pending') && (
+                  {(title.includes('Leave Request') && status === 'Pending') && (
                   <div className=' w-full flex items-center justify-end gap-2'>
-                  <button onClick={() => reject(item.foreignid)} className=' text-xs bg-zinc-950 text-white px-3 py-1 rounded-md'>Denied</button>
-                  <button onClick={() => approved(item.foreignid)} className=' text-xs bg-red-600 text-white px-3 py-1 rounded-md'>Approved</button>
+                  <button onClick={() => reject(item?.foreignid)} className=' text-xs bg-zinc-950 text-white px-3 py-1 rounded-md'>Denied</button>
+                  <button onClick={() => approved(item?.foreignid)} className=' text-xs bg-red-600 text-white px-3 py-1 rounded-md'>Approved</button>
 
                   </div>
                   )}
 
-                  {(item.status === 'Approved' || item.status === 'Denied') && (
-                    <p className={` text-xs w-full text-end ${item.status === 'Approved' ? 'text-green-500' : 'text-red-500'}`}>{item.status}</p>
+               
+
+                  {status === 'Approved' && (
+                    <p className={` text-xs w-full text-end ${status === 'Approved' ? 'text-green-500' : 'text-red-500'}`}>{status}</p>
                   )}
                   
                 </div>

@@ -182,8 +182,8 @@ export const wdrequestperiod = z.object({
     })
   
     // Cycle start should be the same or after start date
-    .refine((data) => new Date(data.cyclestart) >= new Date(data.start), {
-      message: "Cycle Start should not be before Start date.",
+    .refine((data) => new Date(data.cyclestart) !== new Date(data.start), {
+      message: "Cycle Start and Start Date should be the same.",
       path: ["cyclestart"],
     })
   
