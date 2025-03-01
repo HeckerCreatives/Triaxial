@@ -199,14 +199,14 @@ export default function Yourworkload() {
       </div>
       {list.length !== 0 ? (
         <div className=' h-full overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
-          <table className="table-auto w-[300px] border-collapse ">
+          <table className="table-auto w-auto border-collapse ">
             <thead className=' bg-secondary h-[100px]'>
 
               <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
-                <th className=' text-left w-[20px] font-normal'>Team</th>
-                <th className=' text-left w-[20px] font-normal'>Name</th>
-                <th className=' text-left w-[50px] font-normal'>Initial</th>
-                <th className=' text-left font-normal w-[50px]'>Resource</th>
+                <th className=' text-left min-w-[50px] font-normal'>Team</th>
+                <th className=' text-left min-w-[100px] font-normal'>Name</th>
+                <th className=' text-left min-w-[50px] font-normal'>Initial</th>
+                <th className=' text-left font-normal w-[100px]'>Resource</th>
             
               </tr>
             </thead>

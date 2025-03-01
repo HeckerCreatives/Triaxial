@@ -917,11 +917,8 @@ export default function Pmtable() {
                             {loading === true && (
                               <div className=' spinner2'></div>
                             )}
-                            Edit</button>
-                          {/* <ButtonSecondary onClick={() => setDialog(false)}  name={'Cancel'}/>
-                          <Button name={'Save'} onClick={function (): void {
-                            throw new Error('Function not implemented.')
-                          } }/> */}
+                            Save</button>
+                        
                         </div>
                           
 

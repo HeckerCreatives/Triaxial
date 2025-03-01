@@ -115,7 +115,7 @@ export const createEmployee = z.object ({
   lastname: z
     .string()
     .nonempty("Please enter a lastname")
-    .max(15, "Last Name cannot exceed 15 characters")
+    .max(25, "Last Name cannot exceed 25 characters")
     .regex(/^[A-Za-z]+$/, "Last Name must contain only letters"),
   initial: z
     .string()
@@ -125,7 +125,7 @@ export const createEmployee = z.object ({
   contactno: z
     .string()
     .nonempty("Please enter a contact number")
-    .max(20, "Contact number cannot exceed 20 characters")
+    .max(20, "Contact number cannot exceed 20 numbers")
     .regex(/^\d+$/, "Contact number must contain only numbers"),
   team: z.string().nonempty("Please enter a team"),
   reportingto: z.string().nonempty("Please enter a reporting person"),
@@ -164,12 +164,35 @@ export const processLeave = z.object({
 })
 
 export const wdrequestperiod = z.object({
-    start: z.string().nonempty('Please enter a starting date'),
-    end: z.string().nonempty('Please enter a end date'),
-    cycleend: z.string().nonempty('Please enter a cycle end date'),
-    cyclestart: z.string().nonempty('Please enter a cycle start date'),
-})
-
+    start: z.string().nonempty("Please enter a starting date"),
+    end: z.string().nonempty("Please enter an end date"),
+    cycleend: z.string().nonempty("Please enter a cycle end date"),
+    cyclestart: z.string().nonempty("Please enter a cycle start date"),
+  })
+    // End date should not be the same as Start date
+    .refine((data) => data.end !== data.start, {
+      message: "End date cannot be the same as Start date",
+      path: ["end"],
+    })
+  
+    // Cycle start should not be the same as Cycle end
+    .refine((data) => data.cycleend !== data.cyclestart, {
+      message: "Cycle End date cannot be the same as Cycle Start date",
+      path: ["cycleend"],
+    })
+  
+    // Cycle start should be the same or after start date
+    .refine((data) => new Date(data.cyclestart) >= new Date(data.start), {
+      message: "Cycle Start should not be before Start date.",
+      path: ["cyclestart"],
+    })
+  
+    // Cycle end should be after the end date
+    .refine((data) => new Date(data.cycleend) > new Date(data.end), {
+      message: "Cycle End should be after End date.",
+      path: ["cycleend"],
+    });
+  
 export const changepassword = z
   .object({
     cpassword: z.string().max(20).nonempty('Please enter your current password'),

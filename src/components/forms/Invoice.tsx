@@ -108,6 +108,7 @@ export default function Invoice( prop: Props) {
                  setLoading(false)
                  setDialog(false)
                  setNewInvoice(0)
+                 window.location.reload()
             
                }
     
@@ -150,64 +151,72 @@ export default function Invoice( prop: Props) {
 
 
     const requestInvoiceRates = async () => {
-        try {
-            const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}${dynamicCreateInvoiceApiUrl}`,{
-                jobcomponentid: prop.jobcid,
-                invoice: newInvoice,
-                invoiceamount: amount as number,
-                comments: notes
-            },{
-                withCredentials: true,
-                headers: {
-                  'Content-Type': 'application/json'
-                  }
+        if(amount as number > prop.estimatedbudget){
+            toast.error(`Invoice amount should not exceed to the estimated budget.`)              
 
-            })
-
-            const response = await toast.promise(request, {
-                loading: 'Requesting invoice ....',
-                success: `Successfully requested`,
-                error: 'Error while requesting invoice',
-            });
-        
-           if(response.data.message === 'success'){
-             setLoading(false)
-             setDialog(false)
-             setNewInvoice(0)
-           }  
-        } catch (error) {
-        setLoading(false)
-        setDialog(false)
-        setNewInvoice(0)
-        if (axios.isAxiosError(error)) {
-            const axiosError = error as AxiosError<{ message: string, data: string }>;
-            if (axiosError.response && axiosError.response.status === 401) {
-                toast.error(`${axiosError.response.data.data}`) 
-                router.push('/')    
-            }
-
-            if (axiosError.response && axiosError.response.status === 400) {
-                toast.error(`${axiosError.response.data.data}`)     
-                   
-            }
-
-            if (axiosError.response && axiosError.response.status === 402) {
-                toast.error(`${axiosError.response.data.data}`)          
-                       
-            }
-
-            if (axiosError.response && axiosError.response.status === 403) {
-                toast.error(`${axiosError.response.data.data}`)              
-               
-            }
-
-            if (axiosError.response && axiosError.response.status === 404) {
-                toast.error(`${axiosError.response.data.data}`)             
-            }
-        } 
-
+        } else {
+            try {
+                const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}${dynamicCreateInvoiceApiUrl}`,{
+                    jobcomponentid: prop.jobcid,
+                    invoice: newInvoice,
+                    invoiceamount: amount as number,
+                    comments: notes
+                },{
+                    withCredentials: true,
+                    headers: {
+                      'Content-Type': 'application/json'
+                      }
+    
+                })
+    
+                const response = await toast.promise(request, {
+                    loading: 'Requesting invoice ....',
+                    success: `Successfully requested`,
+                    error: 'Error while requesting invoice',
+                });
             
+               if(response.data.message === 'success'){
+                 setLoading(false)
+                 setDialog(false)
+                 setNewInvoice(0)
+                 window.location.reload()
+    
+               }  
+            } catch (error) {
+            setLoading(false)
+            setDialog(false)
+            setNewInvoice(0)
+            if (axios.isAxiosError(error)) {
+                const axiosError = error as AxiosError<{ message: string, data: string }>;
+                if (axiosError.response && axiosError.response.status === 401) {
+                    toast.error(`${axiosError.response.data.data}`) 
+                    router.push('/')    
+                }
+    
+                if (axiosError.response && axiosError.response.status === 400) {
+                    toast.error(`${axiosError.response.data.data}`)     
+                       
+                }
+    
+                if (axiosError.response && axiosError.response.status === 402) {
+                    toast.error(`${axiosError.response.data.data}`)          
+                           
+                }
+    
+                if (axiosError.response && axiosError.response.status === 403) {
+                    toast.error(`${axiosError.response.data.data}`)              
+                   
+                }
+    
+                if (axiosError.response && axiosError.response.status === 404) {
+                    toast.error(`${axiosError.response.data.data}`)             
+                }
+            } 
+    
+                
+            }
         }
+        
     }
 
 

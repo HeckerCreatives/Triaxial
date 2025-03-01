@@ -199,14 +199,14 @@ export default function Yourworkload() {
       </div>
       {list.length !== 0 ? (
         <div className=' h-full overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
-          <table className="table-auto w-[300px] border-collapse ">
+          <table className="table-auto w-auto border-collapse ">
             <thead className=' bg-secondary h-[100px]'>
 
               <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
-                <th className=' text-left w-[20px] font-normal'>Team</th>
-                <th className=' text-left w-[20px] font-normal'>Name</th>
-                <th className=' text-left w-[50px] font-normal'>Initial</th>
-                <th className=' text-left font-normal w-[50px]'>Resource</th>
+              <th className=' text-left min-w-[50px] font-normal'>Team</th>
+                <th className=' text-left min-w-[100px] font-normal'>Name</th>
+                <th className=' text-left min-w-[50px] font-normal'>Initial</th>
+                <th className=' text-left font-normal w-[80px]'>Resource</th>
             
               </tr>
             </thead>
@@ -215,11 +215,11 @@ export default function Yourworkload() {
               graphItem.members.map((member, memberIndex) => (
                 <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600 text-left">
                   {memberIndex === 0 ?
-                  (<td  onClick={() => router.push(`/pm/graph/jobcomponent?teamid=${graphItem.teamid}&teamname=${graphItem.name}`)} className="text-left text-red-500 underline cursor-pointer">{graphItem.name}</td>) :  (<td className="text-center"></td>)
+                  (<td  onClick={() => router.push(`/pm/graph/jobcomponent?teamid=${graphItem.teamid}&teamname=${graphItem.name}`)} className=" min-w-[50px] text-left text-red-500 underline cursor-pointer">{graphItem.name}</td>) :  (<td className="text-center"></td>)
                   }
-                  <td onClick={() => router.push(`/pm/individualworkload?employeeid=${member.id}&name=${member.name}&teamname=${graphItem.name}`)} className="text-left cursor-pointer underline text-blue-400">{member.name}</td>
-                  <td className="text-left">{member.initial}</td>
-                  <td className="text-left">{member.resource}</td>
+                  <td onClick={() => router.push(`/pm/individualworkload?employeeid=${member.id}&name=${member.name}&teamname=${graphItem.name}`)} className=" min-w-[100px] break-all whitespace-normal text-left cursor-pointer underline text-blue-400">{member.name}</td>
+                  <td className="text-left min-w-[50px] ">{member.initial}</td>
+                  <td className="text-left min-w-[80px]">{member.resource}</td>
                  
               
                 </tr>

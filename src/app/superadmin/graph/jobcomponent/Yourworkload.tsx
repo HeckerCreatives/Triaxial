@@ -8,14 +8,24 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import Legends from '@/components/common/Legends'
 import axios, { AxiosError } from 'axios'
 import toast from 'react-hot-toast'
 import { useRouter, useSearchParams } from 'next/navigation'
 import {statusData} from '@/types/data'
 import { Check, Copy, Eye, File, Folder, Layers2, OctagonAlert, Pen, Plus, X } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { Graph, Members } from '@/types/types'
 import { formatDate } from '@/utils/functions'
+import { any } from 'zod'
 import Invoice from '@/components/forms/Invoice'
 import Copyprojectcomponent from './Copyprojectcomponent'
 import JobComponentStatus from '@/components/forms/JobComponentStatus'
@@ -156,12 +166,15 @@ export default function Yourworkload() {
   const [tempData, setTempdata] = useState()
   const [list, setList] = useState<Graph[]>([])
   const [search, setSearch] = useState('')
+  const [startReq, setStartReq] = useState('')
+  const [endReq, setEndReq] = useState('')
 
    const handleCheckboxChange = (id: string) => {
      setComponentid((prevSelectedId) => (prevSelectedId === id ? '' : id));
    };
 
   const findJobComponent = list.find((item) => item._id === componentid)
+
 
 
 
@@ -346,6 +359,8 @@ export default function Yourworkload() {
       
         
           setList(response.data.data)
+          setStartReq(response.data.data[0].projectstart)
+          setEndReq(response.data.data[0].projectend)
         
         }
         getList()
@@ -821,6 +836,13 @@ export default function Yourworkload() {
     return current.allDates.length > max.allDates.length ? current : max;
   }, list[0]);
 
+
+
+  const formatBudgetType = (budgetType: string) => {
+    return budgetType.toLowerCase() === "lumpsum" ? "Lump Sum" : 
+           budgetType.toLowerCase() === "rates" ? "Rates" : budgetType;
+  };
+
   const getStartAndEndDate = (list: { allDates: string[] }[]) => {
     if (!list.length) return { startDate: null, endDate: null };
   
@@ -833,17 +855,10 @@ export default function Yourworkload() {
     const sortedDates = longestAlldates.allDates.sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
   
     return {
-      startDate: sortedDates[0], 
-      endDate: sortedDates[sortedDates.length - 1] 
+      startDate: sortedDates[0],  
+      endDate: sortedDates[sortedDates.length - 1]
     };
   };
-
-
-  const formatBudgetType = (budgetType: string) => {
-    return budgetType.toLowerCase() === "lumpsum" ? "Lump Sum" : 
-           budgetType.toLowerCase() === "rates" ? "Rates" : budgetType;
-  };
-
 
 
   return (
@@ -1128,13 +1143,7 @@ export default function Yourworkload() {
 
 
                     <td className=" text-wrap">{memberIndex === 0 && graphItem.projectname.name}</td>
-                    <td className=" text-wrap">{memberIndex === 0 && ` ${graphItem.budgettype === 'lumpsum' 
-                      ? (graphItem.invoice.pendinginvoice > 0 
-                          ? `${graphItem.invoice.pendinginvoice }%`
-                          : `${graphItem.invoice.percentage}%`) 
-                      : '-'}
-
-                    `}</td>
+                    <td className=" text-wrap">{memberIndex === 0 && ` ${graphItem.budgettype === 'lumpsum' ? `${graphItem.invoice.pendinginvoice}%` : '-'}`}</td>
                     <td className=" text-wrap ">{memberIndex === 0 && `${graphItem.budgettype === 'lumpsum' ? `$ ${graphItem.estimatedbudget}` : '-'}`}</td>
                     <td className=" text-wrap">{memberIndex === 0 && formatBudgetType(graphItem.budgettype)}</td>
 
@@ -1346,7 +1355,7 @@ export default function Yourworkload() {
 
          {isJobmamager === true ? (
               <Dialog open={dialog} onOpenChange={setDialog}>
-                      <DialogContent className=' p-8 bg-secondary border-none text-white max-h-[80%] overflow-y-auto'>
+                      <DialogContent className=' p-8 bg-secondary border-none text-white max-h-[80%] min-h-[50%] overflow-y-auto'>
                         
                         <Tabs defaultValue="account" className=" w-full">
                           <TabsList className=' text-xs bg-zinc-800'>
@@ -1410,20 +1419,20 @@ export default function Yourworkload() {
                             <div key={index} className=" w-full mb-6 p-4 border border-zinc-700 rounded-lg text-xs">
                               <h2 className="text-sm font-semibold mb-2">Form {index + 1}</h2>
                               <div className="space-y-4">
-                                <div>
+                                <div className=' flex items-center gap-4'>
                                   <label className="block text-sm font-medium">Start Date</label>
-                                  {/* <input disabled={wdStatus || event || leave}
-                                    type="date"
-                                    value={form.date.split('T')[0]}
-                                    onChange={(e) => handleChange(index, 'date', e.target.value + 'T00:00:00.000Z')}
-                                  placeholder='Date'
-                                  className=' bg-primary p-2 rounded-md text-xs' /> */}
+                                
 
                                     <DatePicker
                                       selected={form.startdate ? new Date(form.startdate) : null} // Ensure a valid Date object
                                       onChange={(date) =>
                                         handleChange(index, "startdate", date ? date.toISOString() : "")
                                       }
+                                      startDate={new Date(startReq)}
+                                      // endDate={new Date(endReq)}
+                                      maxDate={new Date(endReq)}
+                                      selectsEnd 
+                                      minDate={new Date(startReq)} 
                                       dateFormat="dd/MM/yyyy"
                                       placeholderText="DD/MM/YYYY"
                                       className="bg-primary text-xs p-2 w-fit z-[9999] relative"
@@ -1437,10 +1446,13 @@ export default function Yourworkload() {
                                       onChange={(date) =>
                                         handleChange(index, "enddate", date ? date.toISOString() : "")
                                       }
+                                      startDate={new Date(startReq)}
+                                      // endDate={new Date(endReq)}
+                                      maxDate={new Date(endReq)}
+                                      selectsEnd 
+                                      minDate={new Date(startReq)} 
                                       dateFormat="dd/MM/yyyy"
                                       placeholderText="DD/MM/YYYY"
-                                      // minDate={}
-                                      // maxDate={}
                                       className="bg-primary text-xs p-2 w-fit z-[9999] relative"
                                     />
 

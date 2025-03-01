@@ -117,8 +117,9 @@ export default function Eventtable() {
   );
 
   const selectables = teams.filter(
-    (team) => !selected.includes(team)
+    (team) => !selected.some((selectedTeam) => selectedTeam.teamid === team.teamid)
   );
+  
 
 
   //event list
@@ -407,6 +408,8 @@ export default function Eventtable() {
 
     return newDate[0]
   }
+
+  console.log(selectables)
 
 
 

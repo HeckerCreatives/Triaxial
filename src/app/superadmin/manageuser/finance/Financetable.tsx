@@ -914,7 +914,7 @@ export default function Hrtable() {
                             {loading === true && (
                               <div className=' spinner2'></div>
                             )}
-                            Edit</button>
+                            Save</button>
                           
                         </div>
                           

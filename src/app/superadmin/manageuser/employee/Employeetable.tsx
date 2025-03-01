@@ -746,12 +746,19 @@ useEffect(() => {
 
 
                             <label htmlFor="" className=' mt-2 text-xs'>Initial*</label>
-                            <Input placeholder='Initial' type='text' className=' bg-primary text-xs h-[35px]' {...register('initial')}/>
+                            <Input placeholder='Initial' maxLength={10} type='text' className=' bg-primary text-xs h-[35px]' {...register('initial')}/>
                             {errors.initial && <p className=' text-[.6em] text-red-500'>{errors.initial.message}</p>}
 
 
                             <label htmlFor="" className=' mt-2 text-xs'>Contact no</label>
-                            <Input placeholder='Contact no' maxLength={20} type='number' className=' bg-primary text-xs h-[35px]' {...register('contactno')}/>
+                            <Input
+                              placeholder="Contact no"
+                              type="text" 
+                              maxLength={20}
+                              className="bg-primary text-xs h-[35px]"
+                              {...register("contactno", { pattern: /^[0-9]{1,20}$/ })} 
+                            />
+
                             {errors.contactno && <p className=' text-[.6em] text-red-500'>{errors.contactno.message}</p>}
 
                            
@@ -1269,7 +1276,7 @@ useEffect(() => {
                             {loading === true && (
                               <div className=' spinner2'></div>
                             )}
-                            Edit</button>
+                            Save</button>
                           {/* <ButtonSecondary onClick={() => setDialog(false)}  name={'Cancel'}/>
                           <Button name={'Save'} onClick={function (): void {
                             throw new Error('Function not implemented.')

@@ -622,7 +622,7 @@ export default function ClientTable() {
 
             <Dialog open={dialog3} onOpenChange={setDialog3}>
                 <DialogTrigger>
-                  <button onClick={() => {setClientid(item.teamid)}} className=' bg-red-700 text-xs px-6 py-2 rounded-sm flex items-center gap-1 text-white'><Pen size={15}/>Edit</button>
+                  <button onClick={() => {setClientid(item.teamid)}} className=' rounded-md bg-red-700 text-xs px-4 py-2 flex items-center gap-1 text-white'><Pen size={15}/>Edit</button>
                 </DialogTrigger>
                 <DialogContent className=' bg-secondary border-none text-zinc-100 grid grid-cols-1 lg:grid-cols-[250px,1fr]'>
                   <div className=' bg-blue-400 lg:block hidden'
@@ -652,7 +652,7 @@ export default function ClientTable() {
                           <SelectItem value="Priority 1">Priority 1</SelectItem>
                           <SelectItem value="Priority 2">Priority 2</SelectItem>
                           <SelectItem value="Priority 3">Priority 3</SelectItem>
-                          {/* <SelectItem value="Others">Others</SelectItem> */}
+                          <SelectItem value="Others">Others</SelectItem>
                         </SelectContent>
                       </Select>
                       {errors.priority && <p className=' text-[.6em] text-red-500'>{errors.priority.message}</p>}
@@ -669,7 +669,7 @@ export default function ClientTable() {
                           {loading === true && (
                             <div className=' spinner2'></div>
                           )}
-                          Create</button>
+                          Save</button>
                       </div>
 
                   </form>

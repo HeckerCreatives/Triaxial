@@ -166,12 +166,15 @@ export default function Yourworkload() {
   const [tempData, setTempdata] = useState()
   const [list, setList] = useState<Graph[]>([])
   const [search, setSearch] = useState('')
+  const [startReq, setStartReq] = useState('')
+  const [endReq, setEndReq] = useState('')
 
    const handleCheckboxChange = (id: string) => {
      setComponentid((prevSelectedId) => (prevSelectedId === id ? '' : id));
    };
 
   const findJobComponent = list.find((item) => item._id === componentid)
+
 
 
 
@@ -356,6 +359,8 @@ export default function Yourworkload() {
       
         
           setList(response.data.data)
+          setStartReq(response.data.data[0].projectstart)
+          setEndReq(response.data.data[0].projectend)
         
         }
         getList()
@@ -831,9 +836,28 @@ export default function Yourworkload() {
     return current.allDates.length > max.allDates.length ? current : max;
   }, list[0]);
 
+
+
   const formatBudgetType = (budgetType: string) => {
     return budgetType.toLowerCase() === "lumpsum" ? "Lump Sum" : 
            budgetType.toLowerCase() === "rates" ? "Rates" : budgetType;
+  };
+
+  const getStartAndEndDate = (list: { allDates: string[] }[]) => {
+    if (!list.length) return { startDate: null, endDate: null };
+  
+    const longestAlldates = list.reduce((max, current) => {
+      return current.allDates.length > max.allDates.length ? current : max;
+    }, list[0]);
+  
+    if (!longestAlldates.allDates.length) return { startDate: null, endDate: null };
+  
+    const sortedDates = longestAlldates.allDates.sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+  
+    return {
+      startDate: sortedDates[0],  
+      endDate: sortedDates[sortedDates.length - 1]
+    };
   };
 
 
@@ -965,30 +989,25 @@ export default function Yourworkload() {
       <Individualrequest ref={individualRequestRef} alldates={longestAlldates?.allDates} data={list} />
 
       <div
-      className=' h-auto w-full flex flex-col max-w-[1920px]'>
+      className=' h-auto w-full flex flex-col max-w-[1920px] bg-blue-400'>
         <div className=' h-auto overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
           
-            <table className="table-auto w-full  borer-collapse ml-[6px] ">
-            <thead className='  h-[50px]  w-[1600px]'>
+            <table className="table-auto w-auto  borer-collapse ml-1 ">
+            <thead className='  h-[50px] text-nowrap '>
 
               <tr className=' text-[0.6rem] text-zinc-100 font-normal text-left '>
-                <th className=' font-normal w-[30px]'>Action</th>
-
-                  <th className=' font-normal w-[100px] ' >Job Manager</th>
-
-                  <th className='  font-normal w-[100px] ' >Job Number</th>
-                    <th className='  font-normal w-[100px] ' >Client Name</th>
-                  <th className='  font-normal w-[100px] ' >Job Component</th>
-
-                    <th className='  font-normal w-[100px] ' >Project Name</th>
-
-                    <th className='  font-normal w-[100px] ' >Invoiced (%)</th>
-                    <th className='  font-normal w-[100px] ' >Est. $</th>
-                    <th className='   font-normal w-[110px] ' >Budget type</th>
-
-                    <th className='  font-normal w-[55px] ' >Members</th>
-                    <th className='   font-normal w-[50px] ' >Role</th>
-                    <th className=' font-normal w-[50px] ' >Notes</th>
+                <th className=' text-left font-normal min-w-[40px]'>Action</th>
+                <th className=' text-left  font-normal min-w-[80px] ' >Job Number</th>
+                  <th className=' text-left font-normal min-w-[80px] ' >Job Manager</th>
+                    <th className=' text-left  font-normal min-w-[100px] ' >Client Name</th>
+                  <th className=' text-left font-normal min-w-[120px] ' >Job Component</th>
+                    <th className=' text-left  font-normal min-w-[120px] ' >Project Name</th>
+                    <th className=' text-left  font-normal min-w-[80px] ' >Invoiced (%)</th>
+                    <th className='  text-left font-normal min-w-[80px] ' >Est. $</th>
+                    <th className=' text-left  font-normal min-w-[80px] ' >Budget type</th>
+                    <th className=' text-left  font-normal min-w-[80px] ' >Members</th>
+                    <th className=' text-left  font-normal min-w-[50px] ' >Role</th>
+                    <th className=' text-left font-normal min-w-[50px] ' >Notes</th>
 
               </tr>
             </thead>
@@ -1008,17 +1027,16 @@ export default function Yourworkload() {
                  
                   className=' text-[0.6rem] text-zinc-100 font-normal'>
                   
-                  {longestAlldates?.allDates
+                  {/* {longestAlldates?.allDates
                   .filter((dateObj) => {
                     const day = new Date(dateObj).getDay();
-                    return day >= 1 && day <= 5; // Filter to include only Monday through Friday
+                    return day >= 1 && day <= 5; 
                   })
                   .map((dateObj, index) => {
                     const date = new Date(dateObj);
                     const day = date.getDay();
                     const isFriday = day === 5;
 
-                    // Format functions for Australian date
                     const formatAustralianDate = (date: Date) =>
                       date.toLocaleDateString('en-AU', { day: '2-digit', month: '2-digit', year: '2-digit' });
                     const formatMonthYear = (date: Date) =>
@@ -1031,7 +1049,6 @@ export default function Yourworkload() {
                         className="relative  w-[20px] font-normal border-[1px] border-zinc-700">
                           <div className="whitespace-nowrap  w-[20px] transform -rotate-[90deg]">
                             <p className=' mt-3'>{formatAustralianDate(date)}</p>
-                            {/* <p>{formatMonthYear(date)}</p> */}
                           </div>
                         </th>
                         {isFriday && (
@@ -1043,7 +1060,7 @@ export default function Yourworkload() {
                         )}
                       </React.Fragment>
                     );
-                  })}
+                  })} */}
 
 
                     
@@ -1068,23 +1085,18 @@ export default function Yourworkload() {
                  >
 
                 <tr className=' text-[0.6rem] text-zinc-100 font-normal text-left '>
-                    <th className=' font-normal w-[30px]'>Action</th>
-
-                      <th className='  font-normal w-[100px] ' >Job Manager</th>
-
-                      <th className=' font-normal w-[100px] ' >Job Number</th>
-                        <th className=' font-normal w-[100px] ' >Client Name</th>
-                      <th className=' font-normal w-[100px] ' >Job Component</th>
-
-                        <th className=' font-normal w-[100px] ' >Project Name</th>
-
-                        <th className='  font-normal w-[100px] ' >Invoiced (%/hrs)</th>
-                        <th className='  font-normal w-[100px] ' >Est. $</th>
-                        <th className='   font-normal w-[100px] ' >Budget type</th>
-
-                        <th className='  font-normal w-[50px] ' >Members</th>
-                        <th className=' font-normal w-[50px] ' >Role</th>
-                        <th className=' font-normal w-[50px] ' >Notes</th>
+                <th className=' text-left font-normal min-w-[40px]'>Action</th>
+                <th className=' text-left  font-normal min-w-[80px] ' >Job Number</th>
+                  <th className=' text-left font-normal min-w-[80px] ' >Job Manager</th>
+                    <th className=' text-left  font-normal min-w-[100px] ' >Client Name</th>
+                  <th className=' text-left  font-normal min-w-[120px] ' >Job Component</th>
+                    <th className=' text-left  font-normal min-w-[120px] ' >Project Name</th>
+                    <th className=' text-left  font-normal min-w-[80px] ' >Invoiced (%)</th>
+                    <th className=' text-left  font-normal min-w-[80px] ' >Est. $</th>
+                    <th className=' text-left   font-normal min-w-[80px] ' >Budget type</th>
+                    <th className=' text-left  font-normal min-w-[80px] ' >Members</th>
+                    <th className=' text-left   font-normal min-w-[50px] ' >Role</th>
+                    <th className=' text-left font-normal min-w-[50px] ' >Notes</th>
 
                   </tr>
                   </thead>
@@ -1095,7 +1107,7 @@ export default function Yourworkload() {
                   key={`${graphItem._id}-${memberIndex}`}
                   data-invoice-id={graphItem._id} 
                   className={`  text-left text-[.6rem] py-2 h-[35px] border-[1px] border-zinc-600 ${graphItem.isVariation === true ? 'text-red-600 font-black' : ' text-black'} ${clientColor(graphItem.clientname.priority)}`}>
-                      <td className="text-center text-white h-[30px] flex items-center justify-center gap-1 w-[30px]">
+                      <td className="text-center text-white h-[30px] flex items-center justify-center gap-1 min-w-[40px]">
                         
 
                         {(memberIndex === 0 ) && (
@@ -1110,24 +1122,25 @@ export default function Yourworkload() {
                     </td>
                     {/* ${graphItem.status === null ? 'text-blue-400' :  'text-green-500'} */}
                     {/* <td className={` text-center`}>{memberIndex === 0 && `${graphItem.status === null ? 'Ongoing' :  'Completed'}`}</td> */}
-                    <td className=" text-wrap">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
-                    <td className=" text-wrap">{memberIndex === 0 && graphItem.clientname.name}</td>
+                    <td className=" text-wrap min-w-[80px]">{memberIndex === 0 && graphItem.jobno}</td>
+
+                    <td className=" text-wrap min-w-[80px]">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
+                    <td className=" text-wrap min-w-[100px]">{memberIndex === 0 && graphItem.clientname.name}</td>
 
 
-                    <td className=" text-wrap">{memberIndex === 0 && graphItem.jobno}</td>
-                    <td className=" text-wrap">{memberIndex === 0 && graphItem.jobcomponent}</td>
+                    <td className=" text-wrap min-w-[120px]">{memberIndex === 0 && graphItem.jobcomponent}</td>
 
 
-                    <td className=" text-wrap">{memberIndex === 0 && graphItem.projectname.name}</td>
-                    <td className=" text-wrap">{memberIndex === 0 && ` ${graphItem.budgettype === 'lumpsum' ? `${graphItem.invoice.pendinginvoice}%` : '-'}`}</td>
-                    <td className=" text-wrap ">{memberIndex === 0 && `${graphItem.budgettype === 'lumpsum' ? `$ ${graphItem.estimatedbudget}` : '-'}`}</td>
-                    <td className=" text-wrap">{memberIndex === 0 && formatBudgetType(graphItem.budgettype)}</td>
+                    <td className=" text-wrap min-w-[120px]">{memberIndex === 0 && graphItem.projectname.name}</td>
+                    <td className=" text-wrap min-w-[80px]">{memberIndex === 0 && ` ${graphItem.budgettype === 'lumpsum' ? `${graphItem.invoice.pendinginvoice}%` : '-'}`}</td>
+                    <td className=" text-wrap min-w-[80px] ">{memberIndex === 0 && `${graphItem.budgettype === 'lumpsum' ? `$ ${graphItem.estimatedbudget}` : '-'}`}</td>
+                    <td className=" text-wrap min-w-[80px]">{memberIndex === 0 && formatBudgetType(graphItem.budgettype)}</td>
 
 
           
-                    <td className=" text-wrap">{member.employee.initials}</td>
-                    <td className=" text-wrap text-[.5rem]">{member.role}</td>
-                    <td className=" text-wrap">
+                    <td className=" text-wrap min-w-[80px]">{member.employee.initials}</td>
+                    <td className=" text-wrap min-w-[50px] text-[.5rem]">{member.role}</td>
+                    <td className=" text-wrap min-w-[50px]">
                       <Dialog>
                       <DialogTrigger className=' bg-red-600 p-1 rounded-sm flex items-center text-white text-[.5rem]'>
                         <Eye size={10} /> View
@@ -1208,6 +1221,8 @@ export default function Yourworkload() {
                       let currentWeekTotal = 0;
                       let weekCounter = 0;
 
+
+
                       longestAlldates.allDates.forEach((dateObj, index) => {
                         const memberDate = member.dates?.find(
                           (date) => formatDate(date.date) === formatDate(dateObj)
@@ -1236,6 +1251,8 @@ export default function Yourworkload() {
                             const memberDate = member.dates?.find(
                               (date) => formatDate(date.date) === formatDate(dateObj)
                             );
+
+
 
                             // Handle Click
                             const handleClick = () => {
@@ -1274,6 +1291,7 @@ export default function Yourworkload() {
                               setRole(member.role);
                             };
 
+
                             return (
                               <React.Fragment key={index}>
                                 <td
@@ -1306,7 +1324,11 @@ export default function Yourworkload() {
 
                                 {isFriday && (
                                   <td className="text-center font-normal w-[40px] bg-primary border-[1px] border-zinc-700">
-                                    <p className=' text-white'>{totalHoursForWeek[weekIndex] ?? 0}</p>
+                                    <p className="text-white">
+                                      {Number.isInteger(totalHoursForWeek[weekIndex])
+                                        ? totalHoursForWeek[weekIndex]
+                                        : totalHoursForWeek[weekIndex].toFixed(2)}
+                                    </p>
                                   </td>
                                 )}
                               </React.Fragment>
@@ -1331,7 +1353,7 @@ export default function Yourworkload() {
 
          {isJobmamager === true ? (
               <Dialog open={dialog} onOpenChange={setDialog}>
-                      <DialogContent className=' p-8 bg-secondary border-none text-white max-h-[80%] overflow-y-auto'>
+                      <DialogContent className=' p-8 bg-secondary border-none text-white max-h-[80%] min-h-[50%] overflow-y-auto'>
                         
                         <Tabs defaultValue="account" className=" w-full">
                           <TabsList className=' text-xs bg-zinc-800'>
@@ -1395,20 +1417,20 @@ export default function Yourworkload() {
                             <div key={index} className=" w-full mb-6 p-4 border border-zinc-700 rounded-lg text-xs">
                               <h2 className="text-sm font-semibold mb-2">Form {index + 1}</h2>
                               <div className="space-y-4">
-                                <div>
+                                <div className=' flex items-center gap-4'>
                                   <label className="block text-sm font-medium">Start Date</label>
-                                  {/* <input disabled={wdStatus || event || leave}
-                                    type="date"
-                                    value={form.date.split('T')[0]}
-                                    onChange={(e) => handleChange(index, 'date', e.target.value + 'T00:00:00.000Z')}
-                                  placeholder='Date'
-                                  className=' bg-primary p-2 rounded-md text-xs' /> */}
+                                
 
                                     <DatePicker
                                       selected={form.startdate ? new Date(form.startdate) : null} // Ensure a valid Date object
                                       onChange={(date) =>
                                         handleChange(index, "startdate", date ? date.toISOString() : "")
                                       }
+                                      startDate={new Date(startReq)}
+                                      // endDate={new Date(endReq)}
+                                      maxDate={new Date(endReq)}
+                                      selectsEnd 
+                                      minDate={new Date(startReq)} 
                                       dateFormat="dd/MM/yyyy"
                                       placeholderText="DD/MM/YYYY"
                                       className="bg-primary text-xs p-2 w-fit z-[9999] relative"
@@ -1422,6 +1444,11 @@ export default function Yourworkload() {
                                       onChange={(date) =>
                                         handleChange(index, "enddate", date ? date.toISOString() : "")
                                       }
+                                      startDate={new Date(startReq)}
+                                      // endDate={new Date(endReq)}
+                                      maxDate={new Date(endReq)}
+                                      selectsEnd 
+                                      minDate={new Date(startReq)} 
                                       dateFormat="dd/MM/yyyy"
                                       placeholderText="DD/MM/YYYY"
                                       className="bg-primary text-xs p-2 w-fit z-[9999] relative"
