@@ -324,6 +324,8 @@ export default function Leaveform( prop: Data) {
                 dateFormat="dd/MM/yyyy"
                 placeholderText="DD/MM/YYYY"
                 className="bg-zinc-100 text-xs p-2 w-fit z-[9999] relative rounded-md"
+                onKeyDown={(e) => e.preventDefault()}
+
               />
               {errors.startdate && <p className=' text-[.6em] text-red-500'>{errors.startdate.message}</p>}
             </div>
@@ -337,6 +339,8 @@ export default function Leaveform( prop: Data) {
                 dateFormat="dd/MM/yyyy"
                 placeholderText="DD/MM/YYYY"
                 className="bg-zinc-100 text-xs p-2 w-fit z-[9999] relative rounded-md"
+                onKeyDown={(e) => e.preventDefault()}
+
               />
               {errors.enddate && <p className=' text-[.6em] text-red-500'>{errors.enddate.message}</p>}
 

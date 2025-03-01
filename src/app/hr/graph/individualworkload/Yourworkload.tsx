@@ -142,7 +142,7 @@ export default function Indiviualworkloads() {
 
         <div className=' flex flex-col gap-2'>
           <p>Filter by dates</p>
-          <input value={dateFilter} onChange={(e) => setDateFilter(e.target.value)} type="date" className=' text-white bg-secondary p-2 rounded-md' />
+          <input value={dateFilter} onChange={(e) => setDateFilter(e.target.value)} min="1900-01-01" max="2099-12-31" type="date" className=' text-white bg-secondary p-2 rounded-md' />
 
         </div>
 

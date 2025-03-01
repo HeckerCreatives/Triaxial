@@ -190,6 +190,9 @@ export default function Yourworkload() {
           dateFormat="dd/MM/yyyy"
           placeholderText="DD/MM/YYYY"
           className="bg-primary text-xs p-2 w-fit z-[9999] relative"
+          onKeyDown={(e) => e.preventDefault()}
+          
+
         />
         </div>
         

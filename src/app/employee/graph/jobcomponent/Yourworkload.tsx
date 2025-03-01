@@ -997,7 +997,7 @@ export default function Yourworkload() {
               <tr className=' text-[0.6rem] text-zinc-100 font-normal text-left border-collapse'>
                 <th className=' text-left font-normal min-w-[40px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Action</th>
                 <th className=' text-left  font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2 ' >Job Number</th>
-                  <th className=' text-left font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2 ' >Job Manager</th>
+                  <th className=' text-left font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2 ' >Job Mngr.</th>
                     <th className=' text-left  font-normal min-w-[100px] whitespace-normal break-all border-[1px] border-zinc-600 px-2 ' >Client Name</th>
                   <th className=' text-left font-normal min-w-[120px] whitespace-normal break-all border-[1px] border-zinc-600 px-2' >Job Component</th>
                     <th className=' text-left  font-normal min-w-[120px]  whitespace-normal break-all border-[1px] border-zinc-600 px-2' >Project Name</th>
@@ -1432,7 +1432,9 @@ export default function Yourworkload() {
                                       minDate={new Date(startReq)} 
                                       dateFormat="dd/MM/yyyy"
                                       placeholderText="DD/MM/YYYY"
-                                      className="bg-primary text-xs p-2 w-fit z-[9999] relative"
+                                      className="bg-primary text-xs p-2 w-fit relative"
+                                       onKeyDown={(e) => e.preventDefault()}
+
                                     />
 
                                   <label className="block text-sm font-medium">End Date</label>
@@ -1450,7 +1452,9 @@ export default function Yourworkload() {
                                       minDate={new Date(startReq)} 
                                       dateFormat="dd/MM/yyyy"
                                       placeholderText="DD/MM/YYYY"
-                                      className="bg-primary text-xs p-2 w-fit z-[9999] relative"
+                                      className="bg-primary text-xs p-2 w-fit relative"
+                                      onKeyDown={(e) => e.preventDefault()}
+
                                     />
 
                                 

@@ -117,7 +117,7 @@ export default function Emailtable() {
 
 
   return (
-    <div className=' w-full h-full flex justify-center bg-secondary p-6 text-zinc-100'>
+    <div className=' w-full h-full flex justify-center bg-secondary p-6 text-zinc-100 overflow-y-auto'>
 
       <div className=' w-full flex flex-col max-w-[1520px]'>
         <div className=' flex md:flex-row flex-col items-center justify-between gap-4'>
@@ -207,7 +207,7 @@ export default function Emailtable() {
             <DialogTrigger className=' w-full'>
              
             </DialogTrigger>
-              <DialogContent className=' max-w-[600px] p-6 bg-secondary border-none text-white'>
+              <DialogContent className=' max-w-[800px] p-6 bg-secondary border-none text-white'>
                 <DialogHeader>
                   <DialogTitle></DialogTitle>
                   <DialogDescription>

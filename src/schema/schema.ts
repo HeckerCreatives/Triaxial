@@ -163,35 +163,70 @@ export const processLeave = z.object({
     status: z.string()
 })
 
-export const wdrequestperiod = z.object({
+export const wdrequestperiod = z
+  .object({
     start: z.string().nonempty("Please enter a starting date"),
     end: z.string().nonempty("Please enter an end date"),
     cycleend: z.string().nonempty("Please enter a cycle end date"),
     cyclestart: z.string().nonempty("Please enter a cycle start date"),
   })
-    // End date should not be the same as Start date
-    .refine((data) => data.end !== data.start, {
-      message: "End date cannot be the same as Start date",
-      path: ["end"],
-    })
-  
-    // Cycle start should not be the same as Cycle end
-    .refine((data) => data.cycleend !== data.cyclestart, {
-      message: "Cycle End date cannot be the same as Cycle Start date",
-      path: ["cycleend"],
-    })
-  
-    // Cycle start should be the same or after start date
-    .refine((data) => new Date(data.cyclestart) !== new Date(data.start), {
-      message: "Cycle Start and Start Date should be the same.",
+  // Start date should not be before today
+  .refine(
+    (data) => new Date(data.start).getTime() >= new Date().setHours(0, 0, 0, 0),
+    {
+      message: "Start date cannot be before today.",
+      path: ["start"],
+    }
+  )
+  // Cycle start should not be before today
+  .refine(
+    (data) =>
+      new Date(data.cyclestart).getTime() >= new Date().setHours(0, 0, 0, 0),
+    {
+      message: "Cycle Start date cannot be before today.",
       path: ["cyclestart"],
-    })
-  
-    // Cycle end should be after the end date
-    .refine((data) => new Date(data.cycleend) > new Date(data.end), {
-      message: "Cycle End should be after End date.",
+    }
+  )
+  // End date should be AFTER start date
+  .refine(
+    (data) => new Date(data.end).getTime() > new Date(data.start).getTime(),
+    {
+      message: "End date must be after Start date.",
+      path: ["end"],
+    }
+  )
+  // Cycle start should be the same or after start date
+  .refine(
+    (data) =>
+      new Date(data.cyclestart).getTime() >= new Date(data.start).getTime(),
+    {
+      message: "Cycle Start date must be the same or after Start date.",
+      path: ["cyclestart"],
+    }
+  )
+  // Cycle end should be after cycle start
+  .refine(
+    (data) =>
+      new Date(data.cycleend).getTime() > new Date(data.cyclestart).getTime(),
+    {
+      message: "Cycle End date must be after Cycle Start date.",
       path: ["cycleend"],
-    });
+    }
+  )
+  // Cycle end should be after end date
+  .refine(
+    (data) => new Date(data.cycleend).getTime() > new Date(data.end).getTime(),
+    {
+      message: "Cycle End date must be after End date.",
+      path: ["cycleend"],
+    }
+  )
+  // End and cycleend cannot be the same
+  .refine((data) => data.end !== data.cycleend, {
+    message: "End date and Cycle End date cannot be the same.",
+    path: ["cycleend"],
+  });
+
   
 export const changepassword = z
   .object({

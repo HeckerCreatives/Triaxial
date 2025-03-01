@@ -262,7 +262,7 @@ export default function Emailtable() {
 
 
   return (
-    <div className=' w-full h-full flex justify-center bg-secondary p-6 text-zinc-100'>
+    <div className=' w-full h-full flex justify-center bg-secondary p-6 text-zinc-100 overflow-y-auto'>
 
       <div className=' w-full flex flex-col max-w-[1520px]'>
         <div className=' flex md:flex-row flex-col items-center justify-between gap-4'>

@@ -225,24 +225,24 @@ export default function Yourworkload() {
           <table className="table-auto w-[300px] border-collapse ">
             <thead className=' bg-secondary h-[100px]'>
 
-              <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
-                <th className=' w-[20px] font-normal'>Name</th>
-                <th className=' w-[50px] font-normal'>Initial</th>
-                <th className=' font-normal w-[50px]'>Resource</th>
-                <th className=' w-[20px] font-normal'>Team</th>
+              <tr className=' text-[0.6rem] text-zinc-100 font-normal border-collapse'>
+                <th className=' min-w-[100px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all'>Name</th>
+                <th className=' min-w-[100px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all'>Initial</th>
+                <th className=' font-normal min-w-[100px] border-[1px] border-zinc-600 whitespace-normal break-all'>Resource</th>
+                <th className=' min-w-[100px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all'>Team</th>
 
               </tr>
             </thead>
             <tbody>
             {list.map((graphItem, graphIndex) =>
               graphItem.members.map((member, memberIndex) => (
-                <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600">
+                <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[40px] border-[1px] border-zinc-600 border-collapse">
 
 
-                  <td onClick={() => router.push(`/pm/individualworkload?employeeid=${member.id}&name=${member.name}`)} className="text-center cursor-pointer underline text-blue-400">{member.name}</td>
-                  <td className="text-center">{member.initial}</td>
-                  <td className="text-center">{member.resource}</td>
-                  <td className="text-center">{graphItem.name}</td>
+                  <td onClick={() => router.push(`/pm/individualworkload?employeeid=${member.id}&name=${member.name}`)} className=" border-[1px] border-zinc-600 whitespace-normal break-all text-center cursor-pointer underline text-blue-400">{member.name}</td>
+                  <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all ">{member.initial}</td>
+                  <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all ">{member.resource}</td>
+                  <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all ">{graphItem.name}</td>
 
 
 
