@@ -133,7 +133,7 @@ export default function Totalinvoice() {
             <TableHead>Project Manager</TableHead>
     
             {list[0]?.monthlyInvoices.map((item, index) => (
-            <TableHead key={index}>{getMonthName(item.month)}</TableHead>
+            <TableHead key={index}>{getMonthName(item.month)} {item.year}</TableHead>
             ))}
             
             </TableRow>

@@ -166,11 +166,6 @@ export default function Teamstable() {
     (member) => !selected.some((s) => s.employeeid === member.employeeid)
   );
 
-  console.log('Employees',employee)
-  console.log('Selcttables',selectables)
-  console.log('Selected',selected)
-  
-
 
 
   //create team

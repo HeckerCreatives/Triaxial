@@ -131,7 +131,6 @@ export default function Emailtable() {
     setLoading(true)
     router.push('?state=true')
 
-    console.log(id)
     try {
       const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}${apiUrl}`,{
       status: "Approved",
