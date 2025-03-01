@@ -76,7 +76,7 @@ export default function Yourworkload() {
     const getList = async () => {
     
         try {
-          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/listemployeeindividualrequests?teamid=${id}`,{
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/getjobcomponentindividualrequest?teamid=${id}`,{
             withCredentials: true
           })
 
