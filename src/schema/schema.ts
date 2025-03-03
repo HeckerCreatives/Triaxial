@@ -111,17 +111,17 @@ export const createEmployee = z.object ({
     .string()
     .nonempty("Please enter a firstname")
     .max(25, "First Name cannot exceed 25 characters")
-    .regex(/^[A-Za-z]+$/, "First Name must contain only letters"),
+    .regex(/^[A-Za-z ]+$/, "First Name must contain only letters and spaces"),
   lastname: z
     .string()
     .nonempty("Please enter a lastname")
     .max(25, "Last Name cannot exceed 25 characters")
-    .regex(/^[A-Za-z]+$/, "Last Name must contain only letters"),
+    .regex(/^[A-Za-z ()]+$/, "First Name must contain only letters, spaces, and parentheses"),
   initial: z
     .string()
     .nonempty("Please enter an initial")
     .max(10, "Initial cannot exceed 10 characters")
-    .regex(/^[A-Za-z]+$/, "Initial must contain only letters"),
+    .regex(/^[A-Za-z. ]+$/, "Initial must contain only letters and dot special character"),
   contactno: z
     .string()
     .nonempty("Please enter a contact number")
