@@ -884,30 +884,14 @@ export default function Yourworkload() {
                   </div>
                 </Createprojectcomponent>
 
-                {componentid === '' ? (
-                  <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                    <button onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><Pen size={20}/></button>
-                    <p>Edit</p>
-                  </div>
+               
                   
-                ) : (
-                  <>
-                  {(isJobmamager === true || isMamager === true) ? (
                     <EditJobComponent id={findJobComponent?.componentid} isManger={findJobComponent?.jobmanager.isManager} isJobManager={findJobComponent?.jobmanager.isJobManager} project={findJobComponent?.projectname.projectid} jobmanager={findJobComponent?.jobmanager.employeeid} engr={engrId} engrnotes={engrMember?.notes} engrrvr={engrrvrId} engrrvrnotes={engrrvrMember?.notes} drftr={draftId} drftrnotes={drftMember?.notes} drftrrvr={draftrvrId} drftrrvrnotes={drftrvrMember?.notes} members={findJobComponent?.members || []} pname={findJobComponent?.projectname.name || ''} client={findJobComponent?.clientname.name || ''} start={findJobComponent?.projectstart || ''} end={findJobComponent?.projectend || ''} component={findJobComponent?.jobcomponent || ''} adminnotes={findJobComponent?.adminnotes || ''}>
                                                                         <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
                                                                           <button onClick={() => setDialog2(true)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Pen size={20}/></button>
                                                                           <p>Edit</p>
                                                                         </div>
                                                                       </EditJobComponent>
-                  ):(
-                    <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                      <button onClick={() => toast.error('Only job manager & project manager can edit this job component.')} className={`text-xs p-1 bg-red-600  rounded-sm`}><Pen size={20}/></button>
-                      <p>Edit</p>
-                    </div>
-                  )}
-                  </>
-                  
-                )}
 
                 {componentid === '' ? (
                   <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>

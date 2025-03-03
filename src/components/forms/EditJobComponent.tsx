@@ -446,7 +446,7 @@ export default function EditJobComponent( prop: Prop) {
                               </DialogDescription>
                             </DialogHeader>
 
-                            {(prop.isManger === true && prop.isJobManager=== false ) && (
+                            {/* {(prop.isManger === true && prop.isJobManager=== false ) && (
                               <div className=' flex flex-col w-full gap-2 text-xs'>
 
 
@@ -780,8 +780,167 @@ export default function EditJobComponent( prop: Prop) {
                                   <button onClick={() => updateJobComponenAsBoth()} className=' bg-red-600 px-4 py-2 rounded-md w-fit'>Save</button>
                                 </div>
                               </>
-                            )} 
+                            )}  */}
 
+                            
+                         
+                               <div className=' flex flex-col w-full gap-2 text-xs'>
+                                 <label htmlFor="">Project Details</label>
+                               
+
+                                  <div className=' flex items-start gap-4 '>
+                                                                                          
+                                                                      
+                                      <div className=' w-full'>
+                                        <Label className=' text-zinc-500'>Project Name</Label>
+                                        <Select value={projectname} onValueChange={setProjectname}>
+                                          <SelectTrigger className="text-xs h-[35px] bg-zinc-100">
+                                          <SelectValue placeholder="Select" className="text-black" />
+                                          </SelectTrigger>
+                                          <SelectContent className="text-xs">
+                                            {projects.map((item, index) => (
+                                            <SelectItem key={index} value={item.projectid}>{item.projectname}</SelectItem>
+
+                                            ))}
+                                          
+                                          </SelectContent>
+                                        </Select>
+                                                                                                                                                                                                                                      
+                                      </div>
+                                                                                                                                          
+                                                                                                                                                             
+                                        <div className=' w-full'>
+                                          <Label className=' text-zinc-500'>Client Name</Label>
+                                        <Input type='text' value={prop.client}  className=' text-xs h-[35px] bg-zinc-100' placeholder='Project name'/>
+                                                                    
+                                                                                            
+                                                                                                                                          
+                                        </div>
+                                                                                                                                          
+                                    </div>
+                                                                                                                                          
+                                    <div className=' flex items-start gap-4 '>
+                                                                                                                                                              
+                                                                                                                                          
+                                      <div className=' w-full'>
+                                        <Label className=' text-zinc-500'>Start Date</Label>
+                                        <Input type='text' value={prop.start.split('T')[0]}  className=' text-xs h-[35px] bg-zinc-100' placeholder='Project name' />
+                                                                                                                                          
+                                                                                                                                          
+                                      </div>
+                                                                                                                                          
+                                                                                                                                                             
+                                        <div className=' w-full'>
+                                          <Label className=' text-zinc-500'>End date</Label>
+                                          <Input type='text' value={prop.end.split('T')[0]}  className=' text-xs h-[35px] bg-zinc-100' placeholder='Project name'/>
+                                                                                                                                          
+                                        </div>
+                                                                                                                                          
+                                    </div>
+
+                                  <div>
+
+                                  <Label className=' text-zinc-500'>Job Component</Label>
+                                  <Input type='text' value={prop.component}  className=' text-xs h-[35px] bg-zinc-100 mb-2' placeholder='Project name'/>
+
+                                  <Label className=' text-zinc-500'>Admin Notes</Label>
+                                  <Textarea value={prop.adminnotes}  className=' text-xs h-[35px] bg-zinc-100' placeholder='Project name'/>
+
+                                  </div>
+
+                                <label htmlFor="">Job Manager</label>
+                                <Select value={jobmanager} onValueChange={setJobmanager}>
+                                          <SelectTrigger className="text-xs h-[35px] bg-zinc-100 mt-2">
+                                          <SelectValue placeholder="Select" className="text-black" />
+                                          </SelectTrigger>
+                                          <SelectContent className="text-xs">
+                                            {employee.map((item, index) => (
+                                            <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
+
+                                            ))}
+                                          
+                                      </SelectContent>
+                                  </Select>
+
+                                
+
+                              </div>
+
+                              <div className=' flex flex-col w-full gap-2 text-xs'>
+
+                                  <label htmlFor="">Engineer (Engr.)</label>
+                                    <Select value={engr} onValueChange={setEngr}>
+                                          <SelectTrigger className="text-xs h-[35px] bg-zinc-100 mt-2">
+                                          <SelectValue placeholder="Select" className="text-black" />
+                                          </SelectTrigger>
+                                          <SelectContent className="text-xs">
+                                            {employee.map((item, index) => (
+                                            <SelectItem key={item.employeeid} value={item.employeeid}>{item.name}</SelectItem>
+
+                                            ))}
+                                          
+                                          </SelectContent>
+                                  </Select>
+                                  <label htmlFor="">Notes</label>
+                                  <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} className=' text-xs h-[15px] bg-zinc-100' placeholder='Notes' />
+
+                                  <label htmlFor="">Engineer Reviewer (Engr. Revr.)</label>
+                                  <Select value={engrrvr} onValueChange={(setEngrrvr)}>
+                                          <SelectTrigger className="text-xs h-[35px] bg-zinc-100 mt-2">
+                                          <SelectValue placeholder="Select" className="text-black" />
+                                          </SelectTrigger>
+                                          <SelectContent className="text-xs">
+                                            {employee.map((item, index) => (
+                                            <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
+
+                                            ))}
+                                          
+                                          </SelectContent>
+                                  </Select>
+                                  <label htmlFor="">Notes</label>
+                                  <Textarea value={notes2} onChange={(e) => setNotes2(e.target.value)} className=' text-xs h-[15px] bg-zinc-100' placeholder='Notes' />
+
+                                  <label htmlFor="">Drafter (Drft.)</label>
+                                  <Select value={drf} onValueChange={(setDrf)}>
+                                          <SelectTrigger className="text-xs h-[35px] bg-zinc-100 mt-2">
+                                          <SelectValue placeholder="Select" className="text-black" />
+                                          </SelectTrigger>
+                                          <SelectContent className="text-xs">
+                                            {employee.map((item, index) => (
+                                            <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
+
+                                            ))}
+                                          
+                                          </SelectContent>
+                                  </Select>
+                                  <label htmlFor="">Notes</label>
+                                  <Textarea value={notes3} onChange={(e) => setNotes3(e.target.value)} className=' text-xs h-[15px]  bg-zinc-100' placeholder='Notes' />
+
+                                  <label htmlFor="">Drafter Reviewer (Drft. Revr.)	</label>
+                                  <Select value={drfrvr} onValueChange={(setDrfrvr)}>
+                                          <SelectTrigger className="text-xs h-[35px] bg-zinc-100 mt-2">
+                                          <SelectValue placeholder="Select" className="text-black" />
+                                          </SelectTrigger>
+                                          <SelectContent className="text-xs">
+                                            {employee.map((item, index) => (
+                                            <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
+
+                                            ))}
+                                          
+                                          </SelectContent>
+                                  </Select>
+                                  <label htmlFor="">Notes</label>
+                                  <Textarea value={notes4} onChange={(e) => setNotes4(e.target.value)} className=' text-xs h-[15px] bg-zinc-100' placeholder='Notes' />
+
+                              
+                                  
+
+                              </div>
+
+                                <div className=' w-full flex items-end justify-end mt-4 text-xs'>
+                                  <button onClick={() => updateJobComponenAsBoth()} className=' bg-red-600 px-4 py-2 rounded-md w-fit'>Save</button>
+                                </div>
+                         
                           </DialogContent>
                       </Dialog>
    </>

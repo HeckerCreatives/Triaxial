@@ -56,9 +56,9 @@ export default function Pmcards() {
 
   return (
     <div className=' relative z-50 w-full h-full flex flex-col gap-2 items-center bg-secondary justify-start'>
-      <div className=' h-full overflow-y-auto overflow-x-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
+      <div className=' h-[74dvh] overflow-y-auto overflow-x-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
 
-        <div className=' w-full'>
+        <div className=' w-full py-2'>
          <Yourworkload/>
         </div>
 
