@@ -88,6 +88,13 @@ export default function Legends() {
             </div>
 
             <div className=' flex items-center gap-2'>
+              <div className=' bg-lime-300'>
+                <p className=' text-[.7em] text-black font-semibold px-1'>WFH</p>
+              </div>
+            
+            </div>
+
+            <div className=' flex items-center gap-2'>
               <div className=' bg-fuchsia-300'>
               <p className=' text-[.7em] text-black font-semibold px-1'>Wellness Day</p>
 
@@ -98,7 +105,7 @@ export default function Legends() {
 
             <div className=' flex items-center gap-2'>
               <div className=' bg-gray-400'>
-              <p className=' text-[.7em] text-black font-semibold px-1'>Holidays</p>
+              <p className=' text-[.7em] text-black font-semibold px-1'>Public Holidays</p>
 
               </div>
 

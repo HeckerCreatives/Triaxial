@@ -61,6 +61,7 @@ interface Data {
   end: string
   pname: string
   clientid: string
+  jobno: string
 }
 
 type Member = {
@@ -118,7 +119,7 @@ export default function Variationcomponent( prop: Data) {
         members: [
           {
             employeeid: '',
-            role: "Engnr.",
+            role: "Engr.",
           },
           {
             employeeid: "",
@@ -287,7 +288,7 @@ export default function Variationcomponent( prop: Data) {
         setFormData([{ jobmanager: '',jobno: '12345', budgettype: '', estimatedbudget: '', jobcomponent: '', members: [
           {
               employeeid: "",
-              role: "Engnr."
+              role: "Engr."
           },
           {
               employeeid: "",
@@ -448,25 +449,30 @@ export default function Variationcomponent( prop: Data) {
 
 
 
-const [list, setList] = useState<Project[]>([])
-useEffect(() => {
-  const timer = setTimeout(() => {
-    const getList = async () => {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/projects/saprojectlist?searchproject&page=0&limit=99999`,{
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json'
-          }
-      })
-      setList(response.data.data.projectlist)
-     
-   
-    }
-    getList()
-  },500)
-  return () => clearTimeout(timer)
-  
-},[])
+  const [list, setList] = useState<Project[]>([])
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const getList = async () => {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/projects/saprojectlist?searchproject&page=0&limit=99999`,{
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json'
+            }
+        })
+        setList(response.data.data.projectlist)
+      
+    
+      }
+      getList()
+    },500)
+    return () => clearTimeout(timer)
+    
+  },[])
+
+
+  useEffect(() => {
+    setJobno(prop.jobno)
+  },[prop])
 
 
   
@@ -477,7 +483,7 @@ useEffect(() => {
     </DialogTrigger>
     <DialogContent className=' max-h-[90%] overflow-y-auto'>
       <div className=' w-full p-4 flex flex-col gap-4'>
-        <p className=' text-sm uppercase font-semibold text-red-700 flex items-center gap-2'><span className=' bg-red-700 px-4 py-1 text-zinc-100 text-xs'>Variation</span>Project</p>
+        <p className=' text-sm uppercase font-semibold text-red-700 flex items-center gap-2'><span className=' bg-red-700 px-4 py-1 text-zinc-100 text-xs'>Variation</span>Project Component</p>
         <div className=' w-full flex flex-col gap-4'>
 {/* 
             <div className=' w-full flex items-end justify-end'>
@@ -509,8 +515,8 @@ useEffect(() => {
                                                                                   
                                                                                                      
                                     <div className=' w-full'>
-                                      <Label className=' text-zinc-500'>Client<span className=' text-red-500 text-lg'>*</span></Label>
-                                    <Input type='text' value={prop.client}  className=' text-xs h-[35px] bg-white' placeholder='Project name'/>
+                                      <Label className=' text-zinc-500'>Client Name<span className=' text-red-500 text-lg'>*</span></Label>
+                                    <Input disabled type='text' value={prop.client}  className=' text-xs h-[35px] bg-white' placeholder='Project name'/>
             
                                     
                                                                                   
@@ -520,7 +526,7 @@ useEffect(() => {
                                 
                                                     <div className=' w-full'>
                                                           <Label className=' text-zinc-500'>If other, please input the client name.</Label>
-                                                          <Input type='text' className=' text-xs h-[35px] bg-white' placeholder='Client Name'/>                                           
+                                                          <Input disabled type='text' className=' text-xs h-[35px] bg-white' placeholder='Client Name'/>                                           
                                                         </div>
                                                                                   
                             

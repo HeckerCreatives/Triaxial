@@ -60,7 +60,8 @@ interface Data {
   start: string
   end: string
   pname: string
-  clientid: string
+  clientid: string,
+  jobno: string
 }
 
 type Member = {
@@ -219,18 +220,6 @@ export default function Duplicatecomponent( prop: Data) {
     });
   };
   
-  
-  useEffect(() => {
-    function generateJobNumber() {
-      const prefix = "TX";
-      const randomNumber = Math.floor(1000000 + Math.random() * 9000000); // Generates a random 7-digit number
-      const jobNumber = `${prefix}${randomNumber}`;
-      setJobno(jobNumber)
-      return jobNumber;
-    }
-    generateJobNumber()
-
-  },[dialog])
 
 
   //create job component
@@ -468,6 +457,10 @@ useEffect(() => {
   
 },[])
 
+useEffect(() => {
+  setJobno(prop.jobno)
+},[prop])
+
 
   
   return (
@@ -477,7 +470,7 @@ useEffect(() => {
     </DialogTrigger>
     <DialogContent className=' max-h-[90%] overflow-y-auto'>
       <div className=' w-full p-4 flex flex-col gap-4'>
-        <p className=' text-sm uppercase font-semibold text-red-700 flex items-center gap-2'><span className=' bg-red-700 px-4 py-1 text-zinc-100 text-xs'>Duplicate</span>Project</p>
+        <p className=' text-sm uppercase font-semibold text-red-700 flex items-center gap-2'><span className=' bg-red-700 px-4 py-1 text-zinc-100 text-xs'>Copy</span>Project Component</p>
         <div className=' w-full flex flex-col gap-4'>
 {/* 
             <div className=' w-full flex items-end justify-end'>
@@ -509,7 +502,7 @@ useEffect(() => {
                                                                                   
                                                                                                      
                                     <div className=' w-full'>
-                                      <Label className=' text-zinc-500'>Client<span className=' text-red-500 text-lg'>*</span></Label>
+                                      <Label className=' text-zinc-500'>Client Name<span className=' text-red-500 text-lg'>*</span></Label>
                                     <Input type='text' value={prop.client}  className=' text-xs h-[35px] bg-white' placeholder='Project name'/>
             
                                     
@@ -520,7 +513,7 @@ useEffect(() => {
                                 
                                                     <div className=' w-full'>
                                                           <Label className=' text-zinc-500'>If other, please input the client name.</Label>
-                                                          <Input type='text' className=' text-xs h-[35px] bg-white' placeholder='Client Name'/>                                           
+                                                          <Input disabled type='text' className=' text-xs h-[35px] bg-white' placeholder='Client Name'/>                                           
                                                         </div>
                                                                                   
                             

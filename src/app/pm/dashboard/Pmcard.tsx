@@ -56,7 +56,7 @@ export default function Pmcards() {
 
   return (
     <div className=' relative z-50 w-full h-full flex flex-col gap-2 items-center bg-secondary justify-start'>
-      <div className=' h-[74dvh] overflow-y-auto overflow-x-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
+      <div className=' h-[75dvh] overflow-y-auto overflow-x-auto flex items-start justify-center bg-secondary w-full '>
 
         <div className=' w-full py-2'>
          <Yourworkload/>
@@ -65,7 +65,7 @@ export default function Pmcards() {
       </div>
        
 
-         <div className=' bg-primary absolute z-30 bottom-0 text-zinc-100 h-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-4 max-w-[1920px] p-4'>
+         <div className=' bg-primary absolute z-30 bottom-0 text-zinc-100 h-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-4 p-4'>
           <Dashboardlegends/>
 
           <div className=' w-full h-full'>

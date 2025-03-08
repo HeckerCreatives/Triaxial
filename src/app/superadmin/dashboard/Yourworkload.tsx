@@ -2,9 +2,19 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import axios, { AxiosError } from 'axios'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { RefreshCcw } from 'lucide-react'
+import { Filter, RefreshCcw } from 'lucide-react'
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import SortableTeamsDialog from '@/components/common/SortTeam'
+
 
 type Dates = {
   date: string
@@ -58,6 +68,24 @@ type Wfh = {
   requestend: string
 }
 
+const teams = [
+  "NSW Hydraulic",
+  "NSW CC Civil W&S",
+  "NSW CC Newcastle Civil",
+  "NSW Civil",
+  "NSW CW Civil",
+  "SA Civil",
+  "NSW Remedial Strata",
+  "NSW Remedial Legal",
+  "NSW Structural",
+  "NT Remedial & Design",
+  "QLD Structural",
+  "SA Structural",
+  "SA Industrial",
+  "Drafting",
+  "Administration"
+];
+
 export default function Yourworkload() {
   const [list, setList] = useState<List[]>([])
   const [dates, setDates] = useState<string[]>([])
@@ -87,6 +115,8 @@ export default function Yourworkload() {
     }
     getList()
   },[filter, getTeamid])
+
+   
 
   const isDateInRange = (dateToCheck: string, startDate: string, endDate: string): boolean => {
     const checkDate = new Date(dateToCheck);
@@ -180,47 +210,143 @@ export default function Yourworkload() {
     <div className=' w-full h-full flex flex-col justify-center bg-secondary p-4 text-zinc-100'>
 
     
-      <div className=' h-full w-full flex flex-col gap-2 max-w-[1920px]'>
-      <div className=' w-full flex items-center gap-2 justify-end'>
-        <label htmlFor="" className=' text-xs'>Filter by date:</label>
-        <div className=' relative z-50'>
-        <DatePicker
-          selected={filter}
-          onChange={(date) => setFilter(date)}
-          dateFormat="dd/MM/yyyy"
-          placeholderText="DD/MM/YYYY"
-          className="bg-primary text-xs p-2 w-fit z-[9999] relative"
-          onKeyDown={(e) => e.preventDefault()}
-        />
+      <div className=' relative h-full w-full flex flex-col'>
+        <div className=' flex flex-col gap-2 sticky top-0 z-50 bg-secondary'>
+          <div className=' flex items-center justify-between'>
+          <SortableTeamsDialog/>
+
+            <div className=' w-full flex items-center gap-2 justify-end'>
+              <label htmlFor="" className=' text-xs'>Filter by date:</label>
+              <div className=' relative z-50'>
+              <DatePicker
+                selected={filter}
+                onChange={(date) => setFilter(date)}
+                dateFormat="dd/MM/yyyy"
+                placeholderText="DD/MM/YYYY"
+                className="bg-primary text-xs p-2 w-fit z-[9999] relative"
+                onKeyDown={(e) => e.preventDefault()}
+                
+
+              />
+            </div>
+            
+            <button onClick={() => setFilter(null)} className=' p-2 bg-red-600 text-white rounded-sm'><RefreshCcw size={15}/></button>
+
+
+            </div>
+          </div>
+
+          <div className=' w-full flex'>
+            <div className=' h-full overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
+              <table className="table-auto w-auto border-collapse ">
+                <thead className=' bg-secondary h-[70px]'>
+
+                  <tr className=' text-[0.5rem] text-zinc-100 font-normal border-collapse'>
+                    <th className=' text-left min-w-[97px] font-normal whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Team</th>
+                    <th className=' text-left min-w-[40px] font-normal whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Initial</th>
+                    <th className=' text-left font-normal min-w-[55px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Resource</th>
+                
+                  </tr>
+                </thead>
+                <tbody>
+              
+              </tbody>
+              </table>
+
+              <div className=' overflow-x-auto w-full h-full'>
+            
+                <table className="table-auto w-full border-collapse ">
+                  
+                <thead className="w-full bg-white h-[70px]">
+                  <tr className="text-[0.6rem] text-black font-normal">
+                    {dates.map((dateObj, index) => {
+                      const date = new Date(dateObj);
+                      date.setHours(0, 0, 0, 0);
+
+                      const today = new Date();
+                      today.setHours(0, 0, 0, 0);
+
+                      const startOfWeek = new Date(today);
+                      startOfWeek.setDate(today.getDate() - (today.getDay() - 1));
+
+                      const endOfWeek = new Date(startOfWeek);
+                      endOfWeek.setDate(startOfWeek.getDate() + 4);
+
+                      let bgColor = "bg-white";
+                      if (date >= startOfWeek && date <= endOfWeek) {
+                        const prevDay = new Date(today);
+                        prevDay.setDate(today.getDate() - 1);
+
+                        const nextDay = new Date(today);
+                        nextDay.setDate(today.getDate() + 1);
+
+                        if (date.getTime() < today.getTime()) {
+                          bgColor = "bg-gray-300"; 
+                        } else if (date.getTime() === today.getTime()) {
+                          bgColor = "bg-pink-500";
+                        } else if (date.getTime() >= nextDay.getTime()) {
+                          bgColor = "bg-white";
+                        }
+                      }
+
+                      return (
+                        <React.Fragment key={index}>
+                          <th className={`relative font-normal border-[1px] border-zinc-700 ${bgColor}`}>
+                            <div className="whitespace-nowrap transform -rotate-[90deg] w-[20px]">
+                              <p className="mt-6 font-bold">{formatAustralianDate(dateObj)}</p>
+                            </div>
+                          </th>
+                          {(index + 1) % 5 === 0 && (
+                            <th
+                              key={`total-${index}`}
+                              className="font-normal w-[20px] border-[1px] bg-primary border-zinc-700"
+                            >
+                              <p className="-rotate-90 min-w-[34px] ml-[2px] font-bold text-white">Total Hours</p>
+                            </th>
+                          )}
+                        </React.Fragment>
+                      );
+                    })}
+                  </tr>
+                </thead>
+                  <tbody>
+                
+                </tbody>
+                </table>
+              
+                
+              </div>
+
+
+            </div>
+          </div>
         </div>
-        
-        <button onClick={() => setFilter(null)} className=' p-2 bg-red-600 text-white rounded-sm'><RefreshCcw size={15}/></button>
-
-
-      </div>
+       
+      
       {list.length !== 0 ? (
         <div className=' h-full overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
           <table className="table-auto w-auto border-collapse ">
-            <thead className=' bg-secondary h-[100px]'>
+            <thead className=' bg-secondary h-[70px]'
+            style={{ visibility: 'collapse' }}
+            >
 
-                <tr className=' text-[0.6rem] text-zinc-100 font-normal border-collapse'>
-                <th className=' text-left min-w-[150px] border-[1px] border-zinc-600 px-2'>Team</th>
-                <th className=' text-left min-w-[150px] border-[1px] border-zinc-600 px-2'>Name</th>
-                <th className=' text-left min-w-[150px] border-[1px] border-zinc-600 px-2'>Initial</th>
-                <th className=' text-left min-w-[150px] border-[1px] border-zinc-600 px-2'>Resource</th>
-            
-              </tr>
+             <tr className=' text-[0.5rem] text-zinc-100 font-normal border-collapse'>
+                  <th className=' text-left min-w-[97px] font-normal whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Team</th>
+                  <th className=' text-left min-w-[40px] font-normal whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Initial</th>
+                  <th className=' text-left font-normal min-w-[55px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Resource</th>
+              
+                </tr>
             </thead>
             <tbody>
             {list.map((graphItem, graphIndex) =>
               graphItem.members.map((member, memberIndex) => (
-                <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[48px] border-[1px] border-zinc-600 text-left">
+                <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.5rem] py-2 h-[35px] border-[1px] border-zinc-600 text-left border-collapse">
                   {memberIndex === 0 ?
-                  (<td  onClick={() => router.push(`/pm/graph/jobcomponent?teamid=${graphItem.teamid}&teamname=${graphItem.name}`)} className=" border-[1px] border-zinc-600 px-2  min-w-[150px] text-left text-red-500 underline cursor-pointer">{graphItem.name}</td>) :  (<td className="text-center"></td>)
+                  (<td  onClick={() => router.push(`/superadmin/graph/jobcomponent?teamid=${graphItem.teamid}&teamname=${graphItem.name}`)} className="  whitespace-normal break-all border-[1px] border-zinc-600 px-2 text-left text-red-500 underline cursor-pointer">{graphItem.name}</td>) :  (<td className="text-center"></td>)
                   }
-                  <td onClick={() => router.push(`/pm/individualworkload?employeeid=${member.id}&name=${member.name}&teamname=${graphItem.name}`)} className=" border-[1px] border-zinc-600 px-2  min-w-[150px] break-all whitespace-normal text-left cursor-pointer underline text-blue-400">{member.name}</td>
-                  <td className=" border-[1px] border-zinc-600 px-2 text-left min-w-[150px] ">{member.initial}</td>
-                  <td className=" border-[1px] border-zinc-600 px-2 text-left min-w-[150px]">{member.resource}</td>
+                  {/* <td onClick={() => router.push(`/pm/individualworkload?employeeid=${member.id}&name=${member.name}&teamname=${graphItem.name}`)} className=" whitespace-normal break-all border-[1px] border-zinc-600 px-2 text-left cursor-pointer underline text-blue-400">{member.name}</td> */}
+                  <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">{member.initial}</td>
+                  <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">{member.resource}</td>
                  
               
                 </tr>
@@ -233,7 +359,9 @@ export default function Yourworkload() {
         
             <table className="table-auto w-full border-collapse ">
               
-            <thead className="w-full bg-white h-[100px]">
+            <thead className="w-full bg-white h-[70px]"
+             style={{ visibility: 'collapse' }}
+            >
               <tr className="text-[0.6rem] text-black font-normal">
                 {dates.map((dateObj, index) => {
                   const date = new Date(dateObj);
@@ -261,7 +389,7 @@ export default function Yourworkload() {
                     } else if (date.getTime() === today.getTime()) {
                       bgColor = "bg-pink-500";
                     } else if (date.getTime() >= nextDay.getTime()) {
-                      bgColor = "bg-pink-200";
+                      bgColor = "bg-white";
                     }
                   }
 
@@ -269,7 +397,7 @@ export default function Yourworkload() {
                     <React.Fragment key={index}>
                       <th className={`relative font-normal border-[1px] border-zinc-700 ${bgColor}`}>
                         <div className="whitespace-nowrap transform -rotate-[90deg] w-[20px]">
-                          <p className="mt-4 font-bold">{formatAustralianDate(dateObj)}</p>
+                          <p className="mt-6 font-bold">{formatAustralianDate(dateObj)}</p>
                         </div>
                       </th>
                       {(index + 1) % 5 === 0 && (
@@ -286,16 +414,13 @@ export default function Yourworkload() {
               </tr>
             </thead>
 
-
-
-
               <tbody>
               {list.map((workItem, workIndex) => (
                 <React.Fragment key={workIndex}>
                   {workItem.members.map((member, memberIndex) => (
                     <tr
                       key={`${workIndex}-${memberIndex}`}
-                      className="bg-primary text-[.6rem] py-2 h-[48px] border-[1px] border-zinc-600"
+                      className="bg-primary text-[.6rem] py-2 h-[35px] border-[1px] border-zinc-600"
                     >
                       {dates.map((date, dateIndex) => {
                       
@@ -320,7 +445,7 @@ export default function Yourworkload() {
                                 isEventDay ? 'bg-red-200' : isWd ? 'bg-blue-200' : isLeave ? 'bg-yellow-200' : ''
                               }`}
                             >
-                              <div className="flex absolute top-0 w-full h-[40px] text-center">
+                              <div className="flex absolute top-0 w-full h-[48px] text-center">
                                 {statusData(hours, isWd, isEventDay, isLeave,member.wfh , date, member.leave, member.event, member.wellness).map((item, index) => (
                                   <div key={index} className={`w-full h-full ${item}`}></div>
                                 ))}

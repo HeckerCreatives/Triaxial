@@ -214,7 +214,7 @@ export default function Createprojectform( prop: Data) {
     </DialogTrigger>
     <DialogContent className=' max-h-[90%] overflow-y-auto'>
       <form className=' w-full p-4 flex flex-col gap-4' onSubmit={handleSubmit(createProject)}>
-        <p className=' text-sm uppercase font-semibold text-red-700 flex items-center gap-2'><span className=' bg-red-700 px-4 py-1 text-zinc-100 text-xs'>Variation</span>Project</p>
+        <p className=' text-sm uppercase font-semibold text-red-700 flex items-center gap-2'><span className=' bg-red-700 px-4 py-1 text-zinc-100 text-xs'>Variation</span>Project Component</p>
         <div className=' w-full flex flex-col gap-1'>
         <Label className=' mt-2 text-black font-bold'>Project Details</Label>
 

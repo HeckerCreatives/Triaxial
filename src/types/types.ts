@@ -82,6 +82,11 @@ type Leavedates = {
 leavestart: string
 }
 
+type WFHDates = {
+    requeststart: string
+    requestend: string
+}
+
 
 export  type Members = {
     dates: Dates[]
@@ -91,6 +96,7 @@ leaveDates: Leavedates[]
 notes: string
 role: string
 wellnessDates: string[]
+wfhDates: WFHDates []
 _id: string
  }
 
@@ -107,9 +113,49 @@ componentid: string
 jobcomponent: string
 projectstart: string
 projectend: string
-jobmanager: {employeeid: string, fullname: string, isManager: boolean, isJobManager: boolean}
+jobmanager: {employeeid: string, fullname: string, isManager: boolean, isJobManager: boolean,initials: string}
 jobno: string
 members: Members[]
+projectname: Project
+teamname:string
+_id:string
+status: any
+isVariation: boolean
+budgettype: string
+comments: string,
+adminnotes: string,
+estimatedbudget: number
+invoice: {
+    percentage: number,
+    amount: number
+    pendinginvoice: number,
+    pendinginvoice1: number,
+}
+}
+
+export  type MembersComponent = {
+    dates: Dates[]
+employee: {_id: string,fullname: string, initials: string}
+eventDates: Request[]
+leaveDates: Leavedates[]
+notes: string
+role: string
+wellnessDates: string[]
+wfhDates: string []
+_id: string
+ }
+
+export type GraphComponent = {
+    allDates: []
+clientname: 
+{clientid: string, name: string, priority: string}
+componentid: string
+jobcomponent: string
+projectstart: string
+projectend: string
+jobmanager: {employeeid: string, fullname: string, isManager: boolean, isJobManager: boolean,initials: string}
+jobno: string
+members: MembersComponent[]
 projectname: Project
 teamname:string
 _id:string

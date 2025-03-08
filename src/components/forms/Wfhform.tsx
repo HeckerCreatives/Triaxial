@@ -19,6 +19,7 @@ import { boolean } from 'zod'
 import axios, { AxiosError } from 'axios'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
+import DatePicker from 'react-datepicker'
 
 
 interface Data {
@@ -34,7 +35,7 @@ export default function Wfhform( prop: Data) {
   const [loading, setLoading] = useState(false)
   const [start, setStart] = useState('')
   const [end, setEnd] = useState('')
-  const [wd, setWd] = useState('Yes')
+  const [wd, setWd] = useState('No')
   const router = useRouter()
 
 
@@ -49,7 +50,7 @@ export default function Wfhform( prop: Data) {
   } = useForm<WfhSchema>({
     resolver: zodResolver(wfhSchema),
     defaultValues:{
-      wdcycle: 'Yes'
+      wdcycle: 'No'
     }
   });
 
@@ -79,7 +80,7 @@ export default function Wfhform( prop: Data) {
 
     const response = await toast.promise(request, {
         loading: 'Requesting a wfh setup....',
-        success: `Successfully rquested`,
+        success: `Successfully requested`,
         error: 'Error while requesting wfh setup',
     });
 
@@ -160,6 +161,10 @@ export default function Wfhform( prop: Data) {
    useEffect(() => {
      setValue('totalhoursonleave', hoursonleave)
  }, [workingDays, setValue, hoursonleave, wd]);
+
+ const startDateValue = watch("startdate")
+ ? new Date(watch("startdate"))
+ : null;
  
 
 
@@ -177,8 +182,17 @@ export default function Wfhform( prop: Data) {
         {/* <Label className=' mt-4 font-semibold'>Wfh</Label> */}
           <div className=' flex items-center gap-4'>
             <div>
-              <Label className=' mt-2 text-zinc-500'>Day Of Leave: <span className=' text-red-500'>*</span></Label>
-              <Input type='date' className=' text-xs h-[35px] bg-zinc-200'  placeholder='Name' {...register('startdate',{ onChange: (e) => setStart(e.target.value)})}/>
+              <Label className=' mt-2 text-zinc-500'>Day Of WFH: <span className=' text-red-500'>*</span></Label>
+              {/* <Input type='date' className=' text-xs h-[35px] bg-zinc-200'  placeholder='Name' {...register('startdate',{ onChange: (e) => setStart(e.target.value)})}/> */}
+              <DatePicker
+                selected={startDateValue} // Convert string to Date
+                onChange={(date) =>{ setValue("startdate", date?.toISOString().split("T")[0] || ''); setStart(date?.toISOString().split("T")[0] || '')}} // Store as string
+                dateFormat="dd/MM/yyyy"
+                placeholderText="DD/MM/YYYY"
+                className="bg-zinc-100 text-xs p-2 w-fit z-[9999] relative rounded-md"
+                onKeyDown={(e) => e.preventDefault()}
+              
+              />
               {errors.startdate && <p className=' text-[.6em] text-red-500'>{errors.startdate.message}</p>}
             </div>
 
@@ -196,7 +210,7 @@ export default function Wfhform( prop: Data) {
 
           <div className=' flex items-center gap-2 mt-4'>
             <Label className=' text-zinc-500'>Are you in a Wellness Day Cycle? <span className=' text-red-500'>*</span></Label>
-            <RadioGroup className=' flex items-center gap-2' value={watch('wdcycle')}  onValueChange={(value) => {setValue('wdcycle', value), setWd(value)}} >
+            <RadioGroup defaultValue='No' className=' flex items-center gap-2' value={watch('wdcycle')}  onValueChange={(value) => {setValue('wdcycle', value), setWd(value)}} >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="Yes" id="Yes"  />
                 <Label htmlFor="Yes">Yes</Label>
@@ -224,7 +238,7 @@ export default function Wfhform( prop: Data) {
             </div>
           </div>
 
-          <Label className=' mt-2 text-zinc-500'>Reason's for Work From Home: <span className=' text-red-700'>*</span></Label>
+          <Label className=' mt-2 text-zinc-500'>Reason for Work From Home: <span className=' text-red-700'>*</span></Label>
           <Textarea placeholder='Please input text here' className=' text-xs bg-zinc-200' {...register('reason')}/>
           {errors.reason && <p className=' text-[.6em] text-red-500'>{errors.reason.message}</p>}
 

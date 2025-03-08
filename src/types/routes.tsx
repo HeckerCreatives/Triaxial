@@ -3,7 +3,7 @@ import { ArrowRightLeft, Box, CalendarCheck2, Cog, File, Files, Folder, Home, Ho
 
 export const hr = [
     {name: 'Dashboard', path: '/hr/dashboard', icon: <Home className="h-4 w-4" />, subpath: []},
-    {name: 'Scheduling', path: '/hr/scheduling', icon: <Box className="h-4 w-4" />, subpath: []},
+    // {name: 'Scheduling', path: '/hr/scheduling', icon: <Box className="h-4 w-4" />, subpath: []},
     {name: 'Events', path: '/hr/events', icon: <CalendarCheck2 className="h-4 w-4" />, subpath: []},
     {name: 'Wellness day', path: '/hr/wellnessday', icon: <PlusSquare className="h-4 w-4" />, subpath: []},
     {name: 'Request', path: '/hr/request', icon: <ArrowRightLeft className="h-4 w-4" />,subpath: []},
@@ -44,8 +44,8 @@ export const pm = [
 
 export const employee = [
     {name: 'My Workload', path: '/employee/yourworkload', icon: <List className="h-4 w-4" />, subpath: []},
-    {name: 'Scheduling', path: '/employee/scheduling', icon: <Box className="h-4 w-4" />, subpath: []},
-    {name: 'Your Requests', path: '/employee/request', icon: <ArrowRightLeft className="h-4 w-4" />,subpath: []},
+    // {name: 'Scheduling', path: '/employee/scheduling', icon: <Box className="h-4 w-4" />, subpath: []},
+    {name: 'My Requests', path: '/employee/request', icon: <ArrowRightLeft className="h-4 w-4" />,subpath: []},
     {name: 'Messages', path: '/employee/messages', icon: <Mail className="h-4 w-4" />, subpath: []},
     {name: 'Settings', path: '/employee/settings', icon: <Cog className="h-4 w-4"  />, subpath: []},
 ]
@@ -53,7 +53,7 @@ export const employee = [
 
 export const finance = [
     {name: 'Dashboard', path: '/finance/dashboard', icon: <Home className="h-4 w-4" />, subpath: []},
-    {name: 'Scheduling', path: '/finance/scheduling', icon: <Box className="h-4 w-4" />, subpath: []},
+    // {name: 'Scheduling', path: '/finance/scheduling', icon: <Box className="h-4 w-4" />, subpath: []},
     {name: 'Finance', path: '/finance/projectinvoice/list', icon: <File className="h-4 w-4" />, subpath: []},
     {name: 'Summaries', path: '/finance/summaries', icon: <File className="h-4 w-4" />, subpath: [
         {name: 'Finance WIP List', path: '/finance/summaries', subpath: [

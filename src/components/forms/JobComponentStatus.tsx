@@ -77,6 +77,8 @@ export default function JobComponentStatus( prop: Project) {
        
           setLoading(false)
 
+          window.location.reload()
+
         }
         } catch (error) {
           setLoading(false)
@@ -136,7 +138,7 @@ export default function JobComponentStatus( prop: Project) {
       </div> */}
 
       <div id='invoice-container' className=" bg-white px-6 py-8 w-full flex flex-col gap-2  mx-auto">
-          <p className=' text-lg font-semibold flex items-center gap-1'><TriangleAlert size={18}/>Complete Project</p>
+          <p className=' text-lg font-semibold flex items-center gap-1'><TriangleAlert size={18}/>Complete Project Component</p>
           <p className=' text-zinc-500 text-xs'>You're about to delete a Component of a Project in this Workload. This will be removed permanently on this tab and will be tranferred to archive.</p>
 
           <p className=' text-xs flex items-center gap-1'><TriangleAlert size={15}/>This execution is <span className=' uppercase text-red-600'>irreversable.</span></p>

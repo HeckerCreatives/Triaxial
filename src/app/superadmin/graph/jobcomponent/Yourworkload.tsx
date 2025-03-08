@@ -19,12 +19,12 @@ import Legends from '@/components/common/Legends'
 import axios, { AxiosError } from 'axios'
 import toast from 'react-hot-toast'
 import { useRouter, useSearchParams } from 'next/navigation'
-import {statusData} from '@/types/data'
-import { Check, Copy, Eye, File, Folder, Layers2, OctagonAlert, Pen, Plus, X } from 'lucide-react'
+import {statusData, statusDataMultiple} from '@/types/data'
+import { Check, Copy, Eye, File, Folder, Layers2, OctagonAlert, Pen, Plus, RefreshCcw, X } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Graph, Members } from '@/types/types'
-import { formatDate } from '@/utils/functions'
+import { Graph, GraphComponent, Members, MembersComponent } from '@/types/types'
+import { formatAustralianDate, formatDate } from '@/utils/functions'
 import { any } from 'zod'
 import Invoice from '@/components/forms/Invoice'
 import JobComponentStatus from '@/components/forms/JobComponentStatus'
@@ -99,17 +99,17 @@ leave: [
     leaveend: string
     }
 ],
-event: [
-  {
-    eventstart: string
-    eventend: string
-    }
-],
+event: eventRequest []
 wellness: [
   {
       wellnessdates: string
   }
 ],
+wfh: [
+  {
+    requeststart: string
+  }
+]
 }
 
 type Dates = {
@@ -120,6 +120,13 @@ type Dates = {
   totalhoursofjobcomponents: number
   wellnessDay: boolean
 }
+
+type Wellness = { wellnessdates: string };
+type WFH = { requeststart: string };
+type eventRequest = {eventdates: {
+                                    startdate: string
+                                    enddate: string
+                                }}
 
 
 
@@ -163,10 +170,117 @@ export default function Yourworkload() {
 
   const [componentid, setComponentid] = useState('')
   const [tempData, setTempdata] = useState()
-  const [list, setList] = useState<Graph[]>([])
+  const [list, setList] = useState<GraphComponent[]>([])
   const [search, setSearch] = useState('')
   const [startReq, setStartReq] = useState('')
   const [endReq, setEndReq] = useState('')
+  const [listRequest, setListrequest] = useState<List[]>([])
+  const [dateFilter, setDateFilter] = useState<Date | null>(null)
+  const gettoday = new Date()
+  const todaysDate = gettoday.getDate()
+
+  const filterDate = dateFilter === null ?  '' : (dateFilter?.toLocaleString())?.split(',')[0]
+
+  
+
+  const containerRef1 = useRef<HTMLDivElement>(null);
+  const containerRef2 = useRef<HTMLDivElement>(null);
+
+  const isDownRef = useRef(false);
+  const startXRef = useRef(0);
+  const scrollLeftRef = useRef(0);
+
+  // Sync scroll positions
+  const syncScroll = (source: React.RefObject<HTMLDivElement>, target: React.RefObject<HTMLDivElement>) => {
+    if (source.current && target.current) {
+      target.current.scrollLeft = source.current.scrollLeft;
+    }
+  };
+
+  // Handle mouse down for dragging
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>, containerRef: React.RefObject<HTMLDivElement>) => {
+    if (!containerRef.current) return;
+    isDownRef.current = true;
+    startXRef.current = e.pageX - containerRef.current.offsetLeft;
+    scrollLeftRef.current = containerRef.current.scrollLeft;
+  };
+
+  // Handle mouse up or leave
+  const handleMouseLeaveOrUp = () => {
+    isDownRef.current = false;
+  };
+
+  // Handle mouse move for dragging
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>, containerRef: React.RefObject<HTMLDivElement>) => {
+    if (!isDownRef.current || !containerRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - containerRef.current.offsetLeft;
+    const walk = (x - startXRef.current) * 2;
+    containerRef.current.scrollLeft = scrollLeftRef.current - walk;
+    syncScroll(containerRef, containerRef === containerRef1 ? containerRef2 : containerRef1);
+  };
+  
+
+  //individual reaquest
+  useEffect(() => {
+    const getList = async () => {
+      if (id !== '' || undefined || null) {
+        try {
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/getjobcomponentindividualrequest?teamid=${id}`, {
+            withCredentials: true
+          })
+          setListrequest(response.data.data.teams)
+        } catch (error) {
+          console.error('Error fetching data', error)
+        }
+      }
+    }
+    getList()
+  }, [ id])
+
+  const statusColorRequest = (
+    date: string, 
+    eventDates: eventRequest[], 
+    // events: { eventstart: string; eventend: string }[], 
+    leaveDates: Leave[], 
+    wellness: Wellness[], 
+    wfh: WFH[] = []
+  ): string[] => {
+    const colorData: string[] = [];
+  
+    const isWithinAnyEventDate = eventDates.some((item) =>
+      isDateInRange(date, item.eventdates.startdate, item.eventdates.enddate)
+    );
+  
+    const isWithinAnyLeaveDate = leaveDates.some((item) =>
+      isDateInRange(date, item.leavestart, item.leaveend)
+    );
+
+    // const isWellnessDate = wellness.some((item) =>
+    //   isDateInRange(date, item.wellnessdates, item.leaveend)
+    // );
+
+    const isWFH = wfh.some((item) => formatDate(item.requeststart) === formatDate(date));
+    const isWellnessDate = wellness.some((item) => formatDate(item.wellnessdates) === formatDate(date));
+
+  
+    if (isWithinAnyEventDate) {
+      colorData.push("bg-gray-300");
+    }
+    if (isWithinAnyLeaveDate) {
+      colorData.push("bg-violet-300");
+    }
+    if (isWFH) {
+      colorData.push("bg-lime-300");
+    }
+
+    if(isWellnessDate){
+      colorData.push('bg-fuchsia-300')
+    }
+  
+    return colorData;
+  };
+
 
    const handleCheckboxChange = (id: string) => {
      setComponentid((prevSelectedId) => (prevSelectedId === id ? '' : id));
@@ -349,7 +463,7 @@ export default function Yourworkload() {
     try {
       const timer = setTimeout(() => {
         const getList = async () => {
-          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/listteamjobcomponent?teamid=${id}&search=${search}`,{
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/listteamjobcomponent?teamid=${id}&search=${search}&filterdate=${filterDate}`,{
             withCredentials: true,
             headers: {
               'Content-Type': 'application/json'
@@ -397,7 +511,7 @@ export default function Yourworkload() {
   }
     
     
-  },[refresh, search])
+  },[refresh, search, filterDate])
 
 
   const isDateInRange = (dateToCheck: string, startDate: string, endDate: string): boolean => {
@@ -413,7 +527,7 @@ export default function Yourworkload() {
     return checkDate >= start && checkDate <= end;
   }
 
-  const statusColor = (data: string[], date: string, leaveStart: string, leaveEnd: string, eventStart: string, eventEnd: string, wddate: string, hours: number, eventDates: Event[], leaveDates: Leave[], wellnessDates: string[]) => {
+  const statusColor = (data: string[], date: string, leaveStart: string, leaveEnd: string, eventStart: string, eventEnd: string, wddate: string, hours: number, eventDates: Event[], leaveDates: Leave[], wellnessDates: string[], wfhDates: string []) => {
     const colorData: string[] = [];
 
     const isLeaveInRange = isDateInRange(date, leaveStart, leaveEnd);
@@ -583,7 +697,7 @@ export default function Yourworkload() {
   },[])
 
 
-  const findMember = (data: Members[]) => {
+  const findMember = (data: MembersComponent[]) => {
     const role1 = data.find((item) => item.role.trim() === 'Engnr.')
     const role2 = data.find((item) => item.role.trim() === 'Engr. Revr.')
     const role3 = data.find((item) => item.role.trim() === 'Drft.')
@@ -633,69 +747,6 @@ export default function Yourworkload() {
   const secondDivRef = useRef<HTMLDivElement>(null);
   const individualRequestRef = useRef<HTMLDivElement>(null); // New ref
   
-  
-
-  const syncScroll = (source: HTMLDivElement, targets: HTMLDivElement[]) => {
-    const scrollLeft = source.scrollLeft;
-    targets.forEach((target) => {
-      if (Math.abs(target.scrollLeft - scrollLeft) > 1) { // Only update if there's a significant difference
-        target.scrollLeft = scrollLeft;
-      }
-    });
-  };
-  
-  
-
-  useEffect(() => {
-    const firstDiv = firstDivRef.current;
-    const secondDiv = secondDivRef.current;
-    const individualRequestDiv = individualRequestRef.current;
-  
-    if (!firstDiv || !secondDiv || !individualRequestDiv) return;
-  
-    let timeout: NodeJS.Timeout | null = null;
-  
-    const handleScroll = (source: HTMLDivElement, targets: HTMLDivElement[]) => {
-      return () => {
-        if (timeout) clearTimeout(timeout);
-        
-        timeout = setTimeout(() => {
-          syncScroll(source, targets);
-        }, 10); // Delay to prevent jittering
-      };
-    };
-  
-    const firstScroll = handleScroll(firstDiv, [secondDiv, individualRequestDiv]);
-    const secondScroll = handleScroll(secondDiv, [firstDiv, individualRequestDiv]);
-    const individualScroll = handleScroll(individualRequestDiv, [firstDiv, secondDiv]);
-  
-    firstDiv.addEventListener("scroll", firstScroll);
-    secondDiv.addEventListener("scroll", secondScroll);
-    individualRequestDiv.addEventListener("scroll", individualScroll);
-  
-    return () => {
-      firstDiv.removeEventListener("scroll", firstScroll);
-      secondDiv.removeEventListener("scroll", secondScroll);
-      individualRequestDiv.removeEventListener("scroll", individualScroll);
-    };
-  }, []);
-
-
-
-  const tableRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (scrollId && tableRef.current && list.length > 0) {
-      const row = tableRef.current.querySelector(`[data-invoice-id="${scrollId}"]`);
-      if (row) {
-        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      } else {
-      }
-    }
-  }, [scrollId, list]);
-
-
-
 
 
 
@@ -859,12 +910,37 @@ export default function Yourworkload() {
     };
   };
 
+  const formatGetDate = (data: string) => {
+    const selectedDate = new Date(date); // Convert 'date' to Date object
+    selectedDate.setHours(0, 0, 0, 0);
+    const selectedTimestamp = selectedDate.getDate();
+
+    return selectedTimestamp
+
+  }
+
+
 
   return (
-   <div className=' w-full h-full flex flex-col justify-center bg-secondary p-4 text-zinc-100'>
+   <div className=' w-full h-full flex flex-col bg-secondary p-4 text-zinc-100'>
     <div className=' flex flex-col bg-primary mb-2 p-4'>
-        <div className=' w-full flex items-end justify-end'>
-          <input value={search} onChange={(e) => setSearch(e.target.value)} type="text" placeholder='Search project' className=' p-2 text-black bg-white rounded-sm text-xs' />
+        <div className=' w-full flex gap-4 items-end justify-end'>
+           <div className=' text-[.6rem] flex items-center gap-2 '>
+                  <p>Filter by dates</p>
+                  <DatePicker
+                     selected={dateFilter}
+                    onChange={(date) => setDateFilter(date)}
+                    dateFormat="dd/MM/yyyy"
+                    placeholderText="DD/MM/YYYY"
+                    className="bg-secondary text-[.6rem] p-2 w-fit z-[9999] relative"
+                    onKeyDown={(e) => e.preventDefault()}
+                    />
+          
+                    <button onClick={() => setDateFilter(null)} className=' p-2 bg-red-600 text-white rounded-sm'><RefreshCcw size={12}/></button>
+          
+          
+        </div>
+          <input value={search} onChange={(e) => setSearch(e.target.value)} type="text" placeholder='Search project' className=' p-2 text-black bg-white rounded-sm text-[.6rem]' />
         </div>
 
         <div className=' w-full flex items-center justify-between h-auto bg-primary text-xs'>
@@ -884,25 +960,24 @@ export default function Yourworkload() {
                   </div>
                 </Createprojectcomponent>
 
-                    <EditJobComponent id={findJobComponent?.componentid} isManger={findJobComponent?.jobmanager.isManager} isJobManager={findJobComponent?.jobmanager.isJobManager} project={findJobComponent?.projectname.projectid} jobmanager={findJobComponent?.jobmanager.employeeid} engr={engrId} engrnotes={engrMember?.notes} engrrvr={engrrvrId} engrrvrnotes={engrrvrMember?.notes} drftr={draftId} drftrnotes={drftMember?.notes} drftrrvr={draftrvrId} drftrrvrnotes={drftrvrMember?.notes} members={findJobComponent?.members || []} pname={findJobComponent?.projectname.name || ''} client={findJobComponent?.clientname.name || ''} start={findJobComponent?.projectstart || ''} end={findJobComponent?.projectend || ''} component={findJobComponent?.jobcomponent || ''} adminnotes={findJobComponent?.adminnotes || ''}>
+                    <EditJobComponent id={findJobComponent?.componentid} isManger={findJobComponent?.jobmanager.isManager} isJobManager={findJobComponent?.jobmanager.isJobManager} project={findJobComponent?.projectname.projectid} jobmanager={findJobComponent?.jobmanager.employeeid} engr={engrId} engrnotes={engrMember?.notes} engrrvr={engrrvrId} engrrvrnotes={engrrvrMember?.notes} drftr={draftId} drftrnotes={drftMember?.notes} drftrrvr={draftrvrId} drftrrvrnotes={drftrvrMember?.notes} members={findJobComponent?.members || []} pname={findJobComponent?.projectname.name || ''} client={findJobComponent?.clientname.name || ''} start={findJobComponent?.projectstart || ''} end={findJobComponent?.projectend || ''} component={findJobComponent?.jobcomponent || ''} adminnotes={findJobComponent?.adminnotes || ''} budget={findJobComponent?.estimatedbudget || 0} budgettype={findJobComponent?.budgettype || ''} jcname={findJobComponent?.jobcomponent || ''} clientid={findJobComponent?.clientname.clientid || ''} jobno={findJobComponent?.jobno || ''}>
                                                                         <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
                                                                           <button onClick={() => setDialog2(true)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Pen size={20}/></button>
                                                                           <p>Edit</p>
                                                                         </div>
                                                                       </EditJobComponent>
-                 
 
                 {componentid === '' ? (
                   <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
                     <button  onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><Layers2 size={20}/></button>
-                    <p>Duplicate</p>
+                    <p>Copy</p>
                   </div>
                   
                 ) : (
-                  <Duplicatecomponent name={findJobComponent?.jobcomponent ?? ''} manager={findJobComponent?.jobmanager.employeeid ?? ''} budgettype={findJobComponent?.budgettype ?? ''} engr={findJobComponent?.members[0]?.employee._id} engrrvr={findJobComponent?.members[1]?.employee._id} drftr={findJobComponent?.members[2]?.employee._id} drftrrvr={findJobComponent?.members[3]?.employee._id} estbudget={findJobComponent?.estimatedbudget ?? 0} state={dialog3} client={findJobComponent?.clientname.name || ''} start={findJobComponent?.projectstart || ''} end={findJobComponent?.projectend || ''} pname={findJobComponent?.projectname.name || ''} clientid={findJobComponent?.clientname.clientid || ''}>
+                  <Duplicatecomponent name={findJobComponent?.jobcomponent ?? ''} manager={findJobComponent?.jobmanager.employeeid ?? ''} budgettype={findJobComponent?.budgettype ?? ''} engr={findJobComponent?.members[0]?.employee._id} engrrvr={findJobComponent?.members[1]?.employee._id} drftr={findJobComponent?.members[2]?.employee._id} drftrrvr={findJobComponent?.members[3]?.employee._id} estbudget={findJobComponent?.estimatedbudget ?? 0} state={dialog3} client={findJobComponent?.clientname.name || ''} start={findJobComponent?.projectstart || ''} end={findJobComponent?.projectend || ''} pname={findJobComponent?.projectname.name || ''} clientid={findJobComponent?.clientname.clientid || ''} jobno={findJobComponent?.jobno || ''}>
                     <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
                       <button onClick={() => setDialog2(true)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Layers2 size={20}/></button>
-                      <p>Duplicate</p>
+                      <p>Copy</p>
                     </div>
                   </Duplicatecomponent>
                   
@@ -920,7 +995,7 @@ export default function Yourworkload() {
                   </div>
                   
                 ) : (
-                  <Variationcomponent name={findJobComponent?.jobcomponent ?? ''} manager={findJobComponent?.jobmanager.employeeid ?? ''} budgettype={findJobComponent?.budgettype ?? ''} engr={findJobComponent?.members[0]?.employee._id} engrrvr={findJobComponent?.members[1]?.employee._id} drftr={findJobComponent?.members[2]?.employee._id} drftrrvr={findJobComponent?.members[3]?.employee._id} estbudget={findJobComponent?.estimatedbudget ?? 0} state={dialog3} client={findJobComponent?.clientname.name || ''} start={findJobComponent?.projectstart || ''} end={findJobComponent?.projectend || ''} pname={findJobComponent?.projectname.name || ''} clientid={findJobComponent?.clientname.clientid || ''}>
+                  <Variationcomponent name={findJobComponent?.jobcomponent ?? ''} manager={findJobComponent?.jobmanager.employeeid ?? ''} budgettype={findJobComponent?.budgettype ?? ''} engr={findJobComponent?.members[0]?.employee._id} engrrvr={findJobComponent?.members[1]?.employee._id} drftr={findJobComponent?.members[2]?.employee._id} drftrrvr={findJobComponent?.members[3]?.employee._id} estbudget={findJobComponent?.estimatedbudget ?? 0} state={dialog3} client={findJobComponent?.clientname.name || ''} start={findJobComponent?.projectstart || ''} end={findJobComponent?.projectend || ''} pname={findJobComponent?.projectname.name || ''} clientid={findJobComponent?.clientname.clientid || ''} jobno={findJobComponent?.jobno || ''}>
                   <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
                     <button onClick={() => setDialog3(!dialog3)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Copy size={20}/></button>
                     <p>Variation</p>
@@ -943,7 +1018,7 @@ export default function Yourworkload() {
                   </JobComponentStatus>
                 )}
 
-                {componentid === '' ? (
+                {/* {componentid === '' ? (
                   <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
                     <button onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><File size={20}/></button>
                     <p>Invoice</p>
@@ -956,7 +1031,7 @@ export default function Yourworkload() {
                       <p>Invoice</p>
                     </div>       
                   </Invoice>
-                )}
+                )} */}
 
               </div>
               
@@ -968,198 +1043,216 @@ export default function Yourworkload() {
         </div>
     </div>
 
-      <Individualrequest ref={individualRequestRef} alldates={longestAlldates?.allDates} data={list} />
+    <div
+      className=' h-[67dvh] w-full flex flex-col overflow-y-auto'>
+        <div className=' relative h-auto flex items-start bg-secondary w-full '>
 
-      <div
-      className=' h-auto w-full flex flex-col max-w-[1920px] bg-blue-400'>
-        <div className=' h-auto overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
+          <div className=' w-fit flex flex-col sticky top-0'>
+            <table className="table-auto w-full border-collapse ">
+              
+              <thead className="h-[60px] text-nowrap">
+                <tr className="text-[0.5rem] text-zinc-100 font-normal text-left border-collapse">
+                  <th className="text-center font-normal whitespace-normal border-[1px] border-zinc-600 px-2">
+                    Name
+                  </th>
+                  {/* <th className="text-center font-normal whitespace-normal border-[1px] border-zinc-600 px-2">
+                    Initials
+                  </th>
+                  <th className="text-center font-normal whitespace-normal border-[1px] border-zinc-600 px-2">
+                    Resource
+                  </th> */}
+                  
+                </tr>
+              </thead>
+              <tbody>
+                {listRequest[0]?.members.map((item, graphIndex) =>
+                    <tr key={`${graphIndex}`} className="bg-primary text-[.5rem] py-2 h-[30px] border-[1px] border-zinc-600">
+                      <td onClick={() => router.push(`/pm/individualworkload?employeeid=${item.id}&name=${item.name}&teamname=${list[0].teamname}`)} className="whitespace-normal break-all border-[1px] border-zinc-600 px-2 text-center cursor-pointer underline text-blue-400">{item.name}</td>
+                      {/* <td className="text-center whitespace-normal break-all border-[1px] border-zinc-600 px-2 ">{item.initial}</td>
+                      <td className="text-center whitespace-normal break-all border-[1px] border-zinc-600 px-2 ">{item.resource}</td> */}
+                    </tr>
+                )}
+              </tbody>
+            </table>
+       
           
-            <table className="table-auto w-auto  borer-collapse ml-1 ">
-            <thead className='  h-[50px] text-nowrap '>
-
-              <tr className=' text-[0.6rem] text-zinc-100 font-normal text-left border-collapse'>
-                <th className=' text-left font-normal min-w-[40px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Action</th>
-                <th className=' text-left  font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2 ' >Job Number</th>
-                  <th className=' text-left font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2 ' >Job Mngr.</th>
-                    <th className=' text-left  font-normal min-w-[100px] whitespace-normal break-all border-[1px] border-zinc-600 px-2 ' >Client Name</th>
-                  <th className=' text-left font-normal min-w-[120px] whitespace-normal break-all border-[1px] border-zinc-600 px-2' >Job Component</th>
-                    <th className=' text-left  font-normal min-w-[120px]  whitespace-normal break-all border-[1px] border-zinc-600 px-2' >Project Name</th>
-                    <th className=' text-left  font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2 ' >Invoiced (%)</th>
-                    <th className='  text-left font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2 ' >Est. $</th>
-                    <th className=' text-left  font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2 ' >Budget type</th>
-                    <th className=' text-left  font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2 ' >Members</th>
-                    <th className=' text-left  font-normal min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2 ' >Role</th>
-                    <th className=' text-left font-normal min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2 ' >Notes</th>
-
-              </tr>
-            </thead>
-         
+            <table className="table-auto w-auto border-collapse">
+              <thead className="h-[50px] text-nowrap">
+                <tr className="text-[0.5rem] text-zinc-100 font-normal text-left border-collapse">
+                  <th className="text-left font-normal min-w-[30px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                    Action
+                  </th>
+                  <th className="text-left font-normal min-w-[70px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                    Job Number
+                  </th>
+                  <th className="text-left font-normal min-w-[70px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                    Client
+                  </th>
+                  <th className="text-left font-normal min-w-[80px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                    Project Name
+                  </th>
+                  <th className="text-left font-normal min-w-[30px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                    JM
+                  </th>
+                  <th className="text-left font-normal min-w-[90px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                    Job Component
+                  </th>
+                  <th className="text-left font-normal min-w-[100px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                    Notes
+                  </th>
+                  <th className="text-left font-normal min-w-[55px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                    Role
+                  </th>
+                  <th className="text-left font-normal min-w-[83px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                    Team
+                  </th>
+                  <th className="text-left font-normal min-w-[45px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                    Members
+                  </th>
+                  <th className="text-left font-normal min-w-[50px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                    Total Hours
+                  </th>
+                </tr>
+              </thead>
+                
             </table>
 
-            <div ref={firstDivRef} 
-             style={{
-              overflowX: "hidden",
-            }}
-            className=' w-full'>
-              <table className="table-auto w-full border-collapse "
-              style={{ visibility: 'collapse' }}
-              >
-                <thead className=' bg-secondary h-[100px] '>
-                  <tr 
-                 
-                  className=' text-[0.6rem] text-zinc-100 font-normal'>
+          
+          </div>
+
+          <div 
+          ref={containerRef2}
+          onMouseDown={(e) => handleMouseDown(e, containerRef1)}
+          onMouseLeave={handleMouseLeaveOrUp}
+          onMouseUp={handleMouseLeaveOrUp}
+          onMouseMove={(e) => handleMouseMove(e, containerRef1)}
+          onScroll={() => syncScroll(containerRef2, containerRef1)}
+          className=' w-full flex flex-col max-w-[1920px] overflow-x-auto cursor-pointer'>
+            <table className="table-auto border-collapse min-w-full ">
+            <thead className="bg-secondary h-[60px]">
+              <tr className="bg-secondary text-[0.5rem] text-black font-normal h-[60px]">
+                {longestAlldates?.allDates.map((dateObj, index) => {
+                  const date = new Date(dateObj);
+                  date.setHours(0, 0, 0, 0); // Normalize the date to remove time differences
+
+                  const today = new Date();
+                  today.setHours(0, 0, 0, 0); // Ensure today is set at midnight for accurate comparisons
                   
-                  {/* {longestAlldates?.allDates
-                  .filter((dateObj) => {
-                    const day = new Date(dateObj).getDay();
-                    return day >= 1 && day <= 5; 
-                  })
-                  .map((dateObj, index) => {
-                    const date = new Date(dateObj);
-                    const day = date.getDay();
-                    const isFriday = day === 5;
 
-                    const formatAustralianDate = (date: Date) =>
-                      date.toLocaleDateString('en-AU', { day: '2-digit', month: '2-digit', year: '2-digit' });
-                    const formatMonthYear = (date: Date) =>
-                      date.toLocaleDateString('en-AU', { month: 'short', year: 'numeric' });
+                  const startOfWeek = new Date(today);
+                  startOfWeek.setDate(today.getDate() - (today.getDay() - 1));
 
-                    return (
-                      <React.Fragment key={index}>
-                        <th 
-                         data-date={date} 
-                        className="relative  w-[20px] font-normal border-[1px] border-zinc-700">
-                          <div className="whitespace-nowrap  w-[20px] transform -rotate-[90deg]">
-                            <p className=' mt-3'>{formatAustralianDate(date)}</p>
+                  const endOfWeek = new Date(startOfWeek);
+                  endOfWeek.setDate(startOfWeek.getDate() + 5);
+
+                  let bgColor = "bg-white";
+
+                  // ✅ Corrected: Ensure past days in the week are gray
+                  if (date >= startOfWeek && date <= endOfWeek) {
+                    if (date <= today) {
+                      bgColor = "bg-gray-300"; // ✅ Past days turn gray properly
+                    } else if (date.getTime() === today.getTime()) {
+                      bgColor = "bg-pink-500"; // ✅ Today is pink
+                    } else {
+                      bgColor = 'bg-white'
+                    }
+                  }
+
+                  const shouldInsertTotal = (index + 1) % 5 === 0; // Insert "Total Hours" after every 5 dates
+
+                  return (
+                    <React.Fragment key={index}>
+                      {/* Date Cell */}
+                      <th
+                        data-id={formatAustralianDate(dateObj)}
+                        className={`relative w-[20px] font-normal border-[1px] border-zinc-700 ${bgColor}`}
+                      >
+                        <div className="whitespace-nowrap w-[20px] transform -rotate-[90deg]">
+                          <p className="mt-3 font-semibold">{formatAustralianDate(dateObj)}</p>
+                        </div>
+                      </th>
+
+                      {/* Add "Total Hours" **AFTER EVERY 5th DATE** */}
+                      {shouldInsertTotal && (
+                        <th
+                          key={`total-${index}`}
+                          className="font-normal w-[20px] px-1 border-[1px] border-zinc-700 bg-primary text-white"
+                        >
+                          <div className="transform w-[20px] -rotate-[90deg] font-semibold">
+                            <p>Total Hours</p>
                           </div>
                         </th>
-                        {isFriday && (
-                          <th className="font-normal  w-[20px] px-1 border-[1px] border-zinc-700">
-                            <div className="transform  w-[20px] -rotate-[90deg]">
-                              <p>Total Hours</p>
-                            </div>
-                          </th>
-                        )}
-                      </React.Fragment>
-                    );
-                  })} */}
+                      )}
+                    </React.Fragment>
+                  );
+                })}
+              </tr>
+            </thead>
 
-
+                <tbody>
+                  {listRequest.map((graphItem, graphIndex) =>
+                    graphItem.members.map((member, memberIndex) => {
+                      // Precompute weekly totals
+                      const totalHoursForWeek: number[] = [];
+                      let currentWeekTotal = 0;
+                      let weekCounter = 0;
                     
-                  </tr>
-                </thead>
-               
-              </table>
-            </div>
-            </div>
-      </div>
+                      return (
+                        <tr
+                          key={`${graphIndex}-${memberIndex}`}
+                          className="bg-primary text-[.6rem] py-2 h-[30px] border-[1px] border-zinc-600"
+                        >
+                          {longestAlldates?.allDates.map((dateObj, index) => {
+                            const date = new Date(dateObj);
+                            const isFriday = date.getDay() === 5;
+                            const weekIndex = Math.floor(index / 5); // Ensure correct indexing
 
-         <div
-      ref={tableRef}
-      className=' h-[500px] w-full flex flex-col max-w-[1920px] overflow-y-auto ml-1'>
-        <div className=' h-[500px] flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
-
-              <table 
-              
-              className="table-auto w-full borer-collapse ">
-                 <thead className='  bg-secondary h-[100px] w-[1600px]'
-                 style={{ visibility: 'collapse' }}
-                 >
-
-                <tr className=' text-[0.6rem] text-zinc-100 font-normal text-left '>
-                <th className=' text-left font-normal min-w-[40px]'>Action</th>
-                <th className=' text-left  font-normal min-w-[80px] ' >Job Number</th>
-                  <th className=' text-left font-normal min-w-[80px] ' >Job Manager</th>
-                    <th className=' text-left  font-normal min-w-[100px] ' >Client Name</th>
-                  <th className=' text-left  font-normal min-w-[120px] ' >Job Component</th>
-                    <th className=' text-left  font-normal min-w-[120px] ' >Project Name</th>
-                    <th className=' text-left  font-normal min-w-[80px] ' >Invoiced (%)</th>
-                    <th className=' text-left  font-normal min-w-[80px] ' >Est. $</th>
-                    <th className=' text-left   font-normal min-w-[80px] ' >Budget type</th>
-                    <th className=' text-left  font-normal min-w-[80px] ' >Members</th>
-                    <th className=' text-left   font-normal min-w-[50px] ' >Role</th>
-                    <th className=' text-left font-normal min-w-[50px] ' >Notes</th>
-
-                  </tr>
-                  </thead>
-              <tbody>
-              {list.map((graphItem, graphIndex) =>
-                graphItem.members.map((member, memberIndex) => (
-                  <tr 
-                  key={`${graphItem._id}-${memberIndex}`}
-                  data-invoice-id={graphItem._id} 
-                  className={`  text-left text-[.6rem] py-2 h-[48px] border-[1px] border-zinc-600 border-collapse ${graphItem.isVariation === true ? 'text-red-600 font-black' : ' text-black'} ${clientColor(graphItem.clientname.priority)}`}>
-                      <td className="text-center text-white h-[48px] flex items-center justify-center gap-1 min-w-[40px]  px-2">
-                        
-
-                        {(memberIndex === 0 ) && (
-                          <input
-                          type="checkbox"
-                          checked={componentid === graphItem._id}
-                          onChange={() => {handleCheckboxChange(graphItem._id),setProjectname(graphItem.projectname.projectid), setJobmanager(graphItem.jobmanager.employeeid), setJobno(graphItem.jobno), findMember(graphItem.members), setNotes(graphItem.members[0].notes),setNotes2(graphItem.members[1].notes),setNotes3(graphItem.members[2].notes),setNotes4(graphItem.members[3].notes), setIsmanager(graphItem.jobmanager.isManager),setIsjobmanager(graphItem.jobmanager.isJobManager)}}
-                          />
-                        )}
-
-                                    
-                    </td>
-                    {/* ${graphItem.status === null ? 'text-blue-400' :  'text-green-500'} */}
-                    {/* <td className={` text-center`}>{memberIndex === 0 && `${graphItem.status === null ? 'Ongoing' :  'Completed'}`}</td> */}
-                    <td className=" text-wrap min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.jobno}</td>
-
-                    <td className=" text-wrap min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
-                    <td className=" text-wrap min-w-[100px] whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.clientname.name}</td>
-
-
-                    <td className=" text-wrap min-w-[120px] whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.jobcomponent}</td>
-
-
-                    <td className=" text-wrap min-w-[120px] whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.projectname.name}</td>
-                    <td className=" text-wrap min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && ` ${graphItem.budgettype === 'lumpsum' ? `${graphItem.invoice.pendinginvoice}%` : '-'}`}</td>
-                    <td className=" text-wrap min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2 ">{memberIndex === 0 && `${graphItem.budgettype === 'lumpsum' ? `$ ${graphItem.estimatedbudget}` : '-'}`}</td>
-                    <td className=" text-wrap min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && formatBudgetType(graphItem.budgettype)}</td>
-
-
-          
-                    <td className=" text-wrap min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2">{member.employee.initials}</td>
-                    <td className=" text-wrap min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2 text-[.5rem]">{member.role}</td>
-                    <td className=" text-wrap min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2">
-                      <Dialog>
-                      <DialogTrigger className=' bg-red-600 p-1 rounded-sm flex items-center text-white text-[.5rem]'>
-                        <Eye size={10} />
-                      </DialogTrigger>
-                      <DialogContent className=' bg-secondary p-6 border-none max-w-[600px] text-white'>
-                        <DialogHeader>
-                          <DialogTitle>Notes</DialogTitle>
-                          <DialogDescription>
+                            const shouldInsertTotal = (index + 1) % 5 === 0;
                             
-                          </DialogDescription>
-                        </DialogHeader>
-                        {member.notes === '' ? (
-                          <p className=' text-xs text-zinc-400 h-full w-full text-center'>No notes.</p>
-                        ):(
-                        <p className=' text-xs text-zinc-400'>{member.notes}</p>
-                        )}
-                      </DialogContent>
-                    </Dialog>
+                            const memberDate = member.dates?.find(
+                              (date) => formatDate(date.date) === formatDate(dateObj)
+                            );
 
-                      </td>
+                            return (
+                              <React.Fragment key={index}>
+                                <td
+                                  className="relative text-center overflow-hidden bg-white cursor-pointer border-[1px]"
+                                >
+                                  <div className="w-full h-[50px] absolute flex top-0">
+                                  {statusColorRequest( dateObj, member.event, member.leave, member.wellness, member.wfh).map((item, index) => (
+                                  <div key={index} className={`w-full h-full ${item}`}></div>
+                                    ))}
+                                  </div>
+                                  <p className="relative text-black font-bold text-[.5rem] z-30">
+                                    
+                                  </p>
+                                </td>
 
+                                {shouldInsertTotal && (
+                                  <td className="text-center font-normal w-[40px] bg-primary border-[1px] border-zinc-700">
+                                    <p className="text-white">
+                                      {Number.isInteger(totalHoursForWeek[weekIndex])
+                                        ? totalHoursForWeek[weekIndex]
+                                        : totalHoursForWeek[weekIndex]?.toFixed(2)}
+                                    </p>
+                                  </td>
+                                )}
+                              </React.Fragment>
+                            );
+                          })}
+                        </tr>
+                      );
+                    })
+                  )}
 
-                  
+                </tbody>
+            </table>
 
-                  </tr>
-                ))
-              )}
-            </tbody>
-              </table>
-
-              <div ref={secondDivRef} 
-              className=' w-full overflow-x-auto'>
-                <table className="table-auto border-collapse ">
+            <table className="table-auto border-collapse ">
                   <thead className=' bg-secondary h-1'
-                  style={{ visibility: 'collapse' }}
+                  // style={{ visibility: 'collapse' }}
                   >
-                    <tr className=' text-[0.6rem] text-zinc-100 font-normal h-1'>
+                    <tr className=' text-[0.6rem] text-zinc-100 font-normal h-[50px]'>
                     
                     {longestAlldates?.allDates.map((dateObj, index) => {
                       const date = new Date(dateObj);
@@ -1174,14 +1267,242 @@ export default function Yourworkload() {
 
                       return (
                         <React.Fragment key={index}>
-                         <th className="relative font-normal w-[20px] border-[1px] h-1 overflow-hidden border-zinc-700">
+                         <th className="relative font-normal w-[20px] border-[1px] h-1 overflow-hidden border-zinc-800">
                           <div className="whitespace-nowrap transform w-[20px] -rotate-[90deg]">
-                            <p>{formatAustralianDate(date)}</p>
-                            <p>{formatMonthYear(date)}</p>
+                            {/* <p>{formatAustralianDate(date)}</p>
+                            <p>{formatMonthYear(date)}</p> */}
                           </div>
                         </th>
                         {isFriday && (
-                          <th className="font-normal  w-[20px] px-1 border-[1px] h-1 overflow-hidden border-zinc-700">
+                          <th className="font-normal  w-[20px] px-1 border-[1px] h-1 overflow-hidden border-zinc-800">
+                            <div className="transform  w-[20px] -rotate-[90deg]">
+                              {/* <p>Total Hours</p> */}
+                            </div>
+                          </th>
+                        )}
+                        </React.Fragment>
+                      );
+                    })}
+
+
+                      
+                    </tr>
+                  </thead>
+               
+            </table>
+          </div>
+
+        </div>
+
+        <div className=' relative h-auto flex items-start bg-secondary w-full overflow-y-auto  '>
+
+          <div className=' w-fit flex flex-col sticky top-0'>
+         
+            <table className="table-auto w-auto border-collapse">
+              <thead className="h-[50px] text-nowrap"
+                style={{ visibility: 'collapse' }}
+
+              >
+                <tr className="text-[0.5rem] text-zinc-100 font-normal text-left border-collapse">
+                  <th className="text-left font-normal min-w-[30px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                    Action
+                  </th>
+                  <th className="text-left font-normal min-w-[70px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                    Job Number
+                  </th>
+                  <th className="text-left font-normal min-w-[70px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                    Client
+                  </th>
+                  <th className="text-left font-normal min-w-[80px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                    Project Name
+                  </th>
+                  <th className="text-left font-normal min-w-[30px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                    JM
+                  </th>
+                  <th className="text-left font-normal min-w-[90px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                    Job Component
+                  </th>
+                  <th className="text-left font-normal min-w-[100px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                    Notes
+                  </th>
+                  <th className="text-left font-normal min-w-[55px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                    Role
+                  </th>
+                  <th className="text-left font-normal min-w-[83px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                    Team
+                  </th>
+                  <th className="text-left font-normal min-w-[45px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                    Members
+                  </th>
+                  <th className="text-left font-normal min-w-[50px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                    Total Hours
+                  </th>
+                </tr>
+              </thead>
+                <tbody>
+                {list.map((graphItem, graphIndex) =>
+                  graphItem.members.map((member, memberIndex) => (
+                    <tr 
+                    key={`${graphItem._id}-${memberIndex}`}
+                    data-invoice-id={graphItem._id} 
+                    className={`  text-left text-[.5rem] py-2 h-[30px] border-[1px] border-zinc-600 border-collapse ${graphItem.isVariation === true ? 'text-red-600 font-black' : ' text-black'} ${clientColor(graphItem.clientname.priority)}`}>
+                        <td className="text-center text-white h-[30px] flex items-center justify-center gap-1  ">
+                          
+
+                          {(memberIndex === 0 ) && (
+                            <input
+                            type="checkbox"
+                            checked={componentid === graphItem._id}
+                            onChange={() => {handleCheckboxChange(graphItem._id),setProjectname(graphItem.projectname.projectid), setJobmanager(graphItem.jobmanager.employeeid), setJobno(graphItem.jobno), findMember(graphItem.members), setNotes(graphItem.members[0].notes),setNotes2(graphItem.members[1].notes),setNotes3(graphItem.members[2].notes),setNotes4(graphItem.members[3].notes), setIsmanager(graphItem.jobmanager.isManager),setIsjobmanager(graphItem.jobmanager.isJobManager)}}
+                            />
+                          )}
+
+                                      
+                      </td>
+                      {/* ${graphItem.status === null ? 'text-blue-400' :  'text-green-500'} */}
+                      {/* <td className={` text-center`}>{memberIndex === 0 && `${graphItem.status === null ? 'Ongoing' :  'Completed'}`}</td> */}
+                      <td className=" text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.jobno}</td>
+                      <td className=" text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.clientname.name}</td>
+                      <td className=" text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.projectname.name}</td>
+                      <td className=" text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.jobmanager.initials}</td>
+                      <td className=" text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.jobcomponent}</td>
+                      <td className=" text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                        <Dialog>
+                        <DialogTrigger className=' rounded-sm flex items-center text-black text-[.5rem]'>
+                          {member.notes === '' ? (
+                            <p className=' text-[.5rem] h-full w-full text-center'>No notes.</p>
+                          ):(
+                          <p className=' text-[.5rem]'>{member.notes.slice(0,20)}</p>
+                          )}
+                        </DialogTrigger>
+                        <DialogContent className=' bg-secondary p-6 border-none max-w-[600px] text-white'>
+                          <DialogHeader>
+                            <DialogTitle>Notes</DialogTitle>
+                            <DialogDescription>
+                              
+                            </DialogDescription>
+                          </DialogHeader>
+                          {member.notes === '' ? (
+                            <p className=' text-xs text-zinc-400 h-full w-full text-center'>No notes.</p>
+                          ):(
+                          <p className=' text-xs text-zinc-400'>{member.notes}</p>
+                          )}
+                        </DialogContent>
+                      </Dialog>
+
+                      </td>
+                      <td className=" text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2 text-[.5rem]">{member.role}</td>
+                      <td className=" text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2 text-[.5rem]">{graphItem.teamname}</td>
+                      <td className=" text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">{member.employee.initials}</td>
+                      <td className=" text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">0</td>
+
+                    </tr>
+                  ))
+                )}
+                </tbody>
+            </table>
+
+          
+          </div>
+
+          <div 
+          ref={containerRef1}
+          onMouseDown={(e) => handleMouseDown(e, containerRef1)}
+          onMouseLeave={handleMouseLeaveOrUp}
+          onMouseUp={handleMouseLeaveOrUp}
+          onMouseMove={(e) => handleMouseMove(e, containerRef1)}
+          onScroll={() => syncScroll(containerRef1, containerRef2)}
+          className=' w-full flex flex-col max-w-[1920px] hide-scrollbar overflow-x-auto hide cursor-pointer'>
+            <table className="table-auto border-collapse min-w-full ">
+                <thead className="bg-secondary h-[60px]"
+                style={{ visibility: 'collapse' }}
+                
+                >
+                  <tr className="bg-secondary text-[0.5rem] text-black font-normal h-[60px]">
+                    {longestAlldates?.allDates.map((dateObj, index) => {
+                      const date = new Date(dateObj)
+                      date.setHours(0, 0, 0, 0) // Normalize the date to remove time differences
+    
+                     
+    
+                      const today = new Date();
+                      today.setHours(0, 0, 0, 0);
+
+                      const startOfWeek = new Date(today);
+                      startOfWeek.setDate(today.getDate() - (today.getDay() - 1));
+
+                      const endOfWeek = new Date(startOfWeek);
+                      endOfWeek.setDate(startOfWeek.getDate() + 4);
+
+                      let bgColor = "bg-white";
+                      if (date >= startOfWeek && date <= endOfWeek) {
+                        const prevDay = new Date(today);
+                        prevDay.setDate(today.getDate() - 1);
+
+                        const nextDay = new Date(today);
+                        nextDay.setDate(today.getDate() + 1);
+
+                        if (date.getTime() < today.getTime()) {
+                          bgColor = "bg-gray-300"; 
+                        } else if (date.getTime() === today.getTime()) {
+                          bgColor = "bg-pink-500";
+                        } else if (date.getTime() >= nextDay.getTime()) {
+                          bgColor = "bg-white";
+                        }
+                      }
+
+                      const isFriday = date.getDay() === 5
+
+                      return (
+                        <React.Fragment key={index}>
+                          <th
+                            data-id={formatAustralianDate(dateObj)}
+                            className={`relative w-[20px] font-normal border-[1px] border-zinc-700 ${bgColor}`}
+                          >
+                            <div className="whitespace-nowrap w-[20px] transform -rotate-[90deg]">
+                              <p className="mt-3 font-semibold">{formatAustralianDate(dateObj)}</p>
+                            </div>
+                          </th>
+                          {isFriday && (
+                            <th
+                              key={`total-${index}`}
+                              className="font-normal w-[20px] px-1 border-[1px] border-zinc-700 bg-primary text-white"
+                            >
+                              <div className="transform w-[20px] -rotate-[90deg] font-semibold">
+                                <p>Total Hours</p>
+                              </div>
+                            </th>
+                          )}
+                        </React.Fragment>
+                      );
+                    })}
+                  </tr>
+                </thead>
+
+                 
+            </table>
+
+            <table className="table-auto border-collapse ">
+                  <thead className=' bg-secondary h-0'
+                  style={{ visibility: 'collapse' }}
+                  >
+                    <tr className=' text-[0.6rem] text-zinc-100 font-normal h-[50px]'>
+                    
+                    {longestAlldates?.allDates.map((dateObj, index) => {
+                      const date = new Date(dateObj);
+                      const day = date.getDay();
+                      const isFriday = day === 5;
+
+                   
+                      return (
+                        <React.Fragment key={index}>
+                         <th className="relative font-normal w-[20px] border-[1px] h-1 overflow-hidden border-zinc-800">
+                          <div className="whitespace-nowrap transform w-[20px] -rotate-[90deg]">
+                            {/* <p>{formatAustralianDate(date)}</p> */}
+                          </div>
+                        </th>
+                        {isFriday && (
+                          <th className="font-normal  w-[20px] px-1 border-[1px] h-1 overflow-hidden border-zinc-800">
                             <div className="transform  w-[20px] -rotate-[90deg]">
                               <p>Total Hours</p>
                             </div>
@@ -1195,7 +1516,7 @@ export default function Yourworkload() {
                       
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className=' -translate-y-[1px]'>
                   {list.map((graphItem, graphIndex) =>
                     graphItem.members.map((member, memberIndex) => {
                       // Precompute weekly totals
@@ -1223,7 +1544,7 @@ export default function Yourworkload() {
                       return (
                         <tr
                           key={`${graphIndex}-${memberIndex}`}
-                          className="bg-primary text-[.6rem] py-2 h-[49px] border-[1px] border-zinc-600"
+                          className="bg-primary text-[.6rem] py-2 h-[31px] border-[1px] border-zinc-600"
                         >
                           {longestAlldates.allDates.map((dateObj, index) => {
                             const date = new Date(dateObj);
@@ -1233,6 +1554,10 @@ export default function Yourworkload() {
                             const memberDate = member.dates?.find(
                               (date) => formatDate(date.date) === formatDate(dateObj)
                             );
+
+                            const shouldInsertTotal = (index + 1) % 5 === 0;
+
+                            
 
 
 
@@ -1294,22 +1619,24 @@ export default function Yourworkload() {
                                       memberDate?.hours || 0,
                                       member.eventDates,
                                       member.leaveDates,
-                                      member.wellnessDates
+                                      member.wellnessDates,
+                                      member.wfhDates
                                     ).map((item, index) => (
                                       <div key={index} className={`w-full h-[50px] ${item}`}></div>
                                     ))}
                                   </div>
-                                  <p className="relative text-black font-bold text-xs z-30">
+                                  <p className="relative text-black font-bold text-[.5rem] z-30">
+                                    {/* {memberDate ? memberDate.hours : "-"} */}
                                     {memberDate ? memberDate.hours : "-"}
                                   </p>
                                 </td>
 
-                                {isFriday && (
+                                {shouldInsertTotal && (
                                   <td className="text-center font-normal w-[40px] bg-primary border-[1px] border-zinc-700">
                                     <p className="text-white">
                                       {Number.isInteger(totalHoursForWeek[weekIndex])
                                         ? totalHoursForWeek[weekIndex]
-                                        : totalHoursForWeek[weekIndex].toFixed(2)}
+                                        : totalHoursForWeek[weekIndex]?.toFixed(2)}
                                     </p>
                                   </td>
                                 )}
@@ -1327,203 +1654,189 @@ export default function Yourworkload() {
 
 
                 </tbody>
-                </table>
-              </div>
-          
-          
-           
+            </table>
+          </div>
 
-         {isJobmamager === true ? (
-              <Dialog open={dialog} onOpenChange={setDialog}>
-                      <DialogContent className=' p-8 bg-secondary border-none text-white max-h-[80%] min-h-[50%] overflow-y-auto'>
-                        
-                        <Tabs defaultValue="account" className=" w-full">
-                          <TabsList className=' text-xs bg-zinc-800'>
-                            <TabsTrigger value="single">Single</TabsTrigger>
-                            <TabsTrigger value="multiple">Multiple</TabsTrigger>
-                          </TabsList>
-                          <TabsContent value="single">
-                            <DialogHeader>
-                              <DialogTitle>Update workload ({name} <span className=' text-xs text-red-500'>({role})</span> at {formatDate(date)})</DialogTitle>
-                              <DialogDescription>
-                                Note, you can only update the hours rendered if the employee is not on wellness day.
-                              </DialogDescription>
-                            </DialogHeader>
-                            <div className=' w-full flex flex-col gap-2'>              
-                            <label htmlFor="" className=' text-xs mt-4'>Select Status</label>
+        </div>
 
-                              <div className='w-full flex items-center gap-6'>
-                                {statusData.map((item) => (
-                                  <div key={item.id} className='flex items-center gap-1 text-xs'>
-                                    <input
-                                    disabled={wdStatus || event || leave}
-                                      value={item.id}
-                                      type="checkbox"
-                                      checked={selected.includes(item.id)}
-                                    onChange={() => handleChangeCheckbox(item.id as any)}
-                                    />
-                                    <p className=' p-1'>{item.name}</p>
+        <Dialog open={dialog} onOpenChange={setDialog}>
+                              <DialogContent className=' p-8 bg-secondary border-none text-white max-h-[80%] w-full overflow-y-auto'>
+                                {/* {todaysDate} {formatGetDate(date)} */}
+                                {todaysDate <= formatGetDate(date) - 1 ? (
+                                  <Tabs defaultValue="account" className=" w-full">
+                                   <TabsList className=' text-xs bg-zinc-800'>
+                                     <TabsTrigger value="single">Single</TabsTrigger>
+                                     <TabsTrigger value="multiple">Multiple</TabsTrigger>
+                                   </TabsList>
+                                   <TabsContent value="single">
+                                     <DialogHeader>
+                                       <DialogTitle>Update workload ({name} <span className=' text-xs text-red-500'>({role})</span> at {formatDate(date)})</DialogTitle>
+                                       <DialogDescription>
+                                         Note, you can only update the hours rendered if the employee is not on leave.
+                                       </DialogDescription>
+                                     </DialogHeader>
+                                     <div className=' w-full flex flex-col gap-2'>              
+                                     <label htmlFor="" className=' text-xs mt-4'>Select Status</label>
+         
+                                       <div className='w-full flex items-center gap-6'>
+                                         {statusData.map((item) => (
+                                           <div key={item.id} className='flex items-center gap-1 text-xs'>
+                                             <input
+                                             disabled={wdStatus || event || leave}
+                                               value={item.id}
+                                               type="checkbox"
+                                               checked={selected.includes(item.id)}
+                                             onChange={() => handleChangeCheckbox(item.id as any)}
+                                             />
+                                             <p className=' p-1'>{item.name}</p>
+                                           </div>
+                                         ))}
+                                       </div>
+                                     </div>
+         
+                                     <div className=' flex flex-col gap-2 text-xs'>
+                                       <label htmlFor="">Hours Rendered</label>
+                                       <input disabled={wdStatus || event || leave} type="number" value={hours} onChange={(e) => setHours(e.target.valueAsNumber)} placeholder='Hours' id="" className=' bg-primary p-2 rounded-md text-xs' />
+                                       
+                                     </div>
+         
+                                 
+                           
+                                     <div className=' w-full flex items-end justify-end mt-4 gap-2'>
+                                       <button disabled={wdStatus || event || leave} onClick={() => removeWorkload()} className=' px-4 py-2 bg-zinc-600 text-xs text-white rounded-md'>Remove</button>
+         
+                                       <button disabled={wdStatus || event || leave} onClick={() => updateWorkload()} className=' px-4 py-2 bg-red-600 text-xs text-white rounded-md'>Save</button>
+         
+                                     </div>
+                                  
+                                     {(wdStatus === true || event === true || leave === true) && (
+                                       <p className=' text-xs text-red-500 flex items-center gap-2'><OctagonAlert size={15}/> Employee is in on wellness or event day, you can't update this selected workload</p>
+                                     )}
+                                   </TabsContent>
+                                   <TabsContent value="multiple">
+         
+                                     <DialogHeader>
+                                       <DialogTitle>Update workload ({name} <span className=' text-xs text-red-500'>({role})</span>)</DialogTitle>
+                                       <DialogDescription>
+                                         Note, you can only update the hours rendered if the employee is not on leave.
+                                       </DialogDescription>
+                                     </DialogHeader>
+                                     {forms.map((form, index) => (
+                                     <div key={index} className=" w-full mb-6 p-4 border border-zinc-700 rounded-lg text-xs">
+                                       {/* <h2 className="text-sm font-semibold mb-2">Form {index + 1}</h2> */}
+                                       <div className="space-y-4">
+                                         <div className=' flex items-center gap-4'>
+                                           <label className="block text-sm font-medium">Start Date</label>
+                                         
+         
+                                             <DatePicker
+                                               selected={form.startdate ? new Date(form.startdate) : null} // Ensure a valid Date object
+                                               onChange={(date) =>
+                                                 handleChange(index, "startdate", date ? date.toISOString() : "")
+                                               }
+                                               startDate={new Date(startReq)}
+                                               maxDate={new Date(endReq)}
+                                               selectsEnd 
+                                               minDate={new Date(startReq)} 
+                                               dateFormat="dd/MM/yyyy"
+                                               placeholderText="DD/MM/YYYY"
+                                               className="bg-primary text-xs p-2 w-fit relative"
+                                                 onKeyDown={(e) => e.preventDefault()}
+         
+                                             />
+         
+                                           <label className="block text-sm font-medium">End Date</label>
+         
+         
+                                             <DatePicker
+                                               selected={form.enddate ? new Date(form.enddate) : null} // Ensure a valid Date object
+                                               onChange={(date) =>
+                                                 handleChange(index, "enddate", date ? date.toISOString() : "")
+                                               }
+                                               startDate={new Date(startReq)}
+                                               maxDate={new Date(endReq)}
+                                               selectsEnd 
+                                               minDate={new Date(startReq)} 
+                                               dateFormat="dd/MM/yyyy"
+                                               placeholderText="DD/MM/YYYY"
+                                               className="bg-primary text-xs p-2 w-fit relative"
+                                               onKeyDown={(e) => e.preventDefault()}
+         
+                                             />
+         
+                                         
+                                         </div>
+         
+                                         <div>
+                                         <label className="block text-sm font-medium">Hours Rendered</label>
+                                         <input disabled={wdStatus || event || leave} type="number"
+                                           value={form.hours}
+                                           onChange={(e) => handleChange(index, 'hours', e.target.valueAsNumber)}
+                                         placeholder='Hours' id="" className=' bg-primary p-2 rounded-md text-xs' />
+                                         
+                                         </div>
+         
+                                         <div>
+                                           <label className="block text-sm font-medium">Status</label>
+                                           <div className="flex space-x-4">
+                                             {statusDataMultiple.map((option) => (
+                                               <label key={option.id} className="flex items-center">
+                                                 <input
+                                                   type="checkbox"
+                                                   value={option.id}
+                                                   checked={form.status.includes(option.id)}
+                                                   onChange={() => handleCheckbox(index, option.id)}
+                                                   className="mr-2"
+                                                 />
+                                                 {option.name}
+                                               </label>
+                                             ))}
+                                           </div>
+                                         </div>
+         
+                                         {index !== 0 && (
+                                           <button
+                                           onClick={() => deleteForm(index)}
+                                           className="px-4 py-2 bg-red-500 text-white rounded-md text-[.6rem]"
+                                         >
+                                           Delete Form
+                                         </button>
+                                         )}
+                                         
+                                       </div>
+                                     </div>
+                                     ))}
+         
+                                     {/* <button
+                                       onClick={addForm}
+                                       className=" w-fit text-xs px-4 py-2 bg-blue-500 text-white rounded-md mr-2"
+                                     >
+                                       Add Form
+                                     </button> */}
+         
+                                     <button
+                                       onClick={updateMultipleWorkload}
+                                       className=" w-fit text-xs px-4 py-2 bg-green-500 text-white rounded-md"
+                                     >
+                                       Save All
+                                     </button>
+         
+                                   </TabsContent>
+                                  </Tabs>
+                                ) : (
+                                  <div className=' w-full h-full flex items-center'>
+                                    <p className=' text-xs text-zinc-500'>Not allowed.</p>
                                   </div>
-                                ))}
-                              </div>
-                            </div>
-
-                            <div className=' flex flex-col gap-2 text-xs'>
-                              <label htmlFor="">Hours Rendered</label>
-                              <input disabled={wdStatus || event || leave} type="number" value={hours} onChange={(e) => setHours(e.target.valueAsNumber)} placeholder='Hours' id="" className=' bg-primary p-2 rounded-md text-xs' />
-                              
-                            </div>
-
-                        
-                  
-                            <div className=' w-full flex items-end justify-end mt-4 gap-2'>
-                              <button disabled={wdStatus || event || leave} onClick={() => removeWorkload()} className=' px-4 py-2 bg-zinc-600 text-xs text-white rounded-md'>Remove</button>
-
-                              <button disabled={wdStatus || event || leave} onClick={() => updateWorkload()} className=' px-4 py-2 bg-red-600 text-xs text-white rounded-md'>Save</button>
-
-                            </div>
-                         
-                            {(wdStatus === true || event === true || leave === true) && (
-                              <p className=' text-xs text-red-500 flex items-center gap-2'><OctagonAlert size={15}/> Employee is in on wellness or event day, you can't update this selected workload</p>
-                            )}
-                          </TabsContent>
-                          <TabsContent value="multiple">
-
-                            <DialogHeader>
-                              <DialogTitle>Update workload ({name} <span className=' text-xs text-red-500'>({role})</span></DialogTitle>
-                              <DialogDescription>
-                                Note, you can only update the hours rendered if the employee is not on wellness day.
-                              </DialogDescription>
-                            </DialogHeader>
-                            {forms.map((form, index) => (
-                            <div key={index} className=" w-full mb-6 p-4 border border-zinc-700 rounded-lg text-xs">
-                              <h2 className="text-sm font-semibold mb-2">Form {index + 1}</h2>
-                              <div className="space-y-4">
-                                <div className=' flex items-center gap-4'>
-                                  <label className="block text-sm font-medium">Start Date</label>
-                                
-
-                                    <DatePicker
-                                      selected={form.startdate ? new Date(form.startdate) : null} // Ensure a valid Date object
-                                      onChange={(date) =>
-                                        handleChange(index, "startdate", date ? date.toISOString() : "")
-                                      }
-                                      startDate={new Date(startReq)}
-                                      // endDate={new Date(endReq)}
-                                      maxDate={new Date(endReq)}
-                                      selectsEnd 
-                                      minDate={new Date(startReq)} 
-                                      dateFormat="dd/MM/yyyy"
-                                      placeholderText="DD/MM/YYYY"
-                                      className="bg-primary text-xs p-2 w-fit relative"
-                                        onKeyDown={(e) => e.preventDefault()}
-
-                                    />
-
-                                  <label className="block text-sm font-medium">End Date</label>
-
-
-                                    <DatePicker
-                                      selected={form.enddate ? new Date(form.enddate) : null} // Ensure a valid Date object
-                                      onChange={(date) =>
-                                        handleChange(index, "enddate", date ? date.toISOString() : "")
-                                      }
-                                      startDate={new Date(startReq)}
-                                      // endDate={new Date(endReq)}
-                                      maxDate={new Date(endReq)}
-                                      selectsEnd 
-                                      minDate={new Date(startReq)} 
-                                      dateFormat="dd/MM/yyyy"
-                                      placeholderText="DD/MM/YYYY"
-                                      className="bg-primary text-xs p-2 w-fit relative"
-                                      onKeyDown={(e) => e.preventDefault()}
-
-                                    />
-
-                                
-                                </div>
-
-                                <div>
-                                <label className="block text-sm font-medium">Hours Rendered</label>
-                                <input disabled={wdStatus || event || leave} type="number"
-                                  value={form.hours}
-                                  onChange={(e) => handleChange(index, 'hours', e.target.valueAsNumber)}
-                                placeholder='Hours' id="" className=' bg-primary p-2 rounded-md text-xs' />
-                                
-                                </div>
-
-                                <div>
-                                  <label className="block text-sm font-medium">Status</label>
-                                  <div className="flex space-x-4">
-                                    {statusData.map((option) => (
-                                      <label key={option.id} className="flex items-center">
-                                        <input
-                                          type="checkbox"
-                                          value={option.id}
-                                          checked={form.status.includes(option.id)}
-                                          onChange={() => handleCheckbox(index, option.id)}
-                                          className="mr-2"
-                                        />
-                                        {option.name}
-                                      </label>
-                                    ))}
-                                  </div>
-                                </div>
-
-                                {index !== 0 && (
-                                  <button
-                                  onClick={() => deleteForm(index)}
-                                  className="px-4 py-2 bg-red-500 text-white rounded-md text-[.6rem]"
-                                >
-                                  Delete Form
-                                </button>
                                 )}
+                               
                                 
-                              </div>
-                            </div>
-                            ))}
+        
+                            
+                              </DialogContent>
+        </Dialog>
+    </div>
 
-                            <button
-                              onClick={addForm}
-                              className=" w-fit text-xs px-4 py-2 bg-blue-500 text-white rounded-md mr-2"
-                            >
-                              Add Form
-                            </button>
-
-                            <button
-                              onClick={updateMultipleWorkload}
-                              className=" w-fit text-xs px-4 py-2 bg-green-500 text-white rounded-md"
-                            >
-                              Save All
-                            </button>
-
-                          </TabsContent>
-                        </Tabs>
-                        
-
-                    
-                      </DialogContent>
-              </Dialog>
-            ): (
-              <Dialog open={dialog} onOpenChange={setDialog}>
-                <DialogContent className=' p-8 bg-secondary border-none text-white'>
-                        <DialogHeader>
-                          <DialogTitle>Update workload ({name} <span className=' text-xs text-red-500'>({role})</span> at {formatDate(date)})</DialogTitle>
-                          <DialogDescription>
-                          
-                          </DialogDescription>
-                        </DialogHeader>
-
-                        <p className=' text-lg text-red-500'>Only job manager can update a workload!</p>
-                      
-                </DialogContent>
-              </Dialog>
-            )}
-
-            
-
-        </div>
-        </div>
+      {/* <Individualrequest ref={individualRequestRef} alldates={longestAlldates?.allDates} data={list} /> */}   
 
         {list.length === 0 && (
           <div className=' w-full h-full flex items-center justify-center'>

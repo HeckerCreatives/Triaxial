@@ -278,7 +278,7 @@ export default function Leaveform( prop: Data) {
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="5" id="Long Services Leave" />
-                  <Label htmlFor="Long Services Leave">Long Services Leave</Label>
+                  <Label htmlFor="Long Services Leave">Long Service Leave</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="6" id="Anniversary Day" />
@@ -310,12 +310,12 @@ export default function Leaveform( prop: Data) {
              
             </RadioGroup>
 
-          <Label className=' mt-2 text-zinc-500'>Other Leave:</Label>
+          <Label className=' mt-2 text-zinc-500'>Other Leave Details:</Label>
           <Textarea disabled={watch('type') !== '10'} placeholder='Please input text here' className=' text-xs bg-zinc-200' {...register('details')}/>
 
           <Label className=' mt-4 font-semibold'>Period Of Leave</Label>
           <div className=' flex items-center gap-4'>
-            <div className=''>
+            <div className=' flex items-center'>
               <Label className=' mt-2 text-zinc-500'>First Day Of Leave: <span className=' text-red-500'>*</span></Label>
               {/* <Input type='date' className=' text-xs h-[35px] bg-zinc-200'  placeholder='Name' {...register('startdate',{ onChange: (e) => setStart(e.target.value)})}/> */}
               <DatePicker
@@ -330,7 +330,7 @@ export default function Leaveform( prop: Data) {
               {errors.startdate && <p className=' text-[.6em] text-red-500'>{errors.startdate.message}</p>}
             </div>
 
-            <div className=''>
+            <div className=' flex items-center'>
               <Label className=' mt-2 text-zinc-500'>Last Day Of Leave: <span className=' text-red-500'>*</span></Label>
               {/* <Input type='date' className=' text-xs h-[35px] bg-zinc-200' placeholder='Name' {...register('enddate', { onChange: (e) => setEnd(e.target.value)})}/> */}
               <DatePicker
@@ -386,7 +386,7 @@ export default function Leaveform( prop: Data) {
           <div className=' w-full flex items-start gap-2 mt-4'>
             <div className=' w-full'>
               <Label className=' text-zinc-500'>Total Working Hours on Leave:</Label>
-            < Input type='number' value={hoursonleave.toLocaleString(undefined,{minimumFractionDigits: 2, maximumFractionDigits: 2,})} defaultValue={0} className=' text-xs h-[35px] bg-zinc-200' placeholder='0' {...register('totalhoursonleave',{ valueAsNumber: true})}/>
+            < Input type='number' value={hoursonleave.toLocaleString()} defaultValue={0} className=' text-xs h-[35px] bg-zinc-200' placeholder='0' {...register('totalhoursonleave',{ valueAsNumber: true})}/>
               {errors.totalhoursonleave && <p className=' text-[.6em] text-red-500'>{errors.totalhoursonleave.message}</p>}
 
             </div>

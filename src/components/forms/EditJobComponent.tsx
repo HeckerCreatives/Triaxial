@@ -55,6 +55,11 @@ type Prop = {
     end: string
     component: string
     adminnotes: string
+    budget: number
+    budgettype: string
+    jcname: string
+    clientid: string
+    jobno: string
 }
 
 type Employee = {
@@ -80,6 +85,11 @@ export default function EditJobComponent( prop: Prop) {
   const [projectname, setProjectname] = useState('')
   const [jobmanager, setJobmanager] = useState('')
   const [jobno, setJobno] = useState('')
+  const [budget, setBudget] = useState(0)
+  const [budgettype, setBudgettype] = useState('')
+  const [jcname, setJcname] = useState('')
+  const [clientid, setClientid] = useState('')
+  const [adminnotes, setAdminnotes] = useState('')
 
   const [engr, setEngr] = useState('')
   const [engrrvr, setEngrrvr] = useState('')
@@ -355,7 +365,12 @@ export default function EditJobComponent( prop: Prop) {
         jobcomponentid: prop.id,
         projectid: projectname,
         jobmanagerid: jobmanager, // employeeid
-        members: members
+        members: members,
+        budgettype: '', 
+        budget: '', 
+        adminnotes: '', 
+        jobcomponentname: '', 
+        clientid: ''
       }, {
         withCredentials: true,
         headers: {
@@ -418,7 +433,7 @@ export default function EditJobComponent( prop: Prop) {
   useEffect(() => {
     if (prop) {
       setJobmanager(prop.jobmanager);
-      setProjectname(prop.project);
+      setProjectname(prop.pname);
       setEngr(engrId || '');
       setNotes(engrMember?.notes || '');
       setEngrrvr(engrrvrId || '');
@@ -427,6 +442,13 @@ export default function EditJobComponent( prop: Prop) {
       setNotes3(drftrvrMember?.notes || ''); // Corrected: Use drftrvrMember for Drft. Revr. notes
       setDrfrvr(draftId || ''); // Corrected: Use draftId for Drft. role
       setNotes4(drftMember?.notes || ''); // Corrected: Use drftMember for Drft. notes
+      setJobno(prop.jobno)
+      setBudget(prop.budget)
+      setBudgettype(prop.budgettype)
+      setJcname(prop.jcname)
+      setClientid(prop.clientid)
+      setAdminnotes(prop.adminnotes)
+    
     }
   }, [prop]); // Only `prop` is needed as a dependency
 
@@ -783,6 +805,44 @@ export default function EditJobComponent( prop: Prop) {
                             )}  */}
 
                             
+
+                              <div className=' flex flex-col'>
+                                <label htmlFor="" className=' text-xs'>Job Number<span className=' text-red-500 text-lg'>*</span></label>
+                                <Input type='text' value={jobno} onChange={(e) => setJobno(e.target.value)} className=' text-xs h-[35px] bg-zinc-200' placeholder='Job Number'/>
+                              </div>
+
+                              {/* <div className=' flex items-start gap-4 '>
+                                                                                                              
+                                                                                          
+                                                                                                              <div className=' w-full'>
+                                                                                                                <Label className=' text-zinc-500'>Project Name <span className=' text-red-500 text-lg'>*</span></Label>
+                                                                                                                <Input type='text' value={projectname} onChange={(e) => setProjectname(e.target.value)} className=' text-xs h-[35px] bg-white' placeholder='Project name'/>
+                                                                                          
+                                                                                          
+                                                                                                              </div>
+                                                                                          
+                                                                                                             
+                                                                                                              <div className="w-full">
+                                                                                                                  <Label className="text-zinc-500">
+                                                                                                                    Client Name<span className="text-red-500 text-lg">*</span>
+                                                                                                                  </Label>
+                                                                                                                  <Select value={clientid} onValueChange={setClientid} disabled={!!client}>
+                                                                                                                    <SelectTrigger className="text-xs h-[35px] bg-white">
+                                                                                                                      <SelectValue placeholder="Select Client" className="text-black" />
+                                                                                                                    </SelectTrigger>
+                                                                                                                    <SelectContent className="text-xs">
+                                                                                                                      {clients.map((item) => (
+                                                                                                                        <SelectItem key={item.clientid} value={item.clientid}>
+                                                                                                                          {item.clientname}
+                                                                                                                        </SelectItem>
+                                                                                                                      ))}
+                                                                                                                    </SelectContent>
+                                                                                                                  </Select>
+                                                                                                                </div>
+                              
+                                                                                                                
+                                                                                          
+                              </div> */}
                          
                                <div className=' flex flex-col w-full gap-2 text-xs'>
                                  <label htmlFor="">Project Details</label>
@@ -793,7 +853,9 @@ export default function EditJobComponent( prop: Prop) {
                                                                       
                                       <div className=' w-full'>
                                         <Label className=' text-zinc-500'>Project Name</Label>
-                                        <Select value={projectname} onValueChange={setProjectname}>
+                                        <Input type='text' value={projectname} onChange={(e) => setProjectname(e.target.value)}   className=' text-xs h-[35px] bg-zinc-100' placeholder='Project name'/>
+
+                                        {/* <Select value={projectname} onValueChange={setProjectname}>
                                           <SelectTrigger className="text-xs h-[35px] bg-zinc-100">
                                           <SelectValue placeholder="Select" className="text-black" />
                                           </SelectTrigger>
@@ -804,7 +866,7 @@ export default function EditJobComponent( prop: Prop) {
                                             ))}
                                           
                                           </SelectContent>
-                                        </Select>
+                                        </Select> */}
                                                                                                                                                                                                                                       
                                       </div>
                                                                                                                                           
@@ -819,7 +881,7 @@ export default function EditJobComponent( prop: Prop) {
                                                                                                                                           
                                     </div>
                                                                                                                                           
-                                    <div className=' flex items-start gap-4 '>
+                                    {/* <div className=' flex items-start gap-4 '>
                                                                                                                                                               
                                                                                                                                           
                                       <div className=' w-full'>
@@ -836,15 +898,43 @@ export default function EditJobComponent( prop: Prop) {
                                                                                                                                           
                                         </div>
                                                                                                                                           
-                                    </div>
+                                    </div> */}
 
                                   <div>
 
-                                  <Label className=' text-zinc-500'>Job Component</Label>
-                                  <Input type='text' value={prop.component}  className=' text-xs h-[35px] bg-zinc-100 mb-2' placeholder='Project name'/>
+                                  <Label className=' text-zinc-500'>Job Component Name</Label>
+                                  <Input type='text' value={jcname} onChange={(e) => setJcname(e.target.value)}  className=' text-xs h-[35px] bg-zinc-100' placeholder='Project name'/>
+
+                               
+                                 <Label className="mt-2 text-zinc-500">
+                                                            Budget Type<span className="text-lg text-red-500">*</span>
+                                                          </Label>
+                                                          <Select
+                                                             value={budgettype}
+                                                             onValueChange={setBudgettype}
+                                                          >
+                                                            <SelectTrigger className="text-xs h-[35px] bg-zinc-100 mb-2 ">
+                                                              <SelectValue placeholder="Type" className="text-black" />
+                                                            </SelectTrigger>
+                                                            <SelectContent className="text-xs">
+                                                              <SelectItem value="rates">Rates</SelectItem>
+                                                              <SelectItem value="lumpsum">Lump sum</SelectItem>
+                                                            </SelectContent>
+                                                          </Select>
+                                
+                                                          <Label className="mt-2 text-zinc-500">Job Component Budget $</Label>
+                                                          <Input
+                                                            type="number"
+                                                            className="text-xs h-[35px] bg-zinc-100 mb-2"
+                                                            placeholder="0"
+                                                            value={budget}
+                                                            onChange={(e) => setBudget(e.target.valueAsNumber)}
+                                                            // disabled={budgettype === "rates"}
+                                                          />
+
 
                                   <Label className=' text-zinc-500'>Admin Notes</Label>
-                                  <Textarea value={prop.adminnotes}  className=' text-xs h-[35px] bg-zinc-100' placeholder='Project name'/>
+                                  <Textarea value={adminnotes} onChange={(e) => setAdminnotes(e.target.value)}  className=' text-xs h-[35px] bg-zinc-100' placeholder='Please input here'/>
 
                                   </div>
 
@@ -865,6 +955,8 @@ export default function EditJobComponent( prop: Prop) {
                                 
 
                               </div>
+
+                              
 
                               <div className=' flex flex-col w-full gap-2 text-xs'>
 

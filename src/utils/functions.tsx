@@ -73,8 +73,12 @@ export const formatDMY = (date: string) => {
 
 
 export const formatAustralianDate = (date: string) => {
-  const dates = new Date(date); // Convert the string to a Date object
-  return dates.toLocaleDateString('en-AU', { day: '2-digit', month: '2-digit', year: '2-digit' });
+  const dates = new Date(date); // Convert string to Date object
+  const day = dates.getUTCDate().toString().padStart(2, '0');
+  const month = (dates.getUTCMonth() + 1).toString().padStart(2, '0'); // Months are 0-based
+  const year = dates.getUTCFullYear().toString().slice(-2); // Get last 2 digits of the year
+
+  return `${day}/${month}/${year}`;
 };
 
 export const formatMonthYear = (date: string) => {

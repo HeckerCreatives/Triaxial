@@ -245,9 +245,9 @@ export default function Createprojectcomponent( prop: Data) {
         })
   
         const response = await toast.promise(request, {
-          loading: 'Duplicating job component....',
-          success: `Successfully duplicated`,
-          error: 'Error while duplicating job component',
+          loading: 'Creating job component....',
+          success: `Successfully created`,
+          error: 'Error while creating job component',
       });
 
       if(response.data.message === 'success'){
@@ -518,30 +518,43 @@ export default function Createprojectcomponent( prop: Data) {
                                                                                 </div>
                                                             
                                                                                
-                                                                                  <div className=' w-full'>
-                                                                                    <Label className=' text-zinc-500'>Client Name<span className=' text-red-500 text-lg'>*</span></Label>
-                                                                                    <Select value={clientid} onValueChange={setClientid}>
-                                                                                    <SelectTrigger className=" text-xs h-[35px] bg-white">
-                                                                                      <SelectValue placeholder="Select Client" className=' text-black'  />
-                                                                                    </SelectTrigger>
-                                                                                    <SelectContent className=' text-xs'>
-                                                                                      {clients.map((item, index) => (
-                                                                                      <SelectItem key={item.clientid} value={item.clientid}>{item.clientname}</SelectItem>
-                                                            
-                                                                                      ))}
-                                                                                    </SelectContent>
-                                                                                  </Select>
-                                                            
+                                                                                <div className="w-full">
+                                                                                    <Label className="text-zinc-500">
+                                                                                      Client Name<span className="text-red-500 text-lg">*</span>
+                                                                                    </Label>
+                                                                                    <Select value={clientid} onValueChange={setClientid} disabled={!!client}>
+                                                                                      <SelectTrigger className="text-xs h-[35px] bg-white">
+                                                                                        <SelectValue placeholder="Select Client" className="text-black" />
+                                                                                      </SelectTrigger>
+                                                                                      <SelectContent className="text-xs">
+                                                                                        {clients.map((item) => (
+                                                                                          <SelectItem key={item.clientid} value={item.clientid}>
+                                                                                            {item.clientname}
+                                                                                          </SelectItem>
+                                                                                        ))}
+                                                                                      </SelectContent>
+                                                                                    </Select>
                                                                                   </div>
+
+                                                                                  
                                                             
                                                                               </div>
                                                             
                                                                              
-                                                                              <div className=' w-full'>
-                                                                                  <Label className=' text-zinc-500'>If other, please input the client name.</Label>
-                                                                                  <Input type='text' value={client} onChange={(e) => setClient(e.target.value)} className=' text-xs h-[35px] bg-white' placeholder='Client name' />
-                                                            
-                                                                                </div>
+                                                                              <div className="w-full">
+                                                                                    <Label className="text-zinc-500">
+                                                                                      If other, please input the client name.
+                                                                                    </Label>
+                                                                                    <Input
+                                                                                      type="text"
+                                                                                      value={client}
+                                                                                      onChange={(e) => setClient(e.target.value)}
+                                                                                      className="text-xs h-[35px] bg-white"
+                                                                                      placeholder="Client name"
+                                                                                      disabled={!!clientid} // Disable if a client is selected
+                                                                                    />
+                                                                                  </div>
+
                                                             
                                                                               
           
@@ -571,14 +584,14 @@ export default function Createprojectcomponent( prop: Data) {
                             onChange={(e) => handleChange(index, 'jobcomponent', e.target.value)}
                         />
 
-                        <Label className="mt-2 text-zinc-500">Description</Label>
+                        {/* <Label className="mt-2 text-zinc-500">Description</Label>
                         <Textarea
                           
                             className="text-xs h-[35px] bg-white"
                             placeholder="Description"
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
-                        />
+                        /> */}
 
                       <Label className="mt-2 text-zinc-500">Admin Notes</Label>
                         <Textarea
@@ -606,27 +619,31 @@ export default function Createprojectcomponent( prop: Data) {
 
 
                         {/* <Label className="font-semibold mt-4">Job Component Budget</Label> */}
-                        <Label className="mt-2 text-zinc-500">Budget Type<span className=' text-lg text-red-500'>*</span></Label>
-                        <Select
+                        <Label className="mt-2 text-zinc-500">
+                            Budget Type<span className="text-lg text-red-500">*</span>
+                          </Label>
+                          <Select
                             value={item.budgettype}
-                            onValueChange={(value) => handleChange(index, 'budgettype', value)}
-                        >
+                            onValueChange={(value) => handleChange(index, "budgettype", value)}
+                          >
                             <SelectTrigger className="text-xs h-[35px] bg-white mt-2">
-                            <SelectValue placeholder="Type" className="text-black" />
+                              <SelectValue placeholder="Type" className="text-black" />
                             </SelectTrigger>
                             <SelectContent className="text-xs">
-                            <SelectItem value="rates">Rates</SelectItem>
-                            <SelectItem value="lumpsum">Lump sum</SelectItem>
+                              <SelectItem value="rates">Rates</SelectItem>
+                              <SelectItem value="lumpsum">Lump sum</SelectItem>
                             </SelectContent>
-                        </Select>
-                        <Label className="mt-2 text-zinc-500">Job Component Budget $</Label>
-                        <Input
+                          </Select>
+
+                          <Label className="mt-2 text-zinc-500">Job Component Budget $</Label>
+                          <Input
                             type="number"
                             className="text-xs h-[35px] bg-white"
                             placeholder="0"
                             value={item.estimatedbudget}
-                            onChange={(e) => handleChange(index, 'estimatedbudget', e.target.value)}
-                        />
+                            onChange={(e) => handleChange(index, "estimatedbudget", e.target.value)}
+                            disabled={item.budgettype === "rates"} // ✅ Disable when 'rates' is selected
+                          />
 
                         <Label className="font-semibold mt-4">Members</Label>
                         <Label className="font-semibold mt-4">Engineer</Label>

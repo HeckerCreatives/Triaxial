@@ -9,13 +9,13 @@ export default function Dashboardlegends() {
       <div className=' w-full flex flex-col gap-0'>
         <div className=' flex items-center gap-2'>
           <div className=' h-2 aspect-square bg-green-500'></div>
-          <p className=' text-[.6rem] text-zinc-400'>0 - 7.00 Hours</p>
+          <p className=' text-[.6rem] text-zinc-400'>0 - 5 Hours</p>
 
 
         </div>
          <div className=' flex items-center gap-2'>
           <div className=' h-2 aspect-square bg-orange-500'></div>
-          <p className=' text-[.6rem] text-zinc-400'>7.01 - 9.00 Hours</p>
+          <p className=' text-[.6rem] text-zinc-400'>5 - 9 Hours</p>
 
 
         </div>
@@ -50,7 +50,7 @@ export default function Dashboardlegends() {
 
         <div className=' flex items-center gap-2'>
           <div className=' h-2 aspect-square bg-gray-400'></div>
-          <p className=' text-[.6rem] text-zinc-400'>Holiday</p>
+          <p className=' text-[.6rem] text-zinc-400'>Public Holiday</p>
 
 
         </div>

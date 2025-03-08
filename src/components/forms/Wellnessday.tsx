@@ -21,6 +21,8 @@ import { boolean } from 'zod'
 import axios, { AxiosError } from 'axios'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
+import DatePicker from 'react-datepicker'
+import { format } from "date-fns";
 
 
 interface Data {
@@ -146,6 +148,7 @@ export default function WDform( prop: Data) {
 
 
 
+
   
   return (
     <Dialog open={dialog} onOpenChange={setDialog}>
@@ -164,30 +167,44 @@ export default function WDform( prop: Data) {
 
           <Label className=' mt-4 font-semibold'>Period Wellness Day Cycle</Label>
           <div className=' flex items-center gap-2 w-full'>
-            <div  className=' w-full'>
-              <Label className=' mt-2 text-zinc-500'>Start Day Of Wellness Day Cycle: <span className=' text-red-700'>*</span></Label>
+            <div  className=' w-full flex flex-col gap-1'>
+              <Label className=' mt-2 text-zinc-500'>Start Day Of Wellness Day Cycle:</Label>
               <Controller
-                  name="startdate"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      {...field}
-                      disabled
-                      type="date"
-                      className="text-xs h-[35px] bg-zinc-200"
-                      placeholder="Name"
-                      value={friday ? friday.split('T')[0] : ''} // Ensure value is a valid string
-                    />
-                  )}
-                />
-              {errors.startdate && <p className=' text-[.6em] text-red-500'>{errors.startdate.message}</p>}
+                name="startdate"
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <DatePicker
+                    selected={value && !isNaN(Date.parse(value)) ? new Date(value) : null} // Ensure valid date
+                    onChange={(date) => {
+                      if (date) {
+                        onChange(format(date, "yyyy-MM-dd")); // Store in YYYY-MM-DD format
+                      }
+                    }}
+                    dateFormat="dd/MM/yyyy"
+                    placeholderText="DD/MM/YYYY"
+                    className="w-full rounded-sm text-xs h-9 px-3 bg-zinc-100 z-[9999] relative"
+                    onKeyDown={(e) => e.preventDefault()}
+                    filterDate={(date) => date.getDay() === 1} // Allow only Mondays
+                  />
+                )}
+              />
+
+              {errors.startdate && (
+                <p className="text-[.6em] text-red-500">{errors.startdate.message}</p>
+              )}
 
 
             </div>
 
             <div  className=' w-full'>
               <Label className=' mt-2 text-zinc-500'>This is your Wellness Day. <span className=' text-red-700'>*</span></Label>
-              <Input disabled type='date' value={friday.split('T')[0]} className=' text-xs h-[35px] bg-zinc-200'/>
+              <Input 
+                disabled 
+                type="text" 
+                value={new Date(friday).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' })} 
+                className="text-xs h-[35px] bg-zinc-200"
+              />
+
 
 
             </div>
@@ -220,7 +237,7 @@ export default function WDform( prop: Data) {
           <div className=' flex flex-col gap-2 mt-6'>
             <p className=' text-xs font-semibold italic flex items-center gap-1'><Bell size={15} color='red'/>Reminder</p>
             <p className=' text-xs text-zinc-500'>• Wellness Day's won't occur on fortnights with public holidays. Normal 7.6hr days will apply during those fortnights.</p>
-            <p className=' text-xs text-zinc-500'>• For staff who are working towards a Wellness Day, any leave (sick or other) fornightly cycle will be deducted in 8.5hr days (not 7.6hr days).</p>
+            <p className=' text-xs text-zinc-500'>• For staff who are working towards a Wellness Day, any leave (sick or other) fortnightly cycle will be deducted in 8.5hr days (not 7.6hr days).</p>
             <p className=' text-xs text-zinc-500'>• Unless approved, a minimum of 8 hours must be spent on billable project work each day to qualify for the
 Wellness Day.</p>
 

@@ -139,8 +139,7 @@ export const createTeam = z.object({
     teamname: z
     .string()
     .nonempty("Please enter a team name")
-    .max(25, "Team Name cannot exceed 25 characters")
-    .regex(/^[A-Za-z0-9\s]+$/, "Team Name can only contain letters and numbers"),
+    .max(25, "Team Name cannot exceed 25 characters"),
     directorpartner: z.string().nonempty('Please enter a director partner'),
     associate: z.string(),
     manager: z.string().nonempty('Please enter a manager'),
