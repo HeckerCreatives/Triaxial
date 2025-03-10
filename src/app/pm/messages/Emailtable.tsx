@@ -28,6 +28,7 @@ import Spinner from '@/components/common/Spinner'
 import refreshStore from '@/zustand/refresh'
 import { usePathname, useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
+import { DDMMYYHMS } from '@/utils/functions'
 
 type Message = {
   _id: string
@@ -285,6 +286,7 @@ export default function Emailtable() {
             <TableHead>Sender</TableHead>
             <TableHead>Title</TableHead>
             <TableHead>Message</TableHead>
+            <TableHead>Date | Time</TableHead>
             </TableRow>
         </TableHeader>
         <TableBody>
@@ -298,9 +300,11 @@ export default function Emailtable() {
               </TableCell>
               <TableCell>{item.title}</TableCell>
               <TableCell className=' w-[700px] flex'>
-                <p className=' line-clamp-3'>{item.content.slice(0,150)}...
+                <p className=' line-clamp-3'>{item.content?.slice(0,150)}...
                 </p>
               </TableCell>
+              <TableCell>{DDMMYYHMS(item.createdAt)}</TableCell>
+
 
             <Dialog open={message} >
             <DialogTrigger className=' w-full'>
@@ -313,7 +317,7 @@ export default function Emailtable() {
                   </DialogDescription>
                 </DialogHeader>
 
-                <div className=' flex flex-col gap-4 w-full'>
+                <div className=' flex flex-col gap-4 w-full font-centurygothic'>
                   <p className=' text-lg font-semibold'>{title}</p>
                   <div className=' flex items-center gap-2'>
                     <div className=' flex items-center justify-center w-8 h-8 rounded-full bg-primary'>

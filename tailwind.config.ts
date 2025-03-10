@@ -18,6 +18,9 @@ const config = {
       },
     },
     extend: {
+      fontFamily: {
+        centurygothic: ['CenturyGothic', 'sans-serif'], // Add custom font here
+      },
       backgroundColor:{
         primary: '#343A40',
         secondary: '#262C32',

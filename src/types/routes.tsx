@@ -7,7 +7,7 @@ export const hr = [
     {name: 'Events', path: '/hr/events', icon: <CalendarCheck2 className="h-4 w-4" />, subpath: []},
     {name: 'Wellness day', path: '/hr/wellnessday', icon: <PlusSquare className="h-4 w-4" />, subpath: []},
     {name: 'Request', path: '/hr/request', icon: <ArrowRightLeft className="h-4 w-4" />,subpath: []},
-    {name: 'Messages', path: '/hr/messages', icon: <Mail className="h-4 w-4" />, subpath: []},
+    {name: 'My Messages', path: '/hr/messages', icon: <Mail className="h-4 w-4" />, subpath: []},
     {name: 'Settings', path: '/hr/settings', icon: <Cog className="h-4 w-4"  />, subpath: []},
 
 ]
@@ -20,23 +20,32 @@ export const pm = [
     {name: 'Finance', path: '/pm/invoiceprojection/list', icon: <Files className="h-4 w-4" />, subpath: []},
     {name: 'Summaries', path: '/pm/summaries', icon: <File className="h-4 w-4" />, subpath: [
         {name: 'Projects', path: '/pm/summaries', subpath: [
-            {name: 'Job Master', path: '/pm/summaries/jobmaster',subpath: []},
-            {name: 'Due Dates', path: '/pm/summaries/duedates',subpath: []},
+            {name: 'Master Job List', path: '/pm/summaries/jobmaster',subpath: []},
+            {name: 'Master Leave List', path: '/pm/summaries/individualrequest'},
+
+            // {name: 'Due Dates', path: '/pm/summaries/duedates',subpath: []},
+            // {name: 'Master Leave List', path: '/pm/summaries/individualrequest',subpath: []},
         ]},
-        {name: 'Requests', path: '/pm/summaries', subpath: [
-            {name: 'Individual Requests', path: '/pm/summaries/individualrequest'},
-            {name: 'Leave List', path: '/pm/summaries/leave',subpath: []},
-            {name: 'WFH List', path: '/pm/summaries/wfh',subpath: []},
-            {name: 'WD List', path: '/pm/summaries/wellnessday',subpath: []},
-        ]},
-         {name: 'Finance WIP List', path: '/pm/noaccess', subpath: [
-            //  {name: 'Invoice Requests', path: '/pm/noaccess', icon: <ListChecks className="h-4 w-4" />, subpath: []},
-             {name: 'Per Team', path: '/pm/summaries/team',subpath: []},
-             {name: 'Per Client', path: '/pm/summaries/client',subpath: []},
-         ]}
+        // {name: 'Requests', path: '/pm/summaries', subpath: [
+        //     {name: 'Master Leave List', path: '/pm/summaries/individualrequest'},
+        //     {name: 'Leave List', path: '/pm/summaries/leave',subpath: []},
+        //     {name: 'WFH List', path: '/pm/summaries/wfh',subpath: []},
+        //     {name: 'WD List', path: '/pm/summaries/wellnessday',subpath: []},
+        // ]},
+        //  {name: 'Finance WIP List', path: '/pm/noaccess', subpath: [
+        //     //  {name: 'Per Team', path: '/pm/summaries/team',subpath: []},
+        //      {name: 'Per Client', path: '/pm/summaries/client',subpath: []},
+        //  ]}
     ]},
-    {name: 'Your Requests', path: '/pm/request', icon: <ArrowRightLeft className="h-4 w-4" />, subpath: []},
-    {name: 'Messages', path: '/pm/messages', icon: <Mail className="h-4 w-4" />, subpath: []},
+
+    {name: 'Approvals', path: '/pm/approvals', icon: <Files className="h-4 w-4" />, subpath: [
+        {name: 'Leave Requests', path: '/pm/summaries/leave',subpath: []},
+        {name: 'WFH Requests', path: '/pm/summaries/wfh',subpath: []},
+        {name: 'WD Requests', path: '/pm/summaries/wellnessday',subpath: []},
+        // {name: 'Invoice Requests', path: '/pm/summaries/leave',subpath: []},
+    ]},
+    {name: 'My Requests', path: '/pm/request', icon: <ArrowRightLeft className="h-4 w-4" />, subpath: []},
+    {name: 'My Messages', path: '/pm/messages', icon: <Mail className="h-4 w-4" />, subpath: []},
     {name: 'Settings', path: '/pm/settings', icon: <Cog className="h-4 w-4"  />, subpath: []},
 
 ]
@@ -46,25 +55,31 @@ export const employee = [
     {name: 'My Workload', path: '/employee/yourworkload', icon: <List className="h-4 w-4" />, subpath: []},
     // {name: 'Scheduling', path: '/employee/scheduling', icon: <Box className="h-4 w-4" />, subpath: []},
     {name: 'My Requests', path: '/employee/request', icon: <ArrowRightLeft className="h-4 w-4" />,subpath: []},
-    {name: 'Messages', path: '/employee/messages', icon: <Mail className="h-4 w-4" />, subpath: []},
+    {name: 'My Messages', path: '/employee/messages', icon: <Mail className="h-4 w-4" />, subpath: []},
     {name: 'Settings', path: '/employee/settings', icon: <Cog className="h-4 w-4"  />, subpath: []},
 ]
 
 
 export const finance = [
     {name: 'Dashboard', path: '/finance/dashboard', icon: <Home className="h-4 w-4" />, subpath: []},
-    // {name: 'Scheduling', path: '/finance/scheduling', icon: <Box className="h-4 w-4" />, subpath: []},
+    {name: 'Scheduling', path: '/finance/scheduling', icon: <Box className="h-4 w-4" />, subpath: []},
     {name: 'Finance', path: '/finance/projectinvoice/list', icon: <File className="h-4 w-4" />, subpath: []},
-    {name: 'Summaries', path: '/finance/summaries', icon: <File className="h-4 w-4" />, subpath: [
-        {name: 'Finance WIP List', path: '/finance/summaries', subpath: [
-            {name: 'Invoice Requests', path: '/finance/invoice', subpath: []},
-            {name: 'Per Team', path: '/finance/summaries/team',subpath: []},
-            {name: 'Per Client', path: '/finance/summaries/client',subpath: []},
-
-        ]}
+    {name: 'Approvals', path: '/pm/approvals', icon: <Files className="h-4 w-4" />, subpath: [
+        // {name: 'Leave Requests', path: '/pm/summaries/leave',subpath: []},
+        // {name: 'WFH Requests', path: '/pm/summaries/wfh',subpath: []},
+        // {name: 'WD Requests', path: '/pm/summaries/wellnessday',subpath: []},
+        {name: 'Invoice Requests', path: '/finance/invoice',subpath: []},
     ]},
-    {name: 'Request', path: '/finance/request', icon: <ArrowRightLeft className="h-4 w-4" />,subpath: []},
-    {name: 'Messages', path: '/finance/messages', icon: <Mail className="h-4 w-4" />, subpath: []},
+    // {name: 'Summaries', path: '/finance/summaries', icon: <File className="h-4 w-4" />, subpath: [
+    //     {name: 'Finance WIP List', path: '/finance/summaries', subpath: [
+    //         {name: 'Invoice Requests', path: '/finance/invoice', subpath: []},
+    //         {name: 'Per Team', path: '/finance/summaries/team',subpath: []},
+    //         {name: 'Per Client', path: '/finance/summaries/client',subpath: []},
+
+    //     ]}
+    // ]},
+    {name: 'My Request', path: '/finance/request', icon: <ArrowRightLeft className="h-4 w-4" />,subpath: []},
+    {name: 'My Messages', path: '/finance/messages', icon: <Mail className="h-4 w-4" />, subpath: []},
     {name: 'Settings', path: '/finance/settings', icon: <Cog className="h-4 w-4"  />, subpath: []},
 
 ]
@@ -92,21 +107,29 @@ export const superadmin = [
     {name: 'Summaries', path: '/superadmin/summaries', icon: <File className="h-4 w-4" />, subpath: [
 
         {name: 'Projects', path: '/superadmin/noaccess', subpath: [
-            {name: 'Job Master', path: '/superadmin/summaries/jobmaster',subpath: []},
-            {name: 'Due Dates', path: '/superadmin/summaries/duedates',subpath: []},
-        ]},
-        {name: 'Requests', path: '/superadmin/summaries', subpath: [
-            {name: 'Individual Requests', path: '/superadmin/summaries/individualrequest'},
-            {name: 'Leave List', path: '/superadmin/summaries/leave',subpath: []},
-            {name: 'WFH List', path: '/superadmin/summaries/wfh',subpath: []},
-            {name: 'WD List', path: '/superadmin/summaries/wellnessday',subpath: []},
-        ]},
-        {name: 'Finance WIP List', path: '/finance/summaries', subpath: [
-            {name: 'Invoice Requests', path: '/superadmin/invoice', subpath: []},
-            {name: 'Per Team', path: '/superadmin/summaries/team',subpath: []},
-            {name: 'Per Client', path: '/superadmin/summaries/client',subpath: []},
+            {name: 'Master Job List', path: '/superadmin/summaries/jobmaster',subpath: []},
+            {name: 'Master Leave List', path: '/superadmin/summaries/individualrequest'},
 
-        ]}
+            // {name: 'Due Dates', path: '/superadmin/summaries/duedates',subpath: []},
+        ]},
+        // {name: 'Requests', path: '/superadmin/summaries', subpath: [
+        //     {name: 'Individual Requests', path: '/superadmin/summaries/individualrequest'},
+        //     {name: 'Leave List', path: '/superadmin/summaries/leave',subpath: []},
+        //     {name: 'WFH List', path: '/superadmin/summaries/wfh',subpath: []},
+        //     {name: 'WD List', path: '/superadmin/summaries/wellnessday',subpath: []},
+        // ]},
+        // {name: 'Finance WIP List', path: '/finance/summaries', subpath: [
+        //     {name: 'Invoice Requests', path: '/superadmin/invoice', subpath: []},
+        //     {name: 'Per Team', path: '/superadmin/summaries/team',subpath: []},
+        //     {name: 'Per Client', path: '/superadmin/summaries/client',subpath: []},
+
+        // ]}
+    ]},
+    {name: 'Approvals', path: '/pm/approvals', icon: <Files className="h-4 w-4" />, subpath: [
+        {name: 'Leave Requests', path: '/superadmin/summaries/leave',subpath: []},
+        {name: 'WFH Requests', path: '/superadmin/summaries/wfh',subpath: []},
+        {name: 'WD Requests', path: '/superadmin/summaries/wellnessday',subpath: []},
+        {name: 'Invoice Requests', path: '/superadmin/invoice',subpath: []},
     ]},
     // {name: 'Employee Requests', path: '/superadmin/request', icon: <ArrowRightLeft className="h-4 w-4" />, subpath: [
     //     {name: 'Wellness Day', path: '/superadmin/request/wellnessday', subpath: []},
@@ -124,7 +147,7 @@ export const superadmin = [
     {name: 'Events', path: '/superadmin/events', icon: <CalendarCheck2 className="h-4 w-4" />, subpath: []},
     {name: 'Wellness day', path: '/superadmin/wellnessday', icon: <PlusSquare className="h-4 w-4" />, subpath: []},
     // {name: 'My Request', path: '/superadmin/myrequest', icon: <User className="h-4 w-4" />, subpath: []},
-    {name: 'Messages', path: '/superadmin/messages', icon: <Mail className="h-4 w-4" />, subpath: []},
+    {name: 'My Messages', path: '/superadmin/messages', icon: <Mail className="h-4 w-4" />, subpath: []},
     {name: 'Settings', path: '/superadmin/settings', icon: <Cog className="h-4 w-4"  />, subpath: []},
     {name: 'Archived', path: '/superadmin/archived', icon: <Folder className="h-4 w-4" />, subpath: [
         {name: 'Scheduling', path: '/superadmin/archived/scheduling', subpath: []},

@@ -31,7 +31,7 @@ import PaginitionComponent from '@/components/common/Pagination'
 import Leaves from './Leaves'
 import Wfh from './Wfh'
 import { Wellnessday } from '@/types/types'
-import { formatDate } from '@/utils/functions'
+import { DDMMYY, DDMMYYHMS, formatDate } from '@/utils/functions'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -112,9 +112,6 @@ export default function Requesttable() {
 
    }
 
-
- 
-     
   } catch (error) {
 
        if (axios.isAxiosError(error)) {
@@ -182,22 +179,24 @@ export default function Requesttable() {
           <Table className=' mt-4'>
             <TableHeader>
                 <TableRow>
-                <TableHead className="">Requested at</TableHead>
+                <TableHead className="">Manager</TableHead>
+                <TableHead className="">WD Request Timestamp</TableHead>
                 <TableHead>Type</TableHead>
                 <TableHead>Wellness Day</TableHead>
                 <TableHead className="">First Day of Wellness Day Cycle</TableHead>
-                <TableHead className="">Action</TableHead>
+                {/* <TableHead className="">Action</TableHead> */}
                 </TableRow>
             </TableHeader>
             <TableBody>
               {list.map((item, index) => (
                 <TableRow key={index}>
-                <TableCell className="">{new Date(item.createdAt).toLocaleString()}</TableCell>
+                <TableCell className="">{item.manager}</TableCell>
+                <TableCell className="">{DDMMYYHMS(item.createdAt)}</TableCell>
                 <TableCell>Wellness Day</TableCell>
                 <TableCell>{formatDate(item.requestdate)}</TableCell>
-                <TableCell className="">{formatDate(item.firstdayofwellnessdaycycle)}</TableCell>
-                <TableCell className=" flex items-center gap-2">
-                  <Editwdrequest start={formatDate(item.requestdate)} id={item.requestid}>
+                <TableCell className="">{DDMMYY(item.firstdayofwellnessdaycycle)}</TableCell>
+                {/* <TableCell className=" flex items-center gap-2">
+                  <Editwdrequest start={DDMMYY(item.requestdate)} id={item.requestid}>
                     <button className=' p-2 bg-red-600 rounded-md text-white'><Pen size={15}/></button>
                   </Editwdrequest>
                 <AlertDialog>
@@ -215,7 +214,7 @@ export default function Requesttable() {
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
-                </TableCell>
+                </TableCell> */}
                 
                 </TableRow>
               ))}

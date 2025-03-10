@@ -42,6 +42,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { DDMMYYHMS } from '@/utils/functions'
 
 
 type Leave = {
@@ -58,6 +59,8 @@ type Leave = {
   workinghoursonleave: number
   workinghoursduringleave: number
   details: string
+  approvaltimestamp: string
+  requesttimestamp: string
   
 }
 
@@ -146,7 +149,7 @@ export default function Sickleavetable() {
         setLoading(true);
         try {
           const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_URL}/leave/managerleaverequestlist?page=${currentpage}&limit=10&status=${status}&employeenamefilter=${searchName}`,
+            `${process.env.NEXT_PUBLIC_API_URL}/leave/managerleaverequestlist?page=${currentpage}&limit=9999999&status=${status}&employeenamefilter=${searchName}`,
             {
               withCredentials: true,
               headers: {
@@ -213,8 +216,8 @@ export default function Sickleavetable() {
           </div>
 
             <div className=' flex flex-col gap-1'>
-                <label htmlFor="" className=' text-xs'>Search</label>
-                <Input value={searchName} placeholder='Search client name (clear the input to reset)' onChange={(e) => setSearchName(e.target.value)} type='text' className=' w-[300px] bg-primary text-zinc-100 text-xs h-[35px]'/>
+                {/* <label htmlFor="" className=' text-xs'>Search</label> */}
+                <Input value={searchName} placeholder='Search staff name' onChange={(e) => setSearchName(e.target.value)} type='text' className=' w-[200px] bg-white text-black text-xs h-[35px]'/>
                
             </div>
             
@@ -243,19 +246,26 @@ export default function Sickleavetable() {
             </TableCaption>
           )}
         <TableHeader>
-            <TableRow>
+            <TableRow className=''>
             {/* <TableHead className=' text-xs' >Approved Timestamp</TableHead> */}
-            <TableHead className=' text-xs'>Manager</TableHead>
-            <TableHead className=' text-xs'>Status</TableHead>
-            <TableHead className=' text-xs'>Name</TableHead>
-            <TableHead className=' text-xs'>Leave Type</TableHead>
-            <TableHead className=' text-xs'>First day of Leave</TableHead>
-            <TableHead className=' text-xs'>Last day of Leave</TableHead>
-            <TableHead className=' text-xs'>Total Number of Working Days</TableHead>
-            <TableHead className=' text-xs'>Total Public Holidays</TableHead>
-            <TableHead className=' text-xs'>In a Wellness Day Cycle?</TableHead>
-            <TableHead className=' text-xs'>Total Working Hours on Leave</TableHead>
-            <TableHead className=' text-xs'>Total Worked Hours during Leave</TableHead>
+            {status !== 'Pending' && (
+            <TableHead className=' text-[.6rem]'>Approval Timestamp</TableHead>
+
+            ) }
+            <TableHead className=' text-[.6rem]'>Manager</TableHead>
+            <TableHead className=' text-[.6rem]'>Status</TableHead>
+            <TableHead className=' text-[.6rem]'>Leave Request Timestamp</TableHead>
+            <TableHead className=' text-[.6rem]'>Name</TableHead>
+            <TableHead className=' text-[.6rem]'>Leave Type</TableHead>
+            <TableHead className=' text-[.6rem]'>Comments</TableHead>
+            <TableHead className=' text-[.6rem]'>First day of Leave</TableHead>
+            <TableHead className=' text-[.6rem]'>Last day of Leave</TableHead>
+            <TableHead className=' text-[.6rem]'>Total Number of Working Days</TableHead>
+            <TableHead className=' text-[.6rem]'>Total Public Holidays</TableHead>
+            <TableHead className=' text-[.6rem]'>In a Wellness Day Cycle?</TableHead>
+            <TableHead className=' text-[.6rem]'>Total Working Hours on Leave</TableHead>
+            <TableHead className=' text-[.6rem]'>Total Worked Hours during Leave</TableHead>
+            <TableHead className=' text-[.6rem]'>Total Hours for Payroll</TableHead>
             {/* <TableHead className=' text-xs'>Total Hours for Payroll</TableHead> */}
             {status === 'Pending' && (
               <TableHead className=' text-xs'>Action</TableHead>
@@ -265,23 +275,30 @@ export default function Sickleavetable() {
         <TableBody>
           {leave.map((item, index) => (
              <TableRow key={index}>
-             <TableCell className="">{item.manager}</TableCell>
-             <TableCell className={` ${statusColor(item.status)} text-xs`}>{item.status}</TableCell>
-             <TableCell>{item.name}</TableCell>
-             <TableCell>{findType(item.type)}</TableCell>
-             <TableCell>{new Date(item.leavestart).toLocaleString()}</TableCell>
-             <TableCell>{new Date(item.leaveend).toLocaleString()}</TableCell>
-             <TableCell>{item.totalworkingdays}</TableCell>
-             <TableCell>{item.totalpublicholidays}</TableCell>
-             <TableCell>{item.wellnessdaycycle === true ? 'Yes' : 'No'}</TableCell>
-             <TableCell>{item?.workinghoursonleave ? item.workinghoursonleave.toFixed(2) : '0'}</TableCell>
-             <TableCell>{item.workinghoursduringleave}</TableCell>
+               {status !== 'Pending' && (
+              <TableCell className=" text-[.6rem]">{DDMMYYHMS(item.approvaltimestamp)}</TableCell>
+              )}
+             <TableCell className=" text-[.6rem]">{item.manager}</TableCell>
+             <TableCell className={` ${statusColor(item.status)} text-[.6rem]`}>{item.status}</TableCell>
+             <TableCell className={`text-[.6rem]`}>{DDMMYYHMS(item.requesttimestamp)}</TableCell>
+             <TableCell className=' text-[.6rem]'>{item.name}</TableCell>
+             <TableCell className=' text-[.6rem]'>{findType(item.type)}</TableCell>
+             <TableCell className=' text-[.6rem]'>{findType(item.type)}</TableCell>
+             <TableCell className=' text-[.6rem]'>{DDMMYYHMS(item.leavestart)}</TableCell>
+             <TableCell className=' text-[.6rem]'>{DDMMYYHMS(item.leaveend)}</TableCell>
+             <TableCell className=' text-[.6rem]'>{item.totalworkingdays}</TableCell>
+             <TableCell className=' text-[.6rem]'>{item.totalpublicholidays}</TableCell>
+             <TableCell className=' text-[.6rem]'>{item.wellnessdaycycle === true ? 'Yes' : 'No'}</TableCell>
+             <TableCell className=' text-[.6rem]'>{item?.workinghoursonleave ? item.workinghoursonleave.toFixed(2) : '0'}</TableCell>
+             <TableCell className=' text-[.6rem]'>{item.workinghoursduringleave}</TableCell>
+             <TableCell className=' text-[.6rem]'>{item?.workinghoursonleave ? item.workinghoursonleave.toFixed(2) : '0'}</TableCell>
+
 
              {status === 'Pending' && (
               <TableCell className="">
               <Leaveformadmin onClick={() => undefined} requestid={`${item.requestid}`} manager={`${item.manager}`} status={`${item.status}`} name={`${item.name}`} type={item.type} leavestart={`${item.leavestart}`} leaveend={`${item.leaveend}`} totalworkingdays={item.totalworkingdays} totalpublicholidays={item.totalpublicholidays} wellnessdaycycle={item.wellnessdaycycle} workinghoursonleave={item.workinghoursonleave} workinghoursduringleave={item.workinghoursduringleave} details={item.details}>
                 
-                  <button className=' whitespace-nowrap bg-red-700 text-white text-xs p-2 rounded-sm'>Approved / Denied</button>
+                  <button className=' whitespace-nowrap bg-red-700 text-white text-[.6rem] p-2 rounded-sm'>Approved / Denied</button>
                </Leaveformadmin>
              
             </TableCell>
@@ -295,9 +312,9 @@ export default function Sickleavetable() {
         </TableBody>
         </Table>
 
-        {leave.length !== 0 && (
+        {/* {leave.length !== 0 && (
         <PaginitionComponent currentPage={currentpage} total={totalpage} onPageChange={handlePageChange}/>
-        )}
+        )} */}
       </div>
         
     </div>

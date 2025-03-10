@@ -12,7 +12,7 @@ export default function page() {
       style={{backgroundImage: `url('/dbbg.png')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat:"no-repeat"}}
       
       >
-        <Breadcrumbdb page={'Invoice'}/>
+        <Breadcrumbdb page={'Approvals / Invoice Requests'}/>
       </div>
       {/* <Invoicecards/> */}
       <Invoicetable/>

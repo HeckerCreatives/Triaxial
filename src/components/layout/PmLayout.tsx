@@ -280,7 +280,7 @@ export default function PmLayout({
                         </DropdownMenu>
                         </div>
           </header>
-          <main className={`relative flex flex-1 flex-col items-center gap-4 overflow-hidden ${path.includes('/pm/graph/jobcomponent') && ' overflow-hidden'}`}>
+          <main className={`relative flex flex-1 flex-col items-center gap-4`}>
               {children}
           </main>
         </div>

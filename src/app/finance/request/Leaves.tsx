@@ -25,7 +25,7 @@ import {
 import Editleaverequest from '@/components/forms/Editleaverequest'
 import { Pen, Trash2 } from 'lucide-react'
 import { Leave } from '@/types/types'
-import { formatDate, statusColor } from '@/utils/functions'
+import { DDMMYY, DDMMYYHMS, formatDate, formatDMY, statusColor } from '@/utils/functions'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -123,8 +123,6 @@ export default function Leaves() {
 
    }
 
- 
-     
   } catch (error) {
       setLoading(false)
 
@@ -190,6 +188,7 @@ export default function Leaves() {
           )}
           <TableHeader>
               <TableRow>
+              <TableHead className=' text-xs'>Leave Request Timestamp</TableHead>
               <TableHead className=' text-xs'>Leave Type</TableHead>
               <TableHead className=' text-xs'>First day of Leave</TableHead>
               <TableHead className=' text-xs'>Last day of Leave</TableHead>
@@ -204,19 +203,20 @@ export default function Leaves() {
               <TableHead className=' text-xs'>Comments</TableHead>
               )}
               <TableHead className=' text-xs'>Status</TableHead>
-              {status === 'Pending' && (
+              {/* {status === 'Pending' && (
                 <TableHead className=' text-xs'>Action</TableHead>
 
-              )}
+              )} */}
 
               </TableRow>
           </TableHeader>
           <TableBody>
             {leave.map(( item, index) => (
               <TableRow key={index}>
+              <TableCell className="font-medium">{DDMMYYHMS(item.requesttimestamp)}</TableCell>
               <TableCell className="font-medium">{findType(item.type)}</TableCell>
-              <TableCell>{formatDate(item.startdate)}</TableCell>
-              <TableCell>{formatDate(item.enddate)}</TableCell>
+              <TableCell>{DDMMYY(item.startdate)}</TableCell>
+              <TableCell>{DDMMYY(item.enddate)}</TableCell>
               <TableCell>{item.totalworkingdays}</TableCell>
               <TableCell>{item.totalpublicholidays}</TableCell>
               <TableCell>{item.wellnessdaycycle === true ? 'Yes' : 'No'}</TableCell>
@@ -228,7 +228,7 @@ export default function Leaves() {
               )}
               <TableCell className={` ${statusColor(item.status)} text-xs`}>{item.status}</TableCell>
 
-              {status === 'Pending' && (
+              {/* {status === 'Pending' && (
                 <>
                 <TableCell className=' flex items-center gap-2'>
                 <Editleaverequest requestid={item.requestid} type={item.type} startdate={formatDate(item.startdate)} enddate={formatDate(item.enddate)} totalpublicholidays={item.totalpublicholidays} wellnessdaycycle={item.wellnessdaycycle} workinghoursduringleave={item.workinghoursduringleave} workinghoursonleave={item.workinghoursonleave} totalworkingdays={item.totalworkingdays} details={item.details}>
@@ -258,7 +258,7 @@ export default function Leaves() {
              
                 </>
                
-              )}
+              )} */}
      
               </TableRow>
             ))}

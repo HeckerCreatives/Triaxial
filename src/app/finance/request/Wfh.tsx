@@ -25,7 +25,7 @@ import {
 import Editwfhrequest from '@/components/forms/Editwfhrequest'
 import { Pen, Trash2 } from 'lucide-react'
 import { Wfhemployee } from '@/types/types'
-import { statusColor } from '@/utils/functions'
+import { DDMMYY, statusColor } from '@/utils/functions'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -46,7 +46,7 @@ export default function Wfh() {
   const refresh = params.get('state')
   const [totalpage, setTotalpage] = useState(0)
   const [currentpage, setCurrentpage] = useState(0)
-  const [status, setStatus] = useState('Approved')
+  const [status, setStatus] = useState('Pending')
 
    //paginition
    const handlePageChange = (page: number) => {
@@ -63,7 +63,7 @@ export default function Wfh() {
       setLoading(true);
       try {
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/wfh/listwfhrequest?statusfilter=${status}&page=${currentpage}&limit=10`,
+          `${process.env.NEXT_PUBLIC_API_URL}/wfh/listwfhrequest?statusfilter=Approved&page=${currentpage}&limit=10`,
           {
             withCredentials: true,
             headers: {
@@ -161,7 +161,17 @@ export default function Wfh() {
     <div className=' w-full h-full flex justify-center bg-secondary p-6 text-zinc-100'>
 
       <div className=' w-full max-w-[1520px] flex flex-col'>
-       
+        {/* <label htmlFor="" className=' text-xs text-zinc-400'>Filter by status</label>
+      <Select value={status} onValueChange={setStatus}>
+      <SelectTrigger className="w-[180px] bg-primary mt-2">
+        <SelectValue placeholder="Filter by status" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="Pending">Pending</SelectItem>
+        <SelectItem value="Approved">Approved</SelectItem>
+        <SelectItem value="Denied">Denied</SelectItem>
+      </SelectContent>
+    </Select> */}
 
           <Table className=' mt-4'>
           {leave.length === 0 &&  
@@ -175,29 +185,28 @@ export default function Wfh() {
           )}
           <TableHeader>
               <TableRow>
-              <TableHead className=' text-xs'>Requested at</TableHead>
-              <TableHead className=' text-xs'>First day of Wfh</TableHead>
-              <TableHead className=' text-xs'>Last day of Wfh</TableHead>
-              <TableHead className=' text-xs'>Total hours Wfh</TableHead>
+              <TableHead className=' text-xs'>Manager</TableHead>
+              <TableHead className=' text-xs'>WFH Request Timestamp</TableHead>
+              <TableHead className=' text-xs'>First day of WFH</TableHead>
+              <TableHead className=' text-xs'>Last day of WFH</TableHead>
+              <TableHead className=' text-xs'>Total hours WFH</TableHead>
               <TableHead className=' text-xs'>In a Wellness Day Cycle?</TableHead>
               <TableHead className=' text-xs'>Status</TableHead>
-              {status === 'Pending' && (
-              <TableHead className=' text-xs'>Action</TableHead>
-
-              )}
+              
 
               </TableRow>
           </TableHeader>
           <TableBody>
             {leave.map(( item, index) => (
               <TableRow key={index}>
-              <TableCell>{new Date(item.createdAt).toLocaleString()}</TableCell>
-              <TableCell>{item.requestdate}</TableCell>
-              <TableCell>{item.requestend}</TableCell>
+              <TableCell>{item.manager}</TableCell>
+              <TableCell>{DDMMYY(item.createdAt)}</TableCell>
+              <TableCell>{DDMMYY(item.requestdate)}</TableCell>
+              <TableCell>{DDMMYY(item.requestend)}</TableCell>
               <TableCell>{item.totalhourswfh.toFixed(2)}</TableCell>
               <TableCell>{item.wellnessdaycycle === true ? 'Yes' : 'No'}</TableCell>
               <TableCell className={` ${statusColor(item.status)} text-xs`}>{item.status}</TableCell>
-              {status === 'Pending' && (
+              {/* {status === 'Pending' && (
                <TableCell className=' flex items-center gap-2'>
                 <Editwfhrequest requestid={item.requestid} requestdate={item.requestdate} requestend={item.requestend} wellnessdaycycle={item.wellnessdaycycle} totalhourswfh={item.totalhourswfh}>
                   <button className=' p-2 bg-red-600 rounded-md text-white'><Pen size={15}/></button>
@@ -219,7 +228,7 @@ export default function Wfh() {
                 </AlertDialogContent>
               </AlertDialog>
               </TableCell>
-              )}
+              )} */}
              
      
               </TableRow>

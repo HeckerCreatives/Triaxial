@@ -26,6 +26,7 @@ import PaginitionComponent from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Projectstatusform from '@/components/forms/Projectstatusform'
+import SortableTeamsDialog from '@/components/common/SortTeam'
 
 type Project = {
   createdAt: string
@@ -135,7 +136,7 @@ export default function Projecttable() {
 
       <div className=' w-full flex items-center justify-between'>
           <div>
-            
+            <SortableTeamsDialog/>
           </div>
 
           {/* <div className=' flex flex-col gap-1'>
@@ -159,8 +160,8 @@ export default function Projecttable() {
             <TableRow>
             <TableHead>Team Name</TableHead>
             <TableHead>Manager</TableHead>
-            <TableHead>Team Leader</TableHead>
-            <TableHead>Total # of Projects</TableHead>
+            {/* <TableHead>Team Leader</TableHead>
+            <TableHead>Total # of Projects</TableHead> */}
           
             <TableHead className="">Action</TableHead>
             </TableRow>
@@ -172,8 +173,8 @@ export default function Projecttable() {
               <a href={`/superadmin/graph/jobcomponent?teamid=${item._id}`} className=' text-red-500 underline'>{item.teamname}</a>
               </TableCell>
             <TableCell>{item.manager}</TableCell>
-            <TableCell>{item.teamleader}</TableCell>
-            <TableCell>{item.projectCount}</TableCell>
+            {/* <TableCell>{item.teamleader}</TableCell>
+            <TableCell>{item.projectCount}</TableCell> */}
           
            
             <TableCell className=" flex items-center gap-2">

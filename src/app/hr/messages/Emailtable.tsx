@@ -214,7 +214,7 @@ export default function Emailtable() {
                   </DialogDescription>
                 </DialogHeader>
 
-                <div className=' flex flex-col gap-4 w-full'>
+                <div className=' flex flex-col gap-4 w-full font-centurygothic'>
                   <p className=' text-lg font-semibold'>{title}</p>
                   <div className=' flex items-center gap-2'>
                     <div className=' flex items-center justify-center w-8 h-8 rounded-full bg-primary'>

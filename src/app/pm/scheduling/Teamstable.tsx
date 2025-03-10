@@ -134,7 +134,7 @@ export default function Teamstable() {
             <TableHead className="">Team Leader</TableHead>
             <TableHead>Projects</TableHead>
             {/* <TableHead>Projects</TableHead> */}
-            <TableHead>Individual Workload</TableHead>
+            {/* <TableHead>Individual Workload</TableHead> */}
             </TableRow>
         </TableHeader>
         <TableBody>
@@ -151,9 +151,9 @@ export default function Teamstable() {
                 <Viewbtn disabled={false} name='View' onClick={() => router.push(`/pm/scheduling/projects?teamid=${item.teamid}`)}/>
               </TableCell> */}
 
-              <TableCell>
+              {/* <TableCell>
                 <Viewbtn disabled={false} name='View' onClick={() => router.push(`/pm/graph/teammembers?teamid=${item.teamid}`)}/>
-              </TableCell>
+              </TableCell> */}
             
        
 

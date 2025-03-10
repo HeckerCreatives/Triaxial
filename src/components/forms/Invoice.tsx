@@ -35,13 +35,14 @@ type Props = {
     currinvoice: any
     manager: string
     client: string
+    notes: string
 }
 
 export default function Invoice( prop: Props) {
     const currentDate = new Date()
     const [currInvoice, setCurrInvoice] = useState(0)
     const [newInvoice, setNewInvoice] = useState(0)
-    const [amount, setAmount] = useState(0)
+    const [amount, setAmount] = useState('')
     const [notes, setNotes] = useState('')
     const [loading, setLoading] = useState(false)
     const router = useRouter()
@@ -56,6 +57,14 @@ export default function Invoice( prop: Props) {
     const lumpsumCalculation = ((newInvoice / 100 ) * prop.estimatedbudget) -  (currInvoice / 100) * prop.estimatedbudget
     // const lumpsumCalculation = ((newInvoice / 100 ) * prop.estimatedbudget)
 
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const rawValue = e.target.value.replace(/,/g, ""); // Remove existing commas
+        if (!isNaN(Number(rawValue)) && rawValue !== "") {
+            setAmount(Number(rawValue).toLocaleString()); // Format with commas
+        } else {
+            setAmount(""); // Clear input if invalid
+        }
+    };
 
 
 
@@ -151,7 +160,7 @@ export default function Invoice( prop: Props) {
 
 
     const requestInvoiceRates = async () => {
-        if(amount as number > prop.estimatedbudget){
+        if(amount as any > prop.estimatedbudget){
             toast.error(`Invoice amount should not exceed to the estimated budget.`)              
 
         } else {
@@ -159,7 +168,7 @@ export default function Invoice( prop: Props) {
                 const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}${dynamicCreateInvoiceApiUrl}`,{
                     jobcomponentid: prop.jobcid,
                     invoice: newInvoice,
-                    invoiceamount: amount as number,
+                    invoiceamount: Number(amount.replace(/,/g, "")),
                     comments: notes
                 },{
                     withCredentials: true,
@@ -251,7 +260,7 @@ export default function Invoice( prop: Props) {
                           </div>
                       <hr className=" my-2"/>
                       <div className="flex justify-between mb-4">
-                          <h1 className="text-lg font-bold">Invoice</h1>
+                          <h1 className="text-sm font-bold">Invoice</h1>
                           <div className="text-gray-700">
                               <div>Date: {currentDate.toLocaleString()}</div>
                               {/* <div>Invoice #: {generateRandomTransactionID()}</div> */}
@@ -261,25 +270,33 @@ export default function Invoice( prop: Props) {
                           {/* <h2 className="text-lg font-bold mb-4">To:</h2>
                           <div className="text-gray-700 mb-2">John Doe</div>
                           <div className="text-gray-700 mb-2">123 Main St.</div> */}
-                          <div className="text-gray-700 mb-1 text-sm">Job No. - {prop.jobno}</div>
-                          <div className="text-gray-700 mb-1 text-sm">Client Name. - {prop.client}</div>
-                          <div className="text-gray-700 mb-1 text-sm">Project Name - {prop.projectname}</div>
-                          <div className="text-gray-700 mb-1 text-sm">Job Manager - {prop.manager}</div>
-                          <div className="text-gray-700 mb-1 text-sm">Job Component - {prop.jobcname}</div>
-                          <div className="text-gray-700 mb-1 text-sm">Budget Type - {formatBudgetType(prop.budgettype)}</div>
-                          {/* <div className="text-gray-700 mb-2">Admin Notes : {prop.notes}</div> */}
+                          <div className="text-gray-700 mb-1 text-xs">Job No. - {prop.jobno}</div>
+                          <div className="text-gray-700 mb-1 text-xs">Client Name. - {prop.client}</div>
+                          <div className="text-gray-700 mb-1 text-xs">Project Name - {prop.projectname}</div>
+                          <div className="text-gray-700 mb-1 text-xs">Job Manager - {prop.manager}</div>
+                          <div className="text-gray-700 mb-1 text-xs">Job Component - {prop.jobcname}</div>
+                          <div className="text-gray-700 mb-1 text-xs flex items-center">Budget Type - <p className=' text-blue-600 font-semibold'>{formatBudgetType(prop.budgettype)}</p></div>
+                          <div className="text-gray-700 mb-2 text-xs">Admin Notes : {prop.notes}</div>
 
                           
 
                       </div>
                       <table className="w-full mb-4">
                           <thead>
-                              <tr>
+                              <tr className=' text-xs'>
+                                {prop.budgettype === 'rates' ? (
+                                  <th className="text-left font-bold text-gray-700">Invoiced to Date</th>
+
+                                ): (
                                   <th className="text-left font-bold text-gray-700">Job Component Budget</th>
+                                )}
                                   {prop.budgettype !== 'rates' && (
                                     <>
-                                    <th className="text-left font-bold text-gray-700">Curr. Invoice</th>
-                                    <th className="text-right font-bold text-gray-700">New Invoice ({prop.budgettype === 'lumpsum' ?  '%' : 'hours'})</th>
+                                    <th className="text-left font-bold text-gray-700">$ Invoiced to Date</th>
+                                    <th className="text-right font-bold text-gray-700">% New Invoice 
+
+                                    {/* ({prop.budgettype === 'lumpsum' ?  '%' : 'hours'}) */}
+                                    </th>
                                     </>
                                   )}
                                   
@@ -292,20 +309,39 @@ export default function Invoice( prop: Props) {
                                   {prop.budgettype !== 'rates' ? (
                                     <>
                                     <td className="text-left text-gray-700">
-                                  <Input value={prop.estimatedbudget} placeholder='Amount' className=' bg-zinc-200'/>
-                                  </td>
 
-                                    <td className="text-left text-gray-700">
-                                    <Input defaultValue={prop.currinvoice}  value={currInvoice} placeholder='Amount' className=' bg-zinc-200'/>
+                                    <div className="relative">
+                                            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 text-xs">$</span>
+                                            <Input 
+                                                type="text" 
+                                                value={(prop.estimatedbudget as number).toLocaleString()} 
+                                                placeholder="Amount" 
+                                                className="bg-zinc-200 pl-6 text-xs"
+                                            />  
+                                        </div>
                                     </td>
 
                                     <td className="text-left text-gray-700">
-                                    <Input max={100} type='number'  value={newInvoice} onChange={(e) => setNewInvoice(e.target.valueAsNumber)} placeholder='Amount' className=' bg-zinc-200'/>
+                                    <Input defaultValue={prop.currinvoice}  value={currInvoice} placeholder='Amount' className=' bg-zinc-200 text-xs'/>
+                                    </td>
+
+                                    <td className="text-left text-gray-700">
+                                    <Input max={100} type='number'  value={newInvoice} onChange={(e) => setNewInvoice(e.target.valueAsNumber)} placeholder='Amount' className=' bg-zinc-200 text-xs'/>
                                     </td>
                                     </>
                                   ) : (
                                     <td className="text-left text-gray-700">
-                                    <Input disabled value={prop.estimatedbudget} placeholder='Amount' className=' bg-zinc-200'/>
+                                    <div className="relative">
+                                            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 text-xs">$</span>
+                                            <Input 
+                                                type="text" 
+                                                disabled
+                                                value={(prop.estimatedbudget as number).toLocaleString()} 
+                                                placeholder="Amount" 
+                                                className="bg-zinc-200 pl-6 text-xs"
+                                            />  
+                                        </div>
+
                                     </td>
                                   )}
 
@@ -324,23 +360,39 @@ export default function Invoice( prop: Props) {
 
                       {prop.budgettype !== 'rates' ? (
                         <>
-                            <label htmlFor="">This invoice amount</label>
-                            < Input value={prop.budgettype === 'rates' ? ratesCalculation : lumpsumCalculation} placeholder=' Amount' className=' bg-zinc-200'/>
+                            <label htmlFor="" className="text-xs">This invoice amount</label>
+                            <div className="relative">
+                                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 text-xs">$</span>
+                                <Input 
+                                    value={prop.budgettype === 'rates' ? ratesCalculation.toLocaleString() : lumpsumCalculation.toLocaleString()} 
+                                    placeholder="Amount" 
+                                    className="bg-zinc-200 pl-6 text-xs" // Add left padding to avoid overlap
+                                />
+                            </div>
                         </>
-                        ) : (
-                            <>
-                            <label htmlFor="">This invoice amount</label>
-                            <Input type='number' value={amount} onChange={(e) => setAmount(e.target.valueAsNumber)} placeholder=' Amount' className=' bg-zinc-200'/>  
-                            </>
-                            
-                        )}
+                    ) : (
+                        <>
+                            <label htmlFor="" className="text-xs">This invoice amount</label>
+                            <div className="relative">
+                                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 text-xs">$</span>
+                                <Input
+                                    type="text" // Use text to display formatted values
+                                    value={amount}
+                                    onChange={handleChange}
+                                    placeholder="Amount"
+                                    className="bg-zinc-200 pl-6 text-xs w-full [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                                />
+                            </div>
+                        </>
+                    )}
+
 
                        
 
                     
 
-                      <label htmlFor="" className=' mt-8'>Please insert an instruction or comments for the invoice</label>
-                      <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder=' Please input here' className=' bg-zinc-200'/>
+                      <label htmlFor="" className=' mt-8 text-xs'>Please insert an instruction or comments for the invoice</label>
+                      <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder=' Please input here' className=' bg-zinc-200 text-xs'/>
                       
                     </div>
 

@@ -98,7 +98,7 @@ export default function Createprojectcomponent( prop: Data) {
 
 
 
-  const [formData, setFormData] = useState<FormData[]>([{ jobmanager: '',jobno: '123', budgettype: '', estimatedbudget: '', jobcomponent: '', members: [
+  const [formData, setFormData] = useState<FormData[]>([{ jobmanager: '',jobno: '123', budgettype: '', estimatedbudget: '0', jobcomponent: '', members: [
                 {
                     employeeid: "",
                     role: "Engr."

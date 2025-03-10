@@ -127,13 +127,13 @@ export default function Totalinvoice() {
           )}
         <TableHeader>
             <TableRow>
-            <TableHead className="">Job no.</TableHead>
-            <TableHead>Job Component</TableHead>
-            <TableHead>Project</TableHead>
-            <TableHead>Project Manager</TableHead>
+            <TableHead className=" text-[.6rem]">Job no.</TableHead>
+            <TableHead className=' text-[.6rem]'>Job Component</TableHead>
+            <TableHead className=' text-[.6rem]'>Project</TableHead>
+            <TableHead className=' text-[.6rem]'>Project Manager</TableHead>
     
             {list[0]?.monthlyInvoices.map((item, index) => (
-                        <TableHead key={index}>{getMonthName(item.month)} {item.year}</TableHead>
+                        <TableHead key={index} className=' text-[.6rem]'>{getMonthName(item.month)} {item.year}</TableHead>
                         ))}
             
             </TableRow>
@@ -141,14 +141,14 @@ export default function Totalinvoice() {
         <TableBody>
           {list.map((item, index) => (
             <TableRow>
-              <TableCell className=" cursor-pointer underline">
+              <TableCell className=" text-[.6rem] cursor-pointer underline">
               <a href={`/finance/graph/jobcomponent?teamid=${item.teamid}&jobno=${item.componentid}`} className=' '>{item.jobnumber}</a>
               </TableCell>
-              <TableCell>{item.jobcomponent}</TableCell>
-              <TableCell>{item.projectname}</TableCell>
-              <TableCell>{item.jobmanager.fullname}</TableCell>
+              <TableCell className=' text-[.6rem]'>{item.jobcomponent}</TableCell>
+              <TableCell className=' text-[.6rem]'>{item.projectname}</TableCell>
+              <TableCell className=' text-[.6rem]'>{item.jobmanager.fullname}</TableCell>
               {item.monthlyInvoices.map((total, index) => (
-              <TableCell key={ index}>$ {total.totalAmount}</TableCell>
+              <TableCell key={ index} className=' text-[.6rem]'>$ {total.totalAmount}</TableCell>
               ))}
             
             </TableRow>

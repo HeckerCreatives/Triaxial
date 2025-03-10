@@ -31,7 +31,7 @@ import PaginitionComponent from '@/components/common/Pagination'
 import Leaves from './Leaves'
 import Wfh from './Wfh'
 import { Wellnessday } from '@/types/types'
-import { formatDate } from '@/utils/functions'
+import { DDMMYY, DDMMYYHMS, formatDate } from '@/utils/functions'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -58,7 +58,7 @@ export default function Requesttable() {
   const [dialog, setDialog] = useState(false)
   const [tab, setTab] = useState('Leave')
   const [list, setLiest] = useState<Wellnessday[]>([])
-  const [active, setActive] = useState('Leaves')
+  const [active, setActive] = useState('Leave')
   const router = useRouter()
   const params = useSearchParams()
   const refresh = params.get('state')
@@ -112,7 +112,6 @@ export default function Requesttable() {
 
    }
 
-     
   } catch (error) {
 
        if (axios.isAxiosError(error)) {
@@ -145,6 +144,8 @@ export default function Requesttable() {
   }
   };
 
+
+
   //paginition
   const handlePageChange = (page: number) => {
     setCurrentpage(page)
@@ -156,25 +157,7 @@ export default function Requesttable() {
     <div className=' w-full h-full flex justify-center bg-secondary p-6 text-zinc-100'>
 
       <div className=' w-full max-w-[1520px] flex flex-col'>
-        <div className=' flex flex-col items-start gap-8'>
-          <div className=' flex flex-col gap-2'>
-            <p className=' text-xs'>Request :</p>
-            <div className='flex items-center gap-2 rounded-sm text-xs'>
-                <Leaveform onClick={() => undefined}>
-                  <button className={`text-xs px-3 py-1 bg-red-600  rounded-sm`}>Leave</button>
-                </Leaveform>
-                <WDform onClick={() => undefined}>
-                  <button className={`text-xs px-3 py-1 bg-red-600  rounded-sm`}>Wellness Day</button>
-                </WDform>
-
-                <Wfhform onClick={() => undefined}>
-                  <button className={`text-xs px-3 py-1 bg-red-600  rounded-sm`}>WFH</button>
-                </Wfhform>
-
-            </div>
-          </div>
-         
-
+        <div className=' flex md:flex-row flex-col items-center justify-between gap-4'>
             <div className=' flex flex-col gap-8'>
 
               <div className=' flex gap-4'>
@@ -196,22 +179,24 @@ export default function Requesttable() {
           <Table className=' mt-4'>
             <TableHeader>
                 <TableRow>
-                <TableHead className="">Requested at</TableHead>
+                <TableHead className="">Manager</TableHead>
+                <TableHead className="">WD Request Timestamp</TableHead>
                 <TableHead>Type</TableHead>
                 <TableHead>Wellness Day</TableHead>
                 <TableHead className="">First Day of Wellness Day Cycle</TableHead>
-                <TableHead className="">Action</TableHead>
+                {/* <TableHead className="">Action</TableHead> */}
                 </TableRow>
             </TableHeader>
             <TableBody>
               {list.map((item, index) => (
                 <TableRow key={index}>
-                <TableCell className="">{new Date(item.createdAt).toLocaleString()}</TableCell>
+                <TableCell className="">{item.manager}</TableCell>
+                <TableCell className="">{DDMMYYHMS(item.createdAt)}</TableCell>
                 <TableCell>Wellness Day</TableCell>
                 <TableCell>{formatDate(item.requestdate)}</TableCell>
-                <TableCell className="">{formatDate(item.firstdayofwellnessdaycycle)}</TableCell>
-                <TableCell className=" flex items-center gap-2">
-                  <Editwdrequest start={formatDate(item.requestdate)} id={item.requestid}>
+                <TableCell className="">{DDMMYY(item.firstdayofwellnessdaycycle)}</TableCell>
+                {/* <TableCell className=" flex items-center gap-2">
+                  <Editwdrequest start={DDMMYY(item.requestdate)} id={item.requestid}>
                     <button className=' p-2 bg-red-600 rounded-md text-white'><Pen size={15}/></button>
                   </Editwdrequest>
                 <AlertDialog>
@@ -229,7 +214,7 @@ export default function Requesttable() {
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
-                </TableCell>
+                </TableCell> */}
                 
                 </TableRow>
               ))}

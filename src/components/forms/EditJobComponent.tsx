@@ -366,11 +366,12 @@ export default function EditJobComponent( prop: Prop) {
         projectid: projectname,
         jobmanagerid: jobmanager, // employeeid
         members: members,
-        budgettype: '', 
-        budget: '', 
-        adminnotes: '', 
-        jobcomponentname: '', 
-        clientid: ''
+        budgettype: budgettype, 
+        budget: budget, 
+        adminnotes: adminnotes, 
+        jobcomponentname: jcname, 
+        clientid: clientid,
+        // projectname: projectname
       }, {
         withCredentials: true,
         headers: {
@@ -385,7 +386,7 @@ export default function EditJobComponent( prop: Prop) {
     });
 
     if(response.data.message === 'success'){
-        window.location.reload()
+      window.location.reload()
      
     }
     } catch (error) {
@@ -461,7 +462,7 @@ export default function EditJobComponent( prop: Prop) {
                           </DialogTrigger>
                           <DialogContent className=' max-w-[600px] max-h-[80%] h-auto bg-white border-none p-6 text-black overflow-y-auto'>
                             <DialogHeader>
-                              <DialogTitle className=' text-sm'><span className=' bg-red-600 px-2 py-1 text-white'>Edit</span> Project <span className=' text-xs text-zinc-400'></span></DialogTitle>
+                              <DialogTitle className=' text-sm'><span className=' bg-red-600 px-2 py-1 text-white'>Edit</span> Project Component <span className=' text-xs text-zinc-400'></span></DialogTitle>
                               <DialogDescription className={` ${prop.isManger === true ? 'text-white' : ' text-red-500'}`}>
                                 {/* {graphItem.jobmanager.isManager === true ? 'Your the project manager of this project, you are allowed to edit this project' : ' Your are not the project manager of this project, you are not allowed to edit this project'} */}
                                 
@@ -852,7 +853,7 @@ export default function EditJobComponent( prop: Prop) {
                                                                                           
                                                                       
                                       <div className=' w-full'>
-                                        <Label className=' text-zinc-500'>Project Name</Label>
+                                        <Label className=' text-zinc-500 mt-1'>Project Name</Label>
                                         <Input type='text' value={projectname} onChange={(e) => setProjectname(e.target.value)}   className=' text-xs h-[35px] bg-zinc-100' placeholder='Project name'/>
 
                                         {/* <Select value={projectname} onValueChange={setProjectname}>
@@ -872,12 +873,25 @@ export default function EditJobComponent( prop: Prop) {
                                                                                                                                           
                                                                                                                                                              
                                         <div className=' w-full'>
-                                          <Label className=' text-zinc-500'>Client Name</Label>
-                                        <Input type='text' value={prop.client}  className=' text-xs h-[35px] bg-zinc-100' placeholder='Project name'/>
-                                                                    
-                                                                                            
-                                                                                                                                          
-                                        </div>
+                                              <Label className="text-zinc-500">
+                                                Client Name
+                                              </Label>
+                                              <Select value={clientid} onValueChange={setClientid}>
+                                                <SelectTrigger className="text-xs h-[35px] bg-zinc-100">
+                                                  <SelectValue placeholder="Select Client" className="text-black" />
+                                                </SelectTrigger>
+                                                <SelectContent className="text-xs">
+                                                  {client.map((item) => (
+                                                    <SelectItem key={item.clientid} value={item.clientid}>
+                                                      {item.clientname}
+                                                    </SelectItem>
+                                                  ))}
+                                                </SelectContent>
+                                              </Select>
+                                          </div>
+                                          {/* <Label className=' text-zinc-500'>Client Name</Label>
+                                        <Input type='text' value={prop.client}  className=' text-xs h-[35px] bg-zinc-100' placeholder='Project name'/> */}
+                                                                                                                                                                 
                                                                                                                                           
                                     </div>
                                                                                                                                           
@@ -912,6 +926,7 @@ export default function EditJobComponent( prop: Prop) {
                                                           <Select
                                                              value={budgettype}
                                                              onValueChange={setBudgettype}
+                                                             disabled
                                                           >
                                                             <SelectTrigger className="text-xs h-[35px] bg-zinc-100 mb-2 ">
                                                               <SelectValue placeholder="Type" className="text-black" />
@@ -925,6 +940,7 @@ export default function EditJobComponent( prop: Prop) {
                                                           <Label className="mt-2 text-zinc-500">Job Component Budget $</Label>
                                                           <Input
                                                             type="number"
+                                                            disabled
                                                             className="text-xs h-[35px] bg-zinc-100 mb-2"
                                                             placeholder="0"
                                                             value={budget}
@@ -1030,7 +1046,7 @@ export default function EditJobComponent( prop: Prop) {
                               </div>
 
                                 <div className=' w-full flex items-end justify-end mt-4 text-xs'>
-                                  <button onClick={() => updateJobComponenAsBoth()} className=' bg-red-600 px-4 py-2 rounded-md w-fit'>Save</button>
+                                  <button onClick={() => updateJobComponenAsBoth()} className=' bg-red-600 px-4 py-2 rounded-md w-fit text-white'>Save</button>
                                 </div>
                          
                           </DialogContent>

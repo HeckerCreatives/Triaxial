@@ -10,7 +10,7 @@ export default function page() {
       style={{backgroundImage: `url('/dbbg.png')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat:"no-repeat"}}
       
       >
-        <Breadcrumbdb page={'Emails'}/>
+        <Breadcrumbdb page={'My Messages'}/>
       </div>
       <Emailtable/>
     </SuperadminLayout>

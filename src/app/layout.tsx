@@ -4,6 +4,8 @@ import "./globals.css";
 import { Suspense, useEffect, useState } from "react";
 import Loader from "@/components/common/Loader";
 import { Toaster } from "react-hot-toast";
+import "react-datepicker/dist/react-datepicker.css";
+
 
 const inter = Montserrat({ subsets: ["latin"] });
 

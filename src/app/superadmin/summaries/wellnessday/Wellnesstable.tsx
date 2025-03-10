@@ -14,6 +14,7 @@ import axios from 'axios'
 import Spinner from '@/components/common/Spinner'
 import PaginitionComponent from '@/components/common/Pagination'
 import Approvewdrequest from '@/components/forms/Wdsuperadmin'
+import { DDMMYY, DDMMYYHMS } from '@/utils/functions'
 
 type Welnnessday = {
   firstdayofwellnessdaycycle: string
@@ -21,6 +22,7 @@ type Welnnessday = {
   requestdate: string
   requestid: string
   user: string
+  wdrequesttimestamp: string
 }
 
 
@@ -83,51 +85,51 @@ export default function Wellnesstable() {
             
         </div>
 
-        <Table className=' mt-4'>
-        {list.length === 0 &&  
-          <TableCaption className=' text-xs text-zinc-500'>No data</TableCaption>
-          }
-          
-        {loading === true && (
-            <TableCaption className=' '>
-              <Spinner/>
-            </TableCaption>
-          )}
-        <TableHeader>
-            <TableRow>
-            <TableHead >Manager</TableHead>
-            {/* <TableHead>Time Stamp</TableHead> */}
-            <TableHead>Name</TableHead>
-            <TableHead>First Day of Wellness Day Cycle</TableHead>
-            <TableHead>Wellness Day</TableHead>
-            <TableHead>Total Number of Working Days</TableHead>
-            <TableHead>Total Working Hours During Wellness Day Cycle</TableHead>
-            <TableHead>Action</TableHead>
-            </TableRow>
-        </TableHeader>
-        <TableBody>
-          {list.map((item, index) => (
-            <TableRow key={item.requestid}>
-            <TableCell>{item.manager}</TableCell>
-            {/* <TableCell className="">00/00/00</TableCell> */}
-            <TableCell>{item.user}</TableCell>
-            <TableCell>{item.firstdayofwellnessdaycycle}</TableCell>
-            <TableCell>{item.requestdate}</TableCell>
-            <TableCell></TableCell>
-            <TableCell>0</TableCell>
-            <TableCell>
-            <Approvewdrequest start={item.requestdate} id={item.requestid} >
-                
-                  <button className=' whitespace-nowrap bg-red-700 text-white text-xs p-2 rounded-sm'>Approved / Denied</button>
-               </Approvewdrequest>
-             
-            </TableCell>
-
-            </TableRow>
-          ))}
-            
-        </TableBody>
-        </Table>
+         <Table className=' mt-4'>
+                {list.length === 0 &&  
+                  <TableCaption className=' text-xs text-zinc-500'>No data</TableCaption>
+                  }
+                  
+                {loading === true && (
+                    <TableCaption className=' '>
+                      <Spinner/>
+                    </TableCaption>
+                  )}
+                <TableHeader>
+                    <TableRow>
+                    <TableHead className=' text-[.6rem]'>Manager</TableHead>
+                    <TableHead className=' text-[.6rem]'>Wd Request Timestamp</TableHead>
+                    <TableHead className=' text-[.6rem]'>Name</TableHead>
+                    <TableHead className=' text-[.6rem]'>First Day of Wellness Day Cycle</TableHead>
+                    <TableHead className=' text-[.6rem]'>Wellness Day</TableHead>
+                    <TableHead className=' text-[.6rem]'>Total Number of Working Days</TableHead>
+                    <TableHead className=' text-[.6rem]'>Total Working Hours During Wellness Day Cycle</TableHead>
+                    {/* <TableHead className=' text-[.6rem]'>Action</TableHead> */}
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {list.map((item, index) => (
+                    <TableRow key={item.requestid}>
+                    <TableCell className=' text-[.6rem]'>{item.manager}</TableCell>
+                    <TableCell className=' text-[.6rem]'>{DDMMYYHMS(item.wdrequesttimestamp)}</TableCell>
+                    <TableCell className=' text-[.6rem]'>{item.user}</TableCell>
+                    <TableCell className=' text-[.6rem]'>{DDMMYY(item.requestdate)}</TableCell>
+                    <TableCell className=' text-[.6rem]'>{DDMMYY(item.requestdate)}</TableCell>
+                    <TableCell className=' text-[.6rem]'>1</TableCell>
+                    <TableCell className=' text-[.6rem]'>8.44</TableCell>
+                    {/* <TableCell>
+                    <Approvewdrequest start={item.requestdate} id={item.requestid} >
+                        
+                          <button className=' whitespace-nowrap bg-red-700 text-white text-xs p-2 rounded-sm'>Approved / Denied</button>
+                       </Approvewdrequest>
+                     
+                    </TableCell> */}
+        
+                    </TableRow>
+                  ))}
+                    
+                </TableBody>
+                </Table>
 
         {list.length !== 0 && (
         <PaginitionComponent currentPage={currentpage} total={totalpage} onPageChange={handlePageChange}/>

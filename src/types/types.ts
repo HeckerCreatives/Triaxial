@@ -32,6 +32,8 @@ export type Leave = {
     comments: string
     workinghoursonleave: number
     details: string
+    requesttimestamp: string
+    manager: string
     
 }
 
@@ -40,6 +42,7 @@ export type Wellnessday = {
     requestdate:string 
     firstdayofwellnessdaycycle: string
     requestid: string
+    manager: string
 }
 
 export type Wfhemployee = {
@@ -50,6 +53,7 @@ export type Wfhemployee = {
     totalhourswfh: number
     createdAt: string
     status: string
+    manager: string
   
 }
 
@@ -96,7 +100,19 @@ leaveDates: Leavedates[]
 notes: string
 role: string
 wellnessDates: string[]
-wfhDates: WFHDates []
+wfhDates: string []
+_id: string
+ }
+
+ export  type MembersYourworkload = {
+    dates: Dates[]
+employee: {_id: string,fullname: string, initials: string}
+eventDates: Request[]
+leaveDates: Leavedates[]
+notes: string
+role: string
+wellnessDates: string[]
+wfhDates: string []
 _id: string
  }
 
@@ -229,4 +245,9 @@ client: {
     clientname: string,
     priority: string
 }
+comments: string
+projectname: string
+jobmanagercomments: string
+adminnotes: string
+
 }

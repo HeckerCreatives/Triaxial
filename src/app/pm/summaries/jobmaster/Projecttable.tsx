@@ -31,7 +31,7 @@ import Createprojectform from '@/components/forms/Createprojectform'
 import Editprojectform from '@/components/forms/Editprojectform'
 import Variationprojectform from '@/components/forms/Variationprojectform'
 import axios from 'axios'
-import { formatDate, formatDateTime } from '@/utils/functions'
+import { formatDate, formatDateTime, getInitials } from '@/utils/functions'
 import PaginitionComponent from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
 import { useSearchParams } from 'next/navigation'
@@ -44,6 +44,7 @@ type Components = {
   estimatedBudget: number,
   members: string[]
   id: string
+  isVariation: string
 }
 
 type Project = {
@@ -115,8 +116,8 @@ export default function Projecttable() {
         </div>
 
           <div className=' flex flex-col gap-1'>
-            <label htmlFor="" className=' text-xs'>Search</label>
-            <Input value={search} placeholder='Search client name (clear the input to reset)' onChange={(e) => setSearch(e.target.value)} type='text' className=' w-[300px] bg-primary text-zinc-100 text-xs h-[35px]'/>
+            {/* <label htmlFor="" className=' text-xs'>Search</label> */}
+            <Input value={search} placeholder='Search project' onChange={(e) => setSearch(e.target.value)} type='text' className=' w-[200px] bg-white text-black text-xs h-[35px]'/>
           </div>
 
         </div>
@@ -132,40 +133,44 @@ export default function Projecttable() {
             </TableCaption>
           )}
         <TableHeader>
-            <TableRow>
-            <TableHead>Job no</TableHead>
-            <TableHead>Client</TableHead>
-            <TableHead>Project Name</TableHead>
-            <TableHead>Job Manager</TableHead>
-            <TableHead>Component Budget</TableHead>
-            <TableHead>% Invoice</TableHead>
-            <TableHead>Job Component Budget</TableHead>
-            <TableHead>Job Members</TableHead>
-            <TableHead>Team</TableHead>
+            <TableRow className=' text-xs'>
+            <TableHead className=' text-xs'>Job no</TableHead>
+            <TableHead className=' text-xs'>Client</TableHead>
+            <TableHead className=' text-xs'>Project Name</TableHead>
+            <TableHead className=' text-xs'>Job Manager</TableHead>
+            <TableHead className=' text-xs'>JobComponent Budget</TableHead>
+            <TableHead className=' text-xs'>% Invoiced</TableHead>
+            <TableHead className=' text-xs'>Job Component</TableHead>
+            <TableHead className=' text-xs'>Job Members</TableHead>
+            <TableHead className=' text-xs'>Team</TableHead>
    
             </TableRow>
         </TableHeader>
         <TableBody>
-        {list.map((project) =>
+        {list.flatMap((project) => 
           project.jobComponents.map((job, index) => (
-            <TableRow key={index} className=' text-white'>
-              <TableCell className={` ${clientColor(project.priority)} text-black underline cursor-pointer`}>
-                <a href={`/pm/graph/jobcomponent?teamid=${project.teamid}&jobno=${job.id}`} className=' '>{project.jobno}</a>
-
+            <TableRow key={index} className={`${job.isVariation ? 'text-red-500 text-xs' : 'text-white text-xs'}`}>
+              <TableCell className={`${clientColor(project.priority)} text-blue-600 underline cursor-pointer`}>
+                <a href={`/pm/graph/jobcomponent?teamid=${project.teamid}&jobno=${job.id}`} className="">
+                  {project.jobno}
+                </a>
               </TableCell>
-              <TableCell className={` ${clientColor(project.priority)} text-black`}>{project.client}</TableCell>
-              <TableCell className={` ${clientColor(project.priority)} text-black`}>{project.projectname}</TableCell>
-              <TableCell className={` ${clientColor(project.priority)} text-black`}>{project.managerName}</TableCell>
-              <TableCell className={` ${clientColor(project.priority)} text-black`}>${job.estimatedBudget}</TableCell>
-              <TableCell className={` ${clientColor(project.priority)} text-black`}>{project.invoiced}</TableCell>
-              <TableCell className={` ${clientColor(project.priority)} text-black`}>{job.name}</TableCell>
-              <TableCell className={` flex items-center gap-2 h-[50px] ${clientColor(project.priority)} text-black`}>{job.members.map((item, index) => (
-                <p key={index} className=' h-full'>{item}</p>
-              ))}</TableCell>
-              <TableCell className={` ${clientColor(project.priority)} text-black`}>{project.teamname}</TableCell>
+              <TableCell className={`${clientColor(project.priority)} ${job.isVariation ? 'text-red-600 text-xs' : 'text-black text-xs'}`}>{project.client}</TableCell>
+              <TableCell className={`${clientColor(project.priority)} ${job.isVariation ? 'text-red-600 text-xs' : 'text-black text-xs'}`}>{project.projectname}</TableCell>
+              <TableCell className={`${clientColor(project.priority)} ${job.isVariation ? 'text-red-600 text-xs' : 'text-black text-xs'}`}>{getInitials(project.managerName)}</TableCell>
+              <TableCell className={`${clientColor(project.priority)} ${job.isVariation ? 'text-red-600 text-xs' : 'text-black text-xs'}`}>$ {job.estimatedBudget?.toLocaleString()}</TableCell>
+              <TableCell className={`${clientColor(project.priority)} ${job.isVariation ? 'text-red-600 text-xs' : 'text-black text-xs'}`}>% {project.invoiced}</TableCell>
+              <TableCell className={`${clientColor(project.priority)} ${job.isVariation ? 'text-red-600 text-xs' : 'text-black text-xs'}`}>{job.name}</TableCell>
+              <TableCell className={`flex items-center gap-2 h-[50px] ${clientColor(project.priority)}  ${job.isVariation ? 'text-red-600 text-xs' : 'text-black text-xs'}`}>
+                {job.members.map((item, index) => (
+                  <p key={index} className="h-full">{item}</p>
+                ))}
+              </TableCell>
+              <TableCell className={`${clientColor(project.priority)}  ${job.isVariation ? 'text-red-600 text-xs' : 'text-black text-xs'}`}>{project.teamname}</TableCell>
             </TableRow>
           ))
         )}
+
           {/* {list.map((item, index) => (
             <TableRow key={index}>
             <TableCell>{item.jobno}</TableCell>

@@ -353,7 +353,7 @@ const totalsByDate = allDates.map((dateObj) => {
                 </div>
 
               ) : (
-                <Invoice projectname={findJobComponent?.projectname} jobcname={findJobComponent?.jobcomponent} jobno={findJobComponent?.jobnumber} budgettype={findJobComponent?.budgettype} estimatedbudget={findJobComponent?.estimatedbudget} jobcid={findJobComponent?.componentid} isJobmanager={findJobComponent?.jobmanager.employeeid} currinvoice={findJobComponent?.invoice.percentage} manager={''} client={''}>
+                <Invoice projectname={findJobComponent?.projectname} jobcname={findJobComponent?.jobcomponent} jobno={findJobComponent?.jobnumber} budgettype={findJobComponent?.budgettype} estimatedbudget={findJobComponent?.estimatedbudget} jobcid={findJobComponent?.componentid} isJobmanager={findJobComponent?.jobmanager.employeeid} currinvoice={findJobComponent?.invoice.percentage} manager={''} client={''} notes={''}>
                   <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
                     <button className={`text-xs p-1 bg-red-600  rounded-sm`}><File size={12}/></button>
                     <p>Invoice</p>

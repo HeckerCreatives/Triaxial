@@ -41,7 +41,7 @@ import {
     DialogTitle,
     DialogTrigger,
   } from "@/components/ui/dialog"
-import { formatDMY, statusColor } from '@/utils/functions'
+import { DDMMYYHMS, formatDMY, getInitials, statusColor } from '@/utils/functions'
   
 
 export default function Invoicetable() {
@@ -82,7 +82,7 @@ export default function Invoicetable() {
     setLoading(true)
     const getInvoice = async () => {
         try {
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/invoice/getinvoicelist?jobnofilter=${jobno}&status=${status}&page=${currentpage}&limit=10`,{
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/invoice/getinvoicelist?jobnofilter=${jobno}&status=${status}&page=${currentpage}&limit=999999`,{
                 withCredentials: true
             })
 
@@ -377,23 +377,29 @@ export default function Invoicetable() {
         <TableHeader>
             <TableRow>
             {status === 'Pending' && (
-                <TableHead className="">Select</TableHead>
+                <TableHead className=" text-[.6rem]">Select</TableHead>
             )}
-            <TableHead className="">Requested at</TableHead>
-            <TableHead className="">Invoice Id</TableHead>
-            <TableHead>Job no</TableHead>
-            <TableHead>Job Component Name</TableHead>
-            <TableHead>Manager Name</TableHead>
-            <TableHead>Client</TableHead>
-            <TableHead className="">Budget</TableHead>
-            <TableHead className="">Budget Type</TableHead>
-            <TableHead className="">Curr. In.</TableHead>
-            <TableHead className="">New In.</TableHead>
-            <TableHead className="">In. Amount</TableHead>
-            <TableHead className="">Status</TableHead>
+            <TableHead className=" text-[.6rem]">Timestamp</TableHead>
+            {/* <TableHead className=" text-[.6rem]">Invoice Id</TableHead> */}
+            <TableHead className=' text-[.6rem]'>Job Number</TableHead>
+            <TableHead className=' text-[.6rem]'>Client Name</TableHead>
+
+            <TableHead className=' text-[.6rem]'>Project Name</TableHead>
+            <TableHead className=' text-[.6rem]'>Job Manager</TableHead>
+            <TableHead className=" text-[.6rem]">Budget</TableHead>
+            <TableHead className=" text-[.6rem]">Budget Type</TableHead>
+            <TableHead className=" text-[.6rem]">% Invoiced to Date</TableHead>
+            <TableHead className=" text-[.6rem]">% New Invoice</TableHead>
+            <TableHead className=" text-[.6rem]">$ New Invoice</TableHead>
+            <TableHead className=' text-[.6rem]'>Job Component</TableHead>
+            <TableHead className=' text-[.6rem]'>Admin Notes</TableHead>
+            <TableHead className=' text-[.6rem]'>Job Manager's Comments</TableHead>
+            <TableHead className=' text-[.6rem]'>Invoicer's Comment</TableHead>
+
+            {/* <TableHead className=" text-[.6rem]">Status</TableHead>
             {status === 'Pending' && (
             <TableHead className="">Action</TableHead>
-            )}
+            )} */}
             </TableRow>
         </TableHeader>
         <TableBody>
@@ -409,18 +415,23 @@ export default function Invoicetable() {
                     </TableCell> 
                 )}
                
-                <TableCell className="font-medium">{formatDMY(item.createdAt)}</TableCell>
-                <TableCell className="font-medium">{item.invoiceid}</TableCell>
-                <TableCell className="font-medium">{item.jobcomponent.jobno}</TableCell>
-                <TableCell className="font-medium">{item.jobcomponent.name}</TableCell>
-                <TableCell className="font-medium">{item.jobcomponent.jobmanager}</TableCell>
-                <TableCell className={` font-medium ${clientColor(item.client.priority)}`}>{item.client.clientname}</TableCell>
-                <TableCell className="font-medium">{item.jobcomponent.budget}</TableCell>
-                <TableCell className="font-medium">{item.jobcomponent.budgettype}</TableCell>
-                <TableCell className="font-medium">{item.currentinvoice}</TableCell>
-                <TableCell className="font-medium">{item.newinvoice}</TableCell>
-                <TableCell className="font-medium">$ {item.invoiceamount}</TableCell>
-                <TableCell className={` ${statusColor(item.status)} text-xs`}>{item.status}</TableCell>
+                <TableCell className="font-medium text-[.6rem]">{DDMMYYHMS(item.createdAt)}</TableCell>
+                {/* <TableCell className="font-medium text-[.6rem]">{item.invoiceid}</TableCell> */}
+                <TableCell className="font-medium text-[.6rem]">{item.jobcomponent.jobno}</TableCell>
+                <TableCell className={`font-medium text-[.6rem]  ${(item.client.priority)}`}>{item.client.clientname}</TableCell>
+                <TableCell className="font-medium text-[.6rem]">{item.projectname}</TableCell>
+                <TableCell className="font-medium text-[.6rem]">{getInitials(item.jobcomponent.jobmanager)}</TableCell>
+                <TableCell className="font-medium text-[.6rem]">${item.jobcomponent.budget.toLocaleString()}</TableCell>
+                <TableCell className="font-medium text-[.6rem]">{item.jobcomponent.budgettype}</TableCell>
+                <TableCell className="font-medium text-[.6rem]">{ item.jobcomponent.budgettype === 'lumpsum' &&` %${item.currentinvoice}`}</TableCell>
+                <TableCell className="font-medium text-[.6rem]">{ item.jobcomponent.budgettype === 'lumpsum' && `%${item.newinvoice}`}</TableCell>
+                <TableCell className="font-medium text-[.6rem]">$ {(item.invoiceamount as any).toLocaleString()}</TableCell>
+                <TableCell className="font-medium text-[.6rem]">{item.jobcomponent.name}</TableCell>
+                <TableCell className="font-medium text-[.6rem]">{item.adminnotes}</TableCell>
+                <TableCell className="font-medium text-[.6rem]">{item.jobmanagercomments}</TableCell>
+                <TableCell className="font-medium text-[.6rem]">{item.comments}</TableCell>
+
+                {/* <TableCell className={` ${statusColor(item.status)} text-xs`}>{item.status}</TableCell>
                 {status === 'Pending' && (
                 <TableCell className="font-medium">
                    <Dialog open={modal2} onOpenChange={setModal2}>
@@ -446,7 +457,7 @@ export default function Invoicetable() {
                       </Dialog>
 
                 </TableCell>
-                )}
+                )} */}
                 
                 
                
@@ -456,9 +467,9 @@ export default function Invoicetable() {
         </TableBody>
         </Table>
 
-        {list.length !== 0 && (
+        {/* {list.length !== 0 && (
           <PaginitionComponent currentPage={currentpage} total={totalpage} onPageChange={handlePageChange}/>
-          )}
+          )} */}
       
     </div>
         

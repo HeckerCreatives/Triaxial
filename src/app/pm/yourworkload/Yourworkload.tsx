@@ -11,7 +11,6 @@ import {
 import Legends from '@/components/common/Legends'
 import axios, { AxiosError } from 'axios'
 import { useRouter } from 'next/navigation'
-import { Workload } from '@/types/types'
 import { formatDate } from '@/utils/functions'
 import Leaveform from '@/components/forms/Leaveform'
 import WDform from '@/components/forms/Wellnessday'
@@ -34,6 +33,56 @@ type Wellnessday = {
 type Leave = {
   leavestart: string
   leaveend: string
+}
+
+
+type Dates = {
+  date: string
+  hours: number, 
+  status:[], 
+  _id: string
+}
+
+type Request = {
+  enddate: string
+startdate: string
+}
+
+type Leavedates = {
+  leaveend: string
+leavestart: string
+}
+
+
+type Members = {
+    dates: Dates[]
+employee: {_id: string,fullname: string, initials: string}
+eventDates: Request[]
+leaveDates: Leavedates[]
+notes: string
+role: string
+wellnessDates: string[]
+wfhDates: [{
+  requeststart: string,
+  requestend: string
+}]
+_id: string
+ }
+
+type Workload = {
+    _id: string
+    jobmanager: {employeeid: string, fullname: string}
+    componentid:  string
+    clientname: string
+    clientid: string
+    clientpriority: string
+    teamname:  string
+    teamid: string
+    projectname:  string
+    jobcomponent: string
+    teammembers: string[]
+    members: Members[]
+    jobno: string
 }
 
 export default function Yourworkload() {

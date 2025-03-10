@@ -46,13 +46,13 @@ leave: [
 ],
 event: [
   {
-    eventstart: string
-    eventend: string
+    startdate: string
+    enddate: string
     }
 ],
 wellness: [
   {
-      wellnessdates: string
+    requestdate: string
   }
 ],
 wfh: [
@@ -131,7 +131,7 @@ export default function Yourworkload() {
     return checkDate >= start && checkDate <= end;
   }
 
-  const statusData = ( hours: any, wd: boolean, event: boolean, leave: boolean, wfh: Wfh[], leaveDate: string, leaveArray: Array<{ leavestart: string; leaveend: string }>,eventArray: Array<{ eventstart: string; eventend: string }>,wellness: Array<{wellnessdates: string}>, ) => {
+  const statusData = ( hours: any, wd: boolean, event: boolean, leave: boolean, wfh: Wfh[], leaveDate: string, leaveArray: Array<{ leavestart: string; leaveend: string }>,eventArray: Array<{ startdate: string; enddate: string }>,wellness: {requestdate: string}[] , ) => {
     const data = []
 
      // Check if the leaveDate is in any range in the leave array
@@ -140,7 +140,7 @@ export default function Yourworkload() {
     );
 
     const isEventInRange = eventArray.some((leaveItem) =>
-      isDateInRange(leaveDate, leaveItem.eventstart, leaveItem.eventend)
+      isDateInRange(leaveDate, leaveItem.startdate, leaveItem.enddate)
     );
 
     const isWfhInRange = wfh.some((item) =>
@@ -148,7 +148,7 @@ export default function Yourworkload() {
     );
 
     const isWellnessDay= wellness.some((leaveItem) => {
-      if(leaveItem.wellnessdates.includes(leaveDate)){
+      if(leaveItem.requestdate?.includes(leaveDate)){
         return true
       } else {
         return false
@@ -207,15 +207,13 @@ export default function Yourworkload() {
 
 
   return (
-    <div className=' w-full h-full flex flex-col justify-center bg-secondary px-4 text-zinc-100'>
+    <div className=' w-full h-full flex flex-col justify-center bg-secondary p-4 text-zinc-100'>
 
     
-      <div className=' relative h-full w-full flex flex-col mt-4'>
+      <div className=' relative h-full w-full flex flex-col'>
         <div className=' flex flex-col gap-2 sticky top-0 z-50 bg-secondary'>
           <div className=' flex items-center justify-between'>
           {/* <SortableTeamsDialog/> */}
-
-          <div></div>
 
             <div className=' w-full flex items-center gap-2 justify-end'>
               <label htmlFor="" className=' text-xs'>Filter by date:</label>

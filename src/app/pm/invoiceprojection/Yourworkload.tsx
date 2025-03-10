@@ -11,7 +11,7 @@ import {
 import axios, { AxiosError } from 'axios'
 import toast from 'react-hot-toast'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { formatDate } from '@/utils/functions'
+import { formatDate, getInitials } from '@/utils/functions'
 import { Input } from '@/components/ui/input'
 import Invoice from '@/components/forms/Invoice'
 import { File } from 'lucide-react'
@@ -78,6 +78,7 @@ export default function Yourworkload() {
   const router = useRouter()
   const [remaining, setRemaining] = useState(0)
   const [componentid, setComponentid] = useState('')
+  const [search, setSearch] = useState('')
 
   const getList = async () => {
     const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/projectinvoice/managerlistcomponentprojectinvoice?teamid=${id}`,{
@@ -210,7 +211,7 @@ export default function Yourworkload() {
     try {
       const timer = setTimeout(() => {
         const getList = async () => {
-          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/projectinvoice/managerlistcomponentprojectinvoice?teamid=${id}`,{
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/projectinvoice/managerlistcomponentprojectinvoice?teamid=${id}&search=${search}`,{
             withCredentials: true,
             headers: {
               'Content-Type': 'application/json'
@@ -256,7 +257,7 @@ export default function Yourworkload() {
   }
     
     
-  },[refresh])
+  },[refresh, search])
 
   const formatYearMonth = (date: string) => {
     const newDate = new Date(date)
@@ -325,14 +326,20 @@ const totalsByDate = allDates.map((dateObj) => {
   return (
    <div className=' w-full h-full flex flex-col justify-center bg-secondary p-4 text-zinc-100'>
 
-      <div className=' h-full w-full flex flex-col max-w-[1920px]'>
+      <div className=' h-full w-full flex flex-col'>
+        <p className=' text-xs text-zinc-400'>Note: Sub-cont. cost cell data is editable.</p>
+
+        <div className=' w-full flex items-end justify-end mb-4'>
+          <input value={search} onChange={(e) => setSearch(e.target.value)} type="text" placeholder='Search project' className=' text-black text-[.6rem] p-2 bg-white rounded-sm' />
+
+        </div>
 
         
         {list.length !== 0 ? (
-          <div className=' h-full overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
+          <div className=' h-full overflow-y-auto flex items-start justify-center bg-secondary w-full'>
               
               
-            <table className="table-auto w-[1240px] border-collapse ">
+            <table className="table-auto border-collapse ">
           
             <thead className=' bg-primary h-[50px] border-collapse'>
 
@@ -345,7 +352,7 @@ const totalsByDate = allDates.map((dateObj) => {
                 </div>
 
               ) : (
-                <Invoice projectname={findJobComponent?.projectname} jobcname={findJobComponent?.jobcomponent} jobno={findJobComponent?.jobnumber} budgettype={findJobComponent?.budgettype} estimatedbudget={findJobComponent?.estimatedbudget} jobcid={findJobComponent?.componentid} isJobmanager={findJobComponent?.jobmanager.employeeid} currinvoice={findJobComponent?.invoice.percentage}  manager={findJobComponent?.jobmanager.fullname || ''} client={findJobComponent?.clientname || ``}>
+                <Invoice projectname={findJobComponent?.projectname} jobcname={findJobComponent?.jobcomponent} jobno={findJobComponent?.jobnumber} budgettype={findJobComponent?.budgettype} estimatedbudget={findJobComponent?.estimatedbudget} jobcid={findJobComponent?.componentid} isJobmanager={findJobComponent?.jobmanager.employeeid} currinvoice={findJobComponent?.invoice.percentage}  manager={findJobComponent?.jobmanager.fullname || ''} client={findJobComponent?.clientname || ``} notes={''}>
                   <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
                     <button className={`text-xs p-1 bg-red-600  rounded-sm`}><File size={12}/></button>
                     <p>Invoice</p>
@@ -353,38 +360,38 @@ const totalsByDate = allDates.map((dateObj) => {
                 </Invoice>
               )}
               </th>
-                <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'></th>
-                <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'></th>
-                <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'></th>
-                <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'></th>
-                <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Totals</th>
-                <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>$ {totalEstimatedBudget.toLocaleString()}</th>
-                <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'></th>
-                <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>$ {totalInvoiced.toLocaleString()}</th>
-                <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>$ {totalRemaining.toLocaleString()}</th>
-                <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>$ {totalSubAmount.toLocaleString()}</th>
-                <th className=' font-normal w-[70px] border-[1px] border-zinc-600 whitespace-normal break-all px-2'>$ {totalWIP.toLocaleString()}</th>
-                <th className=' font-normal w-[70px] border-[1px] border-zinc-600 whitespace-normal break-all px-2'>$ {totalCatchupInv.toLocaleString()}</th>
+                <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'></th>
+                <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'></th>
+                <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'></th>
+                <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'></th>
+                <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Totals</th>
+                <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>$ {totalEstimatedBudget.toLocaleString()}</th>
+                <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'></th>
+                <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>$ {totalInvoiced.toLocaleString()}</th>
+                <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>$ {totalRemaining.toLocaleString()}</th>
+                <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>$ {totalSubAmount.toLocaleString()}</th>
+                <th className=' font-normal min-w-[70px] border-[1px] border-zinc-600 whitespace-normal break-all px-2'>$ {totalWIP.toLocaleString()}</th>
+                <th className=' font-normal min-w-[70px] border-[1px] border-zinc-600 whitespace-normal break-all px-2'>$ {totalCatchupInv.toLocaleString()}</th>
 
               </tr>
             </thead>
 
-            <thead className=' bg-secondary h-[80px]'>
+            <thead className=' bg-secondary h-[60px]'>
 
               <tr className=' text-[0.6rem] text-zinc-100 font-normal border-collapse'>
-                <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Action</th>
-                <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Job no:</th>
-                <th className={`w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2`}>Client</th>
-                <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Project Name</th>
-                <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Job Mngr.</th>
-                <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Job Component</th>
-                <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Est. $</th>
-                <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Invoice (%)</th>
-                <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Invoiced $</th>
-                <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Remaining $</th>
-                <th className=' w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Sub-cont. costs</th>
-                <th className=' font-normal w-[70px] border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Wip</th>
-                <th className=' font-normal w-[70px] border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Catchup inv.</th>
+                <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Action</th>
+                <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Job no:</th>
+                <th className={`min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2`}>Client</th>
+                <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Project Name</th>
+                <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Job Manager.</th>
+                <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Job Component</th>
+                <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Est. $</th>
+                <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Invoice (%)</th>
+                <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Invoiced $</th>
+                <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Remaining $</th>
+                <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Sub-cont. costs</th>
+                <th className=' font-normal min-w-[70px] border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Wip</th>
+                <th className=' font-normal min-w-[70px] border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Catchup Invoice</th>
 
               
               </tr>
@@ -401,18 +408,18 @@ const totalsByDate = allDates.map((dateObj) => {
                     />
                   </td>
                   <td className="text-center underline cursor-pointer border-[1px] border-zinc-600 whitespace-normal break-all px-2 ">
-                  <a href={`/pm/graph/jobcomponent?teamid=${id}&jobno=${graphItem.componentid}`} className=' '>{graphItem.jobnumber}</a>
+                  <a href={`/pm/graph/jobcomponent?teamid=${id}&jobno=${graphItem.componentid}`} className=' text-blue-600 '>{graphItem.jobnumber}</a>
 
                   </td>
                   <td className={`text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2   ${clientColor(graphItem.priority)}`}>{graphItem.clientname}</td>
                   <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">{graphItem.projectname}</td>
-                  <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">{graphItem.jobmanager.fullname}</td>
+                  <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">{getInitials(graphItem.jobmanager.fullname)}</td>
                   <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">{graphItem.jobcomponent}</td>
                   <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">{graphItem.budgettype === 'rates' ? `Rates` : `$ ${ graphItem.estimatedbudget.toLocaleString()}` }</td>
                   <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">{graphItem.budgettype === 'rates' ? `` : ` ${ graphItem.invoice.percentage.toLocaleString()}%` }</td>
                   <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">$ {graphItem.budgettype === 'rates' ? `${ graphItem.rates.invoiced.toLocaleString()}` : `${ graphItem.lumpsum.invoiced.toLocaleString()}` }</td>
                   <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">{graphItem.budgettype === 'rates' ? `-` : `$ ${ graphItem.lumpsum.remaining.toLocaleString()}`}</td>
-                  <td onClick={() => {setDialog2(graphItem.budgettype === 'lumpsum' && true), setComponentid(graphItem.componentid), setSubAmount(graphItem.lumpsum.subconts)}} className={` border-[1px] border-zinc-600 whitespace-normal break-all px-2 text-center cursor-pointer font-semibold ${graphItem.budgettype === 'lumpsum' && ''}`}> {graphItem.budgettype === 'rates' ? '-' : `$ ${graphItem.lumpsum.subconts.toLocaleString()}`}</td>
+                  <td onClick={() => {setDialog2(graphItem.budgettype === 'lumpsum' && true), setComponentid(graphItem.componentid), setSubAmount(graphItem.lumpsum.subconts)}} className={` border-[1px] border-zinc-600 whitespace-normal break-all px-2 text-center cursor-pointer font-semibold text-red-500 ${graphItem.budgettype === 'lumpsum' && ''}`}> {graphItem.budgettype === 'rates' ? '-' : `- $ ${graphItem.lumpsum.subconts.toLocaleString()}`}</td>
                   <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">$ {graphItem.budgettype === 'rates' ? `${ graphItem.rates.wip.toLocaleString()}` : ` ${ graphItem.lumpsum.wip.toLocaleString()}`}</td>
                   <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">{graphItem.budgettype === 'rates' ? `-` : `$ ${ graphItem.lumpsum.catchupinv.toLocaleString()}`}</td>
                 </tr>
@@ -427,7 +434,7 @@ const totalsByDate = allDates.map((dateObj) => {
               <thead className=' w-[800px] bg-primary h-[50px] border-none'>
                 <tr className=' text-[0.6rem] text-zinc-100 font-normal border-collapse'>
                   {totalsByDate.map((item, index) => (
-                    <th key={index} className="relative font-normal px-6 border-[1px] border-zinc-600 whitespace-normal break-all px-2 ">
+                    <th key={index} className="relative font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2 ">
                       $ {item.toLocaleString()}
                     </th>
                   ))}
@@ -436,7 +443,26 @@ const totalsByDate = allDates.map((dateObj) => {
                 </tr>
               </thead>
 
-              <thead className=' w-[800px] bg-zinc-800 h-[80px]'>
+              <thead className=' bg-zinc-800 h-[30px]'>
+                <tr className='text-[0.6rem] text-zinc-100 font-normal'>
+                  <th className="relative px-6 border-zinc-700">
+                  </th>
+                  <th className="relative col-span-full px-6 border-zinc-700"></th>
+                  <th className="relative col-span-full px-6 border-zinc-700"></th>
+                  <th className="relative text-end col-span-full px-2 text-sm text-blue-500  border-zinc-700">PROJECTED</th>
+                  <th className="relative text-start col-span-full px-2 text-sm text-blue-500 border-zinc-700">INVOICING</th>
+                  <th className="relative col-span-full px-6 border-zinc-700"></th>
+                  <th className="relative col-span-full px-6 border-zinc-700"></th>
+                  <th className="relative col-span-full px-6 border-zinc-700"></th>
+                  <th className="relative col-span-full px-6 border-zinc-700"></th>
+                  <th className="relative col-span-full px-6 border-zinc-700"></th>
+                  <th className="relative col-span-full px-6 border-zinc-700"></th>
+                  <th className="relative col-span-full px-6 border-zinc-700"></th>
+                  <th className="relative col-span-full px-6 border-zinc-700"></th>
+                </tr>
+              </thead>
+
+              <thead className=' w-[800px] bg-zinc-800 h-[30px]'>
                 <tr className=' text-[0.6rem] text-zinc-100 font-normal'>
                 
               
@@ -447,7 +473,7 @@ const totalsByDate = allDates.map((dateObj) => {
                   return (
                     <React.Fragment key={index}>
                       <th className="relative font-normal border-[1px] px-6 border-zinc-700">
-                        <p className="whitespace-nowrap"><span className=' text-red-600'>{monthName.slice(0,3)}</span> {year} </p>
+                        <p className="whitespace-nowrap">{monthName.slice(0,3)} {year} </p>
                       </th>
                     
                     </React.Fragment>
@@ -480,7 +506,7 @@ const totalsByDate = allDates.map((dateObj) => {
                           }}
                         >
                           {memberDate ? (
-                            <span className="text-xs">$ {memberDate.amount}</span>
+                            <span className="">$ {memberDate.amount}</span>
                           ) : (
                             <span>-</span>
                           )}

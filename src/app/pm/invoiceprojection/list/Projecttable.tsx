@@ -26,6 +26,7 @@ import PaginitionComponent from '@/components/common/Pagination'
 import Spinner from '@/components/common/Spinner'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Projectstatusform from '@/components/forms/Projectstatusform'
+import SortableTeamsDialog from '@/components/common/SortTeam'
 
 type Project = {
   createdAt: string
@@ -48,6 +49,7 @@ type Teams = {
   manager: string
   teamleader: string
   projectCount: number
+  wip: number
 }
 
 export default function Projecttable() {
@@ -126,16 +128,18 @@ export default function Projecttable() {
       return 'bg-green-500'
     } 
   }
+
+  const totalWIP = list.reduce((sum, item) => sum + item.wip, 0);
   
 
   return (
-   <div className=' w-full h-full flex justify-center bg-secondary p-6 text-zinc-100'>
+   <div className=' w-full h-full flex justify-center bg-secondary p-6 text-zinc-100 overflow-y-auto'>
 
-    <div className=' w-full flex flex-col max-w-[1520px]'>
+    <div className=' w-full flex flex-col'>
 
       <div className=' w-full flex items-center justify-between'>
           <div>
-            
+            {/* <SortableTeamsDialog/> */}
           </div>
 
           {/* <div className=' flex flex-col gap-1'>
@@ -158,9 +162,10 @@ export default function Projecttable() {
         <TableHeader>
             <TableRow>
             <TableHead>Team Name</TableHead>
-            <TableHead>Manager</TableHead>
-            <TableHead>Team Leader</TableHead>
+            {/* <TableHead>Manager</TableHead>
+            <TableHead>Team Leader</TableHead> */}
             <TableHead>Total # of Projects</TableHead>
+            <TableHead>WIP Totals</TableHead>
           
             <TableHead className="">Action</TableHead>
             </TableRow>
@@ -169,20 +174,48 @@ export default function Projecttable() {
           {list.map((item, index) => (
             <TableRow key={index} className=' '>
             <TableCell>
-              <a href={`/pm/graph/jobcomponent?teamid=${item._id}`} className=' text-red-500 underline'>{item.teamname}</a>
+              <a href={`/pm/graph/jobcomponent?teamid=${item._id}&teamname=${item.teamname}`} className=' text-red-500 underline'>{item.teamname}</a>
               </TableCell>
-            <TableCell>{item.manager}</TableCell>
-            <TableCell>{item.teamleader}</TableCell>
+            {/* <TableCell>{item.manager}</TableCell>
+            <TableCell>{item.teamleader}</TableCell> */}
             <TableCell>{item.projectCount}</TableCell>
+            <TableCell>${item.wip.toLocaleString()}</TableCell>
           
            
             <TableCell className=" flex items-center gap-2">
-              <button onClick={() => router.push(`/pm/invoiceprojection?jobcomponentid=${item._id}`)} className=' bg-red-600 p-2 text-white rounded-sm flex items-center gap-2'><Eye size={15}/>View Invoice Projection</button>
+              <button onClick={() => router.push(`/pm/invoiceprojection?jobcomponentid=${item._id}`)} className=' text-[.6rem] bg-red-600 p-2 text-white rounded-sm flex items-center gap-1'><Eye size={12}/>View Invoice Projection</button>
               
             </TableCell>
             </TableRow>
           ))}
             
+        </TableBody>
+        </Table>
+
+
+        <Table className=' mt-4 border-none'>
+        {list.length === 0 &&  
+          <TableCaption className=' text-xs text-zinc-500'>No data</TableCaption>
+          }
+          
+        {loading === true && (
+            <TableCaption className=' '>
+              <Spinner/>
+            </TableCaption>
+          )}
+        <TableHeader>
+            <TableRow>
+            <TableHead className=' col-span-1'></TableHead>
+            <TableHead className=' col-span-1'></TableHead>
+            <TableHead className=' col-span-1'></TableHead>
+            <TableHead className=' col-span-1'></TableHead>
+            <TableHead className=' col-span-1'></TableHead>
+            <TableHead className=' col-span-1'></TableHead>
+            <TableHead className=' text-sm'>Company Totals: ${totalWIP.toLocaleString()} </TableHead>
+            <TableHead className=""></TableHead>
+            </TableRow>
+        </TableHeader>
+        <TableBody>
         </TableBody>
         </Table>
 

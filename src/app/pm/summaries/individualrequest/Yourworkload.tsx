@@ -12,7 +12,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { formatAustralianDate, formatMonthYear } from '@/utils/functions'
+import { formatAustralianDate, formatDate, formatMonthYear } from '@/utils/functions'
+import DatePicker from 'react-datepicker'
 
 
 type Dates = {
@@ -31,52 +32,65 @@ type List = {
 }
 
 type Workload = {
-initial: string
-id: string,
-name: string
-resource: string
-dates: Dates[]
-leave: [
-  {
-    leavestart: string
-    leaveend: string
+  initial: string
+  id: string,
+  name: string
+  resource: string
+  dates: Dates[]
+  leave: [
+    {
+      leavestart: string
+      leaveend: string
+      }
+  ],
+  event: eventRequest []
+  wellness: [
+    {
+        wellnessdates: string
     }
-],
-event: [
-  {
-    eventstart: string
-    eventend: string
+  ],
+  wfh: [
+    {
+      requeststart: string
     }
-],
-wellness: [
-  {
-      wellnessdates: string
+  ]
   }
-],
-}
 
 type Team = {
   teamid: string
 teamname: string
 }
 
+type Wellness = { wellnessdates: string };
+type WFH = { requeststart: string };
+type eventRequest = {eventdates: {
+                                    startdate: string
+                                    enddate: string
+                                }}
+                                type Leave = {
+                                  leavestart: string
+                                  leaveend: string
+                                }
+
 export default function Yourworkload() {
   const [memberIndex, setMemberIndex] = useState(0)
   const [list, setList] = useState<List[]>([])
   const [dates, setDates] = useState<string[]>([])
-  const [filter, setFilter] = useState('')
   const router = useRouter()
   const params = useSearchParams()
   const getTeamid = params.get('team')
   const [team, setTeam] = useState<Team[]>([])
   const [id, setId] = useState('')
+    const [filter, setFilter] = useState<Date | null>(null)
+
+  const filterDate = filter === null ?  '' : (filter?.toLocaleString())?.split(',')[0]
 
 
   useEffect(() => {
     const getList = async () => {
     
         try {
-          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/getjobcomponentindividualrequest?teamid=${id}`,{
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/getjobcomponentindividualrequest?teamid=${id}&filterDate=${filterDate}`,{
             withCredentials: true
           })
 
@@ -88,7 +102,7 @@ export default function Yourworkload() {
       }
 
     getList()
-  },[filter, id])
+  },[filter, id, filterDate])
 
   const isDateInRange = (dateToCheck: string, startDate: string, endDate: string): boolean => {
     const checkDate = new Date(dateToCheck);
@@ -103,41 +117,48 @@ export default function Yourworkload() {
     return checkDate >= start && checkDate <= end;
   }
 
-  const statusData = ( hours: any, wd: boolean, event: boolean, leave: boolean, leaveDate: string, leaveArray: Array<{ leavestart: string; leaveend: string }>, eventArray: Array<{ eventstart: string; eventend: string }>, wellness: Array<{wellnessdates: string}>) => {
-    const data = []
-
-     // Check if the leaveDate is in any range in the leave array
-    const isLeaveInRange = leaveArray.some((leaveItem) =>
-      isDateInRange(leaveDate, leaveItem.leavestart, leaveItem.leaveend)
+  const statusColorRequest = (
+    date: string, 
+    eventDates: eventRequest[], 
+    // events: { eventstart: string; eventend: string }[], 
+    leaveDates: Leave[], 
+    wellness: Wellness[], 
+    wfh: WFH[] = []
+  ): string[] => {
+    const colorData: string[] = [];
+  
+    const isWithinAnyEventDate = eventDates.some((item) =>
+      isDateInRange(date, item.eventdates.startdate, item.eventdates.enddate)
+    );
+  
+    const isWithinAnyLeaveDate = leaveDates.some((item) =>
+      isDateInRange(date, item.leavestart, item.leaveend)
     );
 
-    const isEventInRange = eventArray.some((leaveItem) =>
-      isDateInRange(leaveDate, leaveItem.eventstart, leaveItem.eventend)
-    );
+    // const isWellnessDate = wellness.some((item) =>
+    //   isDateInRange(date, item.wellnessdates, item.leaveend)
+    // );
 
-    const isWellnessDay= wellness.some((leaveItem) => {
-      if(leaveItem.wellnessdates.includes(leaveDate)){
-        return true
-      } else {
-        return false
-      }
-    })
+    const isWFH = wfh.some((item) => formatDate(item.requeststart) === formatDate(date));
+    const isWellnessDate = wellness.some((item) => formatDate(item.wellnessdates) === formatDate(date));
 
-    if(isEventInRange){
-      data.push('bg-gray-400')
-
+  
+    if (isWithinAnyEventDate) {
+      colorData.push("bg-gray-300");
+    }
+    if (isWithinAnyLeaveDate) {
+      colorData.push("bg-violet-300");
+    }
+    if (isWFH) {
+      colorData.push("bg-lime-300");
     }
 
-    if(isWellnessDay) {
-      data.push('bg-fuchsia-400')
+    if(isWellnessDate){
+      colorData.push('bg-fuchsia-300')
     }
-
-    if(isLeaveInRange){
-      data.push('bg-violet-300')
-    }
-
-    return data
-  }
+  
+    return colorData;
+  };
 
 
   useEffect(() => {
@@ -163,7 +184,7 @@ export default function Yourworkload() {
     <div className=' w-full h-full flex flex-col justify-center bg-secondary p-4 text-zinc-100'>
 
 
-      <div className=' h-full w-full flex flex-col gap-2 max-w-[1920px]'>
+      <div className=' h-full w-full flex flex-col gap-2'>
       <div className=' w-full flex items-center gap-2 justify-between py-4'>
 
         <div className=' text-xs'>
@@ -196,6 +217,12 @@ export default function Yourworkload() {
               </div>
 
               <div className=' flex items-center gap-2'>
+                <div className=' bg-lime-300'>
+                  <p className=' text-[.7em] text-black font-semibold px-1'>WFH</p>
+                </div>
+              </div>
+
+              <div className=' flex items-center gap-2'>
                 <div className=' bg-fuchsia-400'>
                 <p className=' text-[.7em] text-black font-semibold px-1'>Wellness Day</p>
 
@@ -206,7 +233,7 @@ export default function Yourworkload() {
 
               <div className=' flex items-center gap-2'>
                 <div className=' bg-gray-400'>
-                <p className=' text-[.7em] text-black font-semibold px-1'>Events</p>
+                <p className=' text-[.7em] text-black font-semibold px-1'>Public Holidays</p>
 
                 </div>
 
@@ -216,12 +243,34 @@ export default function Yourworkload() {
 
             </div>
 
+            <div className=' flex flex-col mr-8'>
+            <label htmlFor="" className=' text-xs'>Filter by date:</label>
+                          <div className=' flex relative z-50'>
+                          <DatePicker
+                            selected={filter}
+                            onChange={(date) => setFilter(date)}
+                            dateFormat="dd/MM/yyyy"
+                            placeholderText="DD/MM/YYYY"
+                            className="bg-primary text-xs p-2 w-fit z-[9999] relative"
+                            onKeyDown={(e) => e.preventDefault()}
+                            
+            
+                          />
+                          <button onClick={() => setFilter(null)} className=' p-2 bg-red-600 text-white rounded-sm'><RefreshCcw size={15}/></button>
+                          
+                        </div>
+            </div>
+
+                         
+
+            
+
       </div>
 
 
       </div>
       {list.length !== 0 ? (
-        <div className=' h-full overflow-y-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
+        <div className=' h-full overflow-y-auto flex items-start justify-center bg-secondary w-full'>
           <table className="table-auto w-[300px] border-collapse ">
             <thead className=' bg-secondary h-[100px]'>
 
@@ -252,7 +301,7 @@ export default function Yourworkload() {
           </tbody>
           </table>
 
-          <div className=' overflow-x-auto w-full h-full'>
+          <div className=' overflow-x-auto w-full h-auto'>
 
             <table className="table-auto w-full border-collapse ">
               <thead className=' w-full bg-secondary h-[100px]'>
@@ -287,7 +336,7 @@ export default function Yourworkload() {
                         } else if (date.toDateString() === today.toDateString()) {
                           bgColor = "bg-pink-500"; // Today
                         } else if (date.getTime() >= nextDay.getTime()) {
-                          bgColor = "bg-pink-200"; // Future days
+                          bgColor = "bg-white"; // Future days
                         }
                       }
 
@@ -345,7 +394,7 @@ export default function Yourworkload() {
                               }`}
                             >
                               <div className="flex absolute top-0 w-full h-[40px] text-center">
-                                {statusData(hours, isWd, isEventDay, isLeave, date, member.leave, member.event, member.wellness).map((item, index) => (
+                                {statusColorRequest(date, member.event, member.leave, member.wellness, member.wfh).map((item, index) => (
                                   <div key={index} className={`w-full h-full ${item}`}></div>
                                 ))}
                               </div>

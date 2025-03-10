@@ -25,7 +25,7 @@ import {
 import Editwfhrequest from '@/components/forms/Editwfhrequest'
 import { Pen, Trash2 } from 'lucide-react'
 import { Wfhemployee } from '@/types/types'
-import { statusColor } from '@/utils/functions'
+import { DDMMYY, statusColor } from '@/utils/functions'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -185,10 +185,11 @@ export default function Wfh() {
           )}
           <TableHeader>
               <TableRow>
-              <TableHead className=' text-xs'>Requested at</TableHead>
-              <TableHead className=' text-xs'>First day of Wfh</TableHead>
-              <TableHead className=' text-xs'>Last day of Wfh</TableHead>
-              <TableHead className=' text-xs'>Total hours Wfh</TableHead>
+              <TableHead className=' text-xs'>Manager</TableHead>
+              <TableHead className=' text-xs'>WFH Request Timestamp</TableHead>
+              <TableHead className=' text-xs'>First day of WFH</TableHead>
+              <TableHead className=' text-xs'>Last day of WFH</TableHead>
+              <TableHead className=' text-xs'>Total hours WFH</TableHead>
               <TableHead className=' text-xs'>In a Wellness Day Cycle?</TableHead>
               <TableHead className=' text-xs'>Status</TableHead>
               
@@ -198,9 +199,10 @@ export default function Wfh() {
           <TableBody>
             {leave.map(( item, index) => (
               <TableRow key={index}>
-              <TableCell>{new Date(item.createdAt).toLocaleString()}</TableCell>
-              <TableCell>{item.requestdate}</TableCell>
-              <TableCell>{item.requestend}</TableCell>
+              <TableCell>{item.manager}</TableCell>
+              <TableCell>{DDMMYY(item.createdAt)}</TableCell>
+              <TableCell>{DDMMYY(item.requestdate)}</TableCell>
+              <TableCell>{DDMMYY(item.requestend)}</TableCell>
               <TableCell>{item.totalhourswfh.toFixed(2)}</TableCell>
               <TableCell>{item.wellnessdaycycle === true ? 'Yes' : 'No'}</TableCell>
               <TableCell className={` ${statusColor(item.status)} text-xs`}>{item.status}</TableCell>

@@ -169,7 +169,7 @@ export default function Projecttable() {
           {list.map((item, index) => (
             <TableRow key={index} className=' '>
             <TableCell>
-              <a href={`/pm/graph/jobcomponent?teamid=${item._id}`} className=' text-red-500 underline'>{item.teamname}</a>
+              <a href={`/finance/graph/jobcomponent?teamid=${item._id}&${item.teamname}`} className=' text-red-500 underline'>{item.teamname}</a>
               </TableCell>
             <TableCell>{item.manager}</TableCell>
             <TableCell>{item.teamleader}</TableCell>

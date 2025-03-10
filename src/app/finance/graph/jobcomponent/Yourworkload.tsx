@@ -544,7 +544,13 @@ export default function Yourworkload() {
      // Check if the date is in wellnessDates
   const isWellnessDate = wellnessDates.some(
     (wellnessDate) => wellnessDate.includes(date.split('T')[0])
+  );
+
+  const isWFH = wfhDates.some(
+    (wfh) => wfh.includes(date.split('T')[0])
   );;
+
+  console.log(wfhDates)
 
     if(data.includes('1')){
       colorData.push('bg-red-500')
@@ -576,6 +582,14 @@ export default function Yourworkload() {
 
     if(isWellnessDate){
       colorData.push('bg-fuchsia-300')
+    }
+
+     if(isWellnessDate){
+      colorData.push('bg-fuchsia-300')
+    }
+
+    if(isWFH){
+      colorData.push('bg-lime-300')
     }
 
     return colorData; 
@@ -1018,20 +1032,20 @@ export default function Yourworkload() {
                   </JobComponentStatus>
                 )}
 
-                {/* {componentid === '' ? (
+                {componentid === '' ? (
                   <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
                     <button onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><File size={20}/></button>
                     <p>Invoice</p>
                   </div>
 
                 ) : (
-                  <Invoice projectname={findJobComponent?.projectname.name} jobcname={findJobComponent?.jobcomponent} jobno={findJobComponent?.jobno} budgettype={findJobComponent?.budgettype} estimatedbudget={findJobComponent?.estimatedbudget} jobcid={findJobComponent?.componentid} isJobmanager={findJobComponent?.jobmanager.isJobManager} currinvoice={findJobComponent?.invoice.percentage} manager={findJobComponent?.jobmanager.fullname || ''} client={findJobComponent?.clientname.name || ''}>
+                  <Invoice projectname={findJobComponent?.projectname.name} jobcname={findJobComponent?.jobcomponent} jobno={findJobComponent?.jobno} budgettype={findJobComponent?.budgettype} estimatedbudget={findJobComponent?.estimatedbudget} jobcid={findJobComponent?.componentid} isJobmanager={findJobComponent?.jobmanager.isJobManager} currinvoice={findJobComponent?.invoice.percentage} manager={findJobComponent?.jobmanager.fullname || ''} client={findJobComponent?.clientname.name || ''} notes={findJobComponent?.adminnotes || ''}>
                     <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
                       <button className={`text-xs p-1 bg-red-600  rounded-sm`}><File size={20}/></button>
                       <p>Invoice</p>
                     </div>       
                   </Invoice>
-                )} */}
+                )}
 
               </div>
               
@@ -1067,7 +1081,7 @@ export default function Yourworkload() {
               <tbody>
                 {listRequest[0]?.members.map((item, graphIndex) =>
                     <tr key={`${graphIndex}`} className="bg-primary text-[.5rem] py-2 h-[30px] border-[1px] border-zinc-600">
-                      <td onClick={() => router.push(`/pm/individualworkload?employeeid=${item.id}&name=${item.name}&teamname=${list[0].teamname}`)} className="whitespace-normal break-all border-[1px] border-zinc-600 px-2 text-center cursor-pointer underline text-blue-400">{item.name}</td>
+                      <td onClick={() => router.push(`/finance/individualworkload?employeeid=${item.id}&name=${item.name}&teamname=${list[0].teamname}`)} className="whitespace-normal break-all border-[1px] border-zinc-600 px-2 text-center cursor-pointer underline text-blue-400">{item.name}</td>
                       {/* <td className="text-center whitespace-normal break-all border-[1px] border-zinc-600 px-2 ">{item.initial}</td>
                       <td className="text-center whitespace-normal break-all border-[1px] border-zinc-600 px-2 ">{item.resource}</td> */}
                     </tr>
@@ -1151,7 +1165,7 @@ export default function Yourworkload() {
                   if (date >= startOfWeek && date <= endOfWeek) {
                     if (date <= today) {
                       bgColor = "bg-gray-300"; // ✅ Past days turn gray properly
-                    } else if (date.getTime() === today.getTime()) {
+                    } else if (date.getDate() - 1 === today.getDate()) {
                       bgColor = "bg-pink-500"; // ✅ Today is pink
                     } else {
                       bgColor = 'bg-white'
@@ -1341,64 +1355,83 @@ export default function Yourworkload() {
               </thead>
                 <tbody>
                 {list.map((graphItem, graphIndex) =>
-                  graphItem.members.map((member, memberIndex) => (
-                    <tr 
-                    key={`${graphItem._id}-${memberIndex}`}
-                    data-invoice-id={graphItem._id} 
-                    className={`  text-left text-[.5rem] py-2 h-[30px] border-[1px] border-zinc-600 border-collapse ${graphItem.isVariation === true ? 'text-red-600 font-black' : ' text-black'} ${clientColor(graphItem.clientname.priority)}`}>
-                        <td className="text-center text-white h-[30px] flex items-center justify-center gap-1  ">
-                          
+                    graphItem.members.map((member, memberIndex) => {
+                      // Sum all hours for the member
+                      const totalHours = member.dates?.reduce((sum, date) => sum + date.hours, 0) || 0;
 
-                          {(memberIndex === 0 ) && (
-                            <input
-                            type="checkbox"
-                            checked={componentid === graphItem._id}
-                            onChange={() => {handleCheckboxChange(graphItem._id),setProjectname(graphItem.projectname.projectid), setJobmanager(graphItem.jobmanager.employeeid), setJobno(graphItem.jobno), findMember(graphItem.members), setNotes(graphItem.members[0].notes),setNotes2(graphItem.members[1].notes),setNotes3(graphItem.members[2].notes),setNotes4(graphItem.members[3].notes), setIsmanager(graphItem.jobmanager.isManager),setIsjobmanager(graphItem.jobmanager.isJobManager)}}
-                            />
-                          )}
+                      return (
+                        <tr 
+                          key={`${graphItem._id}-${memberIndex}`}
+                          data-invoice-id={graphItem._id} 
+                          className={`text-left text-[.5rem] py-2 h-[30px] border-[1px] border-zinc-600 border-collapse ${graphItem.isVariation ? 'text-red-600 font-black' : 'text-black'} ${clientColor(graphItem.clientname.priority)}`}
+                        >
+                          <td className="text-center text-white h-[30px] flex items-center justify-center gap-1">
+                            {memberIndex === 0 && (
+                              <input
+                                type="checkbox"
+                                checked={componentid === graphItem._id}
+                                onChange={() => {
+                                  handleCheckboxChange(graphItem._id);
+                                  setProjectname(graphItem.projectname.projectid);
+                                  setJobmanager(graphItem.jobmanager.employeeid);
+                                  setJobno(graphItem.jobno);
+                                  findMember(graphItem.members);
+                                  setNotes(graphItem.members[0]?.notes || "");
+                                  setNotes2(graphItem.members[1]?.notes || "");
+                                  setNotes3(graphItem.members[2]?.notes || "");
+                                  setNotes4(graphItem.members[3]?.notes || "");
+                                  setIsmanager(graphItem.jobmanager.isManager);
+                                  setIsjobmanager(graphItem.jobmanager.isJobManager);
+                                }}
+                              />
+                            )}
+                          </td>
 
-                                      
-                      </td>
-                      {/* ${graphItem.status === null ? 'text-blue-400' :  'text-green-500'} */}
-                      {/* <td className={` text-center`}>{memberIndex === 0 && `${graphItem.status === null ? 'Ongoing' :  'Completed'}`}</td> */}
-                      <td className=" text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.jobno}</td>
-                      <td className=" text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.clientname.name}</td>
-                      <td className=" text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.projectname.name}</td>
-                      <td className=" text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.jobmanager.initials}</td>
-                      <td className=" text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.jobcomponent}</td>
-                      <td className=" text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
-                        <Dialog>
-                        <DialogTrigger className=' rounded-sm flex items-center text-black text-[.5rem]'>
-                          {member.notes === '' ? (
-                            <p className=' text-[.5rem] h-full w-full text-center'>No notes.</p>
-                          ):(
-                          <p className=' text-[.5rem]'>{member.notes.slice(0,20)}</p>
-                          )}
-                        </DialogTrigger>
-                        <DialogContent className=' bg-secondary p-6 border-none max-w-[600px] text-white'>
-                          <DialogHeader>
-                            <DialogTitle>Notes</DialogTitle>
-                            <DialogDescription>
-                              
-                            </DialogDescription>
-                          </DialogHeader>
-                          {member.notes === '' ? (
-                            <p className=' text-xs text-zinc-400 h-full w-full text-center'>No notes.</p>
-                          ):(
-                          <p className=' text-xs text-zinc-400'>{member.notes}</p>
-                          )}
-                        </DialogContent>
-                      </Dialog>
+                          <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                            {memberIndex === 0 && graphItem.jobno}
+                          </td>
+                          <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                            {memberIndex === 0 && graphItem.clientname.name}
+                          </td>
+                          <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                            {memberIndex === 0 && graphItem.projectname.name}
+                          </td>
+                          <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                            {memberIndex === 0 && graphItem.jobmanager.initials}
+                          </td>
+                          <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                            {memberIndex === 0 && graphItem.jobcomponent}
+                          </td>
+                          <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                            <Dialog>
+                              <DialogTrigger className="rounded-sm flex items-center text-black text-[.5rem]">
+                                {member.notes ? <p className="text-[.5rem]">{member.notes.slice(0, 20)}</p> : <p className="text-[.5rem] h-full w-full text-center">No notes.</p>}
+                              </DialogTrigger>
+                              <DialogContent className="bg-secondary p-6 border-none max-w-[600px] text-white">
+                                <DialogHeader>
+                                  <DialogTitle>Notes</DialogTitle>
+                                  <DialogDescription></DialogDescription>
+                                </DialogHeader>
+                                {member.notes ? <p className="text-xs text-zinc-400">{member.notes}</p> : <p className="text-xs text-zinc-400 h-full w-full text-center">No notes.</p>}
+                              </DialogContent>
+                            </Dialog>
+                          </td>
+                          <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2 text-[.5rem]">
+                            {member.role}
+                          </td>
+                          <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2 text-[.5rem]">
+                            {graphItem.teamname}
+                          </td>
+                          <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                            {member.employee.initials}
+                          </td>
+                          {/* Display the total hours for the member */}
+                          <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">{totalHours}</td>
+                        </tr>
+                      );
+                    })
+                  )}
 
-                      </td>
-                      <td className=" text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2 text-[.5rem]">{member.role}</td>
-                      <td className=" text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2 text-[.5rem]">{graphItem.teamname}</td>
-                      <td className=" text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">{member.employee.initials}</td>
-                      <td className=" text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">0</td>
-
-                    </tr>
-                  ))
-                )}
                 </tbody>
             </table>
 

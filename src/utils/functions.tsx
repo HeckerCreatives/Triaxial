@@ -85,3 +85,38 @@ export const formatMonthYear = (date: string) => {
   const dates = new Date(date); // Convert the string to a Date object
   return dates.toLocaleDateString('en-AU', { month: 'short', year: 'numeric' });
 };
+
+
+export const getInitials = (fullName: string) => {
+  const parts = fullName.trim().split(" ");
+  const firstInitial = parts[0] ? parts[0][0].toUpperCase() : "";
+  const lastInitial = parts.length > 1 ? parts[1][0].toUpperCase() : "";
+  return firstInitial + lastInitial;
+};
+
+
+export const DDMMYYHMS = (data: string) => {
+  const date = new Date(data).toLocaleString('en-GB', { 
+    day: '2-digit', 
+    month: '2-digit', 
+    year: '2-digit', 
+    hour: '2-digit', 
+    minute: '2-digit', 
+    second: '2-digit', 
+    hour12: false 
+  })
+
+  return date
+}
+
+
+export const DDMMYY = (data: string) => {
+  const date = new Date(data).toLocaleString('en-GB', { 
+    day: '2-digit', 
+    month: '2-digit', 
+    year: '2-digit', 
+   
+  })
+
+  return date
+}
