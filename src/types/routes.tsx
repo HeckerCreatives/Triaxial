@@ -16,7 +16,7 @@ export const hr = [
 export const pm = [
     {name: 'Dashboard', path: '/pm/dashboard', icon: <Home className="h-4 w-4" />, subpath: []},
     {name: 'My Workload', path: '/pm/yourworkload', icon: <List className="h-4 w-4" />, subpath: []},
-    {name: 'Scheduling', path: '/pm/scheduling', icon: <Box className="h-4 w-4" />, subpath: []},
+    // {name: 'Scheduling', path: '/pm/scheduling', icon: <Box className="h-4 w-4" />, subpath: []},
     {name: 'Finance', path: '/pm/invoiceprojection/list', icon: <Files className="h-4 w-4" />, subpath: []},
     {name: 'Summaries', path: '/pm/summaries', icon: <File className="h-4 w-4" />, subpath: [
         {name: 'Projects', path: '/pm/summaries', subpath: [
