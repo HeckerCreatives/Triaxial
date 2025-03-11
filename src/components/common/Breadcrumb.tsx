@@ -24,7 +24,7 @@ export default function Breadcrumbdb(prop: any) {
             </BreadcrumbItem>
           {/* <BreadcrumbSeparator /> */}
             <BreadcrumbItem>
-              <BreadcrumbLink href={path} className=' text-xs text-zinc-100 hover:text-red-600'>{prop.page}</BreadcrumbLink>
+              <BreadcrumbLink className=' text-xs text-zinc-100 hover:text-red-600'>{prop.page}</BreadcrumbLink>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>

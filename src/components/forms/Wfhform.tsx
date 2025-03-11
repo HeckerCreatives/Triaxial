@@ -256,7 +256,7 @@ export default function Wfhform( prop: Data) {
           </div>
           {errors.declaration && <p className=' text-[.6em] text-red-500'>{errors.declaration.message}</p>}
 
-          <button className=' bg-red-700 text-zinc-100 px-4 py-2 text-xs rounded-sm mt-4'>Submit</button>
+          <button disabled={loading} className=' bg-red-700 text-zinc-100 px-4 py-2 text-xs rounded-sm mt-4'>Submit</button>
 
          
         </div>

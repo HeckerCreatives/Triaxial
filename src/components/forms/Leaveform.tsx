@@ -107,7 +107,7 @@ export default function Leaveform( prop: Data) {
   
       const response = await toast.promise(request, {
           loading: 'Requesting a leave....',
-          success: `Successfully rquested`,
+          success: `Successfully requested`,
           error: 'Error while requesting a leave',
       });
   
@@ -412,7 +412,7 @@ export default function Leaveform( prop: Data) {
           </div>
           {errors.declaration && <p className=' text-[.6em] text-red-500'>{errors.declaration.message}</p>}
 
-          <button className=' bg-red-700 text-zinc-100 px-4 py-2 text-xs rounded-sm mt-4'>Submit</button>
+          <button disabled={loading} className=' bg-red-700 text-zinc-100 px-4 py-2 text-xs rounded-sm mt-4'>Submit</button>
 
          
         </div>

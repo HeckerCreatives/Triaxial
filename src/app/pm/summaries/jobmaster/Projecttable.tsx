@@ -138,7 +138,7 @@ export default function Projecttable() {
             <TableHead className=' text-xs'>Client</TableHead>
             <TableHead className=' text-xs'>Project Name</TableHead>
             <TableHead className=' text-xs'>Job Manager</TableHead>
-            <TableHead className=' text-xs'>JobComponent Budget</TableHead>
+            <TableHead className=' text-xs'>Job Component Budget</TableHead>
             <TableHead className=' text-xs'>% Invoiced</TableHead>
             <TableHead className=' text-xs'>Job Component</TableHead>
             <TableHead className=' text-xs'>Job Members</TableHead>
