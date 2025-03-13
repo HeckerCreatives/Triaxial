@@ -96,7 +96,6 @@ export default function SortableTeamsDialog() {
             withCredentials: true
           })
 
-          console.log(response.data)
           setTeams(response.data.data)
   
         } catch (error) {
@@ -160,7 +159,6 @@ export default function SortableTeamsDialog() {
     }
   }
 
-  console.log(teams)
 
   return (
     <Dialog>

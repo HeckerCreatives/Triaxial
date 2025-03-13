@@ -472,8 +472,8 @@ export default function Yourworkload() {
       
         
           setList(response.data.data)
-          setStartReq(response.data.data[0].projectstart)
-          setEndReq(response.data.data[0].projectend)
+          setStartReq(response.data.data[0]?.projectstart)
+          setEndReq(response.data.data[0]?.projectend)
         
         }
         getList()
@@ -550,7 +550,6 @@ export default function Yourworkload() {
     (wfh) => wfh.includes(date.split('T')[0])
   );;
 
-  console.log(wfhDates)
 
     if(data.includes('1')){
       colorData.push('bg-red-500')
@@ -1179,7 +1178,7 @@ export default function Yourworkload() {
                       {/* Date Cell */}
                       <th
                         data-id={formatAustralianDate(dateObj)}
-                        className={`relative w-[20px] font-normal border-[1px] border-zinc-700 ${bgColor}`}
+                        className={`relative min-w-[20px] font-normal border-[1px] border-zinc-700 ${bgColor}`}
                       >
                         <div className="whitespace-nowrap w-[20px] transform -rotate-[90deg]">
                           <p className="mt-3 font-semibold">{formatAustralianDate(dateObj)}</p>
@@ -1190,7 +1189,7 @@ export default function Yourworkload() {
                       {shouldInsertTotal && (
                         <th
                           key={`total-${index}`}
-                          className="font-normal w-[20px] px-1 border-[1px] border-zinc-700 bg-primary text-white"
+                          className="font-normal min-w-[20px] px-1 border-[1px] border-zinc-700 bg-primary text-white"
                         >
                           <div className="transform w-[20px] -rotate-[90deg] font-semibold">
                             <p>Total Hours</p>

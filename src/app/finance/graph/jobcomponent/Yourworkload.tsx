@@ -472,8 +472,8 @@ export default function Yourworkload() {
       
         
           setList(response.data.data)
-          setStartReq(response.data.data[0].projectstart)
-          setEndReq(response.data.data[0].projectend)
+          setStartReq(response.data.data[0]?.projectstart)
+          setEndReq(response.data.data[0]?.projectend)
         
         }
         getList()
@@ -550,7 +550,6 @@ export default function Yourworkload() {
     (wfh) => wfh.includes(date.split('T')[0])
   );;
 
-  console.log(wfhDates)
 
     if(data.includes('1')){
       colorData.push('bg-red-500')

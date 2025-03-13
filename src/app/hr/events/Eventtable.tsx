@@ -409,7 +409,6 @@ export default function Eventtable() {
     return newDate[0]
   }
 
-  console.log(selected, selectables, teams)
 
 
 
