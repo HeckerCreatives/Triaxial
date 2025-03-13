@@ -90,7 +90,7 @@ export const superadmin = [
     // {name: 'My Workload', path: '/superadmin/noaccess', icon: <List className="h-4 w-4" />, subpath: []},
     // {name: 'Team', path: '/superadmin/noaccess', icon: <Users className="h-4 w-4" />, subpath: []},
     // {name: 'Projects', path: '/superadmin/noaccess', icon: <Box className="h-4 w-4" />, subpath: []},
-    {name: 'Scheduling', path: '/superadmin/scheduling', icon: <Box className="h-4 w-4" />, subpath: []},
+    // {name: 'Scheduling', path: '/superadmin/scheduling', icon: <Box className="h-4 w-4" />, subpath: []},
     {name: 'Finance', path: '/superadmin/invoiceprojection/list', icon: <Files className="h-4 w-4" />, subpath: []},
 
     // {name: 'Invoice Request', path: '/superadmin/invoice', icon: <ListChecks className="h-4 w-4" />, subpath: []},

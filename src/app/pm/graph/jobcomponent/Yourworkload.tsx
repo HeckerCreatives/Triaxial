@@ -1056,453 +1056,144 @@ export default function Yourworkload() {
         </div>
     </div>
 
-    <div
-      className=' h-[67dvh] w-full flex flex-col overflow-y-auto'>
-        <div className=' relative h-auto flex items-start bg-secondary w-full '>
-
-          <div className=' w-fit flex flex-col sticky top-0'>
-            <table className="table-auto w-full border-collapse ">
-              
-              <thead className="h-[60px] text-nowrap">
-                <tr className="text-[0.5rem] text-zinc-100 font-normal text-left border-collapse">
-                  <th className="text-center font-normal whitespace-normal border-[1px] border-zinc-600 px-2">
-                    Name
-                  </th>
-                  {/* <th className="text-center font-normal whitespace-normal border-[1px] border-zinc-600 px-2">
-                    Initials
-                  </th>
-                  <th className="text-center font-normal whitespace-normal border-[1px] border-zinc-600 px-2">
-                    Resource
-                  </th> */}
+     <div
+          className=' h-[67dvh] w-full flex flex-col overflow-y-auto'>
+            <div className=' relative h-auto flex items-start bg-secondary w-full '>
+    
+              <div className=' w-fit flex flex-col sticky top-0'>
+                <table className="table-auto w-full border-collapse ">
                   
-                </tr>
-              </thead>
-              <tbody>
-                {listRequest[0]?.members.map((item, graphIndex) =>
-                    <tr key={`${graphIndex}`} className="bg-primary text-[.5rem] py-2 h-[30px] border-[1px] border-zinc-600">
-                      <td onClick={() => router.push(`/pm/individualworkload?employeeid=${item.id}&name=${item.name}&teamname=${list[0].teamname}`)} className="whitespace-normal break-all border-[1px] border-zinc-600 px-2 text-center cursor-pointer underline text-blue-400">{item.name}</td>
-                      {/* <td className="text-center whitespace-normal break-all border-[1px] border-zinc-600 px-2 ">{item.initial}</td>
-                      <td className="text-center whitespace-normal break-all border-[1px] border-zinc-600 px-2 ">{item.resource}</td> */}
-                    </tr>
-                )}
-              </tbody>
-            </table>
-       
-          
-            <table className="table-auto w-auto border-collapse">
-              <thead className="h-[50px] text-nowrap">
-                <tr className="text-[0.5rem] text-zinc-100 font-normal text-left border-collapse">
-                  <th className="text-left font-normal min-w-[30px] max-w-[30px] whitespace-normal border-[1px] border-zinc-600 px-2">
-                    Action
-                  </th>
-                  <th className="text-left font-normal min-w-[70px] max-w-[70px] whitespace-normal border-[1px] border-zinc-600 px-2">
-                    Job Number
-                  </th>
-                  <th className="text-left font-normal min-w-[70px] max-w-[70px] whitespace-normal border-[1px] border-zinc-600 px-2">
-                    Client
-                  </th>
-                  <th className="text-left font-normal min-w-[80px] max-w-[80px] whitespace-normal border-[1px] border-zinc-600 px-2">
-                    Project Name
-                  </th>
-                  <th className="text-left font-normal min-w-[30px] max-w-[30px] whitespace-normal border-[1px] border-zinc-600 px-2">
-                    JM
-                  </th>
-                  <th className="text-left font-normal min-w-[90px] max-w-[90px] whitespace-normal border-[1px] border-zinc-600 px-2">
-                    Job Component
-                  </th>
-                  <th className="text-left font-normal min-w-[100px] max-w-[100px] whitespace-normal border-[1px] border-zinc-600 px-2">
-                    Notes
-                  </th>
-                  <th className="text-left font-normal min-w-[55px] max-w-[550px] whitespace-normal border-[1px] border-zinc-600 px-2">
-                    Role
-                  </th>
-                  <th className="text-left font-normal min-w-[83px] max-w-[830px] whitespace-normal border-[1px] border-zinc-600 px-2">
-                    Team
-                  </th>
-                  <th className="text-left font-normal min-w-[45px] max-w-[45px] whitespace-normal border-[1px] border-zinc-600 px-2">
-                    Members
-                  </th>
-                  <th className="text-left font-normal min-w-[50px] max-w-[50px] whitespace-normal border-[1px] border-zinc-600 px-2">
-                    Total Hours
-                  </th>
-                </tr>
-              </thead>
-                
-            </table>
-
-          
-          </div>
-
-          <div 
-          ref={containerRef2}
-          onMouseDown={(e) => handleMouseDown(e, containerRef1)}
-          onMouseLeave={handleMouseLeaveOrUp}
-          onMouseUp={handleMouseLeaveOrUp}
-          onMouseMove={(e) => handleMouseMove(e, containerRef1)}
-          onScroll={() => syncScroll(containerRef2, containerRef1)}
-          className=' w-full flex flex-col max-w-[1920px] overflow-x-auto cursor-pointer'>
-            <table className="table-auto border-collapse min-w-full ">
-            <thead className="bg-secondary h-[60px]">
-              <tr className="bg-secondary text-[0.5rem] text-black font-normal h-[60px]">
-                {longestAlldates?.allDates.map((dateObj, index) => {
-                  const date = new Date(dateObj);
-                  date.setHours(0, 0, 0, 0);
-
-                  const today = new Date();
-                  today.setHours(0, 0, 0, 0);
-
-                  const startOfWeek = new Date(today);
-                  startOfWeek.setDate(today.getDate() - (today.getDay() - 1));
-
-                  const endOfWeek = new Date(startOfWeek);
-                  endOfWeek.setDate(startOfWeek.getDate() + 4);
-
-                  let bgColor = "bg-white";
-                  if (date >= startOfWeek && date <= endOfWeek) {
-                    const prevDay = new Date(today);
-                    prevDay.setDate(today.getDate() - 1);
-
-                    const nextDay = new Date(today);
-                    nextDay.setDate(today.getDate() + 1);
-
-                    if (date.getTime() < today.getTime()) {
-                      bgColor = "bg-gray-300"; 
-                    } else if (date.getTime() === today.getTime()) {
-                      bgColor = "bg-pink-500";
-                    } else if (date.getTime() >= nextDay.getTime()) {
-                      bgColor = "bg-white";
-                    }
-                  }
-
-
-                  const shouldInsertTotal = (index + 1) % 5 === 0; // Insert "Total Hours" after every 5 dates
-
-                  return (
-                    <React.Fragment key={index}>
-                      {/* Date Cell */}
-                      <th
-                        data-id={formatAustralianDate(dateObj)}
-                        className={`relative min-w-[20px] max-w-[20px] font-normal border-[1px] border-zinc-700 ${bgColor}`}
-                      >
-                        <div className="whitespace-nowrap w-[20px] transform -rotate-[90deg]">
-                          <p className="mt-3 font-semibold">{formatAustralianDate(dateObj)}</p>
-                        </div>
+                  <thead className="h-[60px] text-nowrap">
+                    <tr className="text-[0.5rem] text-zinc-100 font-normal text-left border-collapse">
+                      <th className="text-center font-normal whitespace-normal border-[1px] border-zinc-600 px-2">
+                        Name
                       </th>
-
-                      {/* Add "Total Hours" **AFTER EVERY 5th DATE** */}
-                      {shouldInsertTotal && (
-                        <th
-                          key={`total-${index}`}
-                          className="font-normal min-w-[30px] max-w-[30px] px-1 border-[1px] border-zinc-700 bg-primary text-white"
-                        >
-                          <div className="transform w-[20px] -rotate-[90deg] font-semibold">
-                            <p>Total Hours</p>
-                          </div>
-                        </th>
-                      )}
-                    </React.Fragment>
-                  );
-                })}
-              </tr>
-            </thead>
-
-                <tbody>
-                  {listRequest.map((graphItem, graphIndex) =>
-                    graphItem.members.map((member, memberIndex) => {
-                      // Precompute weekly totals
-                      const totalHoursForWeek: number[] = [];
-                      let currentWeekTotal = 0;
-                      let weekCounter = 0;
-                    
-                      return (
-                        <tr
-                          key={`${graphIndex}-${memberIndex}`}
-                          className="bg-primary text-[.6rem] py-2 h-[30px] border-[1px] border-zinc-600"
-                        >
-                          {longestAlldates?.allDates.map((dateObj, index) => {
-                            const date = new Date(dateObj);
-                            const isFriday = date.getDay() === 5;
-                            const weekIndex = Math.floor(index / 5); // Ensure correct indexing
-
-                            const shouldInsertTotal = (index + 1) % 5 === 0;
-                            
-                            const memberDate = member.dates?.find(
-                              (date) => formatDate(date.date) === formatDate(dateObj)
-                            );
-
-                            return (
-                              <React.Fragment key={index}>
-                                <td
-                                  className="relative text-center overflow-hidden bg-white cursor-pointer border-[1px]"
-                                >
-                                  <div className="w-full h-[50px] absolute flex top-0">
-                                  {statusColorRequest( dateObj, member.event, member.leave, member.wellness, member.wfh).map((item, index) => (
-                                  <div key={index} className={`w-full h-full ${item}`}></div>
-                                    ))}
-                                  </div>
-                                  <p className="relative text-black font-bold text-[.5rem] z-30">
-                                    
-                                  </p>
-                                </td>
-
-                                {shouldInsertTotal && (
-                                  <td className="text-center font-normal w-[40px] bg-primary border-[1px] border-zinc-700">
-                                    <p className="text-white">
-                                      {Number.isInteger(totalHoursForWeek[weekIndex])
-                                        ? totalHoursForWeek[weekIndex]
-                                        : totalHoursForWeek[weekIndex]?.toFixed(2)}
-                                    </p>
-                                  </td>
-                                )}
-                              </React.Fragment>
-                            );
-                          })}
-                        </tr>
-                      );
-                    })
-                  )}
-
-                </tbody>
-            </table>
-
-            <table className="table-auto border-collapse ">
-                  <thead className=' bg-secondary h-1'
-                  // style={{ visibility: 'collapse' }}
-                  >
-                    <tr className=' text-[0.6rem] text-zinc-100 font-normal h-[50px]'>
-                    
-                    {longestAlldates?.allDates.map((dateObj, index) => {
-                      const date = new Date(dateObj);
-                      const day = date.getDay();
-                      const isFriday = day === 5;
-
-                      // Format functions for Australian date
-                      const formatAustralianDate = (date: Date) =>
-                        date.toLocaleDateString('en-AU', { day: '2-digit', month: '2-digit', year: '2-digit' });
-                      const formatMonthYear = (date: Date) =>
-                        date.toLocaleDateString('en-AU', { month: 'short', year: 'numeric' });
-
-                      return (
-                        <React.Fragment key={index}>
-                         <th className="relative font-normal w-[20px] border-[1px] h-1 overflow-hidden border-zinc-800">
-                          <div className="whitespace-nowrap transform w-[20px] -rotate-[90deg]">
-                            {/* <p>{formatAustralianDate(date)}</p>
-                            <p>{formatMonthYear(date)}</p> */}
-                          </div>
-                        </th>
-                        {isFriday && (
-                          <th className="font-normal  w-[20px] px-1 border-[1px] h-1 overflow-hidden border-zinc-800">
-                            <div className="transform  w-[20px] -rotate-[90deg]">
-                              {/* <p>Total Hours</p> */}
-                            </div>
-                          </th>
-                        )}
-                        </React.Fragment>
-                      );
-                    })}
-
-
+                      {/* <th className="text-center font-normal whitespace-normal border-[1px] border-zinc-600 px-2">
+                        Initials
+                      </th>
+                      <th className="text-center font-normal whitespace-normal border-[1px] border-zinc-600 px-2">
+                        Resource
+                      </th> */}
                       
                     </tr>
                   </thead>
-               
-            </table>
-          </div>
-
-        </div>
-
-        <div className=' relative h-auto flex items-start bg-secondary w-full overflow-y-auto  '>
-
-          <div className=' w-fit flex flex-col sticky top-0'>
-         
-            <table className="table-auto w-auto border-collapse">
-              <thead className="h-[50px] text-nowrap"
-                style={{ visibility: 'collapse' }}
-
-              >
-               <tr className="text-[0.5rem] text-zinc-100 font-normal text-left border-collapse">
-                  <th className="text-left font-normal min-w-[30px] max-w-[30px] whitespace-normal border-[1px] border-zinc-600 px-2">
-                    Action
-                  </th>
-                  <th className="text-left font-normal min-w-[70px] max-w-[70px] whitespace-normal border-[1px] border-zinc-600 px-2">
-                    Job Number
-                  </th>
-                  <th className="text-left font-normal min-w-[70px] max-w-[70px] whitespace-normal border-[1px] border-zinc-600 px-2">
-                    Client
-                  </th>
-                  <th className="text-left font-normal min-w-[80px] max-w-[80px] whitespace-normal border-[1px] border-zinc-600 px-2">
-                    Project Name
-                  </th>
-                  <th className="text-left font-normal min-w-[30px] max-w-[30px] whitespace-normal border-[1px] border-zinc-600 px-2">
-                    JM
-                  </th>
-                  <th className="text-left font-normal min-w-[90px] max-w-[90px] whitespace-normal border-[1px] border-zinc-600 px-2">
-                    Job Component
-                  </th>
-                  <th className="text-left font-normal min-w-[100px] max-w-[100px] whitespace-normal border-[1px] border-zinc-600 px-2">
-                    Notes
-                  </th>
-                  <th className="text-left font-normal min-w-[55px] max-w-[550px] whitespace-normal border-[1px] border-zinc-600 px-2">
-                    Role
-                  </th>
-                  <th className="text-left font-normal min-w-[83px] max-w-[830px] whitespace-normal border-[1px] border-zinc-600 px-2">
-                    Team
-                  </th>
-                  <th className="text-left font-normal min-w-[45px] max-w-[45px] whitespace-normal border-[1px] border-zinc-600 px-2">
-                    Members
-                  </th>
-                  <th className="text-left font-normal min-w-[50px] max-w-[50px] whitespace-normal border-[1px] border-zinc-600 px-2">
-                    Total Hours
-                  </th>
-                </tr>
-              </thead>
-                <tbody>
-                {list.map((graphItem, graphIndex) =>
-                    graphItem.members.map((member, memberIndex) => {
-                      // Sum all hours for the member
-                      const totalHours = member.dates?.reduce((sum, date) => sum + date.hours, 0) || 0;
-
-                      return (
-                        <tr 
-                          key={`${graphItem._id}-${memberIndex}`}
-                          data-invoice-id={graphItem._id} 
-                          className={`text-left text-[.5rem] py-2 h-[30px] border-[1px] border-zinc-600 border-collapse ${graphItem.isVariation ? 'text-red-600 font-black' : 'text-black'} ${clientColor(graphItem.clientname.priority)}`}
-                        >
-                          <td className="text-center text-white h-[30px] flex items-center justify-center gap-1">
-                            {memberIndex === 0 && (
-                              <input
-                                type="checkbox"
-                                checked={componentid === graphItem._id}
-                                onChange={() => {
-                                  handleCheckboxChange(graphItem._id);
-                                  setProjectname(graphItem.projectname.projectid);
-                                  setJobmanager(graphItem.jobmanager.employeeid);
-                                  setJobno(graphItem.jobno);
-                                  findMember(graphItem.members);
-                                  setNotes(graphItem.members[0]?.notes || "");
-                                  setNotes2(graphItem.members[1]?.notes || "");
-                                  setNotes3(graphItem.members[2]?.notes || "");
-                                  setNotes4(graphItem.members[3]?.notes || "");
-                                  setIsmanager(graphItem.jobmanager.isManager);
-                                  setIsjobmanager(graphItem.jobmanager.isJobManager);
-                                }}
-                              />
-                            )}
-                          </td>
-
-                          <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
-                            {memberIndex === 0 && graphItem.jobno}
-                          </td>
-                          <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
-                            {memberIndex === 0 && graphItem.clientname.name}
-                          </td>
-                          <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
-                            {memberIndex === 0 && graphItem.projectname.name}
-                          </td>
-                          <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
-                            {memberIndex === 0 && graphItem.jobmanager.initials}
-                          </td>
-                          <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
-                            {memberIndex === 0 && graphItem.jobcomponent}
-                          </td>
-                          <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
-                            <Dialog>
-                              <DialogTrigger className="rounded-sm flex items-center text-black text-[.5rem]">
-                                {member.notes ? <p className="text-[.5rem]">{member.notes.slice(0, 20)}</p> : <p className="text-[.5rem] h-full w-full text-center">No notes.</p>}
-                              </DialogTrigger>
-                              <DialogContent className="bg-secondary p-6 border-none max-w-[600px] text-white">
-                                <DialogHeader>
-                                  <DialogTitle>Notes</DialogTitle>
-                                  <DialogDescription></DialogDescription>
-                                </DialogHeader>
-                                {member.notes ? <p className="text-xs text-zinc-400">{member.notes}</p> : <p className="text-xs text-zinc-400 h-full w-full text-center">No notes.</p>}
-                              </DialogContent>
-                            </Dialog>
-                          </td>
-                          <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2 text-[.5rem]">
-                            {member.role}
-                          </td>
-                          <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2 text-[.5rem]">
-                            {graphItem.teamname}
-                          </td>
-                          <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
-                            {member.employee.initials}
-                          </td>
-                          {/* Display the total hours for the member */}
-                          <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">{totalHours}</td>
+                  <tbody>
+                    {listRequest[0]?.members.map((item, graphIndex) =>
+                        <tr key={`${graphIndex}`} className="bg-primary text-[.5rem] py-2 h-[30px] border-[1px] border-zinc-600">
+                          <td onClick={() => router.push(`/pm/individualworkload?employeeid=${item.id}&name=${item.name}&teamname=${list[0].teamname}`)} className="whitespace-normal break-all border-[1px] border-zinc-600 px-2 text-center cursor-pointer underline text-blue-400">{item.name}</td>
+                          {/* <td className="text-center whitespace-normal break-all border-[1px] border-zinc-600 px-2 ">{item.initial}</td>
+                          <td className="text-center whitespace-normal break-all border-[1px] border-zinc-600 px-2 ">{item.resource}</td> */}
                         </tr>
-                      );
-                    })
-                  )}
-
-                </tbody>
-            </table>
-
-          
-          </div>
-
-          <div 
-          ref={containerRef1}
-          onMouseDown={(e) => handleMouseDown(e, containerRef1)}
-          onMouseLeave={handleMouseLeaveOrUp}
-          onMouseUp={handleMouseLeaveOrUp}
-          onMouseMove={(e) => handleMouseMove(e, containerRef1)}
-          onScroll={() => syncScroll(containerRef1, containerRef2)}
-          className=' w-full flex flex-col max-w-[1920px] hide-scrollbar overflow-x-auto hide cursor-pointer'>
-            <table className="table-auto border-collapse min-w-full ">
-                <thead className="bg-secondary h-[60px]"
-                style={{ visibility: 'collapse' }}
-                
-                >
+                    )}
+                  </tbody>
+                </table>
+           
+              
+                <table className="table-auto w-auto border-collapse">
+                  <thead className="h-[50px] text-nowrap">
+                    <tr className="text-[0.5rem] text-zinc-100 font-normal text-left border-collapse">
+                      <th className="text-left font-normal min-w-[30px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                        Action
+                      </th>
+                      <th className="text-left font-normal min-w-[70px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                        Job Number
+                      </th>
+                      <th className="text-left font-normal min-w-[70px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                        Client
+                      </th>
+                      <th className="text-left font-normal min-w-[80px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                        Project Name
+                      </th>
+                      <th className="text-left font-normal min-w-[30px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                        JM
+                      </th>
+                      <th className="text-left font-normal min-w-[90px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                        Job Component
+                      </th>
+                      <th className="text-left font-normal min-w-[100px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                        Notes
+                      </th>
+                      <th className="text-left font-normal min-w-[55px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                        Role
+                      </th>
+                      <th className="text-left font-normal min-w-[83px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                        Team
+                      </th>
+                      <th className="text-left font-normal min-w-[45px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                        Members
+                      </th>
+                      <th className="text-left font-normal min-w-[50px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                        Total Hours
+                      </th>
+                    </tr>
+                  </thead>
+                    
+                </table>
+    
+              
+              </div>
+    
+              <div 
+              ref={containerRef2}
+              onMouseDown={(e) => handleMouseDown(e, containerRef1)}
+              onMouseLeave={handleMouseLeaveOrUp}
+              onMouseUp={handleMouseLeaveOrUp}
+              onMouseMove={(e) => handleMouseMove(e, containerRef1)}
+              onScroll={() => syncScroll(containerRef2, containerRef1)}
+              className=' w-full flex flex-col max-w-[1920px] overflow-x-auto cursor-pointer'>
+                <table className="table-auto border-collapse min-w-full ">
+                <thead className="bg-secondary h-[60px]">
                   <tr className="bg-secondary text-[0.5rem] text-black font-normal h-[60px]">
                     {longestAlldates?.allDates.map((dateObj, index) => {
-                      const date = new Date(dateObj)
-                      date.setHours(0, 0, 0, 0) // Normalize the date to remove time differences
+                     const date = new Date(dateObj);
+                     date.setHours(0, 0, 0, 0);
     
-                     
+                     const today = new Date();
+                     today.setHours(0, 0, 0, 0);
     
-                      const today = new Date();
-                      today.setHours(0, 0, 0, 0);
-
-                      const startOfWeek = new Date(today);
-                      startOfWeek.setDate(today.getDate() - (today.getDay() - 1));
-
-                      const endOfWeek = new Date(startOfWeek);
-                      endOfWeek.setDate(startOfWeek.getDate() + 4);
-
-                      let bgColor = "bg-white";
-                      if (date >= startOfWeek && date <= endOfWeek) {
-                        const prevDay = new Date(today);
-                        prevDay.setDate(today.getDate() - 1);
-
-                        const nextDay = new Date(today);
-                        nextDay.setDate(today.getDate() + 1);
-
-                        if (date.getTime() < today.getTime()) {
-                          bgColor = "bg-gray-300"; 
-                        } else if (date.getTime() === today.getTime()) {
-                          bgColor = "bg-pink-500";
-                        } else if (date.getTime() >= nextDay.getTime()) {
-                          bgColor = "bg-white";
-                        }
-                      }
-
-                      const isFriday = date.getDay() === 5
-
+                     const startOfWeek = new Date(today);
+                     startOfWeek.setDate(today.getDate() - (today.getDay() - 1));
+    
+                     const endOfWeek = new Date(startOfWeek);
+                     endOfWeek.setDate(startOfWeek.getDate() + 4);
+    
+                     let bgColor = "bg-white";
+                     if (date >= startOfWeek && date <= endOfWeek) {
+                       const prevDay = new Date(today);
+                       prevDay.setDate(today.getDate() - 1);
+    
+                       const nextDay = new Date(today);
+                       nextDay.setDate(today.getDate() + 1);
+    
+                       if (date.getTime() < today.getTime()) {
+                         bgColor = "bg-gray-300"; 
+                       } else if (date.getTime() === today.getTime()) {
+                         bgColor = "bg-pink-500";
+                       } else if (date.getTime() >= nextDay.getTime()) {
+                         bgColor = "bg-white";
+                       }
+                     }
+    
+    
+                      const shouldInsertTotal = (index + 1) % 5 === 0; // Insert "Total Hours" after every 5 dates
+    
                       return (
                         <React.Fragment key={index}>
+                          {/* Date Cell */}
                           <th
                             data-id={formatAustralianDate(dateObj)}
-                            className={`relative min-w-[20px] max-w-[20px] font-normal border-[1px] border-zinc-700 ${bgColor}`}
+                            className={`relative w-[20px] font-normal border-[1px] border-zinc-700 ${bgColor}`}
                           >
                             <div className="whitespace-nowrap w-[20px] transform -rotate-[90deg]">
                               <p className="mt-3 font-semibold">{formatAustralianDate(dateObj)}</p>
                             </div>
                           </th>
-                          {isFriday && (
+    
+                          {/* Add "Total Hours" **AFTER EVERY 5th DATE** */}
+                          {shouldInsertTotal && (
                             <th
                               key={`total-${index}`}
-                              className="font-normal min-w-[20px] max-w-[20px] px-1 border-[1px] border-zinc-700 bg-primary text-white"
+                              className="font-normal w-[20px] px-1 border-[1px] border-zinc-700 bg-primary text-white"
                             >
                               <div className="transform w-[20px] -rotate-[90deg] font-semibold">
                                 <p>Total Hours</p>
@@ -1514,363 +1205,671 @@ export default function Yourworkload() {
                     })}
                   </tr>
                 </thead>
-
-                 
-            </table>
-
-            <table className="table-auto border-collapse ">
-                  <thead className=' bg-secondary h-0'
-                  style={{ visibility: 'collapse' }}
-                  >
-                    <tr className=' text-[0.6rem] text-zinc-100 font-normal h-[50px]'>
-                    
-                    {longestAlldates?.allDates.map((dateObj, index) => {
-                      const date = new Date(dateObj);
-                      const day = date.getDay();
-                      const isFriday = day === 5;
-
+    
+                    <tbody>
+                      {listRequest.map((graphItem, graphIndex) =>
+                        graphItem.members.map((member, memberIndex) => {
+                          // Precompute weekly totals
+                          const totalHoursForWeek: number[] = [];
+                          let currentWeekTotal = 0;
+                          let weekCounter = 0;
+                        
+                          return (
+                            <tr
+                              key={`${graphIndex}-${memberIndex}`}
+                              className="bg-primary text-[.6rem] py-2 h-[30px] border-[1px] border-zinc-600"
+                            >
+                              {longestAlldates?.allDates.map((dateObj, index) => {
+                                const date = new Date(dateObj);
+                                const isFriday = date.getDay() === 5;
+                                const weekIndex = Math.floor(index / 5); // Ensure correct indexing
+    
+                                const shouldInsertTotal = (index + 1) % 5 === 0;
+                                
+                                const memberDate = member.dates?.find(
+                                  (date) => formatDate(date.date) === formatDate(dateObj)
+                                );
+    
+                                return (
+                                  <React.Fragment key={index}>
+                                    <td
+                                      className="relative text-center overflow-hidden bg-white cursor-pointer border-[1px]"
+                                    >
+                                      <div className="w-full h-[50px] absolute flex top-0">
+                                      {statusColorRequest( dateObj, member.event, member.leave, member.wellness, member.wfh).map((item, index) => (
+                                      <div key={index} className={`w-full h-full ${item}`}></div>
+                                        ))}
+                                      </div>
+                                      <p className="relative text-black font-bold text-[.5rem] z-30">
+                                        
+                                      </p>
+                                    </td>
+    
+                                    {shouldInsertTotal && (
+                                      <td className="text-center font-normal w-[40px] bg-primary border-[1px] border-zinc-700">
+                                        <p className="text-white">
+                                          {Number.isInteger(totalHoursForWeek[weekIndex])
+                                            ? totalHoursForWeek[weekIndex]
+                                            : totalHoursForWeek[weekIndex]?.toFixed(2)}
+                                        </p>
+                                      </td>
+                                    )}
+                                  </React.Fragment>
+                                );
+                              })}
+                            </tr>
+                          );
+                        })
+                      )}
+    
+                    </tbody>
+                </table>
+    
+                <table className="table-auto border-collapse ">
+                      <thead className=' bg-secondary h-1'
+                      // style={{ visibility: 'collapse' }}
+                      >
+                        <tr className=' text-[0.6rem] text-zinc-100 font-normal h-[50px]'>
+                        
+                        {longestAlldates?.allDates.map((dateObj, index) => {
+                          const date = new Date(dateObj);
+                          const day = date.getDay();
+                          const isFriday = day === 5;
+    
+                          // Format functions for Australian date
+                          const formatAustralianDate = (date: Date) =>
+                            date.toLocaleDateString('en-AU', { day: '2-digit', month: '2-digit', year: '2-digit' });
+                          const formatMonthYear = (date: Date) =>
+                            date.toLocaleDateString('en-AU', { month: 'short', year: 'numeric' });
+    
+                          return (
+                            <React.Fragment key={index}>
+                             <th className="relative font-normal w-[20px] border-[1px] h-1 overflow-hidden border-zinc-800">
+                              <div className="whitespace-nowrap transform w-[20px] -rotate-[90deg]">
+                                {/* <p>{formatAustralianDate(date)}</p>
+                                <p>{formatMonthYear(date)}</p> */}
+                              </div>
+                            </th>
+                            {isFriday && (
+                              <th className="font-normal  w-[20px] px-1 border-[1px] h-1 overflow-hidden border-zinc-800">
+                                <div className="transform  w-[20px] -rotate-[90deg]">
+                                  {/* <p>Total Hours</p> */}
+                                </div>
+                              </th>
+                            )}
+                            </React.Fragment>
+                          );
+                        })}
+    
+    
+                          
+                        </tr>
+                      </thead>
                    
-                      return (
-                        <React.Fragment key={index}>
-                         <th className="relative font-normal min-w-[20px] max-w-[20px] border-[1px] h-1 overflow-hidden border-zinc-800">
-                          <div className="whitespace-nowrap transform w-[20px] -rotate-[90deg]">
-                            {/* <p>{formatAustralianDate(date)}</p> */}
-                          </div>
-                        </th>
-                        {isFriday && (
-                          <th className="font-normal  min-w-[20px] max-w-[20px] px-1 border-[1px] h-1 overflow-hidden border-zinc-800">
-                            <div className="transform  w-[20px] -rotate-[90deg]">
-                              <p>Total Hours</p>
-                            </div>
-                          </th>
-                        )}
-                        </React.Fragment>
-                      );
-                    })}
-
-
-                      
+                </table>
+              </div>
+    
+            </div>
+    
+            <div className=' relative h-auto flex items-start bg-secondary w-full overflow-y-auto  '>
+    
+              <div className=' w-fit flex flex-col sticky top-0'>
+             
+                <table className="table-auto w-auto border-collapse">
+                  <thead className="h-[50px] text-nowrap"
+                    style={{ visibility: 'collapse' }}
+    
+                  >
+                    <tr className="text-[0.5rem] text-zinc-100 font-normal text-left border-collapse">
+                      <th className="text-left font-normal min-w-[30px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                        Action
+                      </th>
+                      <th className="text-left font-normal min-w-[70px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                        Job Number
+                      </th>
+                      <th className="text-left font-normal min-w-[70px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                        Client
+                      </th>
+                      <th className="text-left font-normal min-w-[80px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                        Project Name
+                      </th>
+                      <th className="text-left font-normal min-w-[30px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                        JM
+                      </th>
+                      <th className="text-left font-normal min-w-[90px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                        Job Component
+                      </th>
+                      <th className="text-left font-normal min-w-[100px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                        Notes
+                      </th>
+                      <th className="text-left font-normal min-w-[55px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                        Role
+                      </th>
+                      <th className="text-left font-normal min-w-[83px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                        Team
+                      </th>
+                      <th className="text-left font-normal min-w-[45px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                        Members
+                      </th>
+                      <th className="text-left font-normal min-w-[50px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                        Total Hours
+                      </th>
                     </tr>
                   </thead>
-                  <tbody className=' -translate-y-[1px]'>
-                  {list.map((graphItem, graphIndex) =>
-                    graphItem.members.map((member, memberIndex) => {
-                      // Precompute weekly totals
-                      const totalHoursForWeek: number[] = [];
-                      let currentWeekTotal = 0;
-                      let weekCounter = 0;
-
-
-
-                      longestAlldates.allDates.forEach((dateObj, index) => {
-                        const memberDate = member.dates?.find(
-                          (date) => formatDate(date.date) === formatDate(dateObj)
-                        );
-                        currentWeekTotal += memberDate?.hours || 0;
-
-                        // If it's Friday or last date, store the week's total
-                        const isLastDate = index === longestAlldates.allDates.length - 1;
-                        if (new Date(dateObj).getDay() === 5 || isLastDate) {
-                          totalHoursForWeek.push(currentWeekTotal);
-                          currentWeekTotal = 0; // Reset for next week
-                          weekCounter++; // Move to next week
-                        }
-                      });
-
-                      return (
-                        <tr
-                          key={`${graphIndex}-${memberIndex}`}
-                          className="bg-primary text-[.6rem] py-2 h-[31px] border-[1px] border-zinc-600"
-                        >
-                          {longestAlldates.allDates.map((dateObj, index) => {
-                            const date = new Date(dateObj);
-                            const isFriday = date.getDay() === 5;
-                            const weekIndex = Math.floor(index / 5); // Ensure correct indexing
-                            
+                    <tbody>
+                     {list.map((graphItem, graphIndex) =>
+                                        graphItem.members.map((member, memberIndex) => {
+                                          // Sum all hours for the member
+                                          const totalHours = member.dates?.reduce((sum, date) => sum + date.hours, 0) || 0;
+                    
+                                          return (
+                                            <tr 
+                                              key={`${graphItem._id}-${memberIndex}`}
+                                              data-invoice-id={graphItem._id} 
+                                              className={`text-left text-[.5rem] py-2 h-[30px] border-[1px] border-zinc-600 border-collapse ${graphItem.isVariation ? 'text-red-600 font-black' : 'text-black'} ${clientColor(graphItem.clientname.priority)}`}
+                                            >
+                                              <td className="text-center text-white h-[30px] flex items-center justify-center gap-1">
+                                                {memberIndex === 0 && (
+                                                  <input
+                                                    type="checkbox"
+                                                    checked={componentid === graphItem._id}
+                                                    onChange={() => {
+                                                      handleCheckboxChange(graphItem._id);
+                                                      setProjectname(graphItem.projectname.projectid);
+                                                      setJobmanager(graphItem.jobmanager.employeeid);
+                                                      setJobno(graphItem.jobno);
+                                                      findMember(graphItem.members);
+                                                      setNotes(graphItem.members[0]?.notes || "");
+                                                      setNotes2(graphItem.members[1]?.notes || "");
+                                                      setNotes3(graphItem.members[2]?.notes || "");
+                                                      setNotes4(graphItem.members[3]?.notes || "");
+                                                      setIsmanager(graphItem.jobmanager.isManager);
+                                                      setIsjobmanager(graphItem.jobmanager.isJobManager);
+                                                    }}
+                                                  />
+                                                )}
+                                              </td>
+                    
+                                              <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                                                {memberIndex === 0 && graphItem.jobno}
+                                              </td>
+                                              <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                                                {memberIndex === 0 && graphItem.clientname.name}
+                                              </td>
+                                              <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                                                {memberIndex === 0 && graphItem.projectname.name}
+                                              </td>
+                                              <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                                                {memberIndex === 0 && graphItem.jobmanager.initials}
+                                              </td>
+                                              <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                                                {memberIndex === 0 && graphItem.jobcomponent}
+                                              </td>
+                                              <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                                                <Dialog>
+                                                  <DialogTrigger className="rounded-sm flex items-center text-black text-[.5rem]">
+                                                    {member.notes ? <p className="text-[.5rem]">{member.notes.slice(0, 20)}</p> : <p className="text-[.5rem] h-full w-full text-center">No notes.</p>}
+                                                  </DialogTrigger>
+                                                  <DialogContent className="bg-secondary p-6 border-none max-w-[600px] text-white">
+                                                    <DialogHeader>
+                                                      <DialogTitle>Notes</DialogTitle>
+                                                      <DialogDescription></DialogDescription>
+                                                    </DialogHeader>
+                                                    {member.notes ? <p className="text-xs text-zinc-400">{member.notes}</p> : <p className="text-xs text-zinc-400 h-full w-full text-center">No notes.</p>}
+                                                  </DialogContent>
+                                                </Dialog>
+                                              </td>
+                                              <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2 text-[.5rem]">
+                                                {member.role}
+                                              </td>
+                                              <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2 text-[.5rem]">
+                                                {graphItem.teamname}
+                                              </td>
+                                              <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                                                {member.employee.initials}
+                                              </td>
+                                              {/* Display the total hours for the member */}
+                                              <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">{totalHours}</td>
+                                            </tr>
+                                          );
+                                        })
+                                      )}
+                    </tbody>
+                </table>
+    
+              
+              </div>
+    
+              <div 
+              ref={containerRef1}
+              onMouseDown={(e) => handleMouseDown(e, containerRef1)}
+              onMouseLeave={handleMouseLeaveOrUp}
+              onMouseUp={handleMouseLeaveOrUp}
+              onMouseMove={(e) => handleMouseMove(e, containerRef1)}
+              onScroll={() => syncScroll(containerRef1, containerRef2)}
+              className=' w-full flex flex-col max-w-[1920px] hide-scrollbar overflow-x-auto hide cursor-pointer'>
+                <table className="table-auto border-collapse min-w-full ">
+                    <thead className="bg-secondary h-[60px]"
+                    style={{ visibility: 'collapse' }}
+                    
+                    >
+                      <tr className="bg-secondary text-[0.5rem] text-black font-normal h-[60px]">
+                        {longestAlldates?.allDates.map((dateObj, index) => {
+                          const date = new Date(dateObj)
+                          date.setHours(0, 0, 0, 0) // Normalize the date to remove time differences
+        
+                         
+        
+                          const today = new Date();
+                          today.setHours(0, 0, 0, 0);
+    
+                          const startOfWeek = new Date(today);
+                          startOfWeek.setDate(today.getDate() - (today.getDay() - 1));
+    
+                          const endOfWeek = new Date(startOfWeek);
+                          endOfWeek.setDate(startOfWeek.getDate() + 4);
+    
+                          let bgColor = "bg-white";
+                          if (date >= startOfWeek && date <= endOfWeek) {
+                            const prevDay = new Date(today);
+                            prevDay.setDate(today.getDate() - 1);
+    
+                            const nextDay = new Date(today);
+                            nextDay.setDate(today.getDate() + 1);
+    
+                            if (date.getTime() < today.getTime()) {
+                              bgColor = "bg-gray-300"; 
+                            } else if (date.getTime() === today.getTime()) {
+                              bgColor = "bg-pink-500";
+                            } else if (date.getTime() >= nextDay.getTime()) {
+                              bgColor = "bg-white";
+                            }
+                          }
+    
+                          const isFriday = date.getDay() === 5
+    
+                          return (
+                            <React.Fragment key={index}>
+                              <th
+                                data-id={formatAustralianDate(dateObj)}
+                                className={`relative w-[20px] font-normal border-[1px] border-zinc-700 ${bgColor}`}
+                              >
+                                <div className="whitespace-nowrap w-[20px] transform -rotate-[90deg]">
+                                  <p className="mt-3 font-semibold">{formatAustralianDate(dateObj)}</p>
+                                </div>
+                              </th>
+                              {isFriday && (
+                                <th
+                                  key={`total-${index}`}
+                                  className="font-normal w-[20px] px-1 border-[1px] border-zinc-700 bg-primary text-white"
+                                >
+                                  <div className="transform w-[20px] -rotate-[90deg] font-semibold">
+                                    <p>Total Hours</p>
+                                  </div>
+                                </th>
+                              )}
+                            </React.Fragment>
+                          );
+                        })}
+                      </tr>
+                    </thead>
+    
+                     
+                </table>
+    
+                <table className="table-auto border-collapse ">
+                      <thead className=' bg-secondary h-0'
+                      style={{ visibility: 'collapse' }}
+                      >
+                        <tr className=' text-[0.6rem] text-zinc-100 font-normal h-[50px]'>
+                        
+                        {longestAlldates?.allDates.map((dateObj, index) => {
+                          const date = new Date(dateObj);
+                          const day = date.getDay();
+                          const isFriday = day === 5;
+    
+                       
+                          return (
+                            <React.Fragment key={index}>
+                             <th className="relative font-normal w-[20px] border-[1px] h-1 overflow-hidden border-zinc-800">
+                              <div className="whitespace-nowrap transform w-[20px] -rotate-[90deg]">
+                                {/* <p>{formatAustralianDate(date)}</p> */}
+                              </div>
+                            </th>
+                            {isFriday && (
+                              <th className="font-normal  w-[20px] px-1 border-[1px] h-1 overflow-hidden border-zinc-800">
+                                <div className="transform  w-[20px] -rotate-[90deg]">
+                                  <p>Total Hours</p>
+                                </div>
+                              </th>
+                            )}
+                            </React.Fragment>
+                          );
+                        })}
+    
+    
+                          
+                        </tr>
+                      </thead>
+                      <tbody className=' -translate-y-[1px]'>
+                      {list.map((graphItem, graphIndex) =>
+                        graphItem.members.map((member, memberIndex) => {
+                          // Precompute weekly totals
+                          const totalHoursForWeek: number[] = [];
+                          let currentWeekTotal = 0;
+                          let weekCounter = 0;
+    
+    
+    
+                          longestAlldates.allDates.forEach((dateObj, index) => {
                             const memberDate = member.dates?.find(
                               (date) => formatDate(date.date) === formatDate(dateObj)
                             );
-
-                            const shouldInsertTotal = (index + 1) % 5 === 0;
-
-                            
-
-
-
-                            // Handle Click
-                            const handleClick = () => {
-                              setDialog(true);
-                              setDate(dateObj);
-                              setProjectid(graphItem._id);
-                              setName(member.employee.fullname);
-                              setEmployeeid(member.employee._id);
-                              setHours(memberDate?.hours || 0);
-                              setAddstatus(memberDate?.status || []);
-                              setSelectedRows(memberDate?.status || []);
-                              setSelected(memberDate?.status || []);
-                              setLeavestatus(
-                                isDateInRange(
-                                  dateObj,
-                                  member.leaveDates[0]?.leavestart,
-                                  member.leaveDates[0]?.leaveend
-                                )
-                              );
-                              setEvent(
-                                isDateInRange(
-                                  dateObj,
-                                  member.eventDates[0]?.startdate,
-                                  member.eventDates[0]?.enddate
-                                )
-                              );
-                              wdStatusChecker(member.wellnessDates, dateObj, member.eventDates);
-                              setIsjobmanager(graphItem.jobmanager.isJobManager);
-                              setLeave(
-                                isDateInRange(
-                                  dateObj,
-                                  member.leaveDates[0]?.leavestart,
-                                  member.leaveDates[0]?.leaveend
-                                )
-                              );
-                              setRole(member.role);
-                            };
-
-
-                            return (
-                              <React.Fragment key={index}>
-                                <td
-                                  className="relative text-center overflow-hidden bg-white cursor-pointer border-[1px]"
-                                  onClick={handleClick}
-                                >
-
-                                  
-                                  <div className="w-full h-[50px] absolute flex top-0">
-                                    {statusColor(
-                                      memberDate?.status || [],
+                            currentWeekTotal += memberDate?.hours || 0;
+    
+                            // If it's Friday or last date, store the week's total
+                            const isLastDate = index === longestAlldates.allDates.length - 1;
+                            if (new Date(dateObj).getDay() === 5 || isLastDate) {
+                              totalHoursForWeek.push(currentWeekTotal);
+                              currentWeekTotal = 0; // Reset for next week
+                              weekCounter++; // Move to next week
+                            }
+                          });
+    
+                          return (
+                            <tr
+                              key={`${graphIndex}-${memberIndex}`}
+                              className="bg-primary text-[.6rem] py-2 h-[31px] border-[1px] border-zinc-600"
+                            >
+                              {longestAlldates.allDates.map((dateObj, index) => {
+                                const date = new Date(dateObj);
+                                const isFriday = date.getDay() === 5;
+                                const weekIndex = Math.floor(index / 5); // Ensure correct indexing
+                                
+                                const memberDate = member.dates?.find(
+                                  (date) => formatDate(date.date) === formatDate(dateObj)
+                                );
+    
+                                const shouldInsertTotal = (index + 1) % 5 === 0;
+    
+                                
+    
+    
+    
+                                // Handle Click
+                                const handleClick = () => {
+                                  setDialog(true);
+                                  setDate(dateObj);
+                                  setProjectid(graphItem._id);
+                                  setName(member.employee.fullname);
+                                  setEmployeeid(member.employee._id);
+                                  setHours(memberDate?.hours || 0);
+                                  setAddstatus(memberDate?.status || []);
+                                  setSelectedRows(memberDate?.status || []);
+                                  setSelected(memberDate?.status || []);
+                                  setLeavestatus(
+                                    isDateInRange(
                                       dateObj,
-                                      member.leaveDates[0]?.leavestart || "",
-                                      member.leaveDates[0]?.leaveend || "",
-                                      member.eventDates[0]?.startdate || "",
-                                      member.eventDates[0]?.enddate || "",
-                                      member.wellnessDates[0],
-                                      memberDate?.hours || 0,
-                                      member.eventDates,
-                                      member.leaveDates,
-                                      member.wellnessDates,
-                                      member.wfhDates
-                                    ).map((item, index) => (
-                                      <div key={index} className={`w-full h-[50px] ${item}`}></div>
-                                    ))}
-                                  </div>
-                                  <p className="relative text-black font-bold text-[.5rem] z-30">
-                                    {/* {memberDate ? memberDate.hours : "-"} */}
-                                    {memberDate ? memberDate.hours : "-"}
-                                  </p>
-                                </td>
-
-                                {shouldInsertTotal && (
-                                  <td className="text-center font-normal min-w-[30px] max-w-[30px] bg-primary border-[1px] border-zinc-700">
-                                    <p className="text-white">
-                                      {Number.isInteger(totalHoursForWeek[weekIndex])
-                                        ? totalHoursForWeek[weekIndex]
-                                        : totalHoursForWeek[weekIndex]?.toFixed(2)}
-                                    </p>
-                                  </td>
-                                )}
-                              </React.Fragment>
-                            );
-                          })}
-                        </tr>
-                      );
-                    })
-                  )}
-
-
-
-
-
-
-                </tbody>
-            </table>
-          </div>
-
-        </div>
-
-        <Dialog open={dialog} onOpenChange={setDialog}>
-                              <DialogContent className=' p-8 bg-secondary border-none text-white max-h-[80%] w-full overflow-y-auto'>
-                                {/* {todaysDate} {formatGetDate(date)} */}
-                                {todaysDate <= formatGetDate(date) - 1 ? (
-                                  <Tabs defaultValue="account" className=" w-full">
-                                   <TabsList className=' text-xs bg-zinc-800'>
-                                     <TabsTrigger value="single">Single</TabsTrigger>
-                                     <TabsTrigger value="multiple">Multiple</TabsTrigger>
-                                   </TabsList>
-                                   <TabsContent value="single">
-                                     <DialogHeader>
-                                       <DialogTitle>Update workload ({name} <span className=' text-xs text-red-500'>({role})</span> at {formatDate(date)})</DialogTitle>
-                                       <DialogDescription>
-                                         Note, you can only update the hours rendered if the employee is not on leave.
-                                       </DialogDescription>
-                                     </DialogHeader>
-                                     <div className=' w-full flex flex-col gap-2'>              
-                                     <label htmlFor="" className=' text-xs mt-4'>Select Status</label>
-         
-                                       <div className='w-full flex items-center gap-6'>
-                                         {statusData.map((item) => (
-                                           <div key={item.id} className='flex items-center gap-1 text-xs'>
-                                             <input
-                                             disabled={wdStatus || event || leave}
-                                               value={item.id}
-                                               type="checkbox"
-                                               checked={selected.includes(item.id)}
-                                             onChange={() => handleChangeCheckbox(item.id as any)}
-                                             />
-                                             <p className=' p-1'>{item.name}</p>
-                                           </div>
-                                         ))}
-                                       </div>
-                                     </div>
-         
-                                     <div className=' flex flex-col gap-2 text-xs'>
-                                       <label htmlFor="">Hours Rendered</label>
-                                       <input disabled={wdStatus || event || leave} type="number" value={hours} onChange={(e) => setHours(e.target.valueAsNumber)} placeholder='Hours' id="" className=' bg-primary p-2 rounded-md text-xs' />
-                                       
-                                     </div>
-         
-                                 
-                           
-                                     <div className=' w-full flex items-end justify-end mt-4 gap-2'>
-                                       <button disabled={wdStatus || event || leave} onClick={() => removeWorkload()} className=' px-4 py-2 bg-zinc-600 text-xs text-white rounded-md'>Remove</button>
-         
-                                       <button disabled={wdStatus || event || leave} onClick={() => updateWorkload()} className=' px-4 py-2 bg-red-600 text-xs text-white rounded-md'>Save</button>
-         
-                                     </div>
-                                  
-                                     {(wdStatus === true || event === true || leave === true) && (
-                                       <p className=' text-xs text-red-500 flex items-center gap-2'><OctagonAlert size={15}/> Employee is in on wellness or event day, you can't update this selected workload</p>
-                                     )}
-                                   </TabsContent>
-                                   <TabsContent value="multiple">
-         
-                                     <DialogHeader>
-                                       <DialogTitle>Update workload ({name} <span className=' text-xs text-red-500'>({role})</span>)</DialogTitle>
-                                       <DialogDescription>
-                                         Note, you can only update the hours rendered if the employee is not on leave.
-                                       </DialogDescription>
-                                     </DialogHeader>
-                                     {forms.map((form, index) => (
-                                     <div key={index} className=" w-full mb-6 p-4 border border-zinc-700 rounded-lg text-xs">
-                                       {/* <h2 className="text-sm font-semibold mb-2">Form {index + 1}</h2> */}
-                                       <div className="space-y-4">
-                                         <div className=' flex items-center gap-4'>
-                                           <label className="block text-sm font-medium">Start Date</label>
-                                         
-         
-                                             <DatePicker
-                                               selected={form.startdate ? new Date(form.startdate) : null} // Ensure a valid Date object
-                                               onChange={(date) =>
-                                                 handleChange(index, "startdate", date ? date.toISOString() : "")
-                                               }
-                                               startDate={new Date(startReq)}
-                                               maxDate={new Date(endReq)}
-                                               selectsEnd 
-                                               minDate={new Date(startReq)} 
-                                               dateFormat="dd/MM/yyyy"
-                                               placeholderText="DD/MM/YYYY"
-                                               className="bg-primary text-xs p-2 w-fit relative"
-                                                 onKeyDown={(e) => e.preventDefault()}
-         
-                                             />
-         
-                                           <label className="block text-sm font-medium">End Date</label>
-         
-         
-                                             <DatePicker
-                                               selected={form.enddate ? new Date(form.enddate) : null} // Ensure a valid Date object
-                                               onChange={(date) =>
-                                                 handleChange(index, "enddate", date ? date.toISOString() : "")
-                                               }
-                                               startDate={new Date(startReq)}
-                                               maxDate={new Date(endReq)}
-                                               selectsEnd 
-                                               minDate={new Date(startReq)} 
-                                               dateFormat="dd/MM/yyyy"
-                                               placeholderText="DD/MM/YYYY"
-                                               className="bg-primary text-xs p-2 w-fit relative"
-                                               onKeyDown={(e) => e.preventDefault()}
-         
-                                             />
-         
-                                         
-                                         </div>
-         
-                                         <div>
-                                         <label className="block text-sm font-medium">Hours Rendered</label>
-                                         <input disabled={wdStatus || event || leave} type="number"
-                                           value={form.hours}
-                                           onChange={(e) => handleChange(index, 'hours', e.target.valueAsNumber)}
-                                         placeholder='Hours' id="" className=' bg-primary p-2 rounded-md text-xs' />
-                                         
-                                         </div>
-         
-                                         <div>
-                                           <label className="block text-sm font-medium">Status</label>
-                                           <div className="flex space-x-4">
-                                             {statusDataMultiple.map((option) => (
-                                               <label key={option.id} className="flex items-center">
+                                      member.leaveDates[0]?.leavestart,
+                                      member.leaveDates[0]?.leaveend
+                                    )
+                                  );
+                                  setEvent(
+                                    isDateInRange(
+                                      dateObj,
+                                      member.eventDates[0]?.startdate,
+                                      member.eventDates[0]?.enddate
+                                    )
+                                  );
+                                  wdStatusChecker(member.wellnessDates, dateObj, member.eventDates);
+                                  setIsjobmanager(graphItem.jobmanager.isJobManager);
+                                  setLeave(
+                                    isDateInRange(
+                                      dateObj,
+                                      member.leaveDates[0]?.leavestart,
+                                      member.leaveDates[0]?.leaveend
+                                    )
+                                  );
+                                  setRole(member.role);
+                                };
+    
+    
+                                return (
+                                  <React.Fragment key={index}>
+                                    <td
+                                      className="relative text-center overflow-hidden bg-white cursor-pointer border-[1px]"
+                                      onClick={handleClick}
+                                    >
+    
+                                      
+                                      <div className="w-full h-[50px] absolute flex top-0">
+                                        {statusColor(
+                                          memberDate?.status || [],
+                                          dateObj,
+                                          member.leaveDates[0]?.leavestart || "",
+                                          member.leaveDates[0]?.leaveend || "",
+                                          member.eventDates[0]?.startdate || "",
+                                          member.eventDates[0]?.enddate || "",
+                                          member.wellnessDates[0],
+                                          memberDate?.hours || 0,
+                                          member.eventDates,
+                                          member.leaveDates,
+                                          member.wellnessDates,
+                                          member.wfhDates
+                                        ).map((item, index) => (
+                                          <div key={index} className={`w-full h-[50px] ${item}`}></div>
+                                        ))}
+                                      </div>
+                                      <p className="relative text-black font-bold text-[.5rem] z-30">
+                                        {/* {memberDate ? memberDate.hours : "-"} */}
+                                        {memberDate ? memberDate.hours : "-"}
+                                      </p>
+                                    </td>
+    
+                                    {shouldInsertTotal && (
+                                      <td className="text-center font-normal w-[40px] bg-primary border-[1px] border-zinc-700">
+                                        <p className="text-white">
+                                          {Number.isInteger(totalHoursForWeek[weekIndex])
+                                            ? totalHoursForWeek[weekIndex]
+                                            : totalHoursForWeek[weekIndex]?.toFixed(2)}
+                                        </p>
+                                      </td>
+                                    )}
+                                  </React.Fragment>
+                                );
+                              })}
+                            </tr>
+                          );
+                        })
+                      )}
+    
+    
+    
+    
+    
+    
+                    </tbody>
+                </table>
+              </div>
+    
+            </div>
+    
+            <Dialog open={dialog} onOpenChange={setDialog}>
+                                  <DialogContent className=' p-8 bg-secondary border-none text-white max-h-[80%] w-full overflow-y-auto'>
+                                    {/* {todaysDate} {formatGetDate(date)} */}
+                                    {todaysDate <= formatGetDate(date) - 1 ? (
+                                      <Tabs defaultValue="account" className=" w-full">
+                                       <TabsList className=' text-xs bg-zinc-800'>
+                                         <TabsTrigger value="single">Single</TabsTrigger>
+                                         <TabsTrigger value="multiple">Multiple</TabsTrigger>
+                                       </TabsList>
+                                       <TabsContent value="single">
+                                         <DialogHeader>
+                                           <DialogTitle>Update workload ({name} <span className=' text-xs text-red-500'>({role})</span> at {formatDate(date)})</DialogTitle>
+                                           <DialogDescription>
+                                             Note, you can only update the hours rendered if the employee is not on leave.
+                                           </DialogDescription>
+                                         </DialogHeader>
+                                         <div className=' w-full flex flex-col gap-2'>              
+                                         <label htmlFor="" className=' text-xs mt-4'>Select Status</label>
+             
+                                           <div className='w-full flex items-center gap-6'>
+                                             {statusData.map((item) => (
+                                               <div key={item.id} className='flex items-center gap-1 text-xs'>
                                                  <input
+                                                 disabled={wdStatus || event || leave}
+                                                   value={item.id}
                                                    type="checkbox"
-                                                   value={option.id}
-                                                   checked={form.status.includes(option.id)}
-                                                   onChange={() => handleCheckbox(index, option.id)}
-                                                   className="mr-2"
+                                                   checked={selected.includes(item.id)}
+                                                 onChange={() => handleChangeCheckbox(item.id as any)}
                                                  />
-                                                 {option.name}
-                                               </label>
+                                                 <p className=' p-1'>{item.name}</p>
+                                               </div>
                                              ))}
                                            </div>
                                          </div>
-         
-                                         {index !== 0 && (
-                                           <button
-                                           onClick={() => deleteForm(index)}
-                                           className="px-4 py-2 bg-red-500 text-white rounded-md text-[.6rem]"
-                                         >
-                                           Delete Form
-                                         </button>
-                                         )}
-                                         
-                                       </div>
-                                     </div>
-                                     ))}
-         
-                                     {/* <button
-                                       onClick={addForm}
-                                       className=" w-fit text-xs px-4 py-2 bg-blue-500 text-white rounded-md mr-2"
-                                     >
-                                       Add Form
-                                     </button> */}
-         
-                                     <button
-                                       onClick={updateMultipleWorkload}
-                                       className=" w-fit text-xs px-4 py-2 bg-green-500 text-white rounded-md"
-                                     >
-                                       Save All
-                                     </button>
-         
-                                   </TabsContent>
-                                  </Tabs>
-                                ) : (
-                                  <div className=' w-full h-full flex items-center'>
-                                    <p className=' text-xs text-zinc-500'>Not allowed.</p>
-                                  </div>
-                                )}
+             
+                                         <div className=' flex flex-col gap-2 text-xs'>
+                                           <label htmlFor="">Hours Rendered</label>
+                                           <input disabled={wdStatus || event || leave} type="number" value={hours} onChange={(e) => setHours(e.target.valueAsNumber)} placeholder='Hours' id="" className=' bg-primary p-2 rounded-md text-xs' />
+                                           
+                                         </div>
+             
+                                     
                                
+                                         <div className=' w-full flex items-end justify-end mt-4 gap-2'>
+                                           <button disabled={wdStatus || event || leave} onClick={() => removeWorkload()} className=' px-4 py-2 bg-zinc-600 text-xs text-white rounded-md'>Remove</button>
+             
+                                           <button disabled={wdStatus || event || leave} onClick={() => updateWorkload()} className=' px-4 py-2 bg-red-600 text-xs text-white rounded-md'>Save</button>
+             
+                                         </div>
+                                      
+                                         {(wdStatus === true || event === true || leave === true) && (
+                                           <p className=' text-xs text-red-500 flex items-center gap-2'><OctagonAlert size={15}/> Employee is in on wellness or event day, you can't update this selected workload</p>
+                                         )}
+                                       </TabsContent>
+                                       <TabsContent value="multiple">
+             
+                                         <DialogHeader>
+                                           <DialogTitle>Update workload ({name} <span className=' text-xs text-red-500'>({role})</span>)</DialogTitle>
+                                           <DialogDescription>
+                                             Note, you can only update the hours rendered if the employee is not on leave.
+                                           </DialogDescription>
+                                         </DialogHeader>
+                                         {forms.map((form, index) => (
+                                         <div key={index} className=" w-full mb-6 p-4 border border-zinc-700 rounded-lg text-xs">
+                                           {/* <h2 className="text-sm font-semibold mb-2">Form {index + 1}</h2> */}
+                                           <div className="space-y-4">
+                                             <div className=' flex items-center gap-4'>
+                                               <label className="block text-sm font-medium">Start Date</label>
+                                             
+             
+                                                 <DatePicker
+                                                   selected={form.startdate ? new Date(form.startdate) : null} // Ensure a valid Date object
+                                                   onChange={(date) =>
+                                                     handleChange(index, "startdate", date ? date.toISOString() : "")
+                                                   }
+                                                   startDate={new Date(startReq)}
+                                                   maxDate={new Date(endReq)}
+                                                   selectsEnd 
+                                                   minDate={new Date(startReq)} 
+                                                   dateFormat="dd/MM/yyyy"
+                                                   placeholderText="DD/MM/YYYY"
+                                                   className="bg-primary text-xs p-2 w-fit relative"
+                                                     onKeyDown={(e) => e.preventDefault()}
+             
+                                                 />
+             
+                                               <label className="block text-sm font-medium">End Date</label>
+             
+             
+                                                 <DatePicker
+                                                   selected={form.enddate ? new Date(form.enddate) : null} // Ensure a valid Date object
+                                                   onChange={(date) =>
+                                                     handleChange(index, "enddate", date ? date.toISOString() : "")
+                                                   }
+                                                   startDate={new Date(startReq)}
+                                                   maxDate={new Date(endReq)}
+                                                   selectsEnd 
+                                                   minDate={new Date(startReq)} 
+                                                   dateFormat="dd/MM/yyyy"
+                                                   placeholderText="DD/MM/YYYY"
+                                                   className="bg-primary text-xs p-2 w-fit relative"
+                                                   onKeyDown={(e) => e.preventDefault()}
+             
+                                                 />
+             
+                                             
+                                             </div>
+             
+                                             <div>
+                                             <label className="block text-sm font-medium">Hours Rendered</label>
+                                             <input disabled={wdStatus || event || leave} type="number"
+                                               value={form.hours}
+                                               onChange={(e) => handleChange(index, 'hours', e.target.valueAsNumber)}
+                                             placeholder='Hours' id="" className=' bg-primary p-2 rounded-md text-xs' />
+                                             
+                                             </div>
+             
+                                             <div>
+                                               <label className="block text-sm font-medium">Status</label>
+                                               <div className="flex space-x-4">
+                                                 {statusDataMultiple.map((option) => (
+                                                   <label key={option.id} className="flex items-center">
+                                                     <input
+                                                       type="checkbox"
+                                                       value={option.id}
+                                                       checked={form.status.includes(option.id)}
+                                                       onChange={() => handleCheckbox(index, option.id)}
+                                                       className="mr-2"
+                                                     />
+                                                     {option.name}
+                                                   </label>
+                                                 ))}
+                                               </div>
+                                             </div>
+             
+                                             {index !== 0 && (
+                                               <button
+                                               onClick={() => deleteForm(index)}
+                                               className="px-4 py-2 bg-red-500 text-white rounded-md text-[.6rem]"
+                                             >
+                                               Delete Form
+                                             </button>
+                                             )}
+                                             
+                                           </div>
+                                         </div>
+                                         ))}
+             
+                                         {/* <button
+                                           onClick={addForm}
+                                           className=" w-fit text-xs px-4 py-2 bg-blue-500 text-white rounded-md mr-2"
+                                         >
+                                           Add Form
+                                         </button> */}
+             
+                                         <button
+                                           onClick={updateMultipleWorkload}
+                                           className=" w-fit text-xs px-4 py-2 bg-green-500 text-white rounded-md"
+                                         >
+                                           Save All
+                                         </button>
+             
+                                       </TabsContent>
+                                      </Tabs>
+                                    ) : (
+                                      <div className=' w-full h-full flex items-center'>
+                                        <p className=' text-xs text-zinc-500'>Not allowed.</p>
+                                      </div>
+                                    )}
+                                   
+                                    
+            
                                 
-        
-                            
-                              </DialogContent>
-        </Dialog>
-    </div>
+                                  </DialogContent>
+            </Dialog>
+        </div>
 
       {/* <Individualrequest ref={individualRequestRef} alldates={longestAlldates?.allDates} data={list} /> */}   
 
