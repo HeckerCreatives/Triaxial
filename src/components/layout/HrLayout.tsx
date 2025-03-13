@@ -138,7 +138,7 @@ export default function HrLayout({
                    >
                      {item.icon}
                      {item.name}
-                     {(item.path.includes('pm/messages') && unread !== 0) && (
+                     {(item.path.includes('hr/messages') && unread !== 0) && (
                         <div className=' w-4 h-4 bg-red-600 rounded-full -translate-y-1 flex items-center justify-center'>
                           <p className=' text-[.7rem] text-white'>{unread}</p>
 

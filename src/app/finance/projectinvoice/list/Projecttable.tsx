@@ -103,18 +103,19 @@ export default function Projecttable() {
   useEffect(() => {
     const getData = async () => {
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teams/listteamau`,{
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teams/listteamau?limit=10&page=${currentpage}&teamnamefilter=${search}`,{
           withCredentials: true
         })
 
         setList(response.data.data.teams)
+        setTotalpage(response.data.data.totalpages)
 
       } catch (error) {
         
       }
     }
     getData()
-  },[])
+  },[search, currentpage])
 
   
   const clientColor = (data: string) => {
@@ -138,10 +139,10 @@ export default function Projecttable() {
             
           </div>
 
-          {/* <div className=' flex flex-col gap-1'>
+          <div className=' flex flex-col gap-1'>
             <label htmlFor="" className=' text-xs'>Search</label>
-            <Input value={search} placeholder='Search client name (clear the input to reset)' onChange={(e) => setSearch(e.target.value)} type='text' className=' w-[300px] bg-primary text-zinc-100 text-xs h-[35px]'/>
-          </div> */}
+            <Input value={search} placeholder='Search team' onChange={(e) => setSearch(e.target.value)} type='text' className=' w-[300px] bg-primary text-zinc-100 text-xs h-[35px]'/>
+          </div>
 
         </div>
 
@@ -186,9 +187,9 @@ export default function Projecttable() {
         </TableBody>
         </Table>
 
-        {/* {list.length !== 0 && (
+        {list.length !== 0 && (
        <PaginitionComponent currentPage={currentpage} total={totalpage} onPageChange={handlePageChange}/>
-       )} */}
+       )}
     </div>
         
     </div>

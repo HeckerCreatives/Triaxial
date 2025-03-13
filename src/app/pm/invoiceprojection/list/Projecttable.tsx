@@ -105,7 +105,7 @@ export default function Projecttable() {
   useEffect(() => {
     const getData = async () => {
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teams/listteamau`,{
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teams/listteamau?limit=99`,{
           withCredentials: true
         })
 

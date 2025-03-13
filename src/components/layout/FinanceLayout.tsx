@@ -102,6 +102,20 @@ export default function FinaceLayout({
     getData()
   },[refresh])
 
+  //get unread messages
+    useEffect(() => {
+      const getData = async () => {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/email/unreademail`,
+          {withCredentials: true}
+        )
+  
+        setUnread(response.data.unreademails)
+      }
+      getData()
+    },[refresh])
+
+    console.log(unread)
+
   return (
       <div className="flex min-h-screen w-full overflow-hidden">
         <motion.div 
@@ -130,7 +144,7 @@ export default function FinaceLayout({
                     >
                       {item.icon}
                       {item.name}
-                      {(item.path.includes('pm/messages') && unread !== 0) && (
+                      {(item.path.includes('finance/messages') && unread !== 0) && (
                         <div className=' w-4 h-4 bg-red-600 rounded-full -translate-y-1 flex items-center justify-center'>
                           <p className=' text-[.7rem] text-white'>{unread}</p>
 
