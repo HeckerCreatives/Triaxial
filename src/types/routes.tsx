@@ -62,7 +62,7 @@ export const employee = [
 
 export const finance = [
     {name: 'Dashboard', path: '/finance/dashboard', icon: <Home className="h-4 w-4" />, subpath: []},
-    {name: 'Scheduling', path: '/finance/scheduling', icon: <Box className="h-4 w-4" />, subpath: []},
+    // {name: 'Scheduling', path: '/finance/scheduling', icon: <Box className="h-4 w-4" />, subpath: []},
     {name: 'Finance', path: '/finance/projectinvoice/list', icon: <File className="h-4 w-4" />, subpath: []},
     {name: 'Approvals', path: '/pm/approvals', icon: <Files className="h-4 w-4" />, subpath: [
         // {name: 'Leave Requests', path: '/pm/summaries/leave',subpath: []},
