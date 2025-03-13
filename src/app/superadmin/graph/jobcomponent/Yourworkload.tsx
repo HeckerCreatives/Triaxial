@@ -1145,31 +1145,35 @@ export default function Yourworkload() {
             <thead className="bg-secondary h-[60px]">
               <tr className="bg-secondary text-[0.5rem] text-black font-normal h-[60px]">
                 {longestAlldates?.allDates.map((dateObj, index) => {
-                  const date = new Date(dateObj);
-                  date.setHours(0, 0, 0, 0); // Normalize the date to remove time differences
+                 const date = new Date(dateObj);
+                 date.setHours(0, 0, 0, 0);
 
-                  const today = new Date();
-                  today.setHours(0, 0, 0, 0); // Ensure today is set at midnight for accurate comparisons
-                  
+                 const today = new Date();
+                 today.setHours(0, 0, 0, 0);
 
-                  const startOfWeek = new Date(today);
-                  startOfWeek.setDate(today.getDate() - (today.getDay() - 1));
+                 const startOfWeek = new Date(today);
+                 startOfWeek.setDate(today.getDate() - (today.getDay() - 1));
 
-                  const endOfWeek = new Date(startOfWeek);
-                  endOfWeek.setDate(startOfWeek.getDate() + 5);
+                 const endOfWeek = new Date(startOfWeek);
+                 endOfWeek.setDate(startOfWeek.getDate() + 4);
 
-                  let bgColor = "bg-white";
+                 let bgColor = "bg-white";
+                 if (date >= startOfWeek && date <= endOfWeek) {
+                   const prevDay = new Date(today);
+                   prevDay.setDate(today.getDate() - 1);
 
-                  // ✅ Corrected: Ensure past days in the week are gray
-                  if (date >= startOfWeek && date <= endOfWeek) {
-                    if (date <= today) {
-                      bgColor = "bg-gray-300"; // ✅ Past days turn gray properly
-                    } else if (date.getDate() - 1 === today.getDate()) {
-                      bgColor = "bg-pink-500"; // ✅ Today is pink
-                    } else {
-                      bgColor = 'bg-white'
-                    }
-                  }
+                   const nextDay = new Date(today);
+                   nextDay.setDate(today.getDate() + 1);
+
+                   if (date.getTime() < today.getTime()) {
+                     bgColor = "bg-gray-300"; 
+                   } else if (date.getTime() === today.getTime()) {
+                     bgColor = "bg-pink-500";
+                   } else if (date.getTime() >= nextDay.getTime()) {
+                     bgColor = "bg-white";
+                   }
+                 }
+
 
                   const shouldInsertTotal = (index + 1) % 5 === 0; // Insert "Total Hours" after every 5 dates
 

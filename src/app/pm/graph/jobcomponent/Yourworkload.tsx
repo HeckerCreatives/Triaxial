@@ -1092,37 +1092,37 @@ export default function Yourworkload() {
             <table className="table-auto w-auto border-collapse">
               <thead className="h-[50px] text-nowrap">
                 <tr className="text-[0.5rem] text-zinc-100 font-normal text-left border-collapse">
-                  <th className="text-left font-normal min-w-[30px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                  <th className="text-left font-normal min-w-[30px] max-w-[30px] whitespace-normal border-[1px] border-zinc-600 px-2">
                     Action
                   </th>
-                  <th className="text-left font-normal min-w-[70px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                  <th className="text-left font-normal min-w-[70px] max-w-[70px] whitespace-normal border-[1px] border-zinc-600 px-2">
                     Job Number
                   </th>
-                  <th className="text-left font-normal min-w-[70px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                  <th className="text-left font-normal min-w-[70px] max-w-[70px] whitespace-normal border-[1px] border-zinc-600 px-2">
                     Client
                   </th>
-                  <th className="text-left font-normal min-w-[80px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                  <th className="text-left font-normal min-w-[80px] max-w-[80px] whitespace-normal border-[1px] border-zinc-600 px-2">
                     Project Name
                   </th>
-                  <th className="text-left font-normal min-w-[30px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                  <th className="text-left font-normal min-w-[30px] max-w-[30px] whitespace-normal border-[1px] border-zinc-600 px-2">
                     JM
                   </th>
-                  <th className="text-left font-normal min-w-[90px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                  <th className="text-left font-normal min-w-[90px] max-w-[90px] whitespace-normal border-[1px] border-zinc-600 px-2">
                     Job Component
                   </th>
-                  <th className="text-left font-normal min-w-[100px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                  <th className="text-left font-normal min-w-[100px] max-w-[100px] whitespace-normal border-[1px] border-zinc-600 px-2">
                     Notes
                   </th>
-                  <th className="text-left font-normal min-w-[55px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                  <th className="text-left font-normal min-w-[55px] max-w-[550px] whitespace-normal border-[1px] border-zinc-600 px-2">
                     Role
                   </th>
-                  <th className="text-left font-normal min-w-[83px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                  <th className="text-left font-normal min-w-[83px] max-w-[830px] whitespace-normal border-[1px] border-zinc-600 px-2">
                     Team
                   </th>
-                  <th className="text-left font-normal min-w-[45px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                  <th className="text-left font-normal min-w-[45px] max-w-[45px] whitespace-normal border-[1px] border-zinc-600 px-2">
                     Members
                   </th>
-                  <th className="text-left font-normal min-w-[50px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                  <th className="text-left font-normal min-w-[50px] max-w-[50px] whitespace-normal border-[1px] border-zinc-600 px-2">
                     Total Hours
                   </th>
                 </tr>
@@ -1146,30 +1146,34 @@ export default function Yourworkload() {
               <tr className="bg-secondary text-[0.5rem] text-black font-normal h-[60px]">
                 {longestAlldates?.allDates.map((dateObj, index) => {
                   const date = new Date(dateObj);
-                  date.setHours(0, 0, 0, 0); // Normalize the date to remove time differences
+                  date.setHours(0, 0, 0, 0);
 
                   const today = new Date();
-                  today.setHours(0, 0, 0, 0); // Ensure today is set at midnight for accurate comparisons
-                  
+                  today.setHours(0, 0, 0, 0);
 
                   const startOfWeek = new Date(today);
                   startOfWeek.setDate(today.getDate() - (today.getDay() - 1));
 
                   const endOfWeek = new Date(startOfWeek);
-                  endOfWeek.setDate(startOfWeek.getDate() + 5);
+                  endOfWeek.setDate(startOfWeek.getDate() + 4);
 
                   let bgColor = "bg-white";
-
-                  // ✅ Corrected: Ensure past days in the week are gray
                   if (date >= startOfWeek && date <= endOfWeek) {
-                    if (date <= today) {
-                      bgColor = "bg-gray-300"; // ✅ Past days turn gray properly
-                    } else if (date.getDate() - 1 === today.getDate()) {
-                      bgColor = "bg-pink-500"; // ✅ Today is pink
-                    } else {
-                      bgColor = 'bg-white'
+                    const prevDay = new Date(today);
+                    prevDay.setDate(today.getDate() - 1);
+
+                    const nextDay = new Date(today);
+                    nextDay.setDate(today.getDate() + 1);
+
+                    if (date.getTime() < today.getTime()) {
+                      bgColor = "bg-gray-300"; 
+                    } else if (date.getTime() === today.getTime()) {
+                      bgColor = "bg-pink-500";
+                    } else if (date.getTime() >= nextDay.getTime()) {
+                      bgColor = "bg-white";
                     }
                   }
+
 
                   const shouldInsertTotal = (index + 1) % 5 === 0; // Insert "Total Hours" after every 5 dates
 
@@ -1178,7 +1182,7 @@ export default function Yourworkload() {
                       {/* Date Cell */}
                       <th
                         data-id={formatAustralianDate(dateObj)}
-                        className={`relative min-w-[20px] font-normal border-[1px] border-zinc-700 ${bgColor}`}
+                        className={`relative min-w-[20px] max-w-[20px] font-normal border-[1px] border-zinc-700 ${bgColor}`}
                       >
                         <div className="whitespace-nowrap w-[20px] transform -rotate-[90deg]">
                           <p className="mt-3 font-semibold">{formatAustralianDate(dateObj)}</p>
@@ -1189,7 +1193,7 @@ export default function Yourworkload() {
                       {shouldInsertTotal && (
                         <th
                           key={`total-${index}`}
-                          className="font-normal min-w-[20px] px-1 border-[1px] border-zinc-700 bg-primary text-white"
+                          className="font-normal min-w-[30px] max-w-[30px] px-1 border-[1px] border-zinc-700 bg-primary text-white"
                         >
                           <div className="transform w-[20px] -rotate-[90deg] font-semibold">
                             <p>Total Hours</p>
@@ -1316,38 +1320,38 @@ export default function Yourworkload() {
                 style={{ visibility: 'collapse' }}
 
               >
-                <tr className="text-[0.5rem] text-zinc-100 font-normal text-left border-collapse">
-                  <th className="text-left font-normal min-w-[30px] whitespace-normal border-[1px] border-zinc-600 px-2">
+               <tr className="text-[0.5rem] text-zinc-100 font-normal text-left border-collapse">
+                  <th className="text-left font-normal min-w-[30px] max-w-[30px] whitespace-normal border-[1px] border-zinc-600 px-2">
                     Action
                   </th>
-                  <th className="text-left font-normal min-w-[70px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                  <th className="text-left font-normal min-w-[70px] max-w-[70px] whitespace-normal border-[1px] border-zinc-600 px-2">
                     Job Number
                   </th>
-                  <th className="text-left font-normal min-w-[70px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                  <th className="text-left font-normal min-w-[70px] max-w-[70px] whitespace-normal border-[1px] border-zinc-600 px-2">
                     Client
                   </th>
-                  <th className="text-left font-normal min-w-[80px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                  <th className="text-left font-normal min-w-[80px] max-w-[80px] whitespace-normal border-[1px] border-zinc-600 px-2">
                     Project Name
                   </th>
-                  <th className="text-left font-normal min-w-[30px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                  <th className="text-left font-normal min-w-[30px] max-w-[30px] whitespace-normal border-[1px] border-zinc-600 px-2">
                     JM
                   </th>
-                  <th className="text-left font-normal min-w-[90px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                  <th className="text-left font-normal min-w-[90px] max-w-[90px] whitespace-normal border-[1px] border-zinc-600 px-2">
                     Job Component
                   </th>
-                  <th className="text-left font-normal min-w-[100px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                  <th className="text-left font-normal min-w-[100px] max-w-[100px] whitespace-normal border-[1px] border-zinc-600 px-2">
                     Notes
                   </th>
-                  <th className="text-left font-normal min-w-[55px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                  <th className="text-left font-normal min-w-[55px] max-w-[550px] whitespace-normal border-[1px] border-zinc-600 px-2">
                     Role
                   </th>
-                  <th className="text-left font-normal min-w-[83px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                  <th className="text-left font-normal min-w-[83px] max-w-[830px] whitespace-normal border-[1px] border-zinc-600 px-2">
                     Team
                   </th>
-                  <th className="text-left font-normal min-w-[45px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                  <th className="text-left font-normal min-w-[45px] max-w-[45px] whitespace-normal border-[1px] border-zinc-600 px-2">
                     Members
                   </th>
-                  <th className="text-left font-normal min-w-[50px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                  <th className="text-left font-normal min-w-[50px] max-w-[50px] whitespace-normal border-[1px] border-zinc-600 px-2">
                     Total Hours
                   </th>
                 </tr>
@@ -1489,7 +1493,7 @@ export default function Yourworkload() {
                         <React.Fragment key={index}>
                           <th
                             data-id={formatAustralianDate(dateObj)}
-                            className={`relative w-[20px] font-normal border-[1px] border-zinc-700 ${bgColor}`}
+                            className={`relative min-w-[20px] max-w-[20px] font-normal border-[1px] border-zinc-700 ${bgColor}`}
                           >
                             <div className="whitespace-nowrap w-[20px] transform -rotate-[90deg]">
                               <p className="mt-3 font-semibold">{formatAustralianDate(dateObj)}</p>
@@ -1498,7 +1502,7 @@ export default function Yourworkload() {
                           {isFriday && (
                             <th
                               key={`total-${index}`}
-                              className="font-normal w-[20px] px-1 border-[1px] border-zinc-700 bg-primary text-white"
+                              className="font-normal min-w-[20px] max-w-[20px] px-1 border-[1px] border-zinc-700 bg-primary text-white"
                             >
                               <div className="transform w-[20px] -rotate-[90deg] font-semibold">
                                 <p>Total Hours</p>
@@ -1528,13 +1532,13 @@ export default function Yourworkload() {
                    
                       return (
                         <React.Fragment key={index}>
-                         <th className="relative font-normal w-[20px] border-[1px] h-1 overflow-hidden border-zinc-800">
+                         <th className="relative font-normal min-w-[20px] max-w-[20px] border-[1px] h-1 overflow-hidden border-zinc-800">
                           <div className="whitespace-nowrap transform w-[20px] -rotate-[90deg]">
                             {/* <p>{formatAustralianDate(date)}</p> */}
                           </div>
                         </th>
                         {isFriday && (
-                          <th className="font-normal  w-[20px] px-1 border-[1px] h-1 overflow-hidden border-zinc-800">
+                          <th className="font-normal  min-w-[20px] max-w-[20px] px-1 border-[1px] h-1 overflow-hidden border-zinc-800">
                             <div className="transform  w-[20px] -rotate-[90deg]">
                               <p>Total Hours</p>
                             </div>
@@ -1664,7 +1668,7 @@ export default function Yourworkload() {
                                 </td>
 
                                 {shouldInsertTotal && (
-                                  <td className="text-center font-normal w-[40px] bg-primary border-[1px] border-zinc-700">
+                                  <td className="text-center font-normal min-w-[30px] max-w-[30px] bg-primary border-[1px] border-zinc-700">
                                     <p className="text-white">
                                       {Number.isInteger(totalHoursForWeek[weekIndex])
                                         ? totalHoursForWeek[weekIndex]

@@ -20,7 +20,7 @@ export default function page() {
   useEffect(() => {
     const timer = setTimeout(() => {
       const getList = async () => {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teams/listteamau`,{
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teams/listteamau?limit=99999`,{
           withCredentials: true,
           headers: {
             'Content-Type': 'application/json'

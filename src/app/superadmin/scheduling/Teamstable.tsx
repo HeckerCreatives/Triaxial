@@ -74,7 +74,7 @@ export default function Teamstable() {
     setLoading(true)
     const timer = setTimeout(() => {
       const getList = async () => {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teams/listallteams`,{
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teams/listallteams?limit=9999&teamnamefilter=${searchteam}`,{
           withCredentials: true,
           headers: {
             'Content-Type': 'application/json'
@@ -145,7 +145,7 @@ export default function Teamstable() {
             <TableCell className="font-medium">{item.manager}</TableCell>
             <TableCell>{item.teamleader}</TableCell>
             <TableCell className="">
-              <a href={`/superadmin/graph/jobcomponent?teamid=${item.teamid}`} className=' w-fit bg-red-700 rounded-sm p-2 text-white flex items-center gap-2'><Eye size={15}/> View</a>
+              <a href={`/superadmin/graph/jobcomponent?teamid=${item.teamid}&teamname=${item.teamname}`} className=' w-fit bg-red-700 rounded-sm p-2 text-white flex items-center gap-2'><Eye size={15}/> View</a>
             </TableCell>
 
              {/* <TableCell>
