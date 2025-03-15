@@ -966,9 +966,9 @@ export default function Yourworkload() {
                                          {/* Date Cell */}
                                          <th
                                            data-id={formatAustralianDate(dateObj)}
-                                           className={`relative min-w-[22px] font-normal border-[1px] border-zinc-700 ${bgColor}`}
+                                           className={`relative min-w-[21.2px] font-normal border-[1px] border-zinc-700 ${bgColor}`}
                                          >
-                                           <div className="whitespace-nowrap w-[20px]  transform -rotate-[90deg]">
+                                           <div className="whitespace-nowrap w-[21.2px]  transform -rotate-[90deg]">
                                              <p className="mt-3 font-semibold">{formatAustralianDate(dateObj)}</p>
                                            </div>
                                          </th>
@@ -1007,14 +1007,14 @@ export default function Yourworkload() {
                    
                       return (
                         <React.Fragment key={index}>
-                         <th className="relative font-normal  border-[1px] h-1 overflow-hidden border-zinc-800">
-                          <div className="whitespace-nowrap transform w-[20px] -rotate-[90deg]">
+                         <th className="relative font-normal min-w-[20px]  border-[1px] h-1 overflow-hidden border-zinc-800">
+                          <div className="whitespace-nowrap transform min-w-[20px] -rotate-[90deg]">
                             {/* <p>{formatAustralianDate(date)}</p> */}
                           </div>
                         </th>
                         {isFriday && (
                           <th className="font-normal  px-1 border-[1px] h-1 overflow-hidden border-zinc-800">
-                            <div className="transform  w-[20px] -rotate-[90deg]">
+                            <div className="transform w-[20px] -rotate-[90deg]">
                               <p>Total Hours</p>
                             </div>
                           </th>
@@ -1113,12 +1113,12 @@ export default function Yourworkload() {
                             return (
                               <React.Fragment key={index}>
                                 <td
-                                  className="relative text-center overflow-hidden bg-white cursor-pointer border-[1px]"
+                                  className="relative text-center min-w-[20px] overflow-hidden bg-white cursor-pointer border-[1px]"
                                   onClick={handleClick}
                                 >
 
                                   
-                                  <div className="w-full h-[50px] absolute flex top-0">
+                                  <div className="w-full h-[50px] absolute flex top-0 min-w-[20px]">
                                     {statusColor(
                                       memberDate?.status || [],
                                       dateObj,
@@ -1136,7 +1136,7 @@ export default function Yourworkload() {
                                       <div key={index} className={`w-full h-[50px] ${item}`}></div>
                                     ))}
                                   </div>
-                                  <p className="relative text-black font-bold text-[.5rem] z-30">
+                                  <p className="relative text-black font-bold text-[.5rem] z-30 min-w-[20px]">
                                     {/* {memberDate ? memberDate.hours : "-"} */}
                                     {memberDate ? memberDate.hours : "-"}
                                   </p>
