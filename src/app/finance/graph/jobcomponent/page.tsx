@@ -47,7 +47,7 @@ export default function page() {
           style={{backgroundImage: `url('/dbbg.png')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat:"no-repeat"}}
           
           >
-            <Breadcrumbdb page={`Scheduling / ${findTeam?.teamname}`}/>
+            <Breadcrumbdb page={`Scheduling / ${teamname}`}/>
           </div>
       
      

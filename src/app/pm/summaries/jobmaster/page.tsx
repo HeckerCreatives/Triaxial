@@ -15,7 +15,7 @@ export default function page() {
       <div className=' p-6 top-0 left-0 w-full h-auto bg-zinc-800'
       style={{backgroundImage: `url('/dbbg.png')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat:"no-repeat"}}
       >
-        <Breadcrumbdb page={'Summaries / Projects / Master Job List'}/>
+        <Breadcrumbdb page={'Summaries / Master Job List'}/>
       </div>
       <Projecttable/>
      

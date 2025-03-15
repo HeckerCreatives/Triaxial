@@ -46,12 +46,12 @@ type Workload = {
   event: eventRequest []
   wellness: [
     {
-        wellnessdates: string
+      requestdate: string
     }
   ],
   wfh: [
     {
-      requeststart: string
+      requestdate: string
     }
   ]
   }
@@ -61,15 +61,16 @@ type Team = {
 teamname: string
 }
 
-type Wellness = { wellnessdates: string };
-type WFH = { requeststart: string };
-type eventRequest = {eventdates: {
+type Leave = {
+  leavestart: string
+  leaveend: string
+}
+
+type Wellness = { requestdate: string };
+type WFH = { requestdate: string };
+type eventRequest = {
                                     startdate: string
                                     enddate: string
-                                }}
-                                type Leave = {
-                                  leavestart: string
-                                  leaveend: string
                                 }
 
 export default function Yourworkload() {
@@ -128,7 +129,7 @@ export default function Yourworkload() {
     const colorData: string[] = [];
   
     const isWithinAnyEventDate = eventDates.some((item) =>
-      isDateInRange(date, item.eventdates.startdate, item.eventdates.enddate)
+      isDateInRange(date, item.startdate, item.enddate)
     );
   
     const isWithinAnyLeaveDate = leaveDates.some((item) =>
@@ -139,8 +140,8 @@ export default function Yourworkload() {
     //   isDateInRange(date, item.wellnessdates, item.leaveend)
     // );
 
-    const isWFH = wfh.some((item) => formatDate(item.requeststart) === formatDate(date));
-    const isWellnessDate = wellness.some((item) => formatDate(item.wellnessdates) === formatDate(date));
+    const isWFH = wfh.some((item) => formatDate(item.requestdate) === formatDate(date));
+    const isWellnessDate = wellness.some((item) => formatDate(item.requestdate) === formatDate(date));
 
   
     if (isWithinAnyEventDate) {

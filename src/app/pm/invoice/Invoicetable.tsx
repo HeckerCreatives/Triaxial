@@ -82,7 +82,7 @@ export default function Invoicetable() {
     setLoading(true)
     const getInvoice = async () => {
         try {
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/invoice/getinvoicelistsa?jobnofilter=${jobno}&status=${status}&page=${currentpage}&limit=999999`,{
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/invoice/getinvoicelist?jobnofilter=${jobno}&status=${status}&page=${currentpage}&limit=999999`,{
                 withCredentials: true
             })
 
@@ -280,7 +280,7 @@ export default function Invoicetable() {
         
         <div className=' flex flex-col gap-1'>
                 <label htmlFor="" className=' text-xs'>Search</label>
-                <Input value={jobno} placeholder='Search job no (clear the input to reset)' onChange={(e) => setJobno(e.target.value)} type='text' className=' w-[300px] bg-primary text-zinc-100 text-xs h-[35px]'/>
+                <Input value={jobno} placeholder='Search job no.' onChange={(e) => setJobno(e.target.value)} type='text' className=' w-[300px] bg-primary text-zinc-100 text-xs h-[35px]'/>
             </div>
             
         </div>
@@ -413,8 +413,8 @@ export default function Invoicetable() {
                         onChange={() => {handleSelect(item.invoiceid), setAmount(item.invoiceamount)}}
                         />
                     </TableCell> 
-                )} */}
-               
+                )}
+                */}
                 <TableCell className="font-medium text-[.6rem]">{DDMMYYHMS(item.createdAt)}</TableCell>
                 {/* <TableCell className="font-medium text-[.6rem]">{item.invoiceid}</TableCell> */}
                 <TableCell className="font-medium text-[.6rem]">{item.jobcomponent.jobno}</TableCell>

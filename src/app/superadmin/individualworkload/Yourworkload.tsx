@@ -436,14 +436,14 @@ export default function Indiviualworkloads() {
                                  </div>
    
                                  <p className="relative text-black font-bold text-[.5rem] z-30">
-                                   {memberDate ? memberDate.hours : '-'}
+                                   {memberDate ? memberDate.hours.toLocaleString() : '-'}
                                  </p>
                                </td>
    
                                {/* Show total hours for every 5th date */}
                                {(index + 1) % 5 === 0 && (
-                                 <th className="font-normal text-[.5rem] px-1 border-[1px] border-zinc-700">
-                                   <p className="">{totalHoursForWeek}</p>
+                                 <th className="font-semibold text-[.5rem] px-1 border-[1px] border-zinc-700">
+                                   <p className="">{totalHoursForWeek.toLocaleString()}</p>
                                  </th>
                                )}
                              </React.Fragment>

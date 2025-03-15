@@ -189,7 +189,7 @@ export default function SuperadminLayout({
                               </div>
                               
                               <AccordionContent className=' pl-8'>
-                                {item.subpath.map((item, index) => (
+                                {/* {item.subpath.map((item, index) => (
                                   <>
                                 
                                     <Link
@@ -207,7 +207,7 @@ export default function SuperadminLayout({
                            
                                   </>
                                   
-                                ))}
+                                ))} */}
                                 
                               </AccordionContent>
                             </AccordionItem>

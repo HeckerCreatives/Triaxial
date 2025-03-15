@@ -19,13 +19,10 @@ export const pm = [
     // {name: 'Scheduling', path: '/pm/scheduling', icon: <Box className="h-4 w-4" />, subpath: []},
     {name: 'Finance', path: '/pm/invoiceprojection/list', icon: <Files className="h-4 w-4" />, subpath: []},
     {name: 'Summaries', path: '/pm/summaries', icon: <File className="h-4 w-4" />, subpath: [
-        {name: 'Projects', path: '/pm/summaries', subpath: [
             {name: 'Master Job List', path: '/pm/summaries/jobmaster',subpath: []},
-            {name: 'Master Leave List', path: '/pm/summaries/individualrequest'},
-
+            {name: 'Master Leave List', path: '/pm/summaries/individualrequest',subpath: []},
             // {name: 'Due Dates', path: '/pm/summaries/duedates',subpath: []},
             // {name: 'Master Leave List', path: '/pm/summaries/individualrequest',subpath: []},
-        ]},
         // {name: 'Requests', path: '/pm/summaries', subpath: [
         //     {name: 'Master Leave List', path: '/pm/summaries/individualrequest'},
         //     {name: 'Leave List', path: '/pm/summaries/leave',subpath: []},
@@ -42,6 +39,7 @@ export const pm = [
         {name: 'Leave Requests', path: '/pm/summaries/leave',subpath: []},
         {name: 'WFH Requests', path: '/pm/summaries/wfh',subpath: []},
         {name: 'WD Requests', path: '/pm/summaries/wellnessday',subpath: []},
+        {name: 'Invoice Requests', path: '/pm/invoice',subpath: []},
         // {name: 'Invoice Requests', path: '/pm/summaries/leave',subpath: []},
     ]},
     {name: 'My Requests', path: '/pm/request', icon: <ArrowRightLeft className="h-4 w-4" />, subpath: []},
@@ -106,12 +104,10 @@ export const superadmin = [
 
     {name: 'Summaries', path: '/superadmin/summaries', icon: <File className="h-4 w-4" />, subpath: [
 
-        {name: 'Projects', path: '/superadmin/noaccess', subpath: [
             {name: 'Master Job List', path: '/superadmin/summaries/jobmaster',subpath: []},
-            {name: 'Master Leave List', path: '/superadmin/summaries/individualrequest'},
+            {name: 'Master Leave List', path: '/superadmin/summaries/individualrequest',subpath: []},
 
             // {name: 'Due Dates', path: '/superadmin/summaries/duedates',subpath: []},
-        ]},
         // {name: 'Requests', path: '/superadmin/summaries', subpath: [
         //     {name: 'Individual Requests', path: '/superadmin/summaries/individualrequest'},
         //     {name: 'Leave List', path: '/superadmin/summaries/leave',subpath: []},

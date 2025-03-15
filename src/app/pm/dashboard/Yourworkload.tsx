@@ -458,7 +458,7 @@ export default function Yourworkload() {
                                 key={`total-${dateIndex}`}
                                 className="font-normal w-[40px] bg-primary border-[1px] border-zinc-700"
                               >
-                                <p className="text-white">{totalHours || '-'}</p>
+                                <p className="text-white text-[.6rem] font-medium">{totalHours.toLocaleString() || '-'}</p>
                               </th>
                             )}
                           </React.Fragment>

@@ -102,12 +102,12 @@ leave: [
 event: eventRequest []
 wellness: [
   {
-      wellnessdates: string
+    requestdate: string
   }
 ],
 wfh: [
   {
-    requeststart: string
+    requestdate: string
   }
 ]
 }
@@ -121,12 +121,13 @@ type Dates = {
   wellnessDay: boolean
 }
 
-type Wellness = { wellnessdates: string };
-type WFH = { requeststart: string };
-type eventRequest = {eventdates: {
+type Wellness = { requestdate: string };
+type WFH = { requestdate: string };
+type eventRequest = {
                                     startdate: string
                                     enddate: string
-                                }}
+                                }
+
 
 
 
@@ -249,7 +250,7 @@ export default function Yourworkload() {
     const colorData: string[] = [];
   
     const isWithinAnyEventDate = eventDates.some((item) =>
-      isDateInRange(date, item.eventdates.startdate, item.eventdates.enddate)
+      isDateInRange(date, item.startdate, item.enddate)
     );
   
     const isWithinAnyLeaveDate = leaveDates.some((item) =>
@@ -260,8 +261,8 @@ export default function Yourworkload() {
     //   isDateInRange(date, item.wellnessdates, item.leaveend)
     // );
 
-    const isWFH = wfh.some((item) => formatDate(item.requeststart) === formatDate(date));
-    const isWellnessDate = wellness.some((item) => formatDate(item.wellnessdates) === formatDate(date));
+    const isWFH = wfh.some((item) => formatDate(item.requestdate) === formatDate(date));
+    const isWellnessDate = wellness.some((item) => formatDate(item.requestdate) === formatDate(date));
 
   
     if (isWithinAnyEventDate) {
@@ -1116,9 +1117,9 @@ export default function Yourworkload() {
                   <th className="text-left font-normal min-w-[55px] whitespace-normal border-[1px] border-zinc-600 px-2">
                     Role
                   </th>
-                  <th className="text-left font-normal min-w-[83px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                  {/* <th className="text-left font-normal min-w-[83px] whitespace-normal border-[1px] border-zinc-600 px-2">
                     Team
-                  </th>
+                  </th> */}
                   <th className="text-left font-normal min-w-[45px] whitespace-normal border-[1px] border-zinc-600 px-2">
                     Members
                   </th>
@@ -1345,9 +1346,9 @@ export default function Yourworkload() {
                   <th className="text-left font-normal min-w-[55px] whitespace-normal border-[1px] border-zinc-600 px-2">
                     Role
                   </th>
-                  <th className="text-left font-normal min-w-[83px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                  {/* <th className="text-left font-normal min-w-[83px] whitespace-normal border-[1px] border-zinc-600 px-2">
                     Team
-                  </th>
+                  </th> */}
                   <th className="text-left font-normal min-w-[45px] whitespace-normal border-[1px] border-zinc-600 px-2">
                     Members
                   </th>
@@ -1422,14 +1423,14 @@ export default function Yourworkload() {
                           <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2 text-[.5rem]">
                             {member.role}
                           </td>
-                          <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2 text-[.5rem]">
+                          {/* <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2 text-[.5rem]">
                             {graphItem.teamname}
-                          </td>
+                          </td> */}
                           <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
                             {member.employee.initials}
                           </td>
                           {/* Display the total hours for the member */}
-                          <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">{totalHours}</td>
+                          <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">{totalHours.toLocaleString()}</td>
                         </tr>
                       );
                     })
@@ -1669,10 +1670,10 @@ export default function Yourworkload() {
 
                                 {shouldInsertTotal && (
                                   <td className="text-center font-normal w-[40px] bg-primary border-[1px] border-zinc-700">
-                                    <p className="text-white">
+                                    <p className="text-white text-[.5rem] font-semibold">
                                       {Number.isInteger(totalHoursForWeek[weekIndex])
                                         ? totalHoursForWeek[weekIndex]
-                                        : totalHoursForWeek[weekIndex]?.toFixed(2)}
+                                        : totalHoursForWeek[weekIndex]?.toLocaleString()}
                                     </p>
                                   </td>
                                 )}

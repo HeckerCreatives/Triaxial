@@ -443,7 +443,7 @@ export default function Indiviualworkloads() {
                                {/* Show total hours for every 5th date */}
                                {(index + 1) % 5 === 0 && (
                                  <th className="font-normal text-[.5rem] px-1 border-[1px] border-zinc-700">
-                                   <p className="">{totalHoursForWeek}</p>
+                                   <p className="">{totalHoursForWeek.toLocaleString()}</p>
                                  </th>
                                )}
                              </React.Fragment>

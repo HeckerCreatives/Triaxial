@@ -912,7 +912,7 @@ export default function Yourworkload() {
                                             {member.employee.initials}
                                           </td>
                                           {/* Display the total hours for the member */}
-                                          <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">{totalHours}</td>
+                                          <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">{totalHours.toLocaleString()}</td>
                                         </tr>
                                       );
                                     })
@@ -966,7 +966,7 @@ export default function Yourworkload() {
                                          {/* Date Cell */}
                                          <th
                                            data-id={formatAustralianDate(dateObj)}
-                                           className={`relative min-w-[24.2px] font-normal border-[1px] border-zinc-700 ${bgColor}`}
+                                           className={`relative min-w-[22px] font-normal border-[1px] border-zinc-700 ${bgColor}`}
                                          >
                                            <div className="whitespace-nowrap w-[20px]  transform -rotate-[90deg]">
                                              <p className="mt-3 font-semibold">{formatAustralianDate(dateObj)}</p>
@@ -1144,10 +1144,10 @@ export default function Yourworkload() {
 
                                 {shouldInsertTotal && (
                                   <td className="text-center font-normal min-w-[29px] bg-primary border-[1px] border-zinc-700">
-                                    <p className="text-white">
+                                    <p className="text-white text-[.5rem] font-semibold">
                                       {Number.isInteger(totalHoursForWeek[weekIndex])
                                         ? totalHoursForWeek[weekIndex]
-                                        : totalHoursForWeek[weekIndex]?.toFixed(2)}
+                                        : totalHoursForWeek[weekIndex]?.toLocaleString()}
                                     </p>
                                   </td>
                                 )}

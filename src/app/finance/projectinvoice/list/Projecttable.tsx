@@ -160,8 +160,8 @@ export default function Projecttable() {
             <TableRow>
             <TableHead>Team Name</TableHead>
             <TableHead>Manager</TableHead>
-            <TableHead>Team Leader</TableHead>
-            <TableHead>Total # of Projects</TableHead>
+            {/* <TableHead>Team Leader</TableHead>
+            <TableHead>Total # of Projects</TableHead> */}
           
             <TableHead className="">Action</TableHead>
             </TableRow>
@@ -170,11 +170,11 @@ export default function Projecttable() {
           {list.map((item, index) => (
             <TableRow key={index} className=' '>
             <TableCell>
-              <a href={`/finance/graph/jobcomponent?teamid=${item._id}&${item.teamname}`} className=' text-red-500 underline'>{item.teamname}</a>
+              <a href={`/finance/graph/jobcomponent?teamid=${item._id}&teamname=${item.teamname}`} className=' text-red-500 underline'>{item.teamname}</a>
               </TableCell>
             <TableCell>{item.manager}</TableCell>
-            <TableCell>{item.teamleader}</TableCell>
-            <TableCell>{item.projectCount}</TableCell>
+            {/* <TableCell>{item.teamleader}</TableCell>
+            <TableCell>{item.projectCount}</TableCell> */}
           
            
             <TableCell className=" flex items-center gap-2">
