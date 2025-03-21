@@ -380,7 +380,7 @@ export default function EditJobComponent( prop: Prop) {
       })
 
       const response = await toast.promise(request, {
-        loading: 'Updating workload....',
+        loading: 'Updating project details...',
         success: `Successfully updated`,
         error: 'Error while updating the workload',
     });

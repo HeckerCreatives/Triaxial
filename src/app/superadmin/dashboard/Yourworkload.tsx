@@ -242,9 +242,9 @@ export default function Yourworkload() {
                 <thead className=' bg-secondary h-[70px]'>
 
                   <tr className=' text-[0.5rem] text-zinc-100 font-normal border-collapse'>
-                    <th className=' text-left min-w-[97px] font-normal whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Team</th>
+                    <th className=' text-left min-w-[120px] font-normal whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Team</th>
                     <th className=' text-left min-w-[40px] font-normal whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Initial</th>
-                    <th className=' text-left font-normal min-w-[55px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Resource</th>
+                    <th className=' text-left font-normal min-w-[60px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Resource</th>
                 
                   </tr>
                 </thead>
@@ -331,9 +331,9 @@ export default function Yourworkload() {
             >
 
              <tr className=' text-[0.5rem] text-zinc-100 font-normal border-collapse'>
-                  <th className=' text-left min-w-[97px] font-normal whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Team</th>
+                  <th className=' text-left min-w-[120px] font-normal whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Team</th>
                   <th className=' text-left min-w-[40px] font-normal whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Initial</th>
-                  <th className=' text-left font-normal min-w-[55px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Resource</th>
+                  <th className=' text-left font-normal min-w-[60px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Resource</th>
               
                 </tr>
             </thead>
@@ -345,7 +345,9 @@ export default function Yourworkload() {
                   (<td  onClick={() => router.push(`/superadmin/graph/jobcomponent?teamid=${graphItem.teamid}&teamname=${graphItem.name}`)} className="  whitespace-normal break-all border-[1px] border-zinc-600 px-2 text-left text-red-500 underline cursor-pointer">{graphItem.name}</td>) :  (<td className="text-center"></td>)
                   }
                   {/* <td onClick={() => router.push(`/pm/individualworkload?employeeid=${member.id}&name=${member.name}&teamname=${graphItem.name}`)} className=" whitespace-normal break-all border-[1px] border-zinc-600 px-2 text-left cursor-pointer underline text-blue-400">{member.name}</td> */}
-                  <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">{member.initial}</td>
+                  <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                    <a href={`/superadmin/individualworkload?employeeid=${member.id}&name=${member.name}&teamname=${graphItem.name}`} className=' underline'>{member.initial}</a>
+                  </td>
                   <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">{member.resource}</td>
                  
               

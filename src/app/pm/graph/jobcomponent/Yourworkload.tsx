@@ -24,7 +24,7 @@ import { Check, Copy, Eye, File, Folder, Layers2, OctagonAlert, Pen, Plus, Refre
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Graph, GraphComponent, Members, MembersComponent } from '@/types/types'
-import { formatAustralianDate, formatDate } from '@/utils/functions'
+import { formatAustralianDate, formatDate, truncateText } from '@/utils/functions'
 import { any } from 'zod'
 import Invoice from '@/components/forms/Invoice'
 import JobComponentStatus from '@/components/forms/JobComponentStatus'
@@ -38,6 +38,18 @@ import "react-datepicker/dist/react-datepicker.css";
 import Createprojectcomponent from '@/components/forms/Createprojectcomponent'
 import Duplicatecomponent from '@/components/forms/DuplicateComponent'
 import Variationcomponent from '@/components/forms/Variationcomponent'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import Loader from '@/components/common/Loader'
+import Button from '@/components/common/Button'
+import Editnotes from '@/components/forms/Editnotes'
+import EditMember from '@/components/forms/EditMember'
+import refreshStore from '@/zustand/refresh'
+
 
 
 
@@ -180,6 +192,7 @@ export default function Yourworkload() {
   const todaysDate = gettoday.getDate()
 
   const filterDate = dateFilter === null ?  '' : (dateFilter?.toLocaleString())?.split(',')[0]
+  const [loading, setLoading] = useState(false)
 
   
 
@@ -189,6 +202,8 @@ export default function Yourworkload() {
   const isDownRef = useRef(false);
   const startXRef = useRef(0);
   const scrollLeftRef = useRef(0);
+  const {refresh: isRefresh, setRefresh} = refreshStore()
+  
 
   // Sync scroll positions
   const syncScroll = (source: React.RefObject<HTMLDivElement>, target: React.RefObject<HTMLDivElement>) => {
@@ -444,22 +459,10 @@ export default function Yourworkload() {
     }
   }
 
-  
 
-
-  const position = (jobManager: boolean, manager: boolean) => {
-    if(jobManager && manager === true){
-      return 'Project & Job Manager'
-    }else if(jobManager === false && manager === true){
-      return 'Project Manager'
-    }else if(jobManager === true && manager === false){
-      return 'Job Manager'
-    }else{
-      return 'Your not allowed to edit this project'
-    }
-  }
 
   useEffect(() => {
+    setLoading(true)
     try {
       const timer = setTimeout(() => {
         const getList = async () => {
@@ -474,12 +477,15 @@ export default function Yourworkload() {
           setList(response.data.data)
           setStartReq(response.data.data[0]?.projectstart)
           setEndReq(response.data.data[0]?.projectend)
+          setLoading(false)
         
         }
         getList()
       }, 500)
       return () => clearTimeout(timer)
   } catch (error) {
+    setLoading(false)
+
     
        if (axios.isAxiosError(error)) {
               const axiosError = error as AxiosError<{ message: string, data: string }>;
@@ -512,6 +518,59 @@ export default function Yourworkload() {
     
     
   },[refresh, search, filterDate])
+
+  useEffect(() => {
+    try {
+      const timer = setTimeout(() => {
+        const getList = async () => {
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/listteamjobcomponent?teamid=${id}&search=${search}&filterdate=${filterDate}`,{
+            withCredentials: true,
+            headers: {
+              'Content-Type': 'application/json'
+              }
+          })
+      
+        
+          setList(response.data.data)
+          setStartReq(response.data.data[0]?.projectstart)
+          setEndReq(response.data.data[0]?.projectend)
+        
+        }
+        getList()
+      }, 500)
+      return () => clearTimeout(timer)
+  } catch (error) {
+       if (axios.isAxiosError(error)) {
+              const axiosError = error as AxiosError<{ message: string, data: string }>;
+              if (axiosError.response && axiosError.response.status === 401) {
+                  toast.error(`${axiosError.response.data.data}`)
+                  router.push('/')   
+              }
+  
+              if (axiosError.response && axiosError.response.status === 400) {
+                  toast.error(`${axiosError.response.data.data}`)     
+                     
+              }
+  
+              if (axiosError.response && axiosError.response.status === 402) {
+                  toast.error(`${axiosError.response.data.data}`)          
+                         
+              }
+  
+              if (axiosError.response && axiosError.response.status === 403) {
+                  toast.error(`${axiosError.response.data.data}`)              
+                 
+              }
+  
+              if (axiosError.response && axiosError.response.status === 404) {
+                  toast.error(`${axiosError.response.data.data}`)             
+              }
+      } 
+     
+  }
+    
+    
+  },[isRefresh])
 
 
   const isDateInRange = (dateToCheck: string, startDate: string, endDate: string): boolean => {
@@ -761,9 +820,6 @@ export default function Yourworkload() {
   const individualRequestRef = useRef<HTMLDivElement>(null); // New ref
   
 
-
-
-
   //multi form
   const [forms, setForms] = useState<FormData[]>([
     {
@@ -775,21 +831,6 @@ export default function Yourworkload() {
       status: [],
     },
   ]);
-
-  // Add a new form
-  const addForm = () => {
-    setForms([
-      ...forms,
-      {
-        startdate: '',
-        enddate: '',
-        employeeid: employeeid,
-        hours: 0,
-        jobcomponentid: projectid,
-        status: [],
-      },
-    ]);
-  };
 
   const deleteForm = (index: number) => {
     const newForms = forms.filter((_, i) => i !== index);
@@ -824,9 +865,6 @@ export default function Yourworkload() {
     }
   
     setForms(newForms);
-  };
-
-  const handleSubmit = () => {
   };
 
   const updateMultipleWorkload = async () => {
@@ -899,30 +937,6 @@ export default function Yourworkload() {
     return current.allDates.length > max.allDates.length ? current : max;
   }, list[0]);
 
-
-
-  const formatBudgetType = (budgetType: string) => {
-    return budgetType.toLowerCase() === "lumpsum" ? "Lump Sum" : 
-           budgetType.toLowerCase() === "rates" ? "Rates" : budgetType;
-  };
-
-  const getStartAndEndDate = (list: { allDates: string[] }[]) => {
-    if (!list.length) return { startDate: null, endDate: null };
-  
-    const longestAlldates = list.reduce((max, current) => {
-      return current.allDates.length > max.allDates.length ? current : max;
-    }, list[0]);
-  
-    if (!longestAlldates.allDates.length) return { startDate: null, endDate: null };
-  
-    const sortedDates = longestAlldates.allDates.sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
-  
-    return {
-      startDate: sortedDates[0],  
-      endDate: sortedDates[sortedDates.length - 1]
-    };
-  };
-
   const formatGetDate = (data: string) => {
     const selectedDate = new Date(date); // Convert 'date' to Date object
     selectedDate.setHours(0, 0, 0, 0);
@@ -931,7 +945,6 @@ export default function Yourworkload() {
     return selectedTimestamp
 
   }
-
 
 
   return (
@@ -1056,7 +1069,21 @@ export default function Yourworkload() {
         </div>
     </div>
 
-     <div
+      {loading ? (
+
+        <div className=' w-full h-full flex items-center justify-center'>
+           <div className=' spinner'>
+            </div>
+        </div>
+       
+      ) : (
+        <>
+        {list.length === 0 ? (
+          <div className=' w-full h-full flex items-center justify-center'>
+            <p className=' text-xs text-zinc-400'>No job component's yet under this project.</p>
+          </div>
+        ) : (
+          <div
           className=' h-[67dvh] w-full flex flex-col overflow-y-auto'>
             <div className=' relative h-auto flex items-start bg-secondary w-full '>
     
@@ -1113,7 +1140,7 @@ export default function Yourworkload() {
                       <th className="text-left font-normal min-w-[100px] whitespace-normal border-[1px] border-zinc-600 px-2">
                         Notes
                       </th>
-                      <th className="text-left font-normal min-w-[55px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                      <th className="text-left font-normal min-w-[62px] whitespace-normal border-[1px] border-zinc-600 px-2">
                         Role
                       </th>
                       {/* <th className="text-left font-normal min-w-[83px] whitespace-normal border-[1px] border-zinc-600 px-2">
@@ -1342,7 +1369,7 @@ export default function Yourworkload() {
                       <th className="text-left font-normal min-w-[100px] whitespace-normal border-[1px] border-zinc-600 px-2">
                         Notes
                       </th>
-                      <th className="text-left font-normal min-w-[55px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                      <th className="text-left font-normal min-w-[62px] whitespace-normal border-[1px] border-zinc-600 px-2">
                         Role
                       </th>
                       {/* <th className="text-left font-normal min-w-[83px] whitespace-normal border-[1px] border-zinc-600 px-2">
@@ -1358,7 +1385,16 @@ export default function Yourworkload() {
                   </thead>
                     <tbody>
                      {list.map((graphItem, graphIndex) =>
-                                        graphItem.members.map((member, memberIndex) => {
+                                        graphItem.members
+                                        .sort((a, b) => {
+                                          const roleOrder = ["Engr.", "Engr. Revr.", "Drft.", "Drft. Revr."];
+                                    
+                                          const indexA = roleOrder.indexOf(a.role);
+                                          const indexB = roleOrder.indexOf(b.role);
+                                    
+                                          return (indexA === -1 ? 999 : indexA) - (indexB === -1 ? 999 : indexB);
+                                        })
+                                        .map((member, memberIndex) => {
                                           // Sum all hours for the member
                                           const totalHours = member.dates?.reduce((sum, date) => sum + date.hours, 0) || 0;
                     
@@ -1391,44 +1427,70 @@ export default function Yourworkload() {
                                               </td>
                     
                                               <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
-                                                {memberIndex === 0 && graphItem.jobno}
+                                                <TooltipProvider delayDuration={.1}>
+                                                  <Tooltip>
+                                                    <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.jobno, 8)}</TooltipTrigger>
+                                                    <TooltipContent className=' text-[.6rem]'>
+                                                      <p>{memberIndex === 0 && graphItem.jobno}</p>
+                                                    </TooltipContent>
+                                                  </Tooltip>
+                                                </TooltipProvider>
+  
+                                                
                                               </td>
                                               <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
-                                                {memberIndex === 0 && graphItem.clientname.name}
+                                                
+                                                <TooltipProvider delayDuration={.1}>
+                                                  <Tooltip>
+                                                    <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.clientname.name, 10)}</TooltipTrigger>
+                                                    <TooltipContent className=' text-[.6rem]'>
+                                                      <p>{memberIndex === 0 && graphItem.clientname.name}</p>
+                                                    </TooltipContent>
+                                                  </Tooltip>
+                                                </TooltipProvider>
                                               </td>
                                               <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
-                                                {memberIndex === 0 && graphItem.projectname.name}
+                                                
+                                                <TooltipProvider delayDuration={.1}>
+                                                  <Tooltip>
+                                                    <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.projectname.name, 10)}</TooltipTrigger>
+                                                    <TooltipContent className=' text-[.6rem]'>
+                                                      <p>{memberIndex === 0 && graphItem.projectname.name}</p>
+                                                    </TooltipContent>
+                                                  </Tooltip>
+                                                </TooltipProvider>
                                               </td>
                                               <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
                                                 {memberIndex === 0 && graphItem.jobmanager.initials}
                                               </td>
                                               <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
-                                                {memberIndex === 0 && graphItem.jobcomponent}
+                                                
+                                                <TooltipProvider delayDuration={.1}>
+                                                  <Tooltip>
+                                                    <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.jobcomponent, 15)}</TooltipTrigger>
+                                                    <TooltipContent className=' text-[.6rem]'>
+                                                      <p>{memberIndex === 0 && graphItem.jobcomponent}</p>
+                                                    </TooltipContent>
+                                                  </Tooltip>
+                                                </TooltipProvider>
                                               </td>
                                               <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
-                                                <Dialog>
-                                                  <DialogTrigger className="rounded-sm flex items-center text-black text-[.5rem]">
-                                                    {member.notes ? <p className="text-[.5rem]">{member.notes.slice(0, 20)}</p> : <p className="text-[.5rem] h-full w-full text-center">No notes.</p>}
-                                                  </DialogTrigger>
-                                                  <DialogContent className="bg-secondary p-6 border-none max-w-[600px] text-white">
-                                                    <DialogHeader>
-                                                      <DialogTitle>Notes</DialogTitle>
-                                                      <DialogDescription></DialogDescription>
-                                                    </DialogHeader>
-                                                    {member.notes ? <p className="text-xs text-zinc-400">{member.notes}</p> : <p className="text-xs text-zinc-400 h-full w-full text-center">No notes.</p>}
-                                                  </DialogContent>
-                                                </Dialog>
+                                                <Editnotes note={member.notes} role={member.role} userid={member._id} componentid={graphItem.componentid}>
+                                                  {member.notes ? <p className="text-[.5rem]">{truncateText(member.notes, 18)}</p> : <p className="text-[.5rem] h-full w-full text-center">No notes.</p>}
+                                                </Editnotes>
+                                              
                                               </td>
                                               <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2 text-[.5rem]">
                                                 {member.role}
                                               </td>
-                                              {/* <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2 text-[.5rem]">
-                                                {graphItem.teamname}
-                                              </td> */}
+                                             
                                               <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
-                                                {member.employee.initials}
+                                               
+                                                <EditMember membername={member.employee.fullname} memberid={member._id} role={member.role} memberlist={listRequest[0].members} userid={member.employee._id} componentid={graphItem.componentid}>
+                                                  {member.employee.initials}
+                                                </EditMember>
+                                               
                                               </td>
-                                              {/* Display the total hours for the member */}
                                               <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">{totalHours.toLocaleString()}</td>
                                             </tr>
                                           );
@@ -1869,7 +1931,12 @@ export default function Yourworkload() {
                                 
                                   </DialogContent>
             </Dialog>
-        </div>
+         </div>
+        )}
+        </>
+       
+      )}
+      
 
       {/* <Individualrequest ref={individualRequestRef} alldates={longestAlldates?.allDates} data={list} /> */}   
 

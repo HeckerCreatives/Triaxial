@@ -11,13 +11,20 @@ import {
 import Legends from '@/components/common/Legends'
 import axios, { AxiosError } from 'axios'
 import { useRouter } from 'next/navigation'
-import { formatDate } from '@/utils/functions'
+import { formatDate, getInitials, truncateText } from '@/utils/functions'
 import Leaveform from '@/components/forms/Leaveform'
 import WDform from '@/components/forms/Wellnessday'
 import Wfhform from '@/components/forms/Wfhform'
 import { Eye, RefreshCcw } from 'lucide-react'
 import { clientColor } from '@/utils/helpers'
 import DatePicker from 'react-datepicker'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+
 
 
 type Event = {
@@ -259,7 +266,7 @@ export default function Yourworkload() {
               <th className=' text-left font-normal min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Job Component</th>
               <th className=' text-left font-normal min-w-[70px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Notes</th>
 
-              <th className=' text-left font-normal min-w-[30px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Role</th>
+              <th className=' text-left font-normal min-w-[60px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Role</th>
               <th className=' text-left min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 font-normal px-2'>Other Members</th>
             </tr>
           </thead>
@@ -269,11 +276,52 @@ export default function Yourworkload() {
               <tr key={`${graphIndex}-${memberIndex}`} className={` text-black text-[.5rem] py-2 h-[40px] border-[1px] border-zinc-600 ${clientColor(graphItem.clientpriority)}`}>
                  
                   {/* <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">{graphItem.teamname}</td> */}
-                  <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.jobno}</td>
-                  <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.clientname}</td>
-                  <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.projectname}</td>
-                  <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.jobmanager.fullname}</td>
-                  <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.jobcomponent}</td>
+                  <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                  
+                  <TooltipProvider delayDuration={.1}>
+                    <Tooltip>
+                      <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.jobno, 5)}</TooltipTrigger>
+                      <TooltipContent>
+                        <p className=' text-[.6rem]'>{memberIndex === 0 && graphItem.jobno}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+
+                  </td>
+                  <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+
+                  <TooltipProvider delayDuration={.1}>
+                    <Tooltip>
+                      <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.clientname, 5)}</TooltipTrigger>
+                      <TooltipContent>
+                        <p className=' text-[.6rem]'>{memberIndex === 0 && graphItem.clientname}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  </td>
+                  <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                  <TooltipProvider delayDuration={.1}>
+                    <Tooltip>
+                      <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.projectname, 8)}</TooltipTrigger>
+                      <TooltipContent>
+                        <p className=' text-[.6rem]'>{memberIndex === 0 && graphItem.projectname}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+
+                  </td>
+                  <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && getInitials(graphItem.jobmanager.fullname)}</td>
+                  <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+
+                  <TooltipProvider delayDuration={.1}>
+                    <Tooltip>
+                      <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.jobcomponent, 10)}</TooltipTrigger>
+                      <TooltipContent>
+                        <p className=' text-[.6rem]'>{memberIndex === 0 && graphItem.jobcomponent}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  </td>
       
                 <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">
                   <Dialog>
@@ -300,7 +348,7 @@ export default function Yourworkload() {
                   </Dialog>
 
                   </td>
-                <td className="text-left text-[.5rem whitespace-normal break-all border-[1px] border-zinc-600 px-2]">{member.role}</td>
+                <td className="text-left text-[.5rem whitespace-normal break-all border-[1px] border-zinc-600 px-2">{member.role}</td>
 
 
                   <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">{graphItem.teammembers.join(", ")}</td>
@@ -461,7 +509,7 @@ export default function Yourworkload() {
                             {/* Show total hours for every 5th date */}
                             {(index + 1) % 5 === 0 && (
                               <th className="font-normal text-[.5rem] px-1 border-[1px] border-zinc-700">
-                                <p className="">{totalHoursForWeek}</p>
+                                <p className="">{totalHoursForWeek.toLocaleString()}</p>
                               </th>
                             )}
                           </React.Fragment>

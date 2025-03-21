@@ -11,11 +11,18 @@ import {
 import axios, { AxiosError } from 'axios'
 import toast from 'react-hot-toast'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { formatDate, getInitials } from '@/utils/functions'
+import { formatDate, getInitials, truncateText } from '@/utils/functions'
 import { Input } from '@/components/ui/input'
 import Invoice from '@/components/forms/Invoice'
 import { File } from 'lucide-react'
 import { clientColor } from '@/utils/helpers'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+
 
 type values = {
   date: string
@@ -408,13 +415,50 @@ const totalsByDate = allDates.map((dateObj) => {
                     />
                   </td>
                   <td className="text-center underline cursor-pointer border-[1px] border-zinc-600 whitespace-normal break-all px-2 ">
-                  <a href={`/pm/graph/jobcomponent?teamid=${id}&jobno=${graphItem.componentid}`} className=' text-blue-600 '>{graphItem.jobnumber}</a>
+                  <a href={`/pm/graph/jobcomponent?teamid=${id}&jobno=${graphItem.componentid}`} className='  '>
+                   <TooltipProvider delayDuration={.1}>
+                      <Tooltip>
+                        <TooltipTrigger>{truncateText(graphItem.jobnumber, 6)}</TooltipTrigger>
+                        <TooltipContent>
+                          <p className=' text-[.6rem]'>{graphItem.jobnumber}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </a>
 
                   </td>
-                  <td className={`text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2   ${clientColor(graphItem.priority)}`}>{graphItem.clientname}</td>
-                  <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">{graphItem.projectname}</td>
+                  <td className={`text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2   ${clientColor(graphItem.priority)}`}>
+                  <TooltipProvider delayDuration={.1}>
+                      <Tooltip>
+                        <TooltipTrigger>{truncateText(graphItem.clientname, 6)}</TooltipTrigger>
+                        <TooltipContent>
+                          <p className=' text-[.6rem]'>{graphItem.clientname}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </td>
+                  <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">
+                  <TooltipProvider delayDuration={.1}>
+                      <Tooltip>
+                        <TooltipTrigger>{truncateText(graphItem.projectname, 8)}</TooltipTrigger>
+                        <TooltipContent>
+                          <p className=' text-[.6rem]'>{graphItem.projectname}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </td>
                   <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">{getInitials(graphItem.jobmanager.fullname)}</td>
-                  <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">{graphItem.jobcomponent}</td>
+                  <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">
+                  <TooltipProvider delayDuration={.1}>
+                      <Tooltip>
+                        <TooltipTrigger>{truncateText(graphItem.jobcomponent, 8)}</TooltipTrigger>
+                        <TooltipContent>
+                          <p className=' text-[.6rem]'>{graphItem.jobcomponent}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+
+                  </td>
                   <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">{graphItem.budgettype === 'rates' ? `Rates` : `$ ${ graphItem.estimatedbudget.toLocaleString()}` }</td>
                   <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">{graphItem.budgettype === 'rates' ? `` : ` ${ graphItem.invoice.percentage.toLocaleString()}%` }</td>
                   <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">$ {graphItem.budgettype === 'rates' ? `${ graphItem.rates.invoiced.toLocaleString()}` : `${ graphItem.lumpsum.invoiced.toLocaleString()}` }</td>

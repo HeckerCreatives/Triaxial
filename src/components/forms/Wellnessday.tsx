@@ -45,6 +45,40 @@ export default function WDform( prop: Data) {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const [friday, setFriday] = useState('')
+  const [wellnessDay, setWellnessDay] = useState('');
+
+  const calculateWellnessDay = (selectedDate: Date) => {
+    if (!selectedDate) return "";
+  
+    const date = new Date(selectedDate);
+    const dayOfMonth = date.getDate();
+    const month = date.getMonth();
+    const year = date.getFullYear();
+  
+    // Calculate the first Monday of the month
+    const firstDayOfMonth = new Date(year, month, 1);
+    const firstMonday = new Date(firstDayOfMonth);
+  
+    while (firstMonday.getDay() !== 1) {
+      firstMonday.setDate(firstMonday.getDate() + 1);
+    }
+  
+    // Calculate the selected week's index (1-based)
+    const weekIndex = Math.ceil((dayOfMonth - firstMonday.getDate() + 1) / 7) + 1;
+  
+    // Find the first day (Monday) of the second week relative to selected week
+    const secondWeekMonday = new Date(date);
+    secondWeekMonday.setDate(date.getDate() + (8 - date.getDay()));
+  
+    // Find the Friday of that week
+    const wellnessFriday = new Date(secondWeekMonday);
+    while (wellnessFriday.getDay() !== 5) {
+      wellnessFriday.setDate(wellnessFriday.getDate() + 1);
+    }
+  
+    return format(wellnessFriday, "dd/MM/yy"); // Format as DD/MM/YY
+  };
+  
 
   //request welness day
   const {
@@ -65,7 +99,7 @@ export default function WDform( prop: Data) {
 
     try {
       const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/wellnessday/wellnessdayrequest`,{
-       requestdate: friday.split('T')[0] // Format YYYY-MM
+       requestdate: data.startdate // Format YYYY-MM
        
       },
           {
@@ -174,17 +208,27 @@ export default function WDform( prop: Data) {
                 control={control}
                 render={({ field: { onChange, value } }) => (
                   <DatePicker
-                    selected={value && !isNaN(Date.parse(value)) ? new Date(value) : null} // Ensure valid date
+                    selected={value && !isNaN(Date.parse(value)) ? new Date(value) : null} 
                     onChange={(date) => {
                       if (date) {
-                        onChange(format(date, "yyyy-MM-dd")); // Store in YYYY-MM-DD format
+                        onChange(format(date, "yyyy-MM-dd"));
+                        setWellnessDay(calculateWellnessDay(date));
                       }
                     }}
                     dateFormat="dd/MM/yyyy"
                     placeholderText="DD/MM/YYYY"
                     className="w-full rounded-sm text-xs h-9 px-3 bg-zinc-100 z-[9999] relative"
                     onKeyDown={(e) => e.preventDefault()}
-                    filterDate={(date) => date.getDay() === 1} // Allow only Mondays
+                    filterDate={(date) => {
+                      const day = date.getDay();
+                      const dateOfMonth = date.getDate();
+                      const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+                    
+                      const adjustedDate = dateOfMonth + firstDayOfMonth;
+                      const weekOfMonth = Math.ceil(adjustedDate / 7);
+                    
+                      return (day === 1 || day === 2)
+                    }}
                   />
                 )}
               />
@@ -201,7 +245,7 @@ export default function WDform( prop: Data) {
               <Input 
                 disabled 
                 type="text" 
-                value={new Date(friday).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' })} 
+                value={wellnessDay} 
                 className="text-xs h-[35px] bg-zinc-200"
               />
 

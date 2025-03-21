@@ -136,19 +136,6 @@ export default function Yourworkload() {
   
   }
 
-
-  const position = (jobManager: boolean, manager: boolean) => {
-    if(jobManager && manager === true){
-      return 'Project & Job Manager'
-    }else if(jobManager === false && manager === true){
-      return 'Project Manager'
-    }else if(jobManager === true && manager === false){
-      return 'Job Manager'
-    }else{
-      return 'Your not allowed to edit this project'
-    }
-  }
-
   useEffect(() => {
     try {
       const timer = setTimeout(() => {
@@ -715,24 +702,7 @@ export default function Yourworkload() {
 
         <div className=' flex gap-12'>
           
-          <div className=' flex flex-col gap-1 bg-primary p-2'>
-            {/* <p className=' text-sm font-semibold'>Project Details</p>
-            <p className=' text-xs text-zinc-400'>Project Name: <span className=' text-red-500'>{list[0]?.projectname.name}</span></p>
-            <p className=' text-xs text-zinc-400'>Client: <span className=' text-red-500'>{list[0]?.clientname.name}</span></p>
-            <p className=' text-xs text-zinc-400'>Team: <span className=' text-red-500'>{list[0]?.teamname}</span></p>
-            <p className=' text-xs text-zinc-400'>Job no.: <span className=' text-red-500'>{list[0]?.jobno}</span></p> */}
-
-            <p className=' text-sm font-semibold'>Team Members</p>
-
-            <div className=' flex items-center gap-2 flex-wrap'>
-              {list[0]?.members.map(( item, index) => (
-                <p key={index} className=' text-blue-500 underline'>{item.employee.initials}</p>
-              ))}
-            </div>
-            
-
-          </div>
-
+      
           <div className=' flex flex-col gap-1 bg-primary rounded-sm text-xs'>
 
        
@@ -966,9 +936,9 @@ export default function Yourworkload() {
                                          {/* Date Cell */}
                                          <th
                                            data-id={formatAustralianDate(dateObj)}
-                                           className={`relative min-w-[21.2px] font-normal border-[1px] border-zinc-700 ${bgColor}`}
+                                           className={`relative min-w-[20px] font-normal border-[1px] border-zinc-700 ${bgColor}`}
                                          >
-                                           <div className="whitespace-nowrap w-[21.2px]  transform -rotate-[90deg]">
+                                           <div className="whitespace-nowrap w-[20px]  transform -rotate-[90deg]">
                                              <p className="mt-3 font-semibold">{formatAustralianDate(dateObj)}</p>
                                            </div>
                                          </th>

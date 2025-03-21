@@ -82,7 +82,6 @@ export default function Leaveform( prop: Data) {
     const { declaration, ...filteredData } = data;
     setLoading(true)
     router.push('?state=true')
-    if(isWellnessday === false){
       try {
         const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/leave/requestleave`,{
         leavetype: data.type, // 0 to total number of types
@@ -150,11 +149,7 @@ export default function Leaveform( prop: Data) {
         } 
        
     }
-    }else {
-      toast.error('The dates you entered falls within the wellnessday dates.')
-    }
-    
-  };
+  }
 
   const [holidays, setHolidays] = useState(0)
   const [onLeave, setOnleave] = useState(0)
@@ -183,10 +178,10 @@ export default function Leaveform( prop: Data) {
   },[dialog])
 
   const workingDays = totalWorkingDays() - holidays;
-  const hoursonleave = (((totalWorkingDays() - holidays) * hours) - onLeave)
+  const hoursonleave = (((totalWorkingDays() - holidays) * hours) - onLeave).toFixed(2)
   useEffect(() => {
     setValue('workingdays', workingDays); // Update form value whenever workingDays changes
-    setValue('totalhoursonleave', hoursonleave)
+    setValue('totalhoursonleave',hoursonleave as any)
 }, [workingDays, setValue, hoursonleave, wd]);
 
   const startDateValue = watch("startdate")
@@ -346,9 +341,9 @@ export default function Leaveform( prop: Data) {
 
             </div>
 
-            {isWellnessday && (
+            {/* {isWellnessday && (
               <p className=' text-[.7rem] max-w-[200px] text-zinc-500'>Note: The date you entered falls within the wellnessday, Please enter another dates.</p>
-            )}
+            )} */}
           </div>
 
           

@@ -11,11 +11,17 @@ import {
 } from "@/components/ui/dialog"
 import axios from 'axios';
 import { useSearchParams } from 'next/navigation';
-import { formatDate, getInitials } from '@/utils/functions';
+import { formatDate, getInitials, truncateText } from '@/utils/functions';
 import Legends from '@/components/common/Legends';
 import { clientColor, formatAustralianDate } from '@/utils/helpers';
 import { Eye, RefreshCcw } from 'lucide-react';
 import DatePicker from 'react-datepicker';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 type Event = {
   startdate: string
@@ -241,7 +247,7 @@ export default function Indiviualworkloads() {
                  <th className=' text-left font-normal min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Job Component</th>
                  <th className=' text-left font-normal min-w-[70px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Notes</th>
    
-                 <th className=' text-left font-normal min-w-[30px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Role</th>
+                 <th className=' text-left font-normal min-w-[60px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Role</th>
                  <th className=' text-left min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 font-normal px-2'>Other Members</th>
                </tr>
              </thead>
@@ -251,41 +257,82 @@ export default function Indiviualworkloads() {
                  <tr key={`${graphIndex}-${memberIndex}`} className={` text-black text-[.5rem] py-2 h-[40px] border-[1px] border-zinc-600 ${clientColor(graphItem.clientpriority)}`}>
                     
                      {/* <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">{graphItem.teamname}</td> */}
-                     <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.jobno}</td>
-                     <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.clientname}</td>
-                     <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.projectname}</td>
-                     <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && getInitials(graphItem.jobmanager.fullname)}</td>
-                     <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.jobcomponent}</td>
-         
-                   <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">
-                     <Dialog>
-                       <DialogTrigger className=' p-1 rounded-sm flex items-center text-[.5rem]'>
-                       {member.notes === '' ? (
-                           <p className=' h-full w-full text-center'>No notes.</p>
-                         ):(
-                         <p className=' '>{member.notes.slice(0,20)}</p>
-                         )}
-                       </DialogTrigger>
-                       <DialogContent className=' bg-secondary p-6 border-none max-w-[600px] text-white'>
-                         <DialogHeader>
-                           <DialogTitle>Notes</DialogTitle>
-                           <DialogDescription>
-                             
-                           </DialogDescription>
-                         </DialogHeader>
-                         {member.notes === '' ? (
-                           <p className=' text-xs text-zinc-400 h-full w-full text-center'>No notes.</p>
-                         ):(
-                         <p className=' text-xs text-zinc-400'>{member.notes}</p>
-                         )}
-                       </DialogContent>
-                     </Dialog>
-   
-                     </td>
-                   <td className="text-left text-[.5rem whitespace-normal break-all border-[1px] border-zinc-600 px-2]">{member.role}</td>
-   
-   
-                     <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">{graphItem.teammembers.join(", ")}</td>
+                     <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                  
+                  <TooltipProvider delayDuration={.1}>
+                    <Tooltip>
+                      <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.jobno, 5)}</TooltipTrigger>
+                      <TooltipContent>
+                        <p className=' text-[.6rem]'>{memberIndex === 0 && graphItem.jobno}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+
+                  </td>
+                  <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+
+                  <TooltipProvider delayDuration={.1}>
+                    <Tooltip>
+                      <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.clientname, 5)}</TooltipTrigger>
+                      <TooltipContent>
+                        <p className=' text-[.6rem]'>{memberIndex === 0 && graphItem.clientname}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  </td>
+                  <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                  <TooltipProvider delayDuration={.1}>
+                    <Tooltip>
+                      <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.projectname, 8)}</TooltipTrigger>
+                      <TooltipContent>
+                        <p className=' text-[.6rem]'>{memberIndex === 0 && graphItem.projectname}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+
+                  </td>
+                  <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && getInitials(graphItem.jobmanager.fullname)}</td>
+                  <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+
+                  <TooltipProvider delayDuration={.1}>
+                    <Tooltip>
+                      <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.jobcomponent, 10)}</TooltipTrigger>
+                      <TooltipContent>
+                        <p className=' text-[.6rem]'>{memberIndex === 0 && graphItem.jobcomponent}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  </td>
+      
+                <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                  <Dialog>
+                    <DialogTrigger className=' p-1 rounded-sm flex items-center text-[.5rem]'>
+                    {member.notes === '' ? (
+                        <p className=' h-full w-full text-center'>No notes.</p>
+                      ):(
+                      <p className=' '>{truncateText(member.notes, 8)}</p>
+                      )}
+                    </DialogTrigger>
+                    <DialogContent className=' bg-secondary p-6 border-none max-w-[600px] text-white'>
+                      <DialogHeader>
+                        <DialogTitle>Notes</DialogTitle>
+                        <DialogDescription>
+                          
+                        </DialogDescription>
+                      </DialogHeader>
+                      {member.notes === '' ? (
+                        <p className=' text-xs text-zinc-400 h-full w-full text-center'>No notes.</p>
+                      ):(
+                      <p className=' text-xs text-zinc-400'>{member.notes}</p>
+                      )}
+                    </DialogContent>
+                  </Dialog>
+
+                  </td>
+                <td className="text-left text-[.5rem whitespace-normal break-all border-[1px] border-zinc-600 px-2">{member.role}</td>
+
+
+                  <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">{graphItem.teammembers.join(", ")}</td>
    
                  
    
