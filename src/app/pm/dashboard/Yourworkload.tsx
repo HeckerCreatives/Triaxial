@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import axios, { AxiosError } from 'axios'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Filter, RefreshCcw } from 'lucide-react'
@@ -94,6 +94,44 @@ export default function Yourworkload() {
   const params = useSearchParams()
   const getTeamid = params.get('team')
   const [date, setDate] = useState('')
+
+  const containerRef1 = useRef<HTMLDivElement>(null);
+    const containerRef2 = useRef<HTMLDivElement>(null);
+  
+    const isDownRef = useRef(false);
+    const startXRef = useRef(0);
+    const scrollLeftRef = useRef(0);
+    
+  
+    // Sync scroll positions
+    const syncScroll = (source: React.RefObject<HTMLDivElement>, target: React.RefObject<HTMLDivElement>) => {
+      if (source.current && target.current) {
+        target.current.scrollLeft = source.current.scrollLeft;
+      }
+    };
+  
+    // Handle mouse down for dragging
+    const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>, containerRef: React.RefObject<HTMLDivElement>) => {
+      if (!containerRef.current) return;
+      isDownRef.current = true;
+      startXRef.current = e.pageX - containerRef.current.offsetLeft;
+      scrollLeftRef.current = containerRef.current.scrollLeft;
+    };
+  
+    // Handle mouse up or leave
+    const handleMouseLeaveOrUp = () => {
+      isDownRef.current = false;
+    };
+  
+    // Handle mouse move for dragging
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>, containerRef: React.RefObject<HTMLDivElement>) => {
+      if (!isDownRef.current || !containerRef.current) return;
+      e.preventDefault();
+      const x = e.pageX - containerRef.current.offsetLeft;
+      const walk = (x - startXRef.current) * 2;
+      containerRef.current.scrollLeft = scrollLeftRef.current - walk;
+      syncScroll(containerRef, containerRef === containerRef1 ? containerRef2 : containerRef1);
+    };
 
   const filterDate = filter === null ?  '' : (filter?.toLocaleString())?.split(',')[0]
 
@@ -253,7 +291,14 @@ export default function Yourworkload() {
               </tbody>
               </table>
 
-              <div className=' overflow-x-auto w-full h-full'>
+              <div
+               ref={containerRef1}
+               onMouseDown={(e) => handleMouseDown(e, containerRef1)}
+               onMouseLeave={handleMouseLeaveOrUp}
+               onMouseUp={handleMouseLeaveOrUp}
+               onMouseMove={(e) => handleMouseMove(e, containerRef1)}
+               onScroll={() => syncScroll(containerRef1, containerRef2)}
+              className=' overflow-x-auto w-full h-full'>
             
                 <table className="table-auto w-full border-collapse ">
                   
@@ -291,17 +336,17 @@ export default function Yourworkload() {
 
                       return (
                         <React.Fragment key={index}>
-                          <th className={`relative font-normal border-[1px] border-zinc-700 ${bgColor}`}>
-                            <div className="whitespace-nowrap transform -rotate-[90deg] w-[20px]">
+                          <th className={`relative font-normal max-w-[20px] border-[1px] border-zinc-700 ${bgColor}`}>
+                            <div className="whitespace-nowrap transform -rotate-[90deg] max-w-[20px]">
                               <p className="mt-6 font-bold">{formatAustralianDate(dateObj)}</p>
                             </div>
                           </th>
                           {(index + 1) % 5 === 0 && (
                             <th
                               key={`total-${index}`}
-                              className="font-normal w-[20px] border-[1px] bg-primary border-zinc-700"
+                              className="font-normal max-w-[25px] border-[1px] bg-primary border-zinc-700"
                             >
-                              <p className="-rotate-90 min-w-[34px] ml-[2px] font-bold text-white">Total Hours</p>
+                              <p className="-rotate-90  ml-[2px] font-bold text-white">Total Hours</p>
                             </th>
                           )}
                         </React.Fragment>
@@ -357,12 +402,19 @@ export default function Yourworkload() {
           </tbody>
           </table>
 
-          <div className=' overflow-x-auto w-full h-full'>
+          <div 
+            ref={containerRef2}
+            onMouseDown={(e) => handleMouseDown(e, containerRef1)}
+            onMouseLeave={handleMouseLeaveOrUp}
+            onMouseUp={handleMouseLeaveOrUp}
+            onMouseMove={(e) => handleMouseMove(e, containerRef1)}
+            onScroll={() => syncScroll(containerRef2, containerRef1)}
+          className=' w-full h-full overflow-x-auto'>
         
             <table className="table-auto w-full border-collapse ">
               
             <thead className="w-full bg-white h-[70px]"
-             style={{ visibility: 'collapse' }}
+            style={{ visibility: 'collapse' }}
             >
               <tr className="text-[0.6rem] text-black font-normal">
                 {dates.map((dateObj, index) => {
@@ -397,20 +449,20 @@ export default function Yourworkload() {
 
                   return (
                     <React.Fragment key={index}>
-                      <th className={`relative font-normal border-[1px] border-zinc-700 ${bgColor}`}>
-                        <div className="whitespace-nowrap transform -rotate-[90deg] w-[20px]">
-                          <p className="mt-6 font-bold">{formatAustralianDate(dateObj)}</p>
-                        </div>
+                    <th className={`relative font-normal max-w-[20px] border-[1px] border-zinc-700 ${bgColor}`}>
+                      <div className="whitespace-nowrap transform -rotate-[90deg] w-[20px]">
+                        <p className="mt-6 font-bold">{formatAustralianDate(dateObj)}</p>
+                      </div>
+                    </th>
+                    {(index + 1) % 5 === 0 && (
+                      <th
+                        key={`total-${index}`}
+                        className="font-normal max-w-[25px] border-[1px] bg-primary border-zinc-700"
+                      >
+                        <p className="-rotate-90  ml-[2px] font-bold text-white">Total Hours</p>
                       </th>
-                      {(index + 1) % 5 === 0 && (
-                        <th
-                          key={`total-${index}`}
-                          className="font-normal w-[20px] border-[1px] bg-primary border-zinc-700"
-                        >
-                          <p className="-rotate-90 w-[20px] ml-[8px] font-bold text-white">Total Hours</p>
-                        </th>
-                      )}
-                    </React.Fragment>
+                    )}
+                  </React.Fragment>
                   );
                 })}
               </tr>
@@ -458,9 +510,9 @@ export default function Yourworkload() {
                             {(dateIndex + 1) % 5 === 0 && (
                               <th
                                 key={`total-${dateIndex}`}
-                                className="font-normal w-[40px] bg-primary border-[1px] border-zinc-700"
+                                className="font-normal  max-w-[25px] bg-primary border-[1px] border-zinc-700"
                               >
-                                <p className="text-white text-[.6rem] font-medium">{totalHours.toLocaleString() || '-'}</p>
+                                <p className="text-white text-[.5rem] font-medium">{totalHours.toLocaleString() || '-'}</p>
                               </th>
                             )}
                           </React.Fragment>
