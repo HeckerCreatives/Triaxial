@@ -43,6 +43,7 @@ priority: string
 projectname: string
 budgettype: string
 estimatedbudget: number
+teamname: string
 projectedValues: [
     {
         date: string
@@ -415,7 +416,7 @@ const totalsByDate = allDates.map((dateObj) => {
                     />
                   </td>
                   <td className="text-center underline cursor-pointer border-[1px] border-zinc-600 whitespace-normal break-all px-2 ">
-                  <a href={`/pm/graph/jobcomponent?teamid=${id}&jobno=${graphItem.componentid}`} className='  '>
+                  <a href={`/pm/graph/jobcomponent?teamid=${id}&jobno=${graphItem.componentid}&teamname=${graphItem.teamname}`} className='  '>
                    <TooltipProvider delayDuration={.1}>
                       <Tooltip>
                         <TooltipTrigger>{truncateText(graphItem.jobnumber, 6)}</TooltipTrigger>

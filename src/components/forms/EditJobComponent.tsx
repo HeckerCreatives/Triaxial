@@ -363,6 +363,7 @@ export default function EditJobComponent( prop: Prop) {
     try {
       const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/editalljobcomponentdetails`,{
         jobcomponentid: prop.id,
+        jobno: jobno,
         projectid: projectname,
         jobmanagerid: jobmanager, // employeeid
         members: members,

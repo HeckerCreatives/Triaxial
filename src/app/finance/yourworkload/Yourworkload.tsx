@@ -261,13 +261,13 @@ export default function Yourworkload() {
             <tr className=' text-[0.5rem] text-zinc-100 font-normal border-collapse'>
               <th className=' text-left font-normal min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Job No.</th>
               <th className=' text-left font-normal min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Client</th>
-              <th className=' text-left font-normal min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Project Name</th>
-              <th className=' text-left font-normal min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Job Mgr.</th>
-              <th className=' text-left font-normal min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Job Component</th>
+              <th className=' text-left font-normal min-w-[70px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Proj. Name</th>
+              <th className=' text-left font-normal min-w-[40px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>JM</th>
+              <th className=' text-left font-normal min-w-[60px] whitespace-normal border-[1px] border-zinc-600 px-2'>Job Comp.</th>
               <th className=' text-left font-normal min-w-[70px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Notes</th>
 
               <th className=' text-left font-normal min-w-[60px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Role</th>
-              <th className=' text-left min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 font-normal px-2'>Other Members</th>
+              <th className=' text-left min-w-[100px] whitespace-normal break-all border-[1px] border-zinc-600 font-normal px-2'>Other Members</th>
             </tr>
           </thead>
           <tbody>
@@ -315,7 +315,7 @@ export default function Yourworkload() {
 
                   <TooltipProvider delayDuration={.1}>
                     <Tooltip>
-                      <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.jobcomponent, 10)}</TooltipTrigger>
+                      <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.jobcomponent, 6)}</TooltipTrigger>
                       <TooltipContent>
                         <p className=' text-[.6rem]'>{memberIndex === 0 && graphItem.jobcomponent}</p>
                       </TooltipContent>
@@ -329,7 +329,7 @@ export default function Yourworkload() {
                     {member.notes === '' ? (
                         <p className=' h-full w-full text-center'>No notes.</p>
                       ):(
-                      <p className=' '>{member.notes.slice(0,20)}</p>
+                      <p className=' '>{truncateText(member.notes, 10)}</p>
                       )}
                     </DialogTrigger>
                     <DialogContent className=' bg-secondary p-6 border-none max-w-[600px] text-white'>
@@ -518,17 +518,10 @@ export default function Yourworkload() {
                     </tr>
                   ))
                 )}
-
-
-
             </tbody>
             </table>
           </div>
 
-          
-
-         
-          
           </>
         ) : (
           <div className=' w-full h-full flex items-center justify-center'>
@@ -536,9 +529,6 @@ export default function Yourworkload() {
 
           </div>
         )}
-        
-
-        
 
       </div>
      

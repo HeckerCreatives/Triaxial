@@ -99,7 +99,8 @@ export default function WDform( prop: Data) {
 
     try {
       const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/wellnessday/wellnessdayrequest`,{
-       requestdate: data.startdate // Format YYYY-MM
+      requestdate: data.startdate
+       //requestdate: wellnessDay
        
       },
           {
@@ -208,7 +209,7 @@ export default function WDform( prop: Data) {
                 control={control}
                 render={({ field: { onChange, value } }) => (
                   <DatePicker
-                    selected={value && !isNaN(Date.parse(value)) ? new Date(value) : null} 
+                    selected={value && !isNaN(Date.parse(value)) ? new Date(value) : null}
                     onChange={(date) => {
                       if (date) {
                         onChange(format(date, "yyyy-MM-dd"));
@@ -220,18 +221,36 @@ export default function WDform( prop: Data) {
                     className="w-full rounded-sm text-xs h-9 px-3 bg-zinc-100 z-[9999] relative"
                     onKeyDown={(e) => e.preventDefault()}
                     filterDate={(date) => {
-                      const day = date.getDay();
-                      const dateOfMonth = date.getDate();
-                      const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
-                    
-                      const adjustedDate = dateOfMonth + firstDayOfMonth;
-                      const weekOfMonth = Math.ceil(adjustedDate / 7);
-                    
-                      return (day === 1 || day === 2)
+                      const day = date.getDay(); // 1 = Monday, 2 = Tuesday
+                      const year = date.getFullYear();
+                      
+                      // March 17 & 18 as starting points
+                      const allowedDates = [
+                        new Date(year, 2, 17), // March 17
+                        new Date(year, 2, 18), // March 18
+                      ];
+
+                      // Generate future dates (every 2 weeks on Mon/Tue)
+                      let currentDate = new Date(year, 2, 31); // March 31 (First Monday after March 17 & 18)
+                      while (currentDate.getFullYear() === year) {
+                        if (currentDate.getDay() === 1 || currentDate.getDay() === 2) {
+                          allowedDates.push(new Date(currentDate)); // Store allowed dates
+                        }
+                        currentDate.setDate(currentDate.getDate() + (currentDate.getDay() === 1 ? 1 : 13)); // Move 2 weeks ahead
+                      }
+
+                      // Allow only the specified dates
+                      return allowedDates.some(
+                        (allowedDate) =>
+                          allowedDate.getFullYear() === date.getFullYear() &&
+                          allowedDate.getMonth() === date.getMonth() &&
+                          allowedDate.getDate() === date.getDate()
+                      );
                     }}
                   />
                 )}
               />
+
 
               {errors.startdate && (
                 <p className="text-[.6em] text-red-500">{errors.startdate.message}</p>
