@@ -124,7 +124,7 @@ export default function Wfhtable() {
         setLoading(true);
         try {
           const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_URL}/wfh/listwfhrequestadmin?page=${currentpage}&limit=10&statusfilter=Approved&fullnamefilter=${searchName}`,
+            `${process.env.NEXT_PUBLIC_API_URL}/wfh/listwfhrequestadmin?page=${currentpage}&limit=10&statusfilter=${status}&fullnamefilter=${searchName}`,
             {
               withCredentials: true,
               headers: {
@@ -184,7 +184,7 @@ export default function Wfhtable() {
         <div className=' flex md:flex-row flex-col items-center justify-between gap-4'>
 
           <div className=' flex flex-col gap-2'>
-            {/* <label htmlFor="" className=' text-xs text-zinc-400 mt-4'>Filter by status</label>
+            <label htmlFor="" className=' text-xs text-zinc-400 mt-4'>Filter by status</label>
             <Select value={status} onValueChange={setStatus}>
             <SelectTrigger className="w-[180px] bg-primary mt-2">
               <SelectValue placeholder="Filter by status" />
@@ -194,7 +194,7 @@ export default function Wfhtable() {
               <SelectItem value="Approved">Approved</SelectItem>
               <SelectItem value="Denied">Denied</SelectItem>
             </SelectContent>
-          </Select> */}
+          </Select>
 
           </div>
 
@@ -232,11 +232,11 @@ export default function Wfhtable() {
                       <TableHead className=' text-[.6rem]'>Hours of Leave</TableHead>
                       <TableHead className=' text-[.6rem]'>Total Hours</TableHead>
                       {/* <TableHead className=' text-xs'>Total Hours for Payroll</TableHead> */}
-                      {/* <TableHead className=' text-xs'>Status</TableHead> */}
+                      <TableHead className=' text-xs'>Status</TableHead>
 
-                      {/* {status === 'Pending' && (
+                      {status === 'Pending' && (
                          <TableHead className=' text-xs'>Action</TableHead>
-                      )} */}
+                      )}
 
                       </TableRow>
                 </TableHeader>
@@ -255,8 +255,8 @@ export default function Wfhtable() {
                       <TableCell className=' text-[.6rem]'>{item?.totalhourswfh ? item.totalhourswfh.toFixed(2) : '0'}</TableCell>
                       <TableCell className=' text-[.6rem]'>{item.hoursofleave}</TableCell>
                       <TableCell className=' text-[.6rem]'>{item.totalhourswfh}</TableCell>
-                      {/* <TableCell className={` ${statusColor(item.status)} text-[.6rem]`}>{item.status}</TableCell> */}
-                      {/* {status === 'Pending' && (
+                      <TableCell className={` ${statusColor(item.status)} text-[.6rem]`}>{item.status}</TableCell>
+                      {status === 'Pending' && (
                       <TableCell className="">
                       <Wfhformadmin requestid={item.requestid} startdate={item.requestdate} enddate={item.requestend} totalworkinghours={item.totalhourswfh} wellnessdaycycle={item.wellnessdaycycle} hoursofleave={item.hoursofleave} reason={item.reason} fullname={item.fullname} >
 
@@ -264,7 +264,7 @@ export default function Wfhtable() {
                        </Wfhformadmin>
 
                     </TableCell>
-                    )} */}
+                    )}
 
                       </TableRow>
                     ))}

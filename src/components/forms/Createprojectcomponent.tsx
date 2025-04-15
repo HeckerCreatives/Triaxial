@@ -231,7 +231,7 @@ export default function Createprojectcomponent( prop: Data) {
         const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/createjobcomponent`,{
           teamid: id,
           projectname:  projectname,
-          clientid: clientid === '' ? client : clientid,
+          clientid: clientid === 'Other' ? client : clientid,
           jobno: jobno,
           start: (today.toLocaleString()).split(',')[0],
           adminnotes: adminotes,
@@ -532,6 +532,9 @@ export default function Createprojectcomponent( prop: Data) {
                                                                                             {item.clientname}
                                                                                           </SelectItem>
                                                                                         ))}
+                                                                                        <SelectItem value='Other'>
+                                                                                            Other
+                                                                                          </SelectItem>
                                                                                       </SelectContent>
                                                                                     </Select>
                                                                                   </div>
@@ -551,7 +554,7 @@ export default function Createprojectcomponent( prop: Data) {
                                                                                       onChange={(e) => setClient(e.target.value)}
                                                                                       className="text-xs h-[35px] bg-white"
                                                                                       placeholder="Client name"
-                                                                                      disabled={!!clientid} // Disable if a client is selected
+                                                                                      disabled={clientid !== 'Other'} // Disable if a client is selected
                                                                                     />
                                                                                   </div>
 

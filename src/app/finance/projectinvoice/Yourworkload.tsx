@@ -43,6 +43,8 @@ priority: string
 projectname: string
 budgettype: string
 estimatedbudget: number
+teamname: string
+
 projectedValues: [
     {
         date: string
@@ -387,18 +389,19 @@ const totalsByDate = allDates.map((dateObj) => {
 
               <tr className=' text-[0.6rem] text-zinc-100 font-normal border-collapse'>
                 {/* <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Action</th> */}
+                <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Action</th>
                 <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Job no:</th>
                 <th className={`min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2`}>Client</th>
-                <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Project Name</th>
-                <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Job Manager.</th>
-                <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Job Component</th>
+                <th className=' min-w-[90px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Project Name</th>
+                <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>JM</th>
+                <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Job Comp.</th>
                 <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Est. $</th>
                 <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Invoice (%)</th>
                 <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Invoiced $</th>
-                <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Remaining $</th>
-                <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Sub-cont. costs</th>
+                <th className=' min-w-[80px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Remaining $</th>
+                <th className=' min-w-[100px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Sub-cont. costs</th>
                 <th className=' font-normal min-w-[70px] border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Wip</th>
-                <th className=' font-normal min-w-[70px] border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Catchup Invoice</th>
+                <th className=' font-normal min-w-[100px] border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Catchup Invoice</th>
 
               
               </tr>
