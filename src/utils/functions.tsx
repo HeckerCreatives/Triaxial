@@ -90,7 +90,7 @@ export const formatMonthYear = (date: string) => {
 export const getInitials = (fullName: string) => {
   const parts = fullName.trim().split(" ");
   const firstInitial = parts[0] ? parts[0][0].toUpperCase() : "";
-  const lastInitial = parts.length > 1 ? parts[1][0].toUpperCase() : "";
+  const lastInitial = parts.length > 1 ? parts[1][0]?.toUpperCase() : "";
   return firstInitial + lastInitial;
 };
 
@@ -124,4 +124,10 @@ export const DDMMYY = (data: string) => {
 
 export const truncateText = (text: string, maxLength: number): string => {
   return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
+};
+
+
+export const formatDates = (isoDate: string): string => {
+  const date = new Date(isoDate);
+  return date.toLocaleDateString('en-US'); // Outputs in M/D/YYYY format
 };

@@ -28,6 +28,7 @@ import axios, { AxiosError } from 'axios'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { formatDates } from '@/utils/functions'
 
 type Project = {
   createdAt: string
@@ -266,7 +267,7 @@ export default function Variationcomponent( prop: Data) {
           projectname:  prop.pname,
           clientid: prop.clientid,
           jobno: jobno,
-          start: prop.start,
+          start: formatDates(prop.start),
           jobcomponentvalue: filteredFormData,
           isvariation: true,
           adminnotes: adminnotes,

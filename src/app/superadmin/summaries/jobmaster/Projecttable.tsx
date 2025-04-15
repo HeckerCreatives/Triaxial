@@ -38,6 +38,13 @@ import { useSearchParams } from 'next/navigation'
 import Projectstatusform from '@/components/forms/Projectstatusform'
 import Copyprojectform from '@/components/forms/Copyprojectform'
 import { clientColor } from '@/utils/helpers'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 type Components = {
   name: string,
@@ -64,6 +71,13 @@ jobno: string
 jobComponents: Components[]
 }
 
+type Team = {
+  teamid: string
+teamname: string
+}
+
+
+
 export default function Projecttable() {
   const [loading, setLoading] = useState(false)
 
@@ -74,12 +88,14 @@ export default function Projecttable() {
   const params = useSearchParams()
   const refresh = params.get('state')
   const id = params.get('projectid')
+   const [team, setTeam] = useState<Team[]>([])
+    const [teamid, setTeamId] = useState('')
 
   useEffect(() => {
     setLoading(true)
     const timer = setTimeout(() => {
       const getList = async () => {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/projects/listprojectsa?searchproject=${search}&page=${currentpage}&limit=10`,{
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/projects/listprojectsa?searchproject=${search}&page=${currentpage}&limit=10&filter=${teamid}`,{
           withCredentials: true,
           headers: {
             'Content-Type': 'application/json'
@@ -94,7 +110,7 @@ export default function Projecttable() {
     },500)
     return () => clearTimeout(timer)
     
-  },[currentpage, search, refresh])
+  },[currentpage, search, refresh, teamid])
 
 
 
@@ -102,6 +118,23 @@ export default function Projecttable() {
    const handlePageChange = (page: number) => {
     setCurrentpage(page)
   }
+
+    useEffect(() => {
+      const getList = async () => {
+     
+          try {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teams/listteamselect`,{
+              withCredentials: true
+            })
+  
+          setTeam(response.data.data)
+          setTeamId(response.data.data[0].teamid)
+          } catch (error) {
+  
+          }
+        }
+      getList()
+    },[])
 
 
   return (
@@ -111,7 +144,21 @@ export default function Projecttable() {
 
       <div className=' w-full flex items-center justify-between'>
         <div className=' flex items-center gap-2'>
-
+          <div className=' text-xs'>
+                    <label htmlFor="">Filter by team:</label>
+                    <Select value={teamid} onValueChange={setTeamId}>
+                      <SelectTrigger className="w-[180px] bg-primary mt-1" >
+                        <SelectValue placeholder="Select Team" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {team.map((item, index) => (
+                          <SelectItem value={item.teamid}>{item.teamname}</SelectItem>
+                        ))}
+                       
+                      </SelectContent>
+                    </Select>
+          
+                  </div>
         </div>
 
           <div className=' flex flex-col gap-1'>
@@ -185,9 +232,9 @@ export default function Projecttable() {
         </TableBody>
         </Table>
 
-        {list.length !== 0 && (
+        {/* {list.length !== 0 && (
        <PaginitionComponent currentPage={currentpage} total={totalpage} onPageChange={handlePageChange}/>
-       )}
+       )} */}
     </div>
         
     </div>

@@ -92,11 +92,53 @@ type Workload = {
     jobno: string
 }
 
+
+type List = {
+  name: string
+  members: Workloads[]
+}
+
+type Workloads = {
+initial: string
+id: string,
+name: string
+resource: string
+dates: Dates[]
+leave: [
+  {
+    leavestart: string
+    leaveend: string
+    }
+],
+event: eventRequest []
+wellness: [
+  {
+    requestdate: string
+  }
+],
+wfh: [
+  {
+    requestdate: string
+  }
+]
+}
+
+
+type Wellness = { requestdate: string };
+type WFH = { requestdate: string };
+type eventRequest = {
+                                    startdate: string
+                                    enddate: string
+                                }
+
 export default function Yourworkload() {
   const [dateFilter, setDateFilter] = useState<Date | null>(null)
   const [list, setList] = useState<Workload[]>([])
+  const [listRequest, setListrequest] = useState<List[]>([])
+  
   const [dates, setDates] = useState<string[]>([])
   const router = useRouter()
+  const [id, setId] = useState('')
 
   const filterDate = dateFilter === null ?  '' : (dateFilter?.toLocaleString())?.split(',')[0]
 
@@ -109,6 +151,7 @@ export default function Yourworkload() {
 
         setList(response.data.data.yourworkload)
         setDates(response.data.data.alldates)
+        setId(response.data.data.yourworkload[0].teamid)
       } catch (error) {
         
       }
@@ -205,6 +248,70 @@ export default function Yourworkload() {
     return parsedDate.toLocaleDateString('en-AU', { month: 'short', year: 'numeric' });
   };
 
+
+    //individual reaquest
+    useEffect(() => {
+      const getList = async () => {
+        if (id !== '') {
+          try {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/getjobcomponentindividualrequest?teamid=${id}`, {
+              withCredentials: true
+            })
+            setListrequest(response.data.data.teams)
+          } catch (error) {
+            console.error('Error fetching data', error)
+          }
+        }
+      }
+      getList()
+    }, [ id])
+
+
+     const statusColorRequest = (
+        date: string, 
+        eventDates: eventRequest[], 
+        // events: { eventstart: string; eventend: string }[], 
+        leaveDates: Leave[], 
+        wellness: Wellness[], 
+        wfh: WFH[] = []
+      ): string[] => {
+        const colorData: string[] = [];
+      
+        const isWithinAnyEventDate = eventDates.some((item) =>
+          isDateInRange(date, item.startdate, item.enddate)
+        );
+      
+        const isWithinAnyLeaveDate = leaveDates.some((item) =>
+          isDateInRange(date, item.leavestart, item.leaveend)
+        );
+    
+        // const isWellnessDate = wellness.some((item) =>
+        //   isDateInRange(date, item.wellnessdates, item.leaveend)
+        // );
+    
+        const isWFH = wfh.some((item) => formatDate(item.requestdate) === formatDate(date));
+        const isWellnessDate = wellness.some((item) => formatDate(item.requestdate) === formatDate(date));
+    
+      
+        if (isWithinAnyEventDate) {
+          colorData.push("bg-gray-300");
+        }
+        if (isWithinAnyLeaveDate) {
+          colorData.push("bg-violet-300");
+        }
+        if (isWFH) {
+          colorData.push("bg-lime-300");
+        }
+    
+        if(isWellnessDate){
+          colorData.push('bg-fuchsia-300')
+        }
+      
+        return colorData;
+      };
+
+      console.log(listRequest, id)
+
   
 
 
@@ -259,23 +366,55 @@ export default function Yourworkload() {
           <thead className=' bg-secondary h-[95px]'>
 
             <tr className=' text-[0.5rem] text-zinc-100 font-normal border-collapse'>
+              <th className=' text-left font-normal min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Team</th>
               <th className=' text-left font-normal min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Job No.</th>
               <th className=' text-left font-normal min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Client</th>
-              <th className=' text-left font-normal min-w-[70px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Proj. Name</th>
-              <th className=' text-left font-normal min-w-[40px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>JM</th>
-              <th className=' text-left font-normal min-w-[60px] whitespace-normal border-[1px] border-zinc-600 px-2'>Job Comp.</th>
+              <th className=' text-left font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Project Name</th>
+              <th className=' text-left font-normal min-w-[60px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Job Mgr.</th>
+              <th className=' text-left font-normal min-w-[95px] whitespace-normal border-[1px] border-zinc-600 px-2'>Job Component</th>
               <th className=' text-left font-normal min-w-[70px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Notes</th>
 
               <th className=' text-left font-normal min-w-[60px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Role</th>
               <th className=' text-left min-w-[100px] whitespace-normal break-all border-[1px] border-zinc-600 font-normal px-2'>Other Members</th>
             </tr>
           </thead>
+          {/* request */}
+          <tbody>
+                    {listRequest[0]?.members.map((item, graphIndex) =>
+                        <tr key={`${graphIndex}`} className="bg-primary text-[.5rem] py-2 h-[30px] border-[1px] border-zinc-600">
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td  className=" border-[1px] border-zinc-600 px-2 text-start">{item.initial}</td>
+                          <td></td>
+
+                        </tr>
+                    )}
+          </tbody>
+
           <tbody>
           {list.map((graphItem, graphIndex) =>
             graphItem.members.map((member, memberIndex) => (
               <tr key={`${graphIndex}-${memberIndex}`} className={` text-black text-[.5rem] py-2 h-[40px] border-[1px] border-zinc-600 ${clientColor(graphItem.clientpriority)}`}>
                  
                   {/* <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">{graphItem.teamname}</td> */}
+                  <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                  
+                  <TooltipProvider delayDuration={.1}>
+                    <Tooltip>
+                      <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.teamname, 5)}</TooltipTrigger>
+                      <TooltipContent>
+                        <p className=' text-[.6rem]'>{memberIndex === 0 && graphItem.teamname}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+
+                  </td>
                   <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">
                   
                   <TooltipProvider delayDuration={.1}>
@@ -358,7 +497,7 @@ export default function Yourworkload() {
               </tr>
             ))
           )}
-        </tbody>
+          </tbody>
           </table>
 
           <div className=' overflow-x-auto'>
@@ -463,6 +602,65 @@ export default function Yourworkload() {
                   })}
                 </tr>
               </thead>
+
+                {/* request */}
+                              <tbody>
+                                    {listRequest.map((graphItem, graphIndex) =>
+                                      graphItem.members.map((member, memberIndex) => {
+                                        // Precompute weekly totals
+                                        const totalHoursForWeek: number[] = [];
+                                        let currentWeekTotal = 0;
+                                        let weekCounter = 0;
+                                      
+                                        return (
+                                          <tr
+                                            key={`${graphIndex}-${memberIndex}`}
+                                            className="bg-primary text-[.6rem] py-2 h-[30px] border-[1px] border-zinc-600"
+                                          >
+                                            {dates.map((dateObj, index) => {
+                                              const date = new Date(dateObj);
+                                              const isFriday = date.getDay() === 5;
+                                              const weekIndex = Math.floor(index / 5); // Ensure correct indexing
+                  
+                                              const shouldInsertTotal = (index + 1) % 5 === 0;
+                                              
+                                              const memberDate = member.dates?.find(
+                                                (date) => formatDate(date.date) === formatDate(dateObj)
+                                              );
+                  
+                                              return (
+                                                <React.Fragment key={index}>
+                                                  <td
+                                                    className="relative text-center overflow-hidden bg-white cursor-pointer border-[1px] border-zinc-400"
+                                                  >
+                                                    <div className="w-full h-[50px] absolute flex top-0">
+                                                    {statusColorRequest( dateObj, member.event, member.leave, member.wellness, member.wfh).map((item, index) => (
+                                                    <div key={index} className={`w-full h-full ${item}`}></div>
+                                                      ))}
+                                                    </div>
+                                                    <p className="relative text-black font-bold text-[.5rem] z-30">
+                                                      
+                                                    </p>
+                                                  </td>
+                  
+                                                  {shouldInsertTotal && (
+                                                    <td className="text-center font-normal w-[40px] bg-primary border-[1px] border-zinc-700">
+                                                      <p className="text-white">
+                                                        {Number.isInteger(totalHoursForWeek[weekIndex])
+                                                          ? totalHoursForWeek[weekIndex]
+                                                          : totalHoursForWeek[weekIndex]?.toFixed(2)}
+                                                      </p>
+                                                    </td>
+                                                  )}
+                                                </React.Fragment>
+                                              );
+                                            })}
+                                          </tr>
+                                        );
+                                      })
+                                    )}
+                  
+                              </tbody>
 
               <tbody>
               {list.map((graphItem, graphIndex) =>

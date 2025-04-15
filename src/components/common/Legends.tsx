@@ -6,7 +6,7 @@ export default function Legends() {
     <div className=' h-full flex items-end gap-2'>
       <p className=' text-[.8em]'>Status Legend:</p>
 
-        <div className=' w-fit flex items-center gap-2'>
+        <div className=' w-fit flex flex-wrap items-center gap-2'>
 
           <div className=' flex items-center gap-2'>
             <div className=' bg-red-500'>
@@ -68,7 +68,7 @@ export default function Legends() {
     <div className=' h-full flex items-end gap-2'>
         <p className=' text-[.8em]'>Total Hours Legend:</p>
 
-          <div className=' w-fit flex items-center gap-2'>
+          <div className=' w-fit flex flex-wrap items-center gap-2'>
 
             <div className=' flex items-center gap-2'>
               <div className=' bg-pink-500'>

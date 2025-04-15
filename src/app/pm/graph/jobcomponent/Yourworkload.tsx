@@ -969,7 +969,7 @@ export default function Yourworkload() {
           <input value={search} onChange={(e) => setSearch(e.target.value)} type="text" placeholder='Search project' className=' p-2 text-black bg-white rounded-sm text-[.6rem]' />
         </div>
 
-        <div className=' w-full flex items-center justify-between h-auto bg-primary text-xs'>
+        <div className=' w-full flex items-center justify-between gap-6 h-auto bg-primary text-xs'>
 
           <div className=' flex gap-12'>
 
@@ -1107,6 +1107,12 @@ export default function Yourworkload() {
                       <th className="text-left font-normal min-w-[30px] whitespace-normal border-[1px] border-zinc-600 px-2">
                         JM
                       </th>
+                      <th className="text-left font-normal min-w-[60px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                       EST. $
+                      </th> 
+                      <th className="text-left font-normal min-w-[60px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                        % Inv.
+                      </th>
                       <th className="text-left font-normal min-w-[90px] whitespace-normal border-[1px] border-zinc-600 px-2">
                         Job Component
                       </th>
@@ -1118,7 +1124,7 @@ export default function Yourworkload() {
                       </th>
                   
                       <th className="text-left font-normal min-w-[45px] whitespace-normal border-[1px] border-zinc-600 px-2">
-                        Members
+                        Team
                       </th>
                       <th className="text-left font-normal min-w-[50px] whitespace-normal border-[1px] border-zinc-600 px-2">
                         Total Hours
@@ -1232,6 +1238,12 @@ export default function Yourworkload() {
                       <th className="text-left font-normal min-w-[30px] whitespace-normal border-[1px] border-zinc-600 px-2">
                         JM
                       </th>
+                      <th className="text-left font-normal min-w-[60px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                       EST. $
+                      </th> 
+                      <th className="text-left font-normal min-w-[60px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                        % Inv.
+                      </th>
                       <th className="text-left font-normal min-w-[90px] whitespace-normal border-[1px] border-zinc-600 px-2">
                         Job Component
                       </th>
@@ -1243,7 +1255,7 @@ export default function Yourworkload() {
                       </th>
                   
                       <th className="text-left font-normal min-w-[45px] whitespace-normal border-[1px] border-zinc-600 px-2">
-                        Members
+                        Team
                       </th>
                       <th className="text-left font-normal min-w-[50px] whitespace-normal border-[1px] border-zinc-600 px-2">
                         Total Hours
@@ -1255,6 +1267,8 @@ export default function Yourworkload() {
                   <tbody>
                     {listRequest[0]?.members.map((item, graphIndex) =>
                         <tr key={`${graphIndex}`} className="bg-primary text-[.5rem] py-2 h-[30px] border-[1px] border-zinc-600">
+                          <td></td>
+                          <td></td>
                           <td></td>
                           <td></td>
                           <td></td>
@@ -1350,6 +1364,14 @@ export default function Yourworkload() {
                                               </td>
                                               <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
                                                 {memberIndex === 0 && graphItem.jobmanager.initials}
+                                              </td>
+
+                                              <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                                                $ {graphItem.estimatedbudget.toLocaleString()}
+                                              </td>
+
+                                              <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                                                {graphItem.budgettype !== 'rates' && `${graphItem.invoice.percentage}%`}
                                               </td>
                                               <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
                                                 

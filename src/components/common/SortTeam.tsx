@@ -166,7 +166,7 @@ export default function SortableTeamsDialog() {
         <p className=" whitespace-nowrap">Sort Team</p>
         <Filter size={12} />
       </DialogTrigger>
-      <DialogContent className="p-6 max-w-[400px] max-h-[80%]">
+      <DialogContent className="p-6 max-w-[400px] max-h-[80%] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-sm">Sort Team</DialogTitle>
           <DialogDescription className=" text-xs">Drag the team to sort.</DialogDescription>
