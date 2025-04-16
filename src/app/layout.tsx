@@ -28,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body suppressHydrationWarning={true} className={inter.className}>
-        <div className=" bg-primary w-full">
+        <div className=" bg-primary w-full h-[100vh]">
           <Suspense fallback={<Loader/>}>
             {load ? <Loader/> : 
              <Fixed1920Wrapper>{children}</Fixed1920Wrapper>

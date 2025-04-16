@@ -240,15 +240,15 @@ export default function Indiviualworkloads() {
              <thead className=' bg-secondary h-[95px]'>
    
                <tr className=' text-[0.5rem] text-zinc-100 font-normal border-collapse'>
-                 <th className=' text-left font-normal min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Job No.</th>
+               <th className=' text-left font-normal min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Job No.</th>
                  <th className=' text-left font-normal min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Client</th>
-                 <th className=' text-left font-normal min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Project Name</th>
-                 <th className=' text-left font-normal min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Job Mgr.</th>
-                 <th className=' text-left font-normal min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Job Component</th>
+                 <th className=' text-left font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Project Name</th>
+                 <th className=' text-left font-normal min-w-[60px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Job Mgr.</th>
+                 <th className=' text-left font-normal min-w-[90px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Job Component</th>
                  <th className=' text-left font-normal min-w-[70px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Notes</th>
    
                  <th className=' text-left font-normal min-w-[60px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Role</th>
-                 <th className=' text-left min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 font-normal px-2'>Other Members</th>
+                 <th className=' text-left min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 font-normal px-2'>Members</th>
                </tr>
              </thead>
              <tbody>

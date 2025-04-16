@@ -47,7 +47,7 @@ export default function Bottomcards() {
   },[])
 
   return (
-    <div className=' relative w-full h-auto  flex flex-col gap-2 items-center bg-secondary justify-start'>
+    <div className=' relative w-full  flex flex-col gap-2 items-center bg-secondary justify-start'>
       <div className=' h-[74dvh] overflow-y-auto overflow-x-auto flex items-start justify-center bg-secondary w-full max-w-[1920px]'>
 
         <div className=' w-full'>

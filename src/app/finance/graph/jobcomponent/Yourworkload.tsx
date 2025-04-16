@@ -1277,7 +1277,7 @@ export default function Yourworkload() {
                           <td></td>
                           <td></td>
                           <td></td>
-                          <td onClick={() => router.push(`/superadmin/individualworkload?employeeid=${item.id}&name=${item.name}&teamname=${list[0].teamname}`)} className=" border-[1px] border-zinc-600 px-2 text-start cursor-pointer underline text-blue-400">{item.initial}</td>
+                          <td onClick={() => router.push(`/finance/individualworkload?employeeid=${item.id}&name=${item.name}&teamname=${list[0].teamname}`)} className=" border-[1px] border-zinc-600 px-2 text-start cursor-pointer underline text-blue-400">{item.initial}</td>
                           <td></td>
 
                         </tr>
