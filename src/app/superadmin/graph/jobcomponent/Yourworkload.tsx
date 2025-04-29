@@ -1267,16 +1267,16 @@ export default function Yourworkload() {
                   <tbody>
                     {listRequest[0]?.members.map((item, graphIndex) =>
                         <tr key={`${graphIndex}`} className="bg-primary text-[.5rem] py-2 h-[30px] border-[1px] border-zinc-600">
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
-                          <td></td>
+                          <td className=' border-[1px] border-zinc-600 px-1'></td>
+                          <td className=' border-[1px] border-zinc-600 px-1'>TX10010.00-</td>
+                          <td className=' border-[1px] border-zinc-600 px-1'>Triaxial Consulting</td>
+                          <td className=' border-[1px] border-zinc-600 px-1'>On-Leave</td>
+                          <td className=' border-[1px] border-zinc-600 px-1'></td>
+                          <td className=' border-[1px] border-zinc-600 px-1'></td>
+                          <td className=' border-[1px] border-zinc-600 px-1'></td>
+                          <td className=' border-[1px] border-zinc-600 px-1'>AL, SL & Other Leaves</td>
+                          <td className=' border-[1px] border-zinc-600 px-1'></td>
+                          <td className=' border-[1px] border-zinc-600 px-1'></td>
                           <td onClick={() => router.push(`/superadmin/individualworkload?employeeid=${item.id}&name=${item.name}&teamname=${list[0].teamname}`)} className=" border-[1px] border-zinc-600 px-2 text-start cursor-pointer underline text-blue-400">{item.initial}</td>
                           <td></td>
 

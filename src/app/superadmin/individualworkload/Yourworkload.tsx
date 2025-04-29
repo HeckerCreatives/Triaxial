@@ -210,7 +210,7 @@ export default function Indiviualworkloads() {
     <div className=' w-full h-full flex flex-col justify-center bg-secondary p-4 text-zinc-100'>
    
        <div className=' w-full flex items-center justify-between h-auto bg-primary mb-2 p-4 text-xs'>
-       
+     
          <Legends/>
    
          <div className=' text-[.6rem] flex items-center gap-2 '>
@@ -240,17 +240,37 @@ export default function Indiviualworkloads() {
              <thead className=' bg-secondary h-[95px]'>
    
                <tr className=' text-[0.5rem] text-zinc-100 font-normal border-collapse'>
+                 <th className=' text-left font-normal min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Team</th>
                  <th className=' text-left font-normal min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Job No.</th>
                  <th className=' text-left font-normal min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Client</th>
                  <th className=' text-left font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Project Name</th>
                  <th className=' text-left font-normal min-w-[60px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Job Mgr.</th>
-                 <th className=' text-left font-normal min-w-[90px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Job Component</th>
+                 <th className=' text-left font-normal min-w-[95px] whitespace-normal border-[1px] border-zinc-600 px-2'>Job Component</th>
                  <th className=' text-left font-normal min-w-[70px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Notes</th>
    
                  <th className=' text-left font-normal min-w-[60px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Role</th>
-                 <th className=' text-left min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 font-normal px-2'>Members</th>
+                 <th className=' text-left min-w-[100px] whitespace-normal break-all border-[1px] border-zinc-600 font-normal px-2'>Other Members</th>
                </tr>
              </thead>
+             {/* request */}
+             <tbody>
+                       {list[0].members.map((item, graphIndex) =>
+                           <tr key={`${graphIndex}`} className="bg-primary text-[.5rem] py-2 h-[30px] border-[1px] border-zinc-600">
+                             <td className=' border-[1px] border-zinc-600'>TX10010.00-</td>
+                             <td className=' border-[1px] border-zinc-600'></td>
+                             <td className=' border-[1px] border-zinc-600'>Triaxial Consulting</td>
+                             <td className=' border-[1px] border-zinc-600'>On-Leave</td>
+                             <td className=' border-[1px] border-zinc-600'></td>
+                             <td className=' border-[1px] border-zinc-600'>AL, SL & Other Leaves</td>
+                             <td className=' border-[1px] border-zinc-600'></td>
+                             <td className=' border-[1px] border-zinc-600'></td>
+                             <td className=" border-[1px] border-zinc-600 px-2 text-start">{item.employee.initials}</td>
+                             <td className=' border-[1px] border-zinc-600'></td>
+   
+                           </tr>
+                       )}
+             </tbody>
+   
              <tbody>
              {list.map((graphItem, graphIndex) =>
                graphItem.members.map((member, memberIndex) => (
@@ -258,88 +278,100 @@ export default function Indiviualworkloads() {
                     
                      {/* <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">{graphItem.teamname}</td> */}
                      <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">
-                  
-                  <TooltipProvider delayDuration={.1}>
-                    <Tooltip>
-                      <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.jobno, 5)}</TooltipTrigger>
-                      <TooltipContent>
-                        <p className=' text-[.6rem]'>{memberIndex === 0 && graphItem.jobno}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-
-                  </td>
-                  <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">
-
-                  <TooltipProvider delayDuration={.1}>
-                    <Tooltip>
-                      <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.clientname, 5)}</TooltipTrigger>
-                      <TooltipContent>
-                        <p className=' text-[.6rem]'>{memberIndex === 0 && graphItem.clientname}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                  </td>
-                  <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">
-                  <TooltipProvider delayDuration={.1}>
-                    <Tooltip>
-                      <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.projectname, 8)}</TooltipTrigger>
-                      <TooltipContent>
-                        <p className=' text-[.6rem]'>{memberIndex === 0 && graphItem.projectname}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-
-                  </td>
-                  <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && getInitials(graphItem.jobmanager.fullname)}</td>
-                  <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">
-
-                  <TooltipProvider delayDuration={.1}>
-                    <Tooltip>
-                      <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.jobcomponent, 10)}</TooltipTrigger>
-                      <TooltipContent>
-                        <p className=' text-[.6rem]'>{memberIndex === 0 && graphItem.jobcomponent}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                  </td>
-      
-                <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">
-                  <Dialog>
-                    <DialogTrigger className=' p-1 rounded-sm flex items-center text-[.5rem]'>
-                    {member.notes === '' ? (
-                        <p className=' h-full w-full text-center'>No notes.</p>
-                      ):(
-                      <p className=' '>{truncateText(member.notes, 8)}</p>
-                      )}
-                    </DialogTrigger>
-                    <DialogContent className=' bg-secondary p-6 border-none max-w-[600px] text-white'>
-                      <DialogHeader>
-                        <DialogTitle>Notes</DialogTitle>
-                        <DialogDescription>
-                          
-                        </DialogDescription>
-                      </DialogHeader>
-                      {member.notes === '' ? (
-                        <p className=' text-xs text-zinc-400 h-full w-full text-center'>No notes.</p>
-                      ):(
-                      <p className=' text-xs text-zinc-400'>{member.notes}</p>
-                      )}
-                    </DialogContent>
-                  </Dialog>
-
-                  </td>
-                <td className="text-left text-[.5rem whitespace-normal break-all border-[1px] border-zinc-600 px-2">{member.role}</td>
-
-
-                  <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">{graphItem.teammembers.join(", ")}</td>
+                     
+                     <TooltipProvider delayDuration={.1}>
+                       <Tooltip>
+                         <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.teamname, 5)}</TooltipTrigger>
+                         <TooltipContent>
+                           <p className=' text-[.6rem]'>{memberIndex === 0 && graphItem.teamname}</p>
+                         </TooltipContent>
+                       </Tooltip>
+                     </TooltipProvider>
+   
+                     </td>
+                     <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                     
+                     <TooltipProvider delayDuration={.1}>
+                       <Tooltip>
+                         <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.jobno, 5)}</TooltipTrigger>
+                         <TooltipContent>
+                           <p className=' text-[.6rem]'>{memberIndex === 0 && graphItem.jobno}</p>
+                         </TooltipContent>
+                       </Tooltip>
+                     </TooltipProvider>
+   
+                     </td>
+                     <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+   
+                     <TooltipProvider delayDuration={.1}>
+                       <Tooltip>
+                         <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.clientname, 5)}</TooltipTrigger>
+                         <TooltipContent>
+                           <p className=' text-[.6rem]'>{memberIndex === 0 && graphItem.clientname}</p>
+                         </TooltipContent>
+                       </Tooltip>
+                     </TooltipProvider>
+                     </td>
+                     <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                     <TooltipProvider delayDuration={.1}>
+                       <Tooltip>
+                         <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.projectname, 8)}</TooltipTrigger>
+                         <TooltipContent>
+                           <p className=' text-[.6rem]'>{memberIndex === 0 && graphItem.projectname}</p>
+                         </TooltipContent>
+                       </Tooltip>
+                     </TooltipProvider>
+   
+                     </td>
+                     <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && getInitials(graphItem.jobmanager.fullname)}</td>
+                     <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+   
+                     <TooltipProvider delayDuration={.1}>
+                       <Tooltip>
+                         <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.jobcomponent, 6)}</TooltipTrigger>
+                         <TooltipContent>
+                           <p className=' text-[.6rem]'>{memberIndex === 0 && graphItem.jobcomponent}</p>
+                         </TooltipContent>
+                       </Tooltip>
+                     </TooltipProvider>
+                     </td>
+         
+                   <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                     <Dialog>
+                       <DialogTrigger className=' p-1 rounded-sm flex items-center text-[.5rem]'>
+                       {member.notes === '' ? (
+                           <p className=' h-full w-full text-center'>No notes.</p>
+                         ):(
+                         <p className=' '>{truncateText(member.notes, 10)}</p>
+                         )}
+                       </DialogTrigger>
+                       <DialogContent className=' bg-secondary p-6 border-none max-w-[600px] text-white'>
+                         <DialogHeader>
+                           <DialogTitle>Notes</DialogTitle>
+                           <DialogDescription>
+                             
+                           </DialogDescription>
+                         </DialogHeader>
+                         {member.notes === '' ? (
+                           <p className=' text-xs text-zinc-400 h-full w-full text-center'>No notes.</p>
+                         ):(
+                         <p className=' text-xs text-zinc-400'>{member.notes}</p>
+                         )}
+                       </DialogContent>
+                     </Dialog>
+   
+                     </td>
+                   <td className="text-left text-[.5rem whitespace-normal break-all border-[1px] border-zinc-600 px-2">{member.role}</td>
+   
+   
+                     <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">{graphItem.teammembers.join(", ")}</td>
    
                  
    
                  </tr>
                ))
              )}
-           </tbody>
+             </tbody>
              </table>
    
              <div className=' overflow-x-auto'>
@@ -445,6 +477,64 @@ export default function Indiviualworkloads() {
                    </tr>
                  </thead>
    
+                   {/* request */}
+                                 <tbody>
+                                 {list.map((graphItem, graphIndex) =>
+                     graphItem.members.map((member, memberIndex) => (
+                       <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[30px] border-[1px] border-zinc-600">
+                         {dates.map((dateObj, index) => {
+                           // Find member data for the given date
+                           const memberDate = member.dates?.find((date) => formatDate(date.date) === formatDate(dateObj));
+   
+                           // Compute the total hours for every 5 dates
+                           const totalHoursForWeek = dates
+                             .slice(index - (index % 5), index + 1) // Get the previous 5 dates or less
+                             .reduce((total, currentDate) => {
+                               const memberDateForCurrent = member.dates?.find((date) => formatDate(date.date) === formatDate(currentDate));
+                               return total + (memberDateForCurrent?.hours || 0);
+                             }, 0);
+   
+                           return (
+                             <React.Fragment key={index}>
+                               <td
+                                 className="relative text-center overflow-hidden bg-white border-[1px]"
+                               >
+                                 <div className="w-full h-[30px] absolute flex top-0">
+                                   {statusColor(
+                                     memberDate?.status || [],
+                                     dateObj,
+                                     memberDate?.hours || 0,
+                                     member.eventDates[0]?.startdate || '',
+                                     member.eventDates[0]?.enddate || '',
+                                     member.eventDates,
+                                     member.leaveDates,
+                                     member.wellnessDates,
+                                     member.wfhDates
+                                   ).map((item, idx) => (
+                                     <div key={idx} className={`w-full h-[30px] ${item}`} />
+                                   ))}
+                                 </div>
+   
+                                 <p className="relative text-black font-bold text-[.5rem] z-30">
+                                   {/* {memberDate ? memberDate.hours : '-'} */}
+                                 </p>
+                               </td>
+   
+                               {/* Show total hours for every 5th date */}
+                               {(index + 1) % 5 === 0 && (
+                                 <th className="font-normal text-[.5rem] px-1 border-[1px] border-zinc-700">
+                                   {/* <p className="">{totalHoursForWeek.toLocaleString()}</p> */}
+                                 </th>
+                               )}
+                             </React.Fragment>
+                           );
+                         })}
+                       </tr>
+                     ))
+                   )}
+                     
+                                 </tbody>
+   
                  <tbody>
                  {list.map((graphItem, graphIndex) =>
                      graphItem.members.map((member, memberIndex) => (
@@ -476,7 +566,7 @@ export default function Indiviualworkloads() {
                                      member.eventDates,
                                      member.leaveDates,
                                      member.wellnessDates,
-                                    member.wfhDates
+                                     member.wfhDates
                                    ).map((item, idx) => (
                                      <div key={idx} className={`w-full h-[40px] ${item}`} />
                                    ))}
@@ -500,15 +590,9 @@ export default function Indiviualworkloads() {
                      ))
                    )}
    
-   
-   
                </tbody>
                </table>
              </div>
-   
-             
-   
-            
              
              </>
            ) : (
@@ -517,9 +601,7 @@ export default function Indiviualworkloads() {
    
              </div>
            )}
-           
-   
-           
+         
    
          </div>
         
