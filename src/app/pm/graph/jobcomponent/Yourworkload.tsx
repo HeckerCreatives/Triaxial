@@ -203,6 +203,7 @@ export default function Yourworkload() {
   const startXRef = useRef(0);
   const scrollLeftRef = useRef(0);
   const {refresh: isRefresh, setRefresh} = refreshStore()
+  const [listrequestdates, setListrequestdates] = useState<string[]>([])
   
 
   // Sync scroll positions
@@ -245,6 +246,7 @@ export default function Yourworkload() {
             withCredentials: true
           })
           setListrequest(response.data.data.teams)
+          setListrequestdates(response.data.data.alldates)
         } catch (error) {
           console.error('Error fetching data', error)
         }
@@ -342,61 +344,67 @@ export default function Yourworkload() {
 
   //update workload
   const updateWorkload = async () => {
+    if(selected.length === 0){
+      toast.error(`Status is required.`) 
+
+    } else {
+      try {
+        const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/editstatushours`,{
+          jobcomponentid:  projectid,
+          employeeid: employeeid,
+          date: date,
+          status: selected,
+          hours: hours
+        }, {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json'
+            }
+        })
   
-    try {
-      const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/editstatushours`,{
-        jobcomponentid:  projectid,
-        employeeid: employeeid,
-        date: date,
-        status: selected,
-        hours: hours
-      }, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json'
+        const response = await toast.promise(request, {
+          loading: 'Updating workload....',
+          success: `Successfully updated`,
+          error: 'Error while updating the workload',
+      });
+  
+  
+      if(response.data.message === 'success'){
+        getList()
+        setDialog(false)
+        setSelectedRows([])
+      }
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          const axiosError = error as AxiosError<{ message: string, data: string }>;
+          if (axiosError.response && axiosError.response.status === 401) {
+              toast.error(`${axiosError.response.data.data}`) 
+              router.push('/')    
           }
-      })
-
-      const response = await toast.promise(request, {
-        loading: 'Updating workload....',
-        success: `Successfully updated`,
-        error: 'Error while updating the workload',
-    });
-
-
-    if(response.data.message === 'success'){
-      getList()
-      setDialog(false)
-      setSelectedRows([])
+  
+          if (axiosError.response && axiosError.response.status === 400) {
+              toast.error(`${axiosError.response.data.data}`)     
+                 
+          }
+  
+          if (axiosError.response && axiosError.response.status === 402) {
+              toast.error(`${axiosError.response.data.data}`)          
+                     
+          }
+  
+          if (axiosError.response && axiosError.response.status === 403) {
+              toast.error(`${axiosError.response.data.data}`)              
+             
+          }
+  
+          if (axiosError.response && axiosError.response.status === 404) {
+              toast.error(`${axiosError.response.data.data}`)             
+          }
+        } 
+      }
     }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError<{ message: string, data: string }>;
-        if (axiosError.response && axiosError.response.status === 401) {
-            toast.error(`${axiosError.response.data.data}`) 
-            router.push('/')    
-        }
-
-        if (axiosError.response && axiosError.response.status === 400) {
-            toast.error(`${axiosError.response.data.data}`)     
-               
-        }
-
-        if (axiosError.response && axiosError.response.status === 402) {
-            toast.error(`${axiosError.response.data.data}`)          
-                   
-        }
-
-        if (axiosError.response && axiosError.response.status === 403) {
-            toast.error(`${axiosError.response.data.data}`)              
-           
-        }
-
-        if (axiosError.response && axiosError.response.status === 404) {
-            toast.error(`${axiosError.response.data.data}`)             
-        }
-      } 
-    }
+  
+  
   }
 
   const removeWorkload = async () => {
@@ -947,18 +955,32 @@ export default function Yourworkload() {
   }
 
 
+  const canEdit = (dateStr: string): boolean => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+  
+    const selectedDate = new Date(dateStr);
+    selectedDate.setHours(0, 0, 0, 0);
+    console.log(today, selectedDate)
+  
+    return selectedDate.getTime() >= today.getTime();
+  };
+
+  console.log(containerRef1, containerRef2)
+
+
   return (
    <div className=' w-full h-full flex flex-col bg-secondary p-4 text-zinc-100'>
     <div className=' flex flex-col bg-primary mb-2 p-4'>
         <div className=' w-full flex gap-4 items-end justify-end'>
-           <div className=' text-[.6rem] flex items-center gap-2 '>
+           <div className=' relative z-[999999999] text-[.6rem] flex items-center gap-2 '>
                   <p>Filter by dates</p>
                   <DatePicker
                      selected={dateFilter}
                     onChange={(date) => setDateFilter(date)}
                     dateFormat="dd/MM/yyyy"
                     placeholderText="DD/MM/YYYY"
-                    className="bg-secondary text-[.6rem] p-2 w-fit z-[9999] relative"
+                    className="bg-secondary text-[.6rem] p-2 w-fit z-[99999999999] relative"
                     onKeyDown={(e) => e.preventDefault()}
                     />
           
@@ -1079,9 +1101,492 @@ export default function Yourworkload() {
       ) : (
         <>
         {list.length === 0 ? (
-          <div className=' w-full h-full flex items-center justify-center'>
-            <p className=' text-xs text-zinc-400'>No job component's yet under this project.</p>
+
+          <div className=''>
+                              <div
+                              className=' h-full w-full flex flex-col overflow-x-hidden'>
+                  
+                                <div className=' w-fit flex sticky top-0 z-50'>
+                  
+                                  <div className=' w-fit flex flex-col sticky'>
+                                    <table className="table-auto w-auto border-collapse">
+                                      <thead className="h-[60px] text-nowrap bg-primary"
+                                      style={{ visibility: 'collapse' }}
+                                      
+                                      >
+                                        <tr className="text-[0.5rem] text-zinc-100 font-normal text-left border-collapse">
+                                          <th className="text-left font-normal min-w-[30px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                                            Action
+                                          </th>
+                                          <th className="text-left font-normal min-w-[70px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                                            Job Number
+                                          </th>
+                                          <th className="text-left font-normal min-w-[70px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                                            Client
+                                          </th>
+                                          <th className="text-left font-normal min-w-[80px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                                            Project Name
+                                          </th>
+                                          <th className="text-left font-normal min-w-[30px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                                            JM
+                                          </th>
+                                          <th className="text-left font-normal min-w-[60px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                                          EST. $
+                                          </th> 
+                                          <th className="text-left font-normal min-w-[60px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                                            % Inv.
+                                          </th>
+                                          <th className="text-left font-normal min-w-[90px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                                            Job Component
+                                          </th>
+                                          <th className="text-left font-normal min-w-[100px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                                            Notes
+                                          </th>
+                                          <th className="text-left font-normal min-w-[62px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                                            Role
+                                          </th>
+                                      
+                                          <th className="text-left font-normal min-w-[45px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                                            Team
+                                          </th>
+                                          <th className="text-left font-normal min-w-[50px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                                            Total Hours
+                                          </th>
+                                        </tr>
+                                      </thead>               
+                                    </table>
+                                  </div>
+                                  
+                  
+                                    <div className='w-full flex flex-col max-w-[1920px] overflow-x-auto cursor-pointer'
+                                    ref={containerRef1}
+                                    onMouseDown={(e) => handleMouseDown(e, containerRef2)}
+                                    onMouseLeave={handleMouseLeaveOrUp}
+                                    onMouseUp={handleMouseLeaveOrUp}
+                                    onMouseMove={(e) => handleMouseMove(e, containerRef2)}
+                                    onScroll={() => syncScroll(containerRef1, containerRef2)}
+                                    >
+                                      <table className="table-auto w-auto border-collapse">
+                                        <thead className="bg-secondary h-[60px]"
+                                        style={{ visibility: 'collapse' }}
+                                        
+                                        >
+                                          <tr className="bg-secondary text-[0.5rem] text-black font-normal h-[60px]">
+                                            {listrequestdates.map((dateObj, index) => {
+                                            const date = new Date(dateObj);
+                                            date.setHours(0, 0, 0, 0);
+                  
+                                            const today = new Date();
+                                            today.setHours(0, 0, 0, 0);
+                  
+                                            const startOfWeek = new Date(today);
+                                            startOfWeek.setDate(today.getDate() - (today.getDay() - 1));
+                  
+                                            const endOfWeek = new Date(startOfWeek);
+                                            endOfWeek.setDate(startOfWeek.getDate() + 4);
+                  
+                                            let bgColor = "bg-white";
+                                            if (date >= startOfWeek && date <= endOfWeek) {
+                                              const prevDay = new Date(today);
+                                              prevDay.setDate(today.getDate() - 1);
+                  
+                                              const nextDay = new Date(today);
+                                              nextDay.setDate(today.getDate() + 1);
+                  
+                                              if (date.getTime() < today.getTime()) {
+                                                bgColor = "bg-gray-300"; 
+                                              } else if (date.getTime() === today.getTime()) {
+                                                bgColor = "bg-pink-500";
+                                              } else if (date.getTime() >= nextDay.getTime()) {
+                                                bgColor = "bg-white";
+                                              }
+                                            }
+                  
+                  
+                                              const shouldInsertTotal = (index + 1) % 5 === 0; // Insert "Total Hours" after every 5 dates
+                  
+                                              return (
+                                                <React.Fragment key={index}>
+                                                  {/* Date Cell */}
+                                                  <th
+                                                    data-id={formatAustralianDate(dateObj)}
+                                                    className={`relative w-[20px] font-normal border-[1px] border-zinc-700 ${bgColor}`}
+                                                  >
+                                                    <div className="whitespace-nowrap w-[20px] transform -rotate-[90deg]">
+                                                      <p className="mt-3 font-semibold">{formatAustralianDate(dateObj)}</p>
+                                                    </div>
+                                                  </th>
+                  
+                                                  {/* Add "Total Hours" **AFTER EVERY 5th DATE** */}
+                                                  {shouldInsertTotal && (
+                                                    <th
+                                                      key={`total-${index}`}
+                                                      className="font-normal w-[20px] px-1 border-[1px] border-zinc-700 bg-primary text-white"
+                                                    >
+                                                      <div className="transform w-[20px] -rotate-[90deg] font-semibold">
+                                                        <p>Total Hours</p>
+                                                      </div>
+                                                    </th>
+                                                  )}
+                                                </React.Fragment>
+                                              );
+                                            })}
+                                          </tr>
+                                        </thead>            
+                                      </table>
+                                    </div>
+                  
+                                    
+                  
+                                  
+                                </div>
+
+                            
+                  
+                                <div className=' relative h-auto flex items-start bg-secondary w-full'>
+                                  
+                                  <div className=' w-fit flex flex-col sticky'>
+                                    <table className="table-auto w-auto border-collapse">
+                                      <thead className="h-[60px] text-nowrap"
+                                      // style={{ visibility: 'collapse' }}
+                                      >
+                                        <tr className="text-[0.5rem] text-zinc-100 font-normal text-left border-collapse">
+                                          <th className="text-left font-normal min-w-[30px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                                            Action
+                                          </th>
+                                          <th className="text-left font-normal min-w-[70px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                                            Job Number
+                                          </th>
+                                          <th className="text-left font-normal min-w-[70px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                                            Client
+                                          </th>
+                                          <th className="text-left font-normal min-w-[80px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                                            Project Name
+                                          </th>
+                                          <th className="text-left font-normal min-w-[30px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                                            JM
+                                          </th>
+                                          <th className="text-left font-normal min-w-[60px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                                          EST. $
+                                          </th> 
+                                          <th className="text-left font-normal min-w-[60px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                                            % Inv.
+                                          </th>
+                                          <th className="text-left font-normal min-w-[90px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                                            Job Component
+                                          </th>
+                                          <th className="text-left font-normal min-w-[100px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                                            Notes
+                                          </th>
+                                          <th className="text-left font-normal min-w-[62px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                                            Role
+                                          </th>
+                                      
+                                          <th className="text-left font-normal min-w-[45px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                                            Team
+                                          </th>
+                                          <th className="text-left font-normal min-w-[50px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                                            Total Hours
+                                          </th>
+                                        </tr>
+                                      </thead>
+                  
+                                      {/* request */}
+                                      <tbody>
+                                        {listRequest[0]?.members.map((item, graphIndex) =>
+                                            <tr key={`${graphIndex}`} className="bg-primary text-[.5rem] py-2 h-[30px] border-[1px] border-zinc-600">
+                                              <td className=' border-[1px] border-zinc-600 px-1'></td>
+                                              <td className=' border-[1px] border-zinc-600 px-1'>TX10010.00-</td>
+                                              <td className=' border-[1px] border-zinc-600 px-1'>Triaxial Consulting</td>
+                                              <td className=' border-[1px] border-zinc-600 px-1'>On-Leave</td>
+                                              <td className=' border-[1px] border-zinc-600 px-1'></td>
+                                              <td className=' border-[1px] border-zinc-600 px-1'></td>
+                                              <td className=' border-[1px] border-zinc-600 px-1'></td>
+                                              <td className=' border-[1px] border-zinc-600 px-1'>AL, SL & Other Leaves</td>
+                                              <td className=' border-[1px] border-zinc-600 px-1'></td>
+                                              <td className=' border-[1px] border-zinc-600 px-1'></td>
+                                              <td onClick={() => router.push(`/pm/individualworkload?employeeid=${item.id}&name=${item.name}&teamname=${listRequest[0].name}`)} className=" border-[1px] border-zinc-600 px-2 text-start cursor-pointer underline text-blue-400">{item.initial}</td>
+                                              <td></td>
+                  
+                                            </tr>
+                                        )}
+                                      </tbody>
+                  
+                                      {/* project */}
+                                      <tbody>
+                                        {list.map((graphItem, graphIndex) =>
+                                                            graphItem.members
+                                                            .sort((a, b) => {
+                                                              const roleOrder = ["Engr.", "Engr. Revr.", "Drft.", "Drft. Revr."];
+                                                        
+                                                              const indexA = roleOrder.indexOf(a.role);
+                                                              const indexB = roleOrder.indexOf(b.role);
+                                                        
+                                                              return (indexA === -1 ? 999 : indexA) - (indexB === -1 ? 999 : indexB);
+                                                            })
+                                                            .map((member, memberIndex) => {
+                                                              // Sum all hours for the member
+                                                              const totalHours = member.dates?.reduce((sum, date) => sum + date.hours, 0) || 0;
+                                        
+                                                              return (
+                                                                <tr 
+                                                                  key={`${graphItem._id}-${memberIndex}`}
+                                                                  data-invoice-id={graphItem._id} 
+                                                                  className={`text-left text-[.5rem] py-2 h-[30px] border-[1px] border-zinc-600 border-collapse ${graphItem.isVariation ? 'text-red-600 font-black' : 'text-black'} ${clientColor(graphItem.clientname.priority)}`}
+                                                                >
+                                                                  <td className="text-center text-white h-[30px] flex items-center justify-center gap-1">
+                                                                    {memberIndex === 0 && (
+                                                                      <input
+                                                                        type="checkbox"
+                                                                        checked={componentid === graphItem._id}
+                                                                        onChange={() => {
+                                                                          handleCheckboxChange(graphItem._id);
+                                                                          setProjectname(graphItem.projectname.projectid);
+                                                                          setJobmanager(graphItem.jobmanager.employeeid);
+                                                                          setJobno(graphItem.jobno);
+                                                                          findMember(graphItem.members);
+                                                                          setNotes(graphItem.members[0]?.notes || "");
+                                                                          setNotes2(graphItem.members[1]?.notes || "");
+                                                                          setNotes3(graphItem.members[2]?.notes || "");
+                                                                          setNotes4(graphItem.members[3]?.notes || "");
+                                                                          setIsmanager(graphItem.jobmanager.isManager);
+                                                                          setIsjobmanager(graphItem.jobmanager.isJobManager);
+                                                                        }}
+                                                                      />
+                                                                    )}
+                                                                  </td>
+                                        
+                                                                  <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                                                                    <TooltipProvider delayDuration={.1}>
+                                                                      <Tooltip>
+                                                                        <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.jobno, 8)}</TooltipTrigger>
+                                                                        <TooltipContent className=' text-[.6rem]'>
+                                                                          <p>{memberIndex === 0 && graphItem.jobno}</p>
+                                                                        </TooltipContent>
+                                                                      </Tooltip>
+                                                                    </TooltipProvider>
+                      
+                                                                    
+                                                                  </td>
+                                                                  <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                                                                    
+                                                                    <TooltipProvider delayDuration={.1}>
+                                                                      <Tooltip>
+                                                                        <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.clientname.name, 10)}</TooltipTrigger>
+                                                                        <TooltipContent className=' text-[.6rem]'>
+                                                                          <p>{memberIndex === 0 && graphItem.clientname.name}</p>
+                                                                        </TooltipContent>
+                                                                      </Tooltip>
+                                                                    </TooltipProvider>
+                                                                  </td>
+                                                                  <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                                                                    
+                                                                    <TooltipProvider delayDuration={.1}>
+                                                                      <Tooltip>
+                                                                        <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.projectname.name, 10)}</TooltipTrigger>
+                                                                        <TooltipContent className=' text-[.6rem]'>
+                                                                          <p>{memberIndex === 0 && graphItem.projectname.name}</p>
+                                                                        </TooltipContent>
+                                                                      </Tooltip>
+                                                                    </TooltipProvider>
+                                                                  </td>
+                                                                  <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                                                                    {memberIndex === 0 && graphItem.jobmanager.initials}
+                                                                  </td>
+                  
+                                                                  <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                                                                    $ {graphItem.estimatedbudget.toLocaleString()}
+                                                                  </td>
+                  
+                                                                  <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                                                                    {graphItem.budgettype !== 'rates' && `${graphItem.invoice.percentage}%`}
+                                                                  </td>
+                                                                  <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                                                                    
+                                                                    <TooltipProvider delayDuration={.1}>
+                                                                      <Tooltip>
+                                                                        <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.jobcomponent, 15)}</TooltipTrigger>
+                                                                        <TooltipContent className=' text-[.6rem]'>
+                                                                          <p>{memberIndex === 0 && graphItem.jobcomponent}</p>
+                                                                        </TooltipContent>
+                                                                      </Tooltip>
+                                                                    </TooltipProvider>
+                                                                  </td>
+                                                                  <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                                                                    <Editnotes note={member.notes} role={member.role} userid={member._id} componentid={graphItem.componentid}>
+                                                                      {member.notes ? <p className="text-[.5rem]">{truncateText(member.notes, 18)}</p> : <p className="text-[.5rem] h-full w-full text-center">No notes.</p>}
+                                                                    </Editnotes>
+                                                                  
+                                                                  </td>
+                                                                  <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2 text-[.5rem]">
+                                                                    {member.role}
+                                                                  </td>
+                                                                
+                                                                  <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                                                                  
+                                                                    <EditMember membername={member.employee.fullname} memberid={member._id} role={member.role} memberlist={listRequest[0].members} userid={member.employee._id} componentid={graphItem.componentid}>
+                                                                      {member.employee.initials}
+                                                                    </EditMember>
+                                                                  
+                                                                  </td>
+                                                                  <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">{totalHours.toLocaleString()}</td>
+                                                                </tr>
+                                                              );
+                                                            })
+                                                          )}
+                                      </tbody>
+                                        
+                                    </table>
+                  
+                                  
+                                  </div>
+
+                                  <div className='w-full flex flex-col max-w-[1920px] overflow-x-auto cursor-pointer'
+                                    ref={containerRef2}
+                                    onMouseDown={(e) => handleMouseDown(e, containerRef1)}
+                                    onMouseLeave={handleMouseLeaveOrUp}
+                                    onMouseUp={handleMouseLeaveOrUp}
+                                    onMouseMove={(e) => handleMouseMove(e, containerRef1)}
+                                    onScroll={() => syncScroll(containerRef2, containerRef1)}
+                                    >
+                                      <table className="table-auto w-auto border-collapse">
+                                        <thead className="bg-secondary h-[60px]">
+                                          <tr className="bg-secondary text-[0.5rem] text-black font-normal h-[60px]">
+                                            {listrequestdates.map((dateObj, index) => {
+                                            const date = new Date(dateObj);
+                                            date.setHours(0, 0, 0, 0);
+                  
+                                            const today = new Date();
+                                            today.setHours(0, 0, 0, 0);
+                  
+                                            const startOfWeek = new Date(today);
+                                            startOfWeek.setDate(today.getDate() - (today.getDay() - 1));
+                  
+                                            const endOfWeek = new Date(startOfWeek);
+                                            endOfWeek.setDate(startOfWeek.getDate() + 4);
+                  
+                                            let bgColor = "bg-white";
+                                            if (date >= startOfWeek && date <= endOfWeek) {
+                                              const prevDay = new Date(today);
+                                              prevDay.setDate(today.getDate() - 1);
+                  
+                                              const nextDay = new Date(today);
+                                              nextDay.setDate(today.getDate() + 1);
+                  
+                                              if (date.getTime() < today.getTime()) {
+                                                bgColor = "bg-gray-300"; 
+                                              } else if (date.getTime() === today.getTime()) {
+                                                bgColor = "bg-pink-500";
+                                              } else if (date.getTime() >= nextDay.getTime()) {
+                                                bgColor = "bg-white";
+                                              }
+                                            }
+                  
+                  
+                                              const shouldInsertTotal = (index + 1) % 5 === 0; // Insert "Total Hours" after every 5 dates
+                  
+                                              return (
+                                                <React.Fragment key={index}>
+                                                  {/* Date Cell */}
+                                                  <th
+                                                    data-id={formatAustralianDate(dateObj)}
+                                                    className={`relative w-[20px] font-normal border-[1px] border-zinc-700 ${bgColor}`}
+                                                  >
+                                                    <div className="whitespace-nowrap w-[20px] transform -rotate-[90deg]">
+                                                      <p className="mt-3 font-semibold">{formatAustralianDate(dateObj)}</p>
+                                                    </div>
+                                                  </th>
+                  
+                                                  {/* Add "Total Hours" **AFTER EVERY 5th DATE** */}
+                                                  {shouldInsertTotal && (
+                                                    <th
+                                                      key={`total-${index}`}
+                                                      className="font-normal w-[20px] px-1 border-[1px] border-zinc-700 bg-primary text-white"
+                                                    >
+                                                      <div className="transform w-[20px] -rotate-[90deg] font-semibold">
+                                                        <p>Total Hours</p>
+                                                      </div>
+                                                    </th>
+                                                  )}
+                                                </React.Fragment>
+                                              );
+                                            })}
+                                          </tr>
+                                        </thead> 
+
+                                        {/* request */}
+                                    <tbody>
+                                          {listRequest.map((graphItem, graphIndex) =>
+                                            graphItem.members.map((member, memberIndex) => {
+                                              // Precompute weekly totals
+                                              const totalHoursForWeek: number[] = [];
+                                              let currentWeekTotal = 0;
+                                              let weekCounter = 0;
+                                            
+                                              return (
+                                                <tr
+                                                  key={`${graphIndex}-${memberIndex}`}
+                                                  className="bg-primary text-[.6rem] py-2 h-[30px] border-[1px] border-zinc-600"
+                                                >
+                                                  {listrequestdates.map((dateObj, index) => {
+                                                    const date = new Date(dateObj);
+                                                    const isFriday = date.getDay() === 5;
+                                                    const weekIndex = Math.floor(index / 5); // Ensure correct indexing
+                        
+                                                    const shouldInsertTotal = (index + 1) % 5 === 0;
+                                                    
+                                                    const memberDate = member.dates?.find(
+                                                      (date) => formatDate(date.date) === formatDate(dateObj)
+                                                    );
+                        
+                                                    return (
+                                                      <React.Fragment key={index}>
+                                                        <td
+                                                          className="relative text-center overflow-hidden bg-white cursor-pointer border-[1px] border-zinc-400"
+                                                        >
+                                                          <div className="w-full h-[50px] absolute flex top-0">
+                                                          {statusColorRequest( dateObj, member.event, member.leave, member.wellness, member.wfh).map((item, index) => (
+                                                          <div key={index} className={`w-full h-full ${item}`}></div>
+                                                            ))}
+                                                          </div>
+                                                          <p className="relative text-black font-bold text-[.5rem] z-30">
+                                                            
+                                                          </p>
+                                                        </td>
+                        
+                                                        {shouldInsertTotal && (
+                                                          <td className="text-center font-normal w-[40px] bg-primary border-[1px] border-zinc-700">
+                                                            <p className="text-white">
+                                                              {Number.isInteger(totalHoursForWeek[weekIndex])
+                                                                ? totalHoursForWeek[weekIndex]
+                                                                : totalHoursForWeek[weekIndex]?.toFixed(2)}
+                                                            </p>
+                                                          </td>
+                                                        )}
+                                                      </React.Fragment>
+                                                    );
+                                                  })}
+                                                </tr>
+                                              );
+                                            })
+                                          )}
+                        
+                                    </tbody>           
+                                      </table>
+                                    </div>
+                  
+                                
+                  
+                                </div>
+                        
+                            
+                            </div>
+                  
+                            <div className=' w-full h-full flex items-center justify-center'>
+                                <p className=' text-xs text-zinc-400'>No job component's yet under this project.</p>
+                              </div>
           </div>
+         
         ) : (
           <div
           className=' h-[67dvh] w-full flex flex-col overflow-x-hidden'>
@@ -1689,7 +2194,7 @@ export default function Yourworkload() {
             <Dialog open={dialog} onOpenChange={setDialog}>
                                   <DialogContent className=' p-8 bg-secondary border-none text-white max-h-[80%] w-full overflow-y-auto'>
                                     {/* {todaysDate} {formatGetDate(date)} */}
-                                    {todaysDate <= formatGetDate(date) - 1 ? (
+                                    {canEdit(date) ? (
                                       <Tabs defaultValue="account" className=" w-full">
                                        <TabsList className=' text-xs bg-zinc-800'>
                                          <TabsTrigger value="single">Single</TabsTrigger>
@@ -1709,7 +2214,7 @@ export default function Yourworkload() {
                                              {statusData.map((item) => (
                                                <div key={item.id} className='flex items-center gap-1 text-xs'>
                                                  <input
-                                                 disabled={wdStatus || event || leave}
+                                                //  disabled={wdStatus || event || leave}
                                                    value={item.id}
                                                    type="checkbox"
                                                    checked={selected.includes(item.id)}
@@ -1723,22 +2228,26 @@ export default function Yourworkload() {
              
                                          <div className=' flex flex-col gap-2 text-xs'>
                                            <label htmlFor="">Hours Rendered</label>
-                                           <input disabled={wdStatus || event || leave} type="number" value={hours} onChange={(e) => setHours(e.target.valueAsNumber)} placeholder='Hours' id="" className=' bg-primary p-2 rounded-md text-xs' />
+                                           <input type="number" value={hours} onChange={(e) => setHours(e.target.valueAsNumber)} placeholder='Hours' id="" className=' bg-primary p-2 rounded-md text-xs' />
                                            
                                          </div>
              
                                      
                                
                                          <div className=' w-full flex items-end justify-end mt-4 gap-2'>
-                                           <button disabled={wdStatus || event || leave} onClick={() => removeWorkload()} className=' px-4 py-2 bg-zinc-600 text-xs text-white rounded-md'>Remove</button>
+                                           <button 
+                                          //  disabled={wdStatus || event || leave} 
+                                           onClick={() => removeWorkload()} className=' px-4 py-2 bg-zinc-600 text-xs text-white rounded-md'>Remove</button>
              
-                                           <button disabled={wdStatus || event || leave} onClick={() => updateWorkload()} className=' px-4 py-2 bg-red-600 text-xs text-white rounded-md'>Save</button>
+                                           <button 
+                                          //  disabled={wdStatus || event || leave} 
+                                           onClick={() => updateWorkload()} className=' px-4 py-2 bg-red-600 text-xs text-white rounded-md'>Save</button>
              
                                          </div>
                                       
-                                         {(wdStatus === true || event === true || leave === true) && (
+                                         {/* {(wdStatus === true || event === true || leave === true) && (
                                            <p className=' text-xs text-red-500 flex items-center gap-2'><OctagonAlert size={15}/> Employee is in on wellness or event day, you can't update this selected workload</p>
-                                         )}
+                                         )} */}
                                        </TabsContent>
                                        <TabsContent value="multiple">
              
@@ -1796,7 +2305,7 @@ export default function Yourworkload() {
              
                                              <div>
                                              <label className="block text-sm font-medium">Hours Rendered</label>
-                                             <input disabled={wdStatus || event || leave} type="number"
+                                             <input  type="number"
                                                value={form.hours}
                                                onChange={(e) => handleChange(index, 'hours', e.target.valueAsNumber)}
                                              placeholder='Hours' id="" className=' bg-primary p-2 rounded-md text-xs' />

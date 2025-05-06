@@ -479,59 +479,59 @@ export default function Indiviualworkloads() {
           
                           {/* request */}
                                         <tbody>
-                                        {list.map((graphItem, graphIndex) =>
-                            graphItem.members.map((member, memberIndex) => (
-                              <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[30px] border-[1px] border-zinc-600">
-                                {dates.map((dateObj, index) => {
-                                  // Find member data for the given date
-                                  const memberDate = member.dates?.find((date) => formatDate(date.date) === formatDate(dateObj));
-          
-                                  // Compute the total hours for every 5 dates
-                                  const totalHoursForWeek = dates
-                                    .slice(index - (index % 5), index + 1) // Get the previous 5 dates or less
-                                    .reduce((total, currentDate) => {
-                                      const memberDateForCurrent = member.dates?.find((date) => formatDate(date.date) === formatDate(currentDate));
-                                      return total + (memberDateForCurrent?.hours || 0);
-                                    }, 0);
-          
-                                  return (
-                                    <React.Fragment key={index}>
-                                      <td
-                                        className="relative text-center overflow-hidden bg-white border-[1px]"
-                                      >
-                                        <div className="w-full h-[30px] absolute flex top-0">
-                                          {statusColor(
-                                            memberDate?.status || [],
-                                            dateObj,
-                                            memberDate?.hours || 0,
-                                            member.eventDates[0]?.startdate || '',
-                                            member.eventDates[0]?.enddate || '',
-                                            member.eventDates,
-                                            member.leaveDates,
-                                            member.wellnessDates,
-                                            member.wfhDates
-                                          ).map((item, idx) => (
-                                            <div key={idx} className={`w-full h-[30px] ${item}`} />
-                                          ))}
-                                        </div>
-          
-                                        <p className="relative text-black font-bold text-[.5rem] z-30">
-                                          {/* {memberDate ? memberDate.hours : '-'} */}
-                                        </p>
-                                      </td>
-          
-                                      {/* Show total hours for every 5th date */}
-                                      {(index + 1) % 5 === 0 && (
-                                        <th className="font-normal text-[.5rem] px-1 border-[1px] border-zinc-700">
-                                          {/* <p className="">{totalHoursForWeek.toLocaleString()}</p> */}
-                                        </th>
-                                      )}
-                                    </React.Fragment>
-                                  );
-                                })}
-                              </tr>
-                            ))
-                          )}
+                                         {list?.[0]?.members?.map((member, memberIndex) => (
+                                                                    <tr
+                                                                      key={`0-${memberIndex}`}
+                                                                      className="bg-primary text-[.6rem] py-2 h-[30px] border-[1px] border-zinc-600"
+                                                                    >
+                                                                      {dates.map((dateObj, index) => {
+                                                                        const memberDate = member.dates?.find(
+                                                                          (date) => formatDate(date.date) === formatDate(dateObj)
+                                                                        );
+                                        
+                                                                        const totalHoursForWeek = dates
+                                                                          .slice(index - (index % 5), index + 1)
+                                                                          .reduce((total, currentDate) => {
+                                                                            const memberDateForCurrent = member.dates?.find(
+                                                                              (date) => formatDate(date.date) === formatDate(currentDate)
+                                                                            );
+                                                                            return total + (memberDateForCurrent?.hours || 0);
+                                                                          }, 0);
+                                        
+                                                                        return (
+                                                                          <React.Fragment key={index}>
+                                                                            <td className="relative text-center overflow-hidden bg-white border-[1px]">
+                                                                              <div className="w-full h-[30px] absolute flex top-0">
+                                                                                {statusColor(
+                                                                                  memberDate?.status || [],
+                                                                                  dateObj,
+                                                                                  memberDate?.hours || 0,
+                                                                                  member.eventDates?.[0]?.startdate || '',
+                                                                                  member.eventDates?.[0]?.enddate || '',
+                                                                                  member.eventDates || [],
+                                                                                  member.leaveDates || [],
+                                                                                  member.wellnessDates || [],
+                                                                                  member.wfhDates || []
+                                                                                ).map((item, idx) => (
+                                                                                  <div key={idx} className={`w-full h-[30px] ${item}`} />
+                                                                                ))}
+                                                                              </div>
+                                        
+                                                                              <p className="relative text-black font-bold text-[.5rem] z-30">
+                                                                                {/* {memberDate ? memberDate.hours : '-'} */}
+                                                                              </p>
+                                                                            </td>
+                                        
+                                                                            {(index + 1) % 5 === 0 && (
+                                                                              <th className="font-normal text-[.5rem] px-1 border-[1px] border-zinc-700">
+                                                                                {/* {totalHoursForWeek.toLocaleString()} */}
+                                                                              </th>
+                                                                            )}
+                                                                          </React.Fragment>
+                                                                        );
+                                                                      })}
+                                                                    </tr>
+                                                                  ))}
                             
                                         </tbody>
           
