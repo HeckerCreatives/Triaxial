@@ -37,6 +37,7 @@ jobcomponent: string
 jobmanager: {
     employeeid: string
     fullname: string
+    initials: string
 },
 clientname: string
 priority: string
@@ -448,7 +449,7 @@ const totalsByDate = allDates.map((dateObj) => {
                       </Tooltip>
                     </TooltipProvider>
                   </td>
-                  <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">{getInitials(graphItem.jobmanager.fullname)}</td>
+                  <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">{graphItem.jobmanager.initials}</td>
                   <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">
                   <TooltipProvider delayDuration={.1}>
                       <Tooltip>

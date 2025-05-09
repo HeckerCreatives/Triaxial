@@ -78,7 +78,7 @@ _id: string
 
 type Workload = {
     _id: string
-    jobmanager: {employeeid: string, fullname: string}
+    jobmanager: {employeeid: string, fullname: string,initials: string}
     componentid:  string
     clientname: string
     clientid: string
@@ -451,7 +451,8 @@ export default function Yourworkload() {
                   </TooltipProvider>
 
                   </td>
-                  <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && getInitials(graphItem.jobmanager.fullname)}</td>
+                  <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">{graphItem.jobmanager.initials}</td>
+
                   <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">
 
                   <TooltipProvider delayDuration={.1}>
