@@ -355,7 +355,8 @@ export default function Yourworkload() {
           employeeid: employeeid,
           date: date,
           status: selected,
-          hours: hours
+          hours: hours,
+          role: role
         }, {
           withCredentials: true,
           headers: {
