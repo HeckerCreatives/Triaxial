@@ -182,6 +182,71 @@ export default function Indiviualworkloads() {
      return colorData; 
    }
 
+   const statusRequests = (data: string[], date: string, hours: number, eventStart: string, eventEnd: string, eventDates: Event[], leaveDates: Leave[], wellnessDates: string[],wfhDates: {requeststart: string}[]) => {
+    const colorData: string[] = [];
+
+    const isWithinAnyEventDate = eventDates.some((item) =>
+      isDateInRange(date, item.startdate, item.enddate)
+    );
+
+    const isWithinAnyLeaveDate = leaveDates.some((item) =>
+      isDateInRange(date, item.leavestart, item.leaveend)
+    );
+
+  
+
+     // Check if the date is in wellnessDates
+    const isWellnessDate = wellnessDates.some(
+      (wellnessDate) => formatDate(wellnessDate) === date
+    );
+
+    const isWFH = wfhDates.some(
+     (wfh) => formatDate(wfh.requeststart) === date
+   );
+
+   //  const isWFH = wfhDates.some((wfh) => String(wfh).includes(date));
+
+
+
+    // if(data.includes('1')){
+    //   colorData.push('bg-red-500')
+    // }
+    // if(data.includes('2')){
+    //   colorData.push('bg-amber-500')
+    // }
+    // if(data.includes('3')){
+    //   colorData.push('bg-yellow-300')
+    // }
+    // if(data.includes('4')){
+    //   colorData.push('bg-green-500')
+    // }
+    // if(data.includes('5')){
+    //   colorData.push('bg-blue-500')
+    // }
+    // if(data.includes('6')){
+    //   colorData.push('bg-cyan-400')
+    // }
+    // if(hours > 9){
+    //   colorData.push('bg-pink-500')
+    // }
+    if(isWithinAnyEventDate){
+      colorData.push('bg-gray-400')
+    }
+    if(isWithinAnyLeaveDate){
+      colorData.push('bg-violet-300')
+    }
+    if(isWellnessDate){
+      colorData.push('bg-fuchsia-400')
+    }
+
+    if(isWFH){
+      colorData.push('bg-lime-300')
+    }
+
+
+    return colorData; 
+  }
+
 
 
 
@@ -202,6 +267,7 @@ export default function Indiviualworkloads() {
     }
     getMembers()
   },[id, dateFilter])
+
 
 
   
@@ -254,7 +320,7 @@ export default function Indiviualworkloads() {
              </thead>
              {/* request */}
              <tbody>
-                       {list[0].members.map((item, graphIndex) =>
+                       {list[0].members.slice(0, 1).map((item, graphIndex) =>
                            <tr key={`${graphIndex}`} className="bg-primary text-[.5rem] py-2 h-[30px] border-[1px] border-zinc-600">
                              <td className=' border-[1px] border-zinc-600'>TX10010.00-</td>
                              <td className=' border-[1px] border-zinc-600'></td>
@@ -479,7 +545,7 @@ export default function Indiviualworkloads() {
    
                    {/* request */}
                                  <tbody>
-                                 {list?.[0]?.members?.map((member, memberIndex) => (
+                                 {list?.[0]?.members?.slice(0, 1).map((member, memberIndex) => (
                                                             <tr
                                                               key={`0-${memberIndex}`}
                                                               className="bg-primary text-[.6rem] py-2 h-[30px] border-[1px] border-zinc-600"
@@ -502,7 +568,7 @@ export default function Indiviualworkloads() {
                                                                   <React.Fragment key={index}>
                                                                     <td className="relative text-center overflow-hidden bg-white border-[1px]">
                                                                       <div className="w-full h-[30px] absolute flex top-0">
-                                                                        {statusColor(
+                                                                        {statusRequests(
                                                                           memberDate?.status || [],
                                                                           dateObj,
                                                                           memberDate?.hours || 0,

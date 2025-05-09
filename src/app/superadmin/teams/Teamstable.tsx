@@ -83,6 +83,7 @@ type Team = {
 _id: string
 teamleader: string
 teamname: string
+projectCount: number
 
 }
 
@@ -91,6 +92,7 @@ type Row = { id: string; name: string };
 type TeamData = {
   teamid: string
   teamname: string
+  projectCount: number
   directorpartner: {
             fullname: string
             dpid: string
@@ -866,7 +868,7 @@ export default function Teamstable() {
             <TableCell className="font-medium">{item.teamname}</TableCell>
             <TableCell className="font-medium">{item.manager}</TableCell>
             <TableCell>{item.teamleader}</TableCell>
-            <TableCell>1</TableCell>
+            <TableCell>{item.projectCount}</TableCell>
             {/* <TableCell>
               <Viewbtn disabled={false} name='View' onClick={() => router.push(`/superadmin/teams/teamproject?teamid=${item._id}`)}/>
             </TableCell>
