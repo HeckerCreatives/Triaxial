@@ -195,21 +195,27 @@ export default function Yourworkload() {
      
     );
 
-    if((hours <= 7.00) && (!isLeaveInRange)){
-      data.push('bg-green-500')
+    if (!isLeaveInRange) {
+      if (hours <= 7.00) {
+        data.push('bg-green-500');
+      } else if (hours > 7.00 && hours <= 9.00 && !isEventInRange) {
+        data.push('bg-orange-500');
+      }
+      else if(hours > 9.01){
+        data.push('bg-pink-500')
+      } else if(isEventInRange){
+        data.push('bg-gray-400')
+  
+      } else if(isWfhInRange){
+        data.push('bg-lime-300')
+  
+      } else 
+      if(isWellnessDay){
+        data.push('bg-fuchsia-300')
+      }
     }
 
-    if((hours <= 9.00 && hours >= 7.01) && (!isEventInRange)){
-      data.push('bg-orange-500')
-    }
-
-    if(hours > 9.01){
-      data.push('bg-pink-500')
-    }
-
-    if(isWellnessDay){
-      data.push('bg-fuchsia-300')
-    }
+  
     // if(hours < 40){
     //   data.push('bg-cyan-500')
     // }
@@ -218,15 +224,7 @@ export default function Yourworkload() {
     //   data.push('bg-indigo-500')
     // }
 
-    if(isEventInRange){
-      data.push('bg-gray-400')
-
-    }
-
-    if(isWfhInRange){
-      data.push('bg-lime-300')
-
-    }
+    
 
     if(isLeaveInRange){
       data.push('bg-violet-500')
@@ -488,8 +486,17 @@ export default function Yourworkload() {
                         const startIndex = Math.floor(dateIndex / 5) * 5;
                         const endIndex = startIndex + 5;
                         const totalHours = member.dates
-                          .filter(d => dates.slice(startIndex, endIndex).includes(d.date))
-                          .reduce((acc, d) => acc + d.totalhoursofjobcomponents, 0);
+                        .filter(d => {
+                          const isWithinSelectedDates = dates.slice(startIndex, endIndex).includes(d.date);
+                      
+                          // Exclude if the date is inside any approved leave period
+                          const isOnLeave = member.leave?.some(leave =>
+                            isDateInRange(d.date, leave.leavestart, leave.leaveend)
+                          );
+                      
+                          return isWithinSelectedDates && !isOnLeave;
+                        })
+                        .reduce((acc, d) => acc + d.totalhoursofjobcomponents, 0);
 
                         return (
                           <React.Fragment key={dateIndex}>
@@ -504,7 +511,7 @@ export default function Yourworkload() {
                                   <div key={index} className={`w-full h-full ${item}`}></div>
                                 ))}
                               </div>
-                              <p className="relative text-black font-bold text-[.6rem] z-30">{!isEventDay && hours}</p>
+                              <p className="relative text-black font-bold text-[.45rem] z-30">{!isEventDay && hours}</p>
                             </td>
 
                             {(dateIndex + 1) % 5 === 0 && (

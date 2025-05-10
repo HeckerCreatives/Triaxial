@@ -232,7 +232,7 @@ export default function DuplicateJobComponent( prop: Data) {
           projectname:  prop.pname,
           clientid: prop.clientid,
           jobno: jobno,
-          start: (today.toLocaleString()).split(',')[0],
+          start: (today.toLocaleString()).split('T')[0],
           adminnotes: '',
           jobcomponentvalue: filteredFormData
         }, {

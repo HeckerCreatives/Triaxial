@@ -280,20 +280,25 @@ export default function Yourworkload() {
     const isWFH = wfh.some((item) => formatDate(item.requestdate) === formatDate(date));
     const isWellnessDate = wellness.some((item) => formatDate(item.requestdate) === formatDate(date));
 
+    if(!isWithinAnyLeaveDate){
+      if (isWithinAnyEventDate) {
+        colorData.push("bg-gray-300");
+      } else
+      if (isWFH) {
+        colorData.push("bg-lime-300");
+      } else
   
-    if (isWithinAnyEventDate) {
-      colorData.push("bg-gray-300");
+      if(isWellnessDate){
+        colorData.push('bg-fuchsia-300')
+      }
     }
+
     if (isWithinAnyLeaveDate) {
       colorData.push("bg-violet-300");
     }
-    if (isWFH) {
-      colorData.push("bg-lime-300");
-    }
 
-    if(isWellnessDate){
-      colorData.push('bg-fuchsia-300')
-    }
+  
+    
   
     return colorData;
   };
@@ -619,27 +624,29 @@ export default function Yourworkload() {
   );;
 
 
+  if(!isWithinAnyLeaveDate){
     if(data.includes('1')){
       colorData.push('bg-red-500')
-    }
+    } else
     if(data.includes('2')){
       colorData.push('bg-amber-500')
-    }
+    } else
     if(data.includes('3')){
       colorData.push('bg-yellow-300')
-    }
+    } else
     if(data.includes('4')){
       colorData.push('bg-green-500')
-    }
+    } else
     if(data.includes('5')){
       colorData.push('bg-blue-500')
-    }
+    } else
     if(data.includes('6')){
       colorData.push('bg-cyan-400')
-    }
+    } else
     if(hours > 9){
       colorData.push('bg-pink-500')
     }
+  }
     // if(isWithinAnyLeaveDate){
     //   colorData.push('bg-violet-300')
     // }
@@ -1805,7 +1812,13 @@ export default function Yourworkload() {
                                         })
                                         .map((member, memberIndex) => {
                                           // Sum all hours for the member
-                                          const totalHours = member.dates?.reduce((sum, date) => sum + date.hours, 0) || 0;
+                                          const totalHours = member.dates?.reduce((sum, date) => {
+                                            const isOnLeave = member.leaveDates?.some(leave =>
+                                              isDateInRange(date.date, leave.leavestart, leave.leaveend)
+                                            );
+                                          
+                                            return isOnLeave ? sum : sum + date.hours;
+                                          }, 0) || 0;
                     
                                           return (
                                             <tr 
@@ -2031,7 +2044,13 @@ export default function Yourworkload() {
                                         ))}
                                       </div>
                                       <p className="relative text-black font-bold text-[.5rem] z-30">
-                                        
+                                        {
+                                          member.leave?.some(leave =>
+                                            isDateInRange(formatDate(dateObj), leave.leavestart, leave.leaveend)
+                                          )
+                                            ?  (memberDate?.totalhoursofjobcomponents ?? '-') 
+                                            :'-' 
+                                        }
                                       </p>
                                     </td>
     
@@ -2066,19 +2085,28 @@ export default function Yourworkload() {
     
     
                           longestAlldates.allDates.forEach((dateObj, index) => {
-                            const memberDate = member.dates?.find(
-                              (date) => formatDate(date.date) === formatDate(dateObj)
+                            const formattedDate = formatDate(dateObj);
+                          
+                            // Check if the date is on leave
+                            const isOnLeave = member.leaveDates?.some(leave =>
+                              isDateInRange(formattedDate, leave.leavestart, leave.leaveend)
                             );
-                            currentWeekTotal += memberDate?.hours || 0;
-    
-                            // If it's Friday or last date, store the week's total
+                          
+                            if (!isOnLeave) {
+                              const memberDate = member.dates?.find(
+                                (date) => formatDate(date.date) === formattedDate
+                              );
+                              currentWeekTotal += memberDate?.hours || 0;
+                            }
+                          
                             const isLastDate = index === longestAlldates.allDates.length - 1;
                             if (new Date(dateObj).getDay() === 5 || isLastDate) {
                               totalHoursForWeek.push(currentWeekTotal);
-                              currentWeekTotal = 0; // Reset for next week
-                              weekCounter++; // Move to next week
+                              currentWeekTotal = 0;
+                              weekCounter++;
                             }
                           });
+                          
     
                           return (
                             <tr
@@ -2166,13 +2194,23 @@ export default function Yourworkload() {
                                       </div>
                                       <p className="relative text-black font-bold text-[.5rem] z-30">
                                         {/* {memberDate ? memberDate.hours : "-"} */}
-                                        {memberDate ? memberDate.hours : "-"}
+                                        {/* {memberDate ? memberDate.hours : "-"} */}
+
+                                        {
+                                        member.leaveDates?.some(leave =>
+                                          isDateInRange(formatDate(dateObj), leave.leavestart, leave.leaveend)
+                                        )
+                                          ? '-' 
+                                          : (memberDate?.hours ?? '-') 
+                                      }
+
                                       </p>
                                     </td>
     
                                     {shouldInsertTotal && (
                                       <td className="text-center font-normal w-[40px] bg-primary border-[1px] border-zinc-700">
-                                        <p className="text-white text-[.5rem] font-semibold">
+                                        <p className="text-white text-[.5rem] font-semibold"
+                                        >
                                           {Number.isInteger(totalHoursForWeek[weekIndex])
                                             ? totalHoursForWeek[weekIndex]
                                             : totalHoursForWeek[weekIndex]?.toLocaleString()}

@@ -254,7 +254,7 @@ export default function Duplicatecomponent( prop: Data) {
           projectname:  prop.pname,
           clientid: prop.clientid,
           jobno: jobno,
-          start: prop.start,
+          start: prop.start.split('T')[0],
           jobcomponentvalue: filteredFormData,
           isvariation: false,
           adminnotes: adminnotes,

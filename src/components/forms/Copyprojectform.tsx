@@ -87,7 +87,7 @@ export default function Createprojectform( prop: Data) {
      
           team: data.team, // teamid
           projectname: data.projectname,
-          startdate: data.start,
+          startdate: data.start.split('T')[0],
           deadlinedate: data.end,
           client: data.client,
           jobno: data.jobno,

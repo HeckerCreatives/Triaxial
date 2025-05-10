@@ -145,29 +145,32 @@ export default function Indiviualworkloads() {
  
     //  const isWFH = wfhDates.some((wfh) => String(wfh).includes(date));
 
+
+    if(!isWithinAnyLeaveDate){
+      if(data.includes('1')){
+        colorData.push('bg-red-500')
+      } else
+      if(data.includes('2')){
+        colorData.push('bg-amber-500')
+      } else
+      if(data.includes('3')){
+        colorData.push('bg-yellow-300')
+      } else
+      if(data.includes('4')){
+        colorData.push('bg-green-500')
+      } else
+      if(data.includes('5')){
+        colorData.push('bg-blue-500')
+      } else
+      if(data.includes('6')){
+        colorData.push('bg-cyan-400')
+      } else
+      if(hours > 9){
+        colorData.push('bg-pink-500')
+      }
+    }
  
- 
-     if(data.includes('1')){
-       colorData.push('bg-red-500')
-     }
-     if(data.includes('2')){
-       colorData.push('bg-amber-500')
-     }
-     if(data.includes('3')){
-       colorData.push('bg-yellow-300')
-     }
-     if(data.includes('4')){
-       colorData.push('bg-green-500')
-     }
-     if(data.includes('5')){
-       colorData.push('bg-blue-500')
-     }
-     if(data.includes('6')){
-       colorData.push('bg-cyan-400')
-     }
-     if(hours > 9){
-       colorData.push('bg-pink-500')
-     }
+     
     //  if(isWithinAnyEventDate){
     //    colorData.push('bg-gray-400')
     //  }
@@ -233,19 +236,22 @@ export default function Indiviualworkloads() {
     // if(hours > 9){
     //   colorData.push('bg-pink-500')
     // }
-    if(isWithinAnyEventDate){
-      colorData.push('bg-gray-400')
+
+    if(!isWithinAnyLeaveDate) {
+      if(isWithinAnyEventDate){
+        colorData.push('bg-gray-400')
+      } else if(isWellnessDate){
+        colorData.push('bg-fuchsia-400')
+      } else
+      if(isWFH){
+        colorData.push('bg-lime-300')
+      }
     }
+   
     if(isWithinAnyLeaveDate){
       colorData.push('bg-violet-300')
     }
-    if(isWellnessDate){
-      colorData.push('bg-fuchsia-400')
-    }
-
-    if(isWFH){
-      colorData.push('bg-lime-300')
-    }
+    
 
 
     return colorData; 
@@ -590,6 +596,13 @@ export default function Indiviualworkloads() {
 
                                       <p className="relative text-black font-bold text-[.5rem] z-30">
                                         {/* {memberDate ? memberDate.hours : '-'} */}
+                                         {
+                                            member.leaveDates?.some(leave =>
+                                              isDateInRange(formatDate(dateObj), leave.leavestart, leave.leaveend)
+                                            )
+                                              ?  (memberDate?.hours ?? '-') 
+                                              :'-' 
+                                          }
                                       </p>
                                     </td>
 
@@ -617,11 +630,26 @@ export default function Indiviualworkloads() {
        
                                // Compute the total hours for every 5 dates
                                const totalHoursForWeek = dates
-                                 .slice(index - (index % 5), index + 1) // Get the previous 5 dates or less
-                                 .reduce((total, currentDate) => {
-                                   const memberDateForCurrent = member.dates?.find((date) => formatDate(date.date) === formatDate(currentDate));
-                                   return total + (memberDateForCurrent?.hours || 0);
-                                 }, 0);
+                                                              .slice(index - (index % 5), index + 1) // Previous 5 weekdays or less
+                                                              .reduce((total, currentDate) => {
+                                                                const formattedCurrent = formatDate(currentDate);
+                              
+                                                                // Check if this date is within an approved leave range
+                                                                const isOnLeave = member.leaveDates?.some(leave => {
+                              
+                                                                  const leaveStart = formatDate(leave.leavestart);
+                                                                  const leaveEnd = formatDate(leave.leaveend);
+                                                                  return formattedCurrent >= leaveStart && formattedCurrent <= leaveEnd;
+                                                                });
+                              
+                                                                if (isOnLeave) return total; // Skip hours for leave days
+                              
+                                                                const memberDateForCurrent = member.dates?.find(date =>
+                                                                  formatDate(date.date) === formattedCurrent
+                                                                );
+                              
+                                                                return total + (memberDateForCurrent?.hours || 0);
+                                                              }, 0);
        
                                return (
                                  <React.Fragment key={index}>
@@ -645,7 +673,14 @@ export default function Indiviualworkloads() {
                                      </div>
        
                                      <p className="relative text-black font-bold text-[.5rem] z-30">
-                                       {memberDate ? memberDate.hours : '-'}
+                                       {/* {memberDate ? memberDate.hours : '-'} */}
+                                         {
+                                           member.leaveDates?.some(leave =>
+                                             isDateInRange(formatDate(dateObj), leave.leavestart, leave.leaveend)
+                                           )
+                                             ? '-' 
+                                             : (memberDate?.hours ?? '-') 
+                                         }
                                      </p>
                                    </td>
        

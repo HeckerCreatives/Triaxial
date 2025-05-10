@@ -68,7 +68,7 @@ eventDates: Request[]
 leaveDates: Leavedates[]
 notes: string
 role: string
-wellnessDates: Wellness[]
+wellnessDates: Wellness
 wfhDates: WFH[]
 _id: string
  }
@@ -108,11 +108,7 @@ leave: [
     }
 ],
 event: eventRequest []
-wellness: [
-  {
-    requestdate: string
-  }
-],
+wellness: Wellness
 wfh: [
   {
     requestdate: string
@@ -121,7 +117,7 @@ wfh: [
 }
 
 
-type Wellness = { requestdate: string };
+type Wellness = string[];
 type WFH = { requestdate: string };
 type eventRequest = {
                                     startdate: string
@@ -177,7 +173,7 @@ export default function Yourworkload() {
     return checkDate >= start && checkDate <= end;
   }
 
-  const statusColor = (data: string[], date: string, hours: number, eventStart: string, eventEnd: string, eventDates: Event[], leaveDates: Leave[], wellnessDates: Wellness[],wfhDates: { requestdate: string }[] = []) => {
+  const statusColor = (data: string[], date: string, hours: number, eventStart: string, eventEnd: string, eventDates: Event[], leaveDates: Leave[], wellnessDates: Wellness,wfhDates: { requestdate: string }[] = []) => {
     const colorData: string[] = [];
 
     const isWithinAnyEventDate = eventDates.some((item) =>
@@ -192,54 +188,59 @@ export default function Yourworkload() {
 
      // Check if the date is in wellnessDates
     const isWellnessDate = wellnessDates.some(
-      (wellnessDate) => formatDate(wellnessDate.requestdate) === date
+      (wellnessDate) => formatDate(wellnessDate) === date
     );
 
     const isWFH = wfhDates.some(
       (wellnessDate) => formatDate(wellnessDate.requestdate) === date
     );
 
+    if(!isWithinAnyLeaveDate){
+      if(data.includes('1')){
+        colorData.push('bg-red-500')
+      } else
+      if(data.includes('2')){
+        colorData.push('bg-amber-500')
+      } else
+      if(data.includes('3')){
+        colorData.push('bg-yellow-300')
+      } else
+      if(data.includes('4')){
+        colorData.push('bg-green-500')
+      } else
+      if(data.includes('5')){
+        colorData.push('bg-blue-500')
+      } else
+      if(data.includes('6')){
+        colorData.push('bg-cyan-400')
+      } else
+      if(hours > 9){
+        colorData.push('bg-pink-500')
+      } 
+      // else
+      // if(isWithinAnyEventDate){
+      //   colorData.push('bg-gray-400')
+      // } else  if(isWFH){
+      //   colorData.push('bg-lime-300')
+      // } else if(isWellnessDate){
+      //   colorData.push('bg-fuchsia-400')
+      // }
+    }
 
-    if(data.includes('1')){
-      colorData.push('bg-red-500')
-    }
-    if(data.includes('2')){
-      colorData.push('bg-amber-500')
-    }
-    if(data.includes('3')){
-      colorData.push('bg-yellow-300')
-    }
-    if(data.includes('4')){
-      colorData.push('bg-green-500')
-    }
-    if(data.includes('5')){
-      colorData.push('bg-blue-500')
-    }
-    if(data.includes('6')){
-      colorData.push('bg-cyan-400')
-    }
-    if(hours > 9){
-      colorData.push('bg-pink-500')
-    }
-    if(isWithinAnyEventDate){
-      colorData.push('bg-gray-400')
-    }
-    if(isWithinAnyLeaveDate){
-      colorData.push('bg-violet-300')
-    }
-    if(isWellnessDate){
-      colorData.push('bg-fuchsia-400')
-    }
 
-    if(isWFH){
-      colorData.push('bg-lime-300')
-    }
+    
+    // if(isWithinAnyLeaveDate){
+    //   colorData.push('bg-violet-300')
+    // }
+  
+
+   
 
 
     return colorData; 
   }
 
-  const statusRequest = (data: string[], date: string, hours: number, eventStart: string, eventEnd: string, eventDates: Event[], leaveDates: Leave[], wellnessDates: Wellness[],wfhDates: { requestdate: string }[] = []) => {
+  const statusRequest = (data: string[], date: string, hours: number, eventStart: string, eventEnd: string, eventDates: Event[], leaveDates: Leave[], wellnessDates: Wellness,wfhDates: { requestdate: string }[] = []) => {
     const colorData: string[] = [];
 
     const isWithinAnyEventDate = eventDates.some((item) =>
@@ -254,7 +255,7 @@ export default function Yourworkload() {
 
      // Check if the date is in wellnessDates
     const isWellnessDate = wellnessDates.some(
-      (wellnessDate) => formatDate(wellnessDate.requestdate) === date
+      (wellnessDate) => formatDate(wellnessDate) === date
     );
 
     const isWFH = wfhDates.some(
@@ -283,19 +284,29 @@ export default function Yourworkload() {
     // if(hours > 9){
     //   colorData.push('bg-pink-500')
     // }
-    if(isWithinAnyEventDate){
-      colorData.push('bg-gray-400')
+
+    if(!isWithinAnyLeaveDate){
+      if(isWithinAnyEventDate){
+        colorData.push('bg-gray-400')
+      }
+      else
+      if(isWellnessDate){
+        colorData.push('bg-fuchsia-400')
+      }
+    else
+      if(isWFH){
+        colorData.push('bg-lime-300')
+      }
     }
+
     if(isWithinAnyLeaveDate){
       colorData.push('bg-violet-300')
     }
-    if(isWellnessDate){
-      colorData.push('bg-fuchsia-400')
-    }
 
-    if(isWFH){
-      colorData.push('bg-lime-300')
-    }
+      if(isWellnessDate){
+        colorData.push('bg-fuchsia-400')
+      }
+   
 
 
     return colorData; 
@@ -328,52 +339,6 @@ export default function Yourworkload() {
       }
       getList()
     }, [ id])
-
-
-     const statusColorRequest = (
-        date: string, 
-        eventDates: eventRequest[], 
-        // events: { eventstart: string; eventend: string }[], 
-        leaveDates: Leave[], 
-        wellness: Wellness[], 
-        wfh: WFH[] = []
-      ): string[] => {
-        const colorData: string[] = [];
-      
-        const isWithinAnyEventDate = eventDates.some((item) =>
-          isDateInRange(date, item.startdate, item.enddate)
-        );
-      
-        const isWithinAnyLeaveDate = leaveDates.some((item) =>
-          isDateInRange(date, item.leavestart, item.leaveend)
-        );
-    
-        // const isWellnessDate = wellness.some((item) =>
-        //   isDateInRange(date, item.wellnessdates, item.leaveend)
-        // );
-    
-        const isWFH = wfh.some((item) => formatDate(item.requestdate) === formatDate(date));
-        const isWellnessDate = wellness.some((item) => formatDate(item.requestdate) === formatDate(date));
-    
-      
-        if (isWithinAnyEventDate) {
-          colorData.push("bg-gray-300");
-        }
-        if (isWithinAnyLeaveDate) {
-          colorData.push("bg-violet-300");
-        }
-        if (isWFH) {
-          colorData.push("bg-lime-300");
-        }
-    
-        if(isWellnessDate){
-          colorData.push('bg-fuchsia-300')
-        }
-      
-        return colorData;
-      };
-
-      console.log(dates,memberslist)
 
   
 
@@ -674,9 +639,12 @@ export default function Yourworkload() {
                                                           className="bg-primary text-[.6rem] py-2 h-[30px] border-[1px] border-zinc-600"
                                                         >
                                                           {dates.map((dateObj, index) => {
-                                                            // const memberDate = member.dates?.find(
-                                                            //   (date) => formatDate(date.date) === formatDate(dateObj)
-                                                            // );
+                                                          //  const memberDate = member.dates?.find(
+                                                          //    (date) => formatDate(date.date) === formatDate(dateObj)
+                                                          //  );
+
+                                                          const memberDate = member.dates?.find((date) => formatDate(date.date) === formatDate(dateObj));
+
                             
                                                             const totalHoursForWeek = dates
                                                               .slice(index - (index % 5), index + 1)
@@ -710,6 +678,14 @@ export default function Yourworkload() {
                             
                                                                   <p className="relative text-black font-bold text-[.5rem] z-30">
                                                                     {/* {memberDate ? memberDate.hours : '-'} */}
+                                                                    {
+                                                                      member.leaveDates?.some(leave =>
+                                                                        isDateInRange(formatDate(dateObj), leave.leavestart, leave.leaveend)
+                                                                      )
+                                                                        ?  (memberDate?.hours ?? '-') 
+                                                                        :'-' 
+                                                                    }
+                                                                    
                                                                   </p>
                                                                 </td>
                             
@@ -734,14 +710,48 @@ export default function Yourworkload() {
                       {dates.map((dateObj, index) => {
                         // Find member data for the given date
                         const memberDate = member.dates?.find((date) => formatDate(date.date) === formatDate(dateObj));
+                        const dateData = member.dates.find(d => d.date === dateObj);
+                        const hours = dateData ? dateData.hours : '-';
+                        const formattedCurrentDate = formatDate(dateObj);
+                        const isOnLeave = member.leaveDates?.some(leave =>
+                          isDateInRange(formattedCurrentDate, leave.leavestart, leave.leaveend)
+                        );
+
 
                         // Compute the total hours for every 5 dates
                         const totalHoursForWeek = dates
-                          .slice(index - (index % 5), index + 1) // Get the previous 5 dates or less
-                          .reduce((total, currentDate) => {
-                            const memberDateForCurrent = member.dates?.find((date) => formatDate(date.date) === formatDate(currentDate));
-                            return total + (memberDateForCurrent?.hours || 0);
-                          }, 0);
+                        .slice(index - (index % 5), index + 1) // Get up to the last 5 dates
+                        .reduce((total, currentDate) => {
+                          const formattedCurrentDate = formatDate(currentDate); // Ensure date is in YYYY-MM-DD
+
+                          // Check if this date falls within any approved leave
+                          const isOnLeave = member.leaveDates?.some(leave =>
+                            isDateInRange(formattedCurrentDate, leave.leavestart, leave.leaveend)
+                          );
+
+                          if (isOnLeave) return total;
+
+                          const memberDateForCurrent = member.dates?.find(
+                            (date) => formatDate(date.date) === formattedCurrentDate
+                          );
+
+                          return total + (memberDateForCurrent?.hours || 0);
+                        }, 0);
+
+                          // const startIndex = Math.floor(memberIndex / 5) * 5;
+                          // const endIndex = startIndex + 5;
+                          // const totalHoursForWeek = member.dates
+                          // .filter(d => {
+                          //   const isWithinSelectedDates = dates.slice(startIndex, endIndex).includes(d.date);
+                        
+                          //   // Exclude if the date is inside any approved leave period
+                          //   const isOnLeave = member.leaveDates?.some(leave =>
+                          //     isDateInRange(d.date, leave.leavestart, leave.leaveend)
+                          //   );
+                        
+                          //   return isWithinSelectedDates && !isOnLeave;
+                          // })
+                          // .reduce((acc, d) => acc + d.hours, 0);
 
                         return (
                           <React.Fragment key={index}>
@@ -757,16 +767,23 @@ export default function Yourworkload() {
                                   member.eventDates[0]?.enddate || '',
                                   member.eventDates,
                                   member.leaveDates,
-                                  member.wellnessDates,
+                                  member.wellnessDates || [],
                                   member.wfhDates
                                 ).map((item, idx) => (
                                   <div key={idx} className={`w-full h-[40px] ${item}`} />
                                 ))}
                               </div>
-
+                            
                               <p className="relative text-black font-bold text-[.5rem] z-30">
-                                {memberDate ? memberDate.hours : '-'}
-                              </p>
+                                 {
+                                    member.leaveDates?.some(leave =>
+                                      isDateInRange(formatDate(dateObj), leave.leavestart, leave.leaveend)
+                                    )
+                                      ? '-' 
+                                      : (memberDate?.hours ?? '-') 
+                                  } 
+                                  {/* {(memberDate?.hours ?? '-')} */}
+                                </p>
                             </td>
 
                             {/* Show total hours for every 5th date */}

@@ -99,8 +99,8 @@ export default function WDform( prop: Data) {
 
     try {
       const request = axios.post(`${process.env. NEXT_PUBLIC_API_URL}/wellnessday/wellnessdayrequest`,{
-      requestdate: data.startdate
-       //requestdate: wellnessDay
+      // requestdate: data.startdate
+      requestdate: wellnessDay
        
       },
           {
