@@ -44,7 +44,7 @@ export default function Dashboardlegends() {
         </div>
 
         <div className=' flex items-center gap-2'>
-          <div className=' h-2 aspect-square bg-cyan-500'></div>
+          <div className=' h-2 aspect-square bg-lime-300'></div>
           <p className=' text-[.6rem] text-zinc-400'>WFH</p>
         </div>
 

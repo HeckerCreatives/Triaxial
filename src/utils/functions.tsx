@@ -12,10 +12,14 @@ export const statusColor = (data: string) => {
 
   }
 
-export  const formatDate = (date: string) => {
-    const formattedDate = date?.split('T');
-    return formattedDate[0]
-}
+  export const formatDate = (date: string | null | undefined): string => {
+    // console.log("Received date:", date, "Type:", typeof date);
+  
+    if (typeof date !== 'string') return date || '';
+  
+    return date.split('T')[0];
+  };
+  
 
 export  const formatDateTime = (date: string) => {
   const formattedDate =  new Date(date).toLocaleString();

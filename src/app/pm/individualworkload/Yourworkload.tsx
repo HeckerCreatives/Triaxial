@@ -57,9 +57,11 @@ leavestart: string
 }
 
 type WFHDates = {
-  requeststart: string
-  requestend: string
+  requestdate: string
 }
+
+type WellnessDates = string
+
 
 
 type Members = {
@@ -69,7 +71,7 @@ eventDates: Request[]
 leaveDates: Leavedates[]
 notes: string
 role: string
-wellnessDates: string[]
+wellnessDates: WellnessDates[]
 wfhDates: WFHDates[]
 _id: string
  }
@@ -97,6 +99,8 @@ export default function Indiviualworkloads() {
   const [list, setList] = useState<Workload[]>([])
   const [dates, setDates] = useState<string[]>([])
   const [dateFilter, setDateFilter] = useState<Date | null>(null)
+  const [memberslist, setMemberslist] = useState<Members[]>([])
+  
   
 
   const filterDate = dateFilter === null ?  '' : (dateFilter?.toLocaleString())?.split(',')[0]
@@ -117,7 +121,7 @@ export default function Indiviualworkloads() {
     return checkDate >= start && checkDate <= end;
   }
 
-   const statusColor = (data: string[], date: string, hours: number, eventStart: string, eventEnd: string, eventDates: Event[], leaveDates: Leave[], wellnessDates: string[],wfhDates: {requeststart: string}[]) => {
+   const statusColor = (data: string[], date: string, hours: number, eventStart: string, eventEnd: string, eventDates: Event[], leaveDates: Leave[], wellnessDates: WellnessDates[],wfhDates: WFHDates[]) => {
      const colorData: string[] = [];
  
      const isWithinAnyEventDate = eventDates.some((item) =>
@@ -136,7 +140,7 @@ export default function Indiviualworkloads() {
      );
 
      const isWFH = wfhDates.some(
-      (wfh) => formatDate(wfh.requeststart) === date
+      (wfh) => formatDate(wfh.requestdate) === date
     );
  
     //  const isWFH = wfhDates.some((wfh) => String(wfh).includes(date));
@@ -164,25 +168,25 @@ export default function Indiviualworkloads() {
      if(hours > 9){
        colorData.push('bg-pink-500')
      }
-     if(isWithinAnyEventDate){
-       colorData.push('bg-gray-400')
-     }
-     if(isWithinAnyLeaveDate){
-       colorData.push('bg-violet-300')
-     }
-     if(isWellnessDate){
-       colorData.push('bg-fuchsia-400')
-     }
+    //  if(isWithinAnyEventDate){
+    //    colorData.push('bg-gray-400')
+    //  }
+    //  if(isWithinAnyLeaveDate){
+    //    colorData.push('bg-violet-300')
+    //  }
+    //  if(isWellnessDate){
+    //    colorData.push('bg-fuchsia-400')
+    //  }
  
-     if(isWFH){
-       colorData.push('bg-lime-300')
-     }
+    //  if(isWFH){
+    //    colorData.push('bg-lime-300')
+    //  }
  
  
      return colorData; 
    }
 
-   const statusRequest = (data: string[], date: string, hours: number, eventStart: string, eventEnd: string, eventDates: Event[], leaveDates: Leave[], wellnessDates: string[],wfhDates: {requeststart: string}[]) => {
+   const statusRequest = (data: string[], date: string, hours: number, eventStart: string, eventEnd: string, eventDates: Event[], leaveDates: Leave[], wellnessDates:WellnessDates[],wfhDates: WFHDates[]) => {
     const colorData: string[] = [];
 
     const isWithinAnyEventDate = eventDates.some((item) =>
@@ -201,7 +205,7 @@ export default function Indiviualworkloads() {
     );
 
     const isWFH = wfhDates.some(
-     (wfh) => formatDate(wfh.requeststart) === date
+     (wfh) => formatDate(wfh.requestdate) === date
    );
 
    //  const isWFH = wfhDates.some((wfh) => String(wfh).includes(date));
@@ -259,6 +263,7 @@ export default function Indiviualworkloads() {
         })
 
         setList(response.data.data.yourworkload)
+        setMemberslist(response.data.data.members)
         setDates(response.data.data.alldates)
         setList
       } catch (error) {
@@ -267,6 +272,7 @@ export default function Indiviualworkloads() {
     }
     getMembers()
   },[id, dateFilter])
+
 
 
   
@@ -299,7 +305,7 @@ export default function Indiviualworkloads() {
        
            <div className=' h-full w-full flex flex-col '>
              <div className=' h-full overflow-y-auto flex items-start justify-center bg-secondary w-full '>
-               {list.length !== 0 ? (
+               {(memberslist.length !== 0 || list.length !== 0) ? (
                  <>
                  <table className="table-auto border-collapse ">
                  <thead className=' bg-secondary h-[95px]'>
@@ -319,7 +325,7 @@ export default function Indiviualworkloads() {
                  </thead>
                  {/* request */}
                  <tbody>
-                           {list[0].members.slice(0, 1).map((item, graphIndex) =>
+                           {memberslist.map((item, graphIndex) =>
                                <tr key={`${graphIndex}`} className="bg-primary text-[.5rem] py-2 h-[30px] border-[1px] border-zinc-600">
                                  <td className=' border-[1px] border-zinc-600'>TX10010.00-</td>
                                  <td className=' border-[1px] border-zinc-600'></td>
@@ -544,7 +550,7 @@ export default function Indiviualworkloads() {
        
                        {/* request */}
                         <tbody>
-                        {list?.[0]?.members?.slice(0, 1).map((member, memberIndex) => (
+                        {memberslist.map((member, memberIndex) => (
                             <tr
                               key={`0-${memberIndex}`}
                               className="bg-primary text-[.6rem] py-2 h-[30px] border-[1px] border-zinc-600"

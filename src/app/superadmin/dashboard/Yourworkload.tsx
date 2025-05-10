@@ -185,6 +185,8 @@ export default function Yourworkload() {
       isDateInRange(leaveDate, item.requestdate, item.requestend)
     );
 
+    console.log(wfh)
+
     const isWellnessDay= wellness.some((leaveItem) => {
       if(leaveItem.requestdate?.includes(leaveDate)){
         return true
@@ -195,11 +197,11 @@ export default function Yourworkload() {
      
     );
 
-    if(hours <= 7.00){
+    if((hours <= 7.00) && (!isEventInRange)){
       data.push('bg-green-500')
     }
 
-    if(hours <= 9.00 && hours >= 7.01){
+    if((hours <= 9.00 && hours >= 7.01) && (!isEventInRange)){
       data.push('bg-orange-500')
     }
 
@@ -224,7 +226,7 @@ export default function Yourworkload() {
     }
 
     if(isWfhInRange){
-      data.push('bg-cyan-400')
+      data.push('bg-lime-300')
 
     }
 

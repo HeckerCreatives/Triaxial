@@ -195,11 +195,11 @@ export default function Yourworkload() {
      
     );
 
-    if(hours <= 7.00){
+    if((hours <= 7.00) && (!isLeaveInRange)){
       data.push('bg-green-500')
     }
 
-    if(hours <= 9.00 && hours >= 7.01){
+    if((hours <= 9.00 && hours >= 7.01) && (!isEventInRange)){
       data.push('bg-orange-500')
     }
 
@@ -224,7 +224,7 @@ export default function Yourworkload() {
     }
 
     if(isWfhInRange){
-      data.push('bg-cyan-400')
+      data.push('bg-lime-300')
 
     }
 

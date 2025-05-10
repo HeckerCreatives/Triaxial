@@ -68,11 +68,8 @@ eventDates: Request[]
 leaveDates: Leavedates[]
 notes: string
 role: string
-wellnessDates: string[]
-wfhDates: [{
-  requeststart: string,
-  requestend: string
-}]
+wellnessDates: Wellness[]
+wfhDates: WFH[]
 _id: string
  }
 
@@ -140,6 +137,7 @@ export default function Yourworkload() {
   const router = useRouter()
   const [id, setId] = useState('')
   const [userid, setUserid] = useState('')
+  const [memberslist, setMemberslist] = useState<Members[]>([])
 
   const filterDate = dateFilter === null ?  '' : (dateFilter?.toLocaleString())?.split(',')[0]
 
@@ -151,6 +149,7 @@ export default function Yourworkload() {
         })
 
         setList(response.data.data.yourworkload)
+        setMemberslist(response.data.data.members)
         setDates(response.data.data.alldates)
         setId(response.data.data.yourworkload[0].teamid)
         setId(response.data.data.yourworkload[0].members[0].employee.employeeid[0])
@@ -178,7 +177,7 @@ export default function Yourworkload() {
     return checkDate >= start && checkDate <= end;
   }
 
-  const statusColor = (data: string[], date: string, hours: number, eventStart: string, eventEnd: string, eventDates: Event[], leaveDates: Leave[], wellnessDates: string[],wfhDates: { requeststart: string; requestend: string }[] = []) => {
+  const statusColor = (data: string[], date: string, hours: number, eventStart: string, eventEnd: string, eventDates: Event[], leaveDates: Leave[], wellnessDates: Wellness[],wfhDates: { requestdate: string }[] = []) => {
     const colorData: string[] = [];
 
     const isWithinAnyEventDate = eventDates.some((item) =>
@@ -193,11 +192,11 @@ export default function Yourworkload() {
 
      // Check if the date is in wellnessDates
     const isWellnessDate = wellnessDates.some(
-      (wellnessDate) => formatDate(wellnessDate) === date
+      (wellnessDate) => formatDate(wellnessDate.requestdate) === date
     );
 
     const isWFH = wfhDates.some(
-      (wellnessDate) => formatDate(wellnessDate.requeststart) === date
+      (wellnessDate) => formatDate(wellnessDate.requestdate) === date
     );
 
 
@@ -222,6 +221,68 @@ export default function Yourworkload() {
     if(hours > 9){
       colorData.push('bg-pink-500')
     }
+    if(isWithinAnyEventDate){
+      colorData.push('bg-gray-400')
+    }
+    if(isWithinAnyLeaveDate){
+      colorData.push('bg-violet-300')
+    }
+    if(isWellnessDate){
+      colorData.push('bg-fuchsia-400')
+    }
+
+    if(isWFH){
+      colorData.push('bg-lime-300')
+    }
+
+
+    return colorData; 
+  }
+
+  const statusRequest = (data: string[], date: string, hours: number, eventStart: string, eventEnd: string, eventDates: Event[], leaveDates: Leave[], wellnessDates: Wellness[],wfhDates: { requestdate: string }[] = []) => {
+    const colorData: string[] = [];
+
+    const isWithinAnyEventDate = eventDates.some((item) =>
+      isDateInRange(date, item.startdate, item.enddate)
+    );
+
+    const isWithinAnyLeaveDate = leaveDates.some((item) =>
+      isDateInRange(date, item.leavestart, item.leaveend)
+    );
+
+  
+
+     // Check if the date is in wellnessDates
+    const isWellnessDate = wellnessDates.some(
+      (wellnessDate) => formatDate(wellnessDate.requestdate) === date
+    );
+
+    const isWFH = wfhDates.some(
+      (wellnessDate) => formatDate(wellnessDate.requestdate) === date
+    );
+
+
+    // if(data.includes('1')){
+    //   colorData.push('bg-red-500')
+    // }
+    // if(data.includes('2')){
+    //   colorData.push('bg-amber-500')
+    // }
+    // if(data.includes('3')){
+    //   colorData.push('bg-yellow-300')
+    // }
+    // if(data.includes('4')){
+    //   colorData.push('bg-green-500')
+    // }
+    // if(data.includes('5')){
+    //   colorData.push('bg-blue-500')
+    // }
+    // if(data.includes('6')){
+    //   colorData.push('bg-cyan-400')
+    // }
+    // if(hours > 9){
+    //   colorData.push('bg-pink-500')
+    // }
     if(isWithinAnyEventDate){
       colorData.push('bg-gray-400')
     }
@@ -312,7 +373,7 @@ export default function Yourworkload() {
         return colorData;
       };
 
-      console.log(listRequest, id)
+      console.log(dates,memberslist)
 
   
 
@@ -362,7 +423,7 @@ export default function Yourworkload() {
 
     <div className=' h-full w-full flex flex-col '>
       <div className=' h-full overflow-y-auto flex items-start justify-center bg-secondary w-full '>
-        {list.length !== 0 ? (
+        {memberslist.length !== 0 ? (
           <>
           <table className="table-auto border-collapse ">
           <thead className=' bg-secondary h-[95px]'>
@@ -382,7 +443,7 @@ export default function Yourworkload() {
           </thead>
           {/* request */}
           <tbody>
-                    {list[0].members.map((item, graphIndex) =>
+                    {memberslist.map((item, graphIndex) =>
                         <tr key={`${graphIndex}`} className="bg-primary text-[.5rem] py-2 h-[30px] border-[1px] border-zinc-600">
                           <td className=' border-[1px] border-zinc-600'>TX10010.00-</td>
                           <td className=' border-[1px] border-zinc-600'></td>
@@ -606,62 +667,65 @@ export default function Yourworkload() {
               </thead>
 
                 {/* request */}
-                              <tbody>
-                              {list.map((graphItem, graphIndex) =>
-                  graphItem.members.map((member, memberIndex) => (
-                    <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.6rem] py-2 h-[30px] border-[1px] border-zinc-600">
-                      {dates.map((dateObj, index) => {
-                        // Find member data for the given date
-                        const memberDate = member.dates?.find((date) => formatDate(date.date) === formatDate(dateObj));
-
-                        // Compute the total hours for every 5 dates
-                        const totalHoursForWeek = dates
-                          .slice(index - (index % 5), index + 1) // Get the previous 5 dates or less
-                          .reduce((total, currentDate) => {
-                            const memberDateForCurrent = member.dates?.find((date) => formatDate(date.date) === formatDate(currentDate));
-                            return total + (memberDateForCurrent?.hours || 0);
-                          }, 0);
-
-                        return (
-                          <React.Fragment key={index}>
-                            <td
-                              className="relative text-center overflow-hidden bg-white border-[1px]"
-                            >
-                              <div className="w-full h-[30px] absolute flex top-0">
-                                {statusColor(
-                                  memberDate?.status || [],
-                                  dateObj,
-                                  memberDate?.hours || 0,
-                                  member.eventDates[0]?.startdate || '',
-                                  member.eventDates[0]?.enddate || '',
-                                  member.eventDates,
-                                  member.leaveDates,
-                                  member.wellnessDates,
-                                  member.wfhDates
-                                ).map((item, idx) => (
-                                  <div key={idx} className={`w-full h-[30px] ${item}`} />
-                                ))}
-                              </div>
-
-                              <p className="relative text-black font-bold text-[.5rem] z-30">
-                                {/* {memberDate ? memberDate.hours : '-'} */}
-                              </p>
-                            </td>
-
-                            {/* Show total hours for every 5th date */}
-                            {(index + 1) % 5 === 0 && (
-                              <th className="font-normal text-[.5rem] px-1 border-[1px] border-zinc-700">
-                                {/* <p className="">{totalHoursForWeek.toLocaleString()}</p> */}
-                              </th>
-                            )}
-                          </React.Fragment>
-                        );
-                      })}
-                    </tr>
-                  ))
-                )}
-                  
-                              </tbody>
+                <tbody>
+                                                    {memberslist.map((member, memberIndex) => (
+                                                        <tr
+                                                          key={`0-${memberIndex}`}
+                                                          className="bg-primary text-[.6rem] py-2 h-[30px] border-[1px] border-zinc-600"
+                                                        >
+                                                          {dates.map((dateObj, index) => {
+                                                            // const memberDate = member.dates?.find(
+                                                            //   (date) => formatDate(date.date) === formatDate(dateObj)
+                                                            // );
+                            
+                                                            const totalHoursForWeek = dates
+                                                              .slice(index - (index % 5), index + 1)
+                                                              .reduce((total, currentDate) => {
+                                                                const memberDateForCurrent = member.dates?.find(
+                                                                  (date) => formatDate(date.date) === formatDate(currentDate)
+                                                                );
+                                                                return total + (memberDateForCurrent?.hours || 0);
+                                                              }, 0);
+                            
+                                                            return (
+                                                              <React.Fragment key={index}>
+                                                                <td className="relative text-center overflow-hidden bg-white border-[1px]">
+                                                                  <div className="w-full h-[30px] absolute flex top-0">
+                                                                    {statusRequest(
+                                                                      // memberDate?.status || [],
+                                                                      [],
+                                                                      dateObj,
+                                                                      // memberDate?.hours || 0,
+                                                                      0,
+                                                                      member.eventDates?.[0]?.startdate || '',
+                                                                      member.eventDates?.[0]?.enddate || '',
+                                                                      member.eventDates || [],
+                                                                      member.leaveDates || [],
+                                                                      member.wellnessDates || [],
+                                                                      member.wfhDates || []
+                                                                    ).map((item, idx) => (
+                                                                      <div key={idx} className={`w-full h-[30px] ${item}`} />
+                                                                    ))}
+                                                                  </div>
+                            
+                                                                  <p className="relative text-black font-bold text-[.5rem] z-30">
+                                                                    {/* {memberDate ? memberDate.hours : '-'} */}
+                                                                  </p>
+                                                                </td>
+                            
+                                                                {(index + 1) % 5 === 0 && (
+                                                                  <th className="font-normal text-[.5rem] px-1 border-[1px] border-zinc-700">
+                                                                    {/* {totalHoursForWeek.toLocaleString()} */}
+                                                                  </th>
+                                                                )}
+                                                              </React.Fragment>
+                                                            );
+                                                          })}
+                                                        </tr>
+                                                      ))}
+                            
+                                                     
+              </tbody>
 
               <tbody>
               {list.map((graphItem, graphIndex) =>

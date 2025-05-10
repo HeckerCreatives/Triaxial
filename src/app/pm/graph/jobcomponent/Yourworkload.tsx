@@ -637,27 +637,28 @@ export default function Yourworkload() {
     if(data.includes('6')){
       colorData.push('bg-cyan-400')
     }
-    if(isWithinAnyLeaveDate){
-      colorData.push('bg-violet-300')
-    }
-    if(isWithinAnyEventDate){
-      colorData.push('bg-gray-300')
-    }
     if(hours > 9){
       colorData.push('bg-pink-500')
     }
+    // if(isWithinAnyLeaveDate){
+    //   colorData.push('bg-violet-300')
+    // }
+    // if(isWithinAnyEventDate){
+    //   colorData.push('bg-gray-300')
+    // }
+    
 
-    if(isWellnessDate){
-      colorData.push('bg-fuchsia-300')
-    }
+    // if(isWellnessDate){
+    //   colorData.push('bg-fuchsia-300')
+    // }
 
-     if(isWellnessDate){
-      colorData.push('bg-fuchsia-300')
-    }
+    //  if(isWellnessDate){
+    //   colorData.push('bg-fuchsia-300')
+    // }
 
-    if(isWFH){
-      colorData.push('bg-lime-300')
-    }
+    // if(isWFH){
+    //   colorData.push('bg-lime-300')
+    // }
 
     return colorData; 
   }
