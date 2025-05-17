@@ -461,9 +461,11 @@ export default function Indiviualworkloads() {
        
                          <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">
                           {graphItem.teammembers
-                          .filter((item) => item !== memberslist[0]?.employee.initials) 
-                          .join(', ')
-                        }
+                            .filter(item => item !== memberslist[0]?.employee.initials) // remove first
+                            .slice(0, 3) // limit to 3 items
+                            .join(', ')
+                          }
+
                          </td>
        
                      
@@ -623,13 +625,13 @@ export default function Indiviualworkloads() {
 
                                       <p className="relative text-black font-bold text-[.5rem] z-30">
                                         {/* {memberDate ? memberDate.hours : '-'} */}
-                                         {
-                                            member.leaveDates?.some(leave =>
-                                              isDateInRange(formatDate(dateObj), leave.leavestart, leave.leaveend)
-                                            )
-                                              ?  (memberDate?.hours ?? '-') 
-                                              :'-' 
-                                          }
+                                          {
+                                                                               member.leaveDates?.some(leave =>
+                                                                                 isDateInRange(formatDate(dateObj), leave.leavestart, leave.leaveend)
+                                                                               )
+                                                                                 ? Math.max(memberDate?.hours ?? 0, 0).toLocaleString() // ensures result is never negative
+                                                                                 : '-'
+                                                                                  }
                                       </p>
                                     </td>
 

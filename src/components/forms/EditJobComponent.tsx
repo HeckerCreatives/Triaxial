@@ -882,7 +882,10 @@ export default function EditJobComponent( prop: Prop) {
                                                   <SelectValue placeholder="Select Client" className="text-black" />
                                                 </SelectTrigger>
                                                 <SelectContent className="text-xs">
-                                                  {client.map((item) => (
+                                                  {client
+                                                  .slice() // create a shallow copy to avoid mutating original array
+                                                  .sort((a, b) => a.clientname.localeCompare(b.clientname))
+                                                  .map((item) => (
                                                     <SelectItem key={item.clientid} value={item.clientid}>
                                                       {item.clientname}
                                                     </SelectItem>

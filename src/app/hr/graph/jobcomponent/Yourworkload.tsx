@@ -1037,12 +1037,21 @@ export default function Yourworkload() {
                   </div>
                 </Createprojectcomponent>
 
-                    <EditJobComponent id={findJobComponent?.componentid} isManger={findJobComponent?.jobmanager.isManager} isJobManager={findJobComponent?.jobmanager.isJobManager} project={findJobComponent?.projectname.projectid} jobmanager={findJobComponent?.jobmanager.employeeid} engr={engrId} engrnotes={engrMember?.notes} engrrvr={engrrvrId} engrrvrnotes={engrrvrMember?.notes} drftr={draftId} drftrnotes={drftMember?.notes} drftrrvr={draftrvrId} drftrrvrnotes={drftrvrMember?.notes} members={findJobComponent?.members || []} pname={findJobComponent?.projectname.name || ''} client={findJobComponent?.clientname.name || ''} start={findJobComponent?.projectstart || ''} end={findJobComponent?.projectend || ''} component={findJobComponent?.jobcomponent || ''} adminnotes={findJobComponent?.adminnotes || ''} budget={findJobComponent?.estimatedbudget || 0} budgettype={findJobComponent?.budgettype || ''} jcname={findJobComponent?.jobcomponent || ''} clientid={findJobComponent?.clientname.clientid || ''} jobno={findJobComponent?.jobno || ''}>
-                                                                        <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
-                                                                          <button onClick={() => setDialog2(true)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Pen size={20}/></button>
-                                                                          <p>Edit</p>
-                                                                        </div>
-                                                                      </EditJobComponent>
+                  {componentid === '' ? (
+                                   <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                                     <button  onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><Pen size={20}/></button>
+                                     <p>Edit</p>
+                                   </div>
+                                   
+                                 ) : (
+                                   <EditJobComponent id={findJobComponent?.componentid} isManger={findJobComponent?.jobmanager.isManager} isJobManager={findJobComponent?.jobmanager.isJobManager} project={findJobComponent?.projectname.projectid} jobmanager={findJobComponent?.jobmanager.employeeid} engr={engrId} engrnotes={engrMember?.notes} engrrvr={engrrvrId} engrrvrnotes={engrrvrMember?.notes} drftr={draftId} drftrnotes={drftMember?.notes} drftrrvr={draftrvrId} drftrrvrnotes={drftrvrMember?.notes} members={findJobComponent?.members || []} pname={findJobComponent?.projectname.name || ''} client={findJobComponent?.clientname.name || ''} start={findJobComponent?.projectstart || ''} end={findJobComponent?.projectend || ''} component={findJobComponent?.jobcomponent || ''} adminnotes={findJobComponent?.adminnotes || ''} budget={findJobComponent?.estimatedbudget || 0} budgettype={findJobComponent?.budgettype || ''} jcname={findJobComponent?.jobcomponent || ''} clientid={findJobComponent?.clientname.clientid || ''} jobno={findJobComponent?.jobno || ''}>
+                                                                                         <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
+                                                                                           <button onClick={() => setDialog2(true)} className={`text-xs p-1 bg-red-600  rounded-sm`}><Pen size={20}/></button>
+                                                                                           <p>Edit</p>
+                                                                                         </div>
+                                                                                       </EditJobComponent>
+                                   
+                                 )}
 
                 {componentid === '' ? (
                   <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
@@ -2072,13 +2081,13 @@ export default function Yourworkload() {
                                         ))}
                                       </div>
                                       <p className="relative text-black font-bold text-[.45rem] z-30">
-                                        {
-                                          member.leave?.some(leave =>
-                                            isDateInRange(formatDate(dateObj), leave.leavestart, leave.leaveend)
-                                          )
-                                            ?  (memberDate?.totalhoursofjobcomponents.toLocaleString() ?? '-') 
-                                            :'-' 
-                                        }
+                                         {
+                                                                                member.leave?.some(leave =>
+                                                                                  isDateInRange(formatDate(dateObj), leave.leavestart, leave.leaveend)
+                                                                                )
+                                                                                  ? Math.max(memberDate?.totalhoursofjobcomponents ?? 0, 0).toLocaleString() // ensures result is never negative
+                                                                                  : '-'
+                                                                                   }
                                       </p>
                                     </td>
     
@@ -2269,7 +2278,8 @@ export default function Yourworkload() {
                                               )
                                         } */}
 
-                                        {memberDate?.status?.includes('Leave') ? '-' : memberDate?.hours.toLocaleString()}
+                                                                               {memberDate?.status?.includes('Leave') ? '-' : memberDate?.hours.toLocaleString() ?? '-'}
+
                                       </p>
                                     </td>
     

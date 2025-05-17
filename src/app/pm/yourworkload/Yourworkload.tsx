@@ -683,12 +683,12 @@ export default function Yourworkload() {
                                                    <p className="relative text-black font-bold text-[.5rem] z-30">
                                                      {/* {memberDate ? memberDate.hours : '-'} */}
                                                       {
-                                                         member.leaveDates?.some(leave =>
-                                                           isDateInRange(formatDate(dateObj), leave.leavestart, leave.leaveend)
-                                                         )
-                                                           ?  (memberDate?.hours ?? '-') 
-                                                           :'-' 
-                                                       }
+                                                                                           member.leaveDates?.some(leave =>
+                                                                                             isDateInRange(formatDate(dateObj), leave.leavestart, leave.leaveend)
+                                                                                           )
+                                                                                             ? Math.max(memberDate?.hours ?? 0, 0).toLocaleString() // ensures result is never negative
+                                                                                             : '-'
+                                                                                              }
                                                    </p>
                                                  </td>
              

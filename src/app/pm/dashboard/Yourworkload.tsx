@@ -383,7 +383,13 @@ export default function Yourworkload() {
                   </thead>
                   <tbody>
                   {list.map((graphItem, graphIndex) =>
-                    graphItem.members.map((member, memberIndex) => (
+                    graphItem.members
+                    .sort((a, b) => {
+                        const initialsA = a.initial?.toLowerCase() || '';
+                        const initialsB = b.initial?.toLowerCase() || '';
+                        return initialsA.localeCompare(initialsB);
+                      })
+                    .map((member, memberIndex) => (
                       <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.5rem] py-2 h-[35px] border-[1px] border-zinc-600 text-left border-collapse">
                         {memberIndex === 0 ?
                         (<td  onClick={() => router.push(`/pm/graph/jobcomponent?teamid=${graphItem.teamid}&teamname=${graphItem.name}`)} className=" text-[.65rem]  whitespace-normal break-all border-[1px] border-zinc-600 px-2 text-left underline cursor-pointer">{graphItem.name}</td>) :  (<td className="text-center"></td>)
