@@ -15,6 +15,13 @@ import Spinner from '@/components/common/Spinner'
 import PaginitionComponent from '@/components/common/Pagination'
 import Approvewdrequest from '@/components/forms/Wdsuperadmin'
 import { DDMMYY, DDMMYYHMS } from '@/utils/functions'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 type Welnnessday = {
   firstdayofwellnessdaycycle: string
@@ -23,6 +30,7 @@ type Welnnessday = {
   requestid: string
   user: string
   wdrequesttimestamp: string
+  status: string
 }
 
 
@@ -33,13 +41,15 @@ export default function Wellnesstable() {
   const [loading, setLoading] = useState(false)
   const [totalpage, setTotalpage] = useState(0)
   const [currentpage, setCurrentpage] = useState(0)
+  const [status, setStatus] = useState('Pending')
+  
 
   //wellness day list
   useEffect(() => {
     setLoading(true)
     const timer = setTimeout(() => {
       const getList = async () => {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/wellnessday/wellnessdaylistrequest?page=${currentpage}&limit=10&fullnamefilter=${search}`,{
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/wellnessday/wellnessdaylistrequest?page=${currentpage}&limit=10&fullnamefilter=${search}&status=${status}`,{
           withCredentials: true,
           headers: {
             'Content-Type': 'application/json'
@@ -59,7 +69,7 @@ export default function Wellnesstable() {
     }, 500)
     return () => clearTimeout(timer)
     
-  },[search, currentpage])
+  },[search, currentpage, status])
 
   //paginition
   const handlePageChange = (page: number) => {
@@ -85,6 +95,18 @@ export default function Wellnesstable() {
             
         </div>
 
+          {/* <label htmlFor="" className=' text-xs text-zinc-400 mt-4'>Filter by status</label>
+      <Select value={status} onValueChange={setStatus}>
+      <SelectTrigger className="w-[180px] bg-primary mt-2">
+        <SelectValue placeholder="Filter by status" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="Pending">Pending</SelectItem>
+        <SelectItem value="Approved">Approved</SelectItem>
+        <SelectItem value="Denied">Denied</SelectItem>
+      </SelectContent>
+    </Select> */}
+
          <Table className=' mt-4'>
                 {list.length === 0 &&  
                   <TableCaption className=' text-xs text-zinc-500'>No data</TableCaption>
@@ -100,10 +122,11 @@ export default function Wellnesstable() {
                     <TableHead className=' text-[.6rem]'>Manager</TableHead>
                     <TableHead className=' text-[.6rem]'>Wd Request Timestamp</TableHead>
                     <TableHead className=' text-[.6rem]'>Name</TableHead>
-                    <TableHead className=' text-[.6rem]'>First Day of Wellness Day Cycle</TableHead>
+                    {/* <TableHead className=' text-[.6rem]'>First Day of Wellness Day Cycle</TableHead> */}
                     <TableHead className=' text-[.6rem]'>Wellness Day</TableHead>
-                    <TableHead className=' text-[.6rem]'>Total Number of Working Days</TableHead>
-                    <TableHead className=' text-[.6rem]'>Total Working Hours During Wellness Day Cycle</TableHead>
+                    {/* <TableHead className=' text-[.6rem]'>Total Number of Working Days</TableHead>
+                    <TableHead className=' text-[.6rem]'>Total Working Hours During Wellness Day Cycle</TableHead> */}
+                    <TableHead className=' text-[.6rem]'>Status</TableHead>
                     {/* <TableHead className=' text-[.6rem]'>Action</TableHead> */}
                     </TableRow>
                 </TableHeader>
@@ -113,18 +136,19 @@ export default function Wellnesstable() {
                     <TableCell className=' text-[.6rem]'>{item.manager}</TableCell>
                     <TableCell className=' text-[.6rem]'>{DDMMYYHMS(item.wdrequesttimestamp)}</TableCell>
                     <TableCell className=' text-[.6rem]'>{item.user}</TableCell>
+                    {/* <TableCell className=' text-[.6rem]'>{DDMMYY(item.requestdate)}</TableCell> */}
                     <TableCell className=' text-[.6rem]'>{DDMMYY(item.requestdate)}</TableCell>
-                    <TableCell className=' text-[.6rem]'>{DDMMYY(item.requestdate)}</TableCell>
-                    <TableCell className=' text-[.6rem]'>1</TableCell>
-                    <TableCell className=' text-[.6rem]'>8.44</TableCell>
+                    {/* <TableCell className=' text-[.6rem]'>1</TableCell>
+                    <TableCell className=' text-[.6rem]'>8.44</TableCell> */}
+                    <TableCell className=' text-[.6rem] text-green-300'>Approved</TableCell>
                     {/* <TableCell>
                     <Approvewdrequest start={item.requestdate} id={item.requestid} >
                         
                           <button className=' whitespace-nowrap bg-red-700 text-white text-xs p-2 rounded-sm'>Approved / Denied</button>
                        </Approvewdrequest>
                      
-                    </TableCell> */}
-        
+                    </TableCell>
+         */}
                     </TableRow>
                   ))}
                     

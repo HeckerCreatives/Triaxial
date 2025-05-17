@@ -248,13 +248,13 @@ export default function Yourworkload() {
 
     
       <div className=' relative h-full w-full flex flex-col'>
-        <div className=' flex flex-col gap-2 sticky top-0 z-50 bg-secondary'>
+        <div className=' flex flex-col gap-2 sticky top-0 z-[9999] bg-secondary'>
           <div className=' flex items-center justify-between'>
           <SortableTeamsDialog/>
 
-            <div className=' w-full flex items-center gap-2 justify-end'>
+            <div className=' relative z-[9999] w-full flex items-center gap-2 justify-end'>
               <label htmlFor="" className=' text-xs'>Filter by date:</label>
-              <div className=' relative z-50'>
+              <div className=' relative z-[999999]'>
               <DatePicker
                 selected={filter}
                 onChange={(date) => setFilter(date)}
@@ -383,10 +383,16 @@ export default function Yourworkload() {
                   </thead>
                   <tbody>
                   {list.map((graphItem, graphIndex) =>
-                    graphItem.members.map((member, memberIndex) => (
+                    graphItem.members
+                    .sort((a, b) => {
+                        const initialsA = a.initial?.toLowerCase() || '';
+                        const initialsB = b.initial?.toLowerCase() || '';
+                        return initialsA.localeCompare(initialsB);
+                      })
+                    .map((member, memberIndex) => (
                       <tr key={`${graphIndex}-${memberIndex}`} className="bg-primary text-[.5rem] py-2 h-[35px] border-[1px] border-zinc-600 text-left border-collapse">
                         {memberIndex === 0 ?
-                        (<td  onClick={() => router.push(`/superadmin/graph/jobcomponent?teamid=${graphItem.teamid}&teamname=${graphItem.name}`)} className="  whitespace-normal break-all border-[1px] border-zinc-600 px-2 text-left text-red-500 underline cursor-pointer">{graphItem.name}</td>) :  (<td className="text-center"></td>)
+                        (<td  onClick={() => router.push(`/superadmin/graph/jobcomponent?teamid=${graphItem.teamid}&teamname=${graphItem.name}`)} className=" text-[.65rem]  whitespace-normal break-all border-[1px] border-zinc-600 px-2 text-left underline cursor-pointer">{graphItem.name}</td>) :  (<td className="text-center"></td>)
                         }
                         {/* <td onClick={() => router.push(`/pm/individualworkload?employeeid=${member.id}&name=${member.name}&teamname=${graphItem.name}`)} className=" whitespace-normal break-all border-[1px] border-zinc-600 px-2 text-left cursor-pointer underline text-blue-400">{member.name}</td> */}
                         <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">
@@ -489,15 +495,20 @@ export default function Yourworkload() {
                               const totalHours = member.dates
                               .filter(d => {
                                 const isWithinSelectedDates = dates.slice(startIndex, endIndex).includes(d.date);
-                            
-                                // Exclude if the date is inside any approved leave period
-                                const isOnLeave = member.leave?.some(leave =>
-                                  isDateInRange(d.date, leave.leavestart, leave.leaveend)
-                                );
-                            
-                                return isWithinSelectedDates && !isOnLeave;
+                                return isWithinSelectedDates; // No longer excluding leave dates
                               })
                               .reduce((acc, d) => acc + d.totalhoursofjobcomponents, 0);
+                              // const totalHours = member.dates
+                              // .filter(d => {
+                              //   const isWithinSelectedDates = dates.slice(startIndex, endIndex).includes(d.date);
+                            
+                              //   const isOnLeave = member.leave?.some(leave =>
+                              //     isDateInRange(d.date, leave.leavestart, leave.leaveend)
+                              //   );
+                            
+                              //   return isWithinSelectedDates && !isOnLeave;
+                              // })
+                              // .reduce((acc, d) => acc + d.totalhoursofjobcomponents, 0);
       
                               return (
                                 <React.Fragment key={dateIndex}>

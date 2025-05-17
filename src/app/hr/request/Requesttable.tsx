@@ -183,7 +183,7 @@ export default function Requesttable() {
                 <TableHead className="">WD Request Timestamp</TableHead>
                 <TableHead>Type</TableHead>
                 <TableHead>Wellness Day</TableHead>
-                <TableHead className="">First Day of Wellness Day Cycle</TableHead>
+                {/* <TableHead className="">First Day of Wellness Day Cycle</TableHead> */}
                 {/* <TableHead className="">Action</TableHead> */}
                 </TableRow>
             </TableHeader>
@@ -194,7 +194,7 @@ export default function Requesttable() {
                 <TableCell className="">{DDMMYYHMS(item.createdAt)}</TableCell>
                 <TableCell>Wellness Day</TableCell>
                 <TableCell>{formatDate(item.requestdate)}</TableCell>
-                <TableCell className="">{DDMMYY(item.firstdayofwellnessdaycycle)}</TableCell>
+                {/* <TableCell className="">{DDMMYY(item.firstdayofwellnessdaycycle)}</TableCell> */}
                 {/* <TableCell className=" flex items-center gap-2">
                   <Editwdrequest start={DDMMYY(item.requestdate)} id={item.requestid}>
                     <button className=' p-2 bg-red-600 rounded-md text-white'><Pen size={15}/></button>

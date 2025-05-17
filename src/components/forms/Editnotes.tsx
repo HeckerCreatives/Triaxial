@@ -102,7 +102,7 @@ useEffect(() => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-    <DialogTrigger  className="rounded-sm flex items-center text-black text-[.5rem] underline">
+    <DialogTrigger  className="rounded-sm flex items-center text-black text-[.5rem] underline w-full h-[20px]">
         {children}
       {/* {member.notes ? <p className="text-[.5rem]">{truncateText(member.notes, 16)}</p> : <p className="text-[.5rem] h-full w-full text-center">No notes.</p>} */}
     </DialogTrigger>

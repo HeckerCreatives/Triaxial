@@ -20,8 +20,8 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 type List = {
-  id: string;
-  name: string;
+  employeeid: string,
+  name: string
 };
 
 type Props = {
@@ -35,12 +35,14 @@ type Props = {
 };
 
 export default function EditMember({ membername, memberid, userid, role, children, memberlist, componentid }: Props) {
-  const [changeMember, setChangeMember] = useState<string>(memberid);
+  const [changeMember, setChangeMember] = useState<string>();
   const [isEditable, setIsEditable] = useState<boolean>(false);
   const {refresh, setRefresh} = refreshStore()
   const [open, setOpen] = useState(false)
 const router = useRouter()
 const [loading, setLoading] = useState(false)
+
+console.log(membername)
 
   
   
@@ -48,7 +50,7 @@ const [loading, setLoading] = useState(false)
   useEffect(() => {
     const selectedMember = memberlist.find((member) => member.name === membername);
     if (selectedMember) {
-      setChangeMember(selectedMember.id);
+      setChangeMember(selectedMember.employeeid);
     }
   }, [memberid, memberlist]);
 
@@ -131,11 +133,11 @@ const [loading, setLoading] = useState(false)
         {/* ✅ Ensure the Select component updates correctly */}
         <Select value={changeMember} onValueChange={setChangeMember} disabled={!isEditable}>
           <SelectTrigger className="bg-primary">
-            <SelectValue>{memberlist.find(m => m.id === changeMember)?.name || "Select member"}</SelectValue>
+            <SelectValue>{memberlist.find(m => m.employeeid === changeMember)?.name || "Select member"}</SelectValue>
           </SelectTrigger>
           <SelectContent>
             {memberlist.map((member) => (
-              <SelectItem key={member.id} value={member.id}>
+              <SelectItem key={member.employeeid} value={member.employeeid}>
                 {member.name}
               </SelectItem>
             ))}

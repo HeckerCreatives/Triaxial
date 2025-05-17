@@ -53,6 +53,7 @@ clientid: string
 
 interface Data {
   children?: React.ReactNode;
+  teamid: string
 }
 
 type Member = {
@@ -79,6 +80,13 @@ type Manager = {
   name: string
 }
 
+type TeamMembers = {
+  employeeid: string
+  fullname: string
+  resources: string
+  role: string
+}
+
 export default function Createprojectcomponent( prop: Data) {
   const [dialog, setDialog] = useState(false)
   const [clientid, setClientid] = useState('')
@@ -94,6 +102,7 @@ export default function Createprojectcomponent( prop: Data) {
   const today = new Date()
   const [adminotes, setAdminnotes] = useState('')
   const [description, setDescription] = useState('')
+  const [members, setMembers] = useState<TeamMembers[]>([])
 
 
 
@@ -309,7 +318,7 @@ export default function Createprojectcomponent( prop: Data) {
     try {
       const timer = setTimeout(() => {
         const getList = async () => {
-          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users/employeesearchlistmanager?fullname`,{
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users/employeesearchlistmanager`,{
             withCredentials: true,
             headers: {
               'Content-Type': 'application/json'
@@ -373,6 +382,59 @@ export default function Createprojectcomponent( prop: Data) {
           setManager(response.data.data.managerlist)
           
         
+        
+        }
+        getList()
+      }, 500)
+      return () => clearTimeout(timer)
+  } catch (error) {
+     
+  
+       if (axios.isAxiosError(error)) {
+              const axiosError = error as AxiosError<{ message: string, data: string }>;
+              if (axiosError.response && axiosError.response.status === 401) {
+                  toast.error(`${axiosError.response.data.data}`)
+                  router.push('/')   
+              }
+  
+              if (axiosError.response && axiosError.response.status === 400) {
+                  toast.error(`${axiosError.response.data.data}`)     
+                     
+              }
+  
+              if (axiosError.response && axiosError.response.status === 402) {
+                  toast.error(`${axiosError.response.data.data}`)          
+                         
+              }
+  
+              if (axiosError.response && axiosError.response.status === 403) {
+                  toast.error(`${axiosError.response.data.data}`)              
+                 
+              }
+  
+              if (axiosError.response && axiosError.response.status === 404) {
+                  toast.error(`${axiosError.response.data.data}`)             
+              }
+      } 
+     
+  }
+    
+    
+  },[])
+
+  //teamemberlist
+   useEffect(() => {
+    try {
+      const timer = setTimeout(() => {
+        const getList = async () => {
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/teams/listteammembers?teamid=${prop.teamid}`,{
+            withCredentials: true,
+            headers: {
+              'Content-Type': 'application/json'
+              }
+          })
+      
+          setMembers(response.data.data.teammembers[0].members)
         
         }
         getList()
@@ -614,8 +676,8 @@ export default function Createprojectcomponent( prop: Data) {
                             <SelectValue placeholder="Select Job Manager" className="text-black" />
                             </SelectTrigger>
                             <SelectContent className="text-xs">
-                              {employee.map((item, index) => (
-                                <SelectItem key={index} value={item.employeeid}>{item.name}</SelectItem>
+                              {members.map((item, index) => (
+                                <SelectItem key={index} value={item.employeeid}>{item.fullname}</SelectItem>
                               ))}
                             </SelectContent>
                         </Select>

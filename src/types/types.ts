@@ -72,8 +72,10 @@ export type Team = {
 type Dates = {
     date: string
     hours: number, 
-    status:[], 
+    status:string[], 
     _id: string
+    leavewellnessday?: boolean,
+    workinghoursduringleave?: number,
 }
 
 type Request = {

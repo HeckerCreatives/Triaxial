@@ -258,7 +258,7 @@ export default function SuperadminLayout({
             </DropdownMenu>
           </div>
         </header>
-        <main className="relative flex flex-1 flex-col items-center gap-4">
+        <main className="relative flex flex-1 flex-col items-center gap-4 hide-scrollbar">
           {children}
         </main>
       </div>

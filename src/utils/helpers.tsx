@@ -6,7 +6,7 @@
     } else if(data?.includes('3')){
       return 'bg-[#D9ead3]'
     } else {
-      return 'bg-[#d9d9d9]'
+      return 'bg-gray-200'
 
     }
   }

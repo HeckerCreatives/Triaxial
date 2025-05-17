@@ -195,7 +195,7 @@ export default function Yourworkload() {
       (wellnessDate) => formatDate(wellnessDate.requestdate) === date
     );
 
-    if(!isWithinAnyLeaveDate){
+    if(!data.includes('Leave')){
       if(data.includes('1')){
         colorData.push('bg-red-500')
       } else
@@ -302,6 +302,10 @@ export default function Yourworkload() {
     if(isWithinAnyLeaveDate){
       colorData.push('bg-violet-300')
     }
+
+      if(isWellnessDate){
+        colorData.push('bg-fuchsia-400')
+      }
    
 
 
@@ -590,11 +594,20 @@ export default function Yourworkload() {
 
                     // Calculate total hours for this date
                     const totalHoursForDate = list.reduce((total, graphItem) => {
-                      return total + graphItem.members.reduce((memberTotal, member) => {
-                        const memberDate = member.dates?.find((date) => formatDate(date.date) === formattedDate);
-                        return memberTotal + (memberDate?.hours || 0);
-                      }, 0);
+                    return total + graphItem.members.reduce((memberTotal, member) => {
+                      // Check if this date is within any of the member's leave periods
+                      const isOnLeave = member.leaveDates?.some(leave =>
+                        isDateInRange(formattedDate, leave.leavestart, leave.leaveend)
+                      );
+
+                      // If the member is on leave for this date, skip adding hours
+                      if (isOnLeave) return memberTotal;
+
+                      const memberDate = member.dates?.find((date) => formatDate(date.date) === formattedDate);
+                      return memberTotal + (memberDate?.hours || 0);
                     }, 0);
+                  }, 0);
+
 
                     // Compute the total hours for every 5 dates
                     const totalHoursForWeek = dates
@@ -627,77 +640,71 @@ export default function Yourworkload() {
                 </tr>
               </thead>
 
-                {/* request */}
-                <tbody>
-                                                    {memberslist.map((member, memberIndex) => (
-                                                        <tr
-                                                          key={`0-${memberIndex}`}
-                                                          className="bg-primary text-[.6rem] py-2 h-[30px] border-[1px] border-zinc-600"
-                                                        >
-                                                          {dates.map((dateObj, index) => {
-                                                          //  const memberDate = member.dates?.find(
-                                                          //    (date) => formatDate(date.date) === formatDate(dateObj)
-                                                          //  );
-
-                                                          const memberDate = member.dates?.find((date) => formatDate(date.date) === formatDate(dateObj));
-
-                            
-                                                            const totalHoursForWeek = dates
-                                                              .slice(index - (index % 5), index + 1)
-                                                              .reduce((total, currentDate) => {
-                                                                const memberDateForCurrent = member.dates?.find(
-                                                                  (date) => formatDate(date.date) === formatDate(currentDate)
-                                                                );
-                                                                return total + (memberDateForCurrent?.hours || 0);
-                                                              }, 0);
-                            
-                                                            return (
-                                                              <React.Fragment key={index}>
-                                                                <td className="relative text-center overflow-hidden bg-white border-[1px]">
-                                                                  <div className="w-full h-[30px] absolute flex top-0">
-                                                                    {statusRequest(
-                                                                      // memberDate?.status || [],
-                                                                      [],
-                                                                      dateObj,
-                                                                      // memberDate?.hours || 0,
-                                                                      0,
-                                                                      member.eventDates?.[0]?.startdate || '',
-                                                                      member.eventDates?.[0]?.enddate || '',
-                                                                      member.eventDates || [],
-                                                                      member.leaveDates || [],
-                                                                      member.wellnessDates || [],
-                                                                      member.wfhDates || []
-                                                                    ).map((item, idx) => (
-                                                                      <div key={idx} className={`w-full h-[30px] ${item}`} />
-                                                                    ))}
-                                                                  </div>
-                            
-                                                                  <p className="relative text-black font-bold text-[.5rem] z-30">
-                                                                    {/* {memberDate ? memberDate.hours : '-'} */}
-                                                                    {
-                                                                      member.leaveDates?.some(leave =>
-                                                                        isDateInRange(formatDate(dateObj), leave.leavestart, leave.leaveend)
-                                                                      )
-                                                                        ?  (memberDate?.hours ?? '-') 
-                                                                        :'-' 
-                                                                    }
-                                                                    
-                                                                  </p>
-                                                                </td>
-                            
-                                                                {(index + 1) % 5 === 0 && (
-                                                                  <th className="font-normal text-[.5rem] px-1 border-[1px] border-zinc-700">
-                                                                    {/* {totalHoursForWeek.toLocaleString()} */}
-                                                                  </th>
-                                                                )}
-                                                              </React.Fragment>
-                                                            );
-                                                          })}
-                                                        </tr>
-                                                      ))}
-                            
-                                                     
-              </tbody>
+              {/* request */}
+                                     <tbody>
+                                     {memberslist.map((member, memberIndex) => (
+                                         <tr
+                                           key={`0-${memberIndex}`}
+                                           className="bg-primary text-[.6rem] py-2 h-[30px] border-[1px] border-zinc-600"
+                                         >
+                                           {dates.map((dateObj, index) => {
+                                             const memberDate = member.dates?.find(
+                                               (date) => formatDate(date.date) === formatDate(dateObj)
+                                             );
+             
+                                             const totalHoursForWeek = dates
+                                               .slice(index - (index % 5), index + 1)
+                                               .reduce((total, currentDate) => {
+                                                 const memberDateForCurrent = member.dates?.find(
+                                                   (date) => formatDate(date.date) === formatDate(currentDate)
+                                                 );
+                                                 return total + (memberDateForCurrent?.hours || 0);
+                                               }, 0);
+             
+                                             return (
+                                               <React.Fragment key={index}>
+                                                 <td className="relative text-center overflow-hidden bg-white border-[1px]">
+                                                   <div className="w-full h-[30px] absolute flex top-0">
+                                                     {statusRequest(
+                                                       memberDate?.status || [],
+                                                       dateObj,
+                                                       memberDate?.hours || 0,
+                                                       member.eventDates?.[0]?.startdate || '',
+                                                       member.eventDates?.[0]?.enddate || '',
+                                                       member.eventDates || [],
+                                                       member.leaveDates || [],
+                                                       member.wellnessDates || [],
+                                                       member.wfhDates || []
+                                                     ).map((item, idx) => (
+                                                       <div key={idx} className={`w-full h-[30px] ${item}`} />
+                                                     ))}
+                                                   </div>
+             
+                                                   <p className="relative text-black font-bold text-[.5rem] z-30">
+                                                     {/* {memberDate ? memberDate.hours : '-'} */}
+                                                      {
+                                                         member.leaveDates?.some(leave =>
+                                                           isDateInRange(formatDate(dateObj), leave.leavestart, leave.leaveend)
+                                                         )
+                                                           ?  (memberDate?.hours ?? '-') 
+                                                           :'-' 
+                                                       }
+                                                   </p>
+                                                 </td>
+             
+                                                 {(index + 1) % 5 === 0 && (
+                                                   <th className="font-normal text-[.5rem] px-1 border-[1px] border-zinc-700">
+                                                     {/* {totalHoursForWeek.toLocaleString()} */}
+                                                   </th>
+                                                 )}
+                                               </React.Fragment>
+                                             );
+                                           })}
+                                         </tr>
+                                       ))}
+             
+                                      
+                                                  </tbody>
 
               <tbody>
               {list.map((graphItem, graphIndex) =>
@@ -719,13 +726,6 @@ export default function Yourworkload() {
                         .slice(index - (index % 5), index + 1) // Get up to the last 5 dates
                         .reduce((total, currentDate) => {
                           const formattedCurrentDate = formatDate(currentDate); // Ensure date is in YYYY-MM-DD
-
-                          // Check if this date falls within any approved leave
-                          const isOnLeave = member.leaveDates?.some(leave =>
-                            isDateInRange(formattedCurrentDate, leave.leavestart, leave.leaveend)
-                          );
-
-                          if (isOnLeave) return total;
 
                           const memberDateForCurrent = member.dates?.find(
                             (date) => formatDate(date.date) === formattedCurrentDate
@@ -771,14 +771,14 @@ export default function Yourworkload() {
                               </div>
                             
                               <p className="relative text-black font-bold text-[.5rem] z-30">
-                                 {
+                                 {/* {
                                     member.leaveDates?.some(leave =>
                                       isDateInRange(formatDate(dateObj), leave.leavestart, leave.leaveend)
                                     )
                                       ? '-' 
                                       : (memberDate?.hours ?? '-') 
-                                  } 
-                                  {/* {(memberDate?.hours ?? '-')} */}
+                                  }  */}
+                                  {(memberDate?.hours ?? '-')}
                                 </p>
                             </td>
 
@@ -801,7 +801,9 @@ export default function Yourworkload() {
             </table>
           </div>
 
-        
+          
+
+         
           
           </>
         ) : (

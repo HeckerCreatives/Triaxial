@@ -157,7 +157,7 @@ export default function Yourworkload() {
   const id = params.get('teamid')
   const scrollId= params.get('jobno')
   const refresh = params.get('state')
-  const [addStatus, setAddstatus] = useState([])
+  const [addStatus, setAddstatus] = useState<string[]>([])
   const [wdStatus, setWdstatus] = useState(false)
   const [event, setEvent] = useState(false)
   const [leave, setLeave] = useState(false)
@@ -254,6 +254,20 @@ export default function Yourworkload() {
     }
     getList()
   }, [ id])
+
+   const getIndividualList = async () => {
+      if (id !== '' || undefined || null) {
+        try {
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/getjobcomponentindividualrequest?teamid=${id}`, {
+            withCredentials: true
+          })
+          setListrequest(response.data.data.teams)
+          setListrequestdates(response.data.data.alldates)
+        } catch (error) {
+          console.error('Error fetching data', error)
+        }
+      }
+    }
 
   const statusColorRequest = (
     date: string, 
@@ -379,6 +393,7 @@ export default function Yourworkload() {
         getList()
         setDialog(false)
         setSelectedRows([])
+        getIndividualList()
       }
       } catch (error) {
         if (axios.isAxiosError(error)) {
@@ -423,7 +438,8 @@ export default function Yourworkload() {
         employeeid: employeeid,
         date: date,
         status: [],
-        hours: null
+        hours: 0,
+        role: role
       }, {
         withCredentials: true,
         headers: {
@@ -442,6 +458,8 @@ export default function Yourworkload() {
       getList()
       setDialog(false)
       setSelectedRows([])
+        getIndividualList()
+
     }
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -624,7 +642,7 @@ export default function Yourworkload() {
   );;
 
 
-  if(!isWithinAnyLeaveDate){
+  if(!data.includes('Leave')){
     if(data.includes('1')){
       colorData.push('bg-red-500')
     } else
@@ -840,7 +858,7 @@ export default function Yourworkload() {
   //multi form
   const [forms, setForms] = useState<FormData[]>([
     {
-      startdate: '',
+      startdate: new Date().toISOString(),
       enddate:'',
       employeeid: employeeid,
       hours: 0,
@@ -884,31 +902,42 @@ export default function Yourworkload() {
     setForms(newForms);
   };
 
-  const updateMultipleWorkload = async () => {
-  
-    try {
-      const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/editmultiplestatushours`,{
-        jobcomponentid:  projectid,
+ const updateMultipleWorkload = async () => {
+  const hasEmptyStatus = forms.some(form => form.status.length === 0);
+  if (hasEmptyStatus) {
+    toast.error("Status is required for all workload entries.");
+    return;
+  }
+
+  try {
+    const request = axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/editmultiplestatushours`,
+      {
+        jobcomponentid: projectid,
         employeeid: employeeid,
-        updates: forms
-      }, {
+        updates: forms,
+      role: role
+      },
+      {
         withCredentials: true,
         headers: {
           'Content-Type': 'application/json'
-          }
-      })
+        }
+      }
+    );
 
-      const response = await toast.promise(request, {
-        loading: 'Updating workload....',
-        success: `Successfully updated`,
-        error: 'Error while updating the workload',
+    const response = await toast.promise(request, {
+      loading: 'Updating workload....',
+      success: `Successfully updated`,
+      error: 'Error while updating the workload',
     });
 
+    if (response.data.message === 'success') {
+      getList();
+      setDialog(false);
+      setSelectedRows([]);
+        getIndividualList()
 
-    if(response.data.message === 'success'){
-      getList()
-      setDialog(false)
-      setSelectedRows([])
       setForms([
         {
           startdate: '',
@@ -920,35 +949,26 @@ export default function Yourworkload() {
         },
       ]);
     }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError<{ message: string, data: string }>;
-        if (axiosError.response && axiosError.response.status === 401) {
-            toast.error(`${axiosError.response.data.data}`) 
-            router.push('/')    
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const axiosError = error as AxiosError<{ message: string, data: string }>;
+
+      if (axiosError.response) {
+        const status = axiosError.response.status;
+        const errorMessage = axiosError.response.data.data;
+
+        if ([400, 401, 402, 403, 404].includes(status)) {
+          toast.error(errorMessage);
         }
 
-        if (axiosError.response && axiosError.response.status === 400) {
-            toast.error(`${axiosError.response.data.data}`)     
-               
+        if (status === 401) {
+          router.push('/');
         }
-
-        if (axiosError.response && axiosError.response.status === 402) {
-            toast.error(`${axiosError.response.data.data}`)          
-                   
-        }
-
-        if (axiosError.response && axiosError.response.status === 403) {
-            toast.error(`${axiosError.response.data.data}`)              
-           
-        }
-
-        if (axiosError.response && axiosError.response.status === 404) {
-            toast.error(`${axiosError.response.data.data}`)             
-        }
-      } 
+      }
     }
   }
+};
+
 
   const longestAlldates = list.reduce((max, current) => {
     return current.allDates.length > max.allDates.length ? current : max;
@@ -982,7 +1002,7 @@ export default function Yourworkload() {
    <div className=' w-full h-full flex flex-col bg-secondary p-4 text-zinc-100'>
     <div className=' flex flex-col bg-primary mb-2 p-4'>
         <div className=' w-full flex gap-4 items-end justify-end'>
-           <div className=' relative z-[999999999] text-[.6rem] flex items-center gap-2 '>
+           <div className=' relative z-[99] text-[.6rem] flex items-center gap-2 '>
                   <p>Filter by dates</p>
                   <DatePicker
                      selected={dateFilter}
@@ -1000,7 +1020,7 @@ export default function Yourworkload() {
           <input value={search} onChange={(e) => setSearch(e.target.value)} type="text" placeholder='Search project' className=' p-2 text-black bg-white rounded-sm text-[.6rem]' />
         </div>
 
-        <div className=' w-full flex items-center justify-between gap-6 h-auto bg-primary text-xs'>
+        <div className=' w-full flex items-center justify-between gap-6 h-auto bg-primary text-xs hide-scrollbar'>
 
           <div className=' flex gap-12'>
 
@@ -1010,7 +1030,7 @@ export default function Yourworkload() {
 
               <p className=' text-xs mt-2'>Project Component:</p>
               <div className='flex items-center gap-2 bg-primary rounded-sm text-xs mt-2'>
-                <Createprojectcomponent>
+                <Createprojectcomponent teamid={id || ''}>
                   <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
                     <button className={`text-xs p-1 bg-red-600  rounded-sm`}><Plus size={20}/></button>
                     <p>Create</p>
@@ -1111,9 +1131,9 @@ export default function Yourworkload() {
         <>
         {list.length === 0 ? (
 
-          <div className=''>
+          <div className='hide-scrollbar'>
                               <div
-                              className=' h-full w-full flex flex-col overflow-x-hidden'>
+                              className=' h-full w-full flex flex-col overflow-x-hidden hide-scrollbar'>
                   
                                 <div className=' w-fit flex sticky top-0 z-50'>
                   
@@ -1404,11 +1424,13 @@ export default function Yourworkload() {
                                                                   </td>
                   
                                                                   <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
-                                                                    $ {graphItem.estimatedbudget.toLocaleString()}
+                                                                    ${memberIndex === 0 && graphItem.estimatedbudget.toLocaleString()}
+                                                                    {/* $ {graphItem.estimatedbudget.toLocaleString()} */}
                                                                   </td>
                   
                                                                   <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
-                                                                    {graphItem.budgettype !== 'rates' && `${graphItem.invoice.percentage}%`}
+                                                                    {memberIndex === 0 && graphItem.budgettype !== 'rates' && `${graphItem.invoice.percentage}%`}
+                                                                    {/* {graphItem.budgettype !== 'rates' && `${graphItem.invoice.percentage}%`} */}
                                                                   </td>
                                                                   <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
                                                                     
@@ -1433,7 +1455,7 @@ export default function Yourworkload() {
                                                                 
                                                                   <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
                                                                   
-                                                                    <EditMember membername={member.employee.fullname} memberid={member._id} role={member.role} memberlist={listRequest[0].members} userid={member.employee._id} componentid={graphItem.componentid}>
+                                                                    <EditMember membername={member.employee.fullname} memberid={member._id} role={member.role} memberlist={employee} userid={member.employee._id} componentid={graphItem.componentid}>
                                                                       {member.employee.initials}
                                                                     </EditMember>
                                                                   
@@ -1598,18 +1620,18 @@ export default function Yourworkload() {
          
         ) : (
           <div
-          className=' h-[67dvh] w-full flex flex-col overflow-x-hidden'>
+          className=' h-[67dvh] w-full flex flex-col overflow-x-hidden custom-scrollbar'>
 
             <div className=' w-fit flex sticky top-0 z-50'>
 
               <div className=' w-fit flex flex-col sticky'>
                 <table className="table-auto w-auto border-collapse">
                   <thead className="h-[60px] text-nowrap bg-primary">
-                    <tr className="text-[0.5rem] text-zinc-100 font-normal text-left border-collapse">
+                    <tr className="text-[0.6rem] text-white font-normal text-left border-collapse">
                       <th className="text-left font-normal min-w-[30px] whitespace-normal border-[1px] border-zinc-600 px-2">
                         Action
                       </th>
-                      <th className="text-left font-normal min-w-[70px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                      <th className="text-left font-normal min-w-[80px] whitespace-normal border-[1px] border-zinc-600 px-2">
                         Job Number
                       </th>
                       <th className="text-left font-normal min-w-[70px] whitespace-normal border-[1px] border-zinc-600 px-2">
@@ -1633,7 +1655,7 @@ export default function Yourworkload() {
                       <th className="text-left font-normal min-w-[100px] whitespace-normal border-[1px] border-zinc-600 px-2">
                         Notes
                       </th>
-                      <th className="text-left font-normal min-w-[62px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                      <th className="text-left font-normal min-w-[65px] whitespace-normal border-[1px] border-zinc-600 px-2">
                         Role
                       </th>
                   
@@ -1649,7 +1671,7 @@ export default function Yourworkload() {
               </div>
                
 
-                <div className='w-full flex flex-col max-w-[1920px] overflow-x-auto cursor-pointer'
+                <div className='w-full flex flex-col max-w-[1920px] overflow-x-auto cursor-pointer custom-scrollbar'
                  ref={containerRef1}
                  onMouseDown={(e) => handleMouseDown(e, containerRef2)}
                  onMouseLeave={handleMouseLeaveOrUp}
@@ -1736,11 +1758,11 @@ export default function Yourworkload() {
                   <thead className="h-[60px] text-nowrap"
                   style={{ visibility: 'collapse' }}
                   >
-                    <tr className="text-[0.5rem] text-zinc-100 font-normal text-left border-collapse">
+                    <tr className="text-[0.6rem] text-white font-normal text-left border-collapse">
                       <th className="text-left font-normal min-w-[30px] whitespace-normal border-[1px] border-zinc-600 px-2">
                         Action
                       </th>
-                      <th className="text-left font-normal min-w-[70px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                      <th className="text-left font-normal min-w-[80px] whitespace-normal border-[1px] border-zinc-600 px-2">
                         Job Number
                       </th>
                       <th className="text-left font-normal min-w-[70px] whitespace-normal border-[1px] border-zinc-600 px-2">
@@ -1764,7 +1786,7 @@ export default function Yourworkload() {
                       <th className="text-left font-normal min-w-[100px] whitespace-normal border-[1px] border-zinc-600 px-2">
                         Notes
                       </th>
-                      <th className="text-left font-normal min-w-[62px] whitespace-normal border-[1px] border-zinc-600 px-2">
+                      <th className="text-left font-normal min-w-[65px] whitespace-normal border-[1px] border-zinc-600 px-2">
                         Role
                       </th>
                   
@@ -1780,7 +1802,7 @@ export default function Yourworkload() {
                   {/* request */}
                   <tbody>
                     {listRequest[0]?.members.map((item, graphIndex) =>
-                        <tr key={`${graphIndex}`} className="bg-primary text-[.5rem] py-2 h-[30px] border-[1px] border-zinc-600">
+                        <tr key={`${graphIndex}`} className="bg-primary text-[.55rem] py-2 h-[30px] border-[1px] border-zinc-600">
                           <td className=' border-[1px] border-zinc-600 px-1'></td>
                           <td className=' border-[1px] border-zinc-600 px-1'>TX10010.00-</td>
                           <td className=' border-[1px] border-zinc-600 px-1'>Triaxial Consulting</td>
@@ -1791,7 +1813,7 @@ export default function Yourworkload() {
                           <td className=' border-[1px] border-zinc-600 px-1'>AL, SL & Other Leaves</td>
                           <td className=' border-[1px] border-zinc-600 px-1'></td>
                           <td className=' border-[1px] border-zinc-600 px-1'></td>
-                          <td onClick={() => router.push(`/superadmin/individualworkload?employeeid=${item.id}&name=${item.name}&teamname=${list[0].teamname}`)} className=" border-[1px] border-zinc-600 px-2 text-start cursor-pointer underline text-blue-400">{item.initial}</td>
+                          <td onClick={() => router.push(`/finance/individualworkload?employeeid=${item.id}&name=${item.name}&teamname=${list[0].teamname}`)} className=" border-[1px] border-zinc-600 px-2 text-start cursor-pointer underline text-blue-400">{item.initial}</td>
                           <td></td>
 
                         </tr>
@@ -1804,27 +1826,29 @@ export default function Yourworkload() {
                                         graphItem.members
                                         .sort((a, b) => {
                                           const roleOrder = ["Engr.", "Engr. Revr.", "Drft.", "Drft. Revr."];
-                                    
-                                          const indexA = roleOrder.indexOf(a.role);
-                                          const indexB = roleOrder.indexOf(b.role);
-                                    
+
+                                          const clean = (role: string) => role.trim().toLowerCase();
+
+                                          const indexA = roleOrder.findIndex(r => clean(r) === clean(a.role));
+                                          const indexB = roleOrder.findIndex(r => clean(r) === clean(b.role));
+
                                           return (indexA === -1 ? 999 : indexA) - (indexB === -1 ? 999 : indexB);
                                         })
                                         .map((member, memberIndex) => {
                                           // Sum all hours for the member
-                                          const totalHours = member.dates?.reduce((sum, date) => {
-                                            const isOnLeave = member.leaveDates?.some(leave =>
-                                              isDateInRange(date.date, leave.leavestart, leave.leaveend)
-                                            );
-                                          
-                                            return isOnLeave ? sum : sum + date.hours;
+                                           const totalHours = member.dates?.reduce((sum, date) => {
+                                            // Skip hours if the status array includes 'Leave'
+                                            if (date.status?.includes('Leave')) {
+                                              return sum;
+                                            }
+                                            return sum + date.hours;
                                           }, 0) || 0;
                     
                                           return (
                                             <tr 
                                               key={`${graphItem._id}-${memberIndex}`}
                                               data-invoice-id={graphItem._id} 
-                                              className={`text-left text-[.5rem] py-2 h-[30px] border-[1px] border-zinc-600 border-collapse ${graphItem.isVariation ? 'text-red-600 font-black' : 'text-black'} ${clientColor(graphItem.clientname.priority)}`}
+                                              className={`text-left text-[.55rem] py-2 h-[30px] border-[1px] border-zinc-600 border-collapse ${graphItem.isVariation ? 'text-red-600' : 'text-black'} ${clientColor(graphItem.clientname.priority)}`}
                                             >
                                               <td className="text-center text-white h-[30px] flex items-center justify-center gap-1">
                                                 {memberIndex === 0 && (
@@ -1851,7 +1875,7 @@ export default function Yourworkload() {
                                               <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
                                                 <TooltipProvider delayDuration={.1}>
                                                   <Tooltip>
-                                                    <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.jobno, 8)}</TooltipTrigger>
+                                                    <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.jobno, 20)}</TooltipTrigger>
                                                     <TooltipContent className=' text-[.6rem]'>
                                                       <p>{memberIndex === 0 && graphItem.jobno}</p>
                                                     </TooltipContent>
@@ -1886,13 +1910,15 @@ export default function Yourworkload() {
                                                 {memberIndex === 0 && graphItem.jobmanager.initials}
                                               </td>
 
-                                              <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
-                                                $ {graphItem.estimatedbudget.toLocaleString()}
-                                              </td>
+                                               <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                                                  {memberIndex === 0 && `$ ${graphItem.estimatedbudget.toLocaleString()}`}
+                                                  {/* $ {graphItem.estimatedbudget.toLocaleString()} */}
+                                                </td>
 
-                                              <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
-                                                {graphItem.budgettype !== 'rates' && `${graphItem.invoice.percentage}%`}
-                                              </td>
+                                                <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                                                  {memberIndex === 0 && graphItem.budgettype !== 'rates' && `${graphItem.invoice.percentage}%`}
+                                                  {/* {graphItem.budgettype !== 'rates' && `${graphItem.invoice.percentage}%`} */}
+                                                </td>
                                               <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
                                                 
                                                 <TooltipProvider delayDuration={.1}>
@@ -1906,17 +1932,19 @@ export default function Yourworkload() {
                                               </td>
                                               <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
                                                 <Editnotes note={member.notes} role={member.role} userid={member._id} componentid={graphItem.componentid}>
-                                                  {member.notes ? <p className="text-[.5rem]">{truncateText(member.notes, 18)}</p> : <p className="text-[.5rem] h-full w-full text-center">No notes.</p>}
+                                                  <td>
+                                                    {member.notes ? <p className="text-[.55rem]">{truncateText(member.notes, 18)}</p> : <p className="text-[.5rem] h-full w-full text-center"></p>}
+                                                  </td>
                                                 </Editnotes>
+                                                </td>
                                               
-                                              </td>
                                               <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2 text-[.5rem]">
                                                 {member.role}
                                               </td>
                                              
                                               <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
                                                
-                                                <EditMember membername={member.employee.fullname} memberid={member._id} role={member.role} memberlist={listRequest[0].members} userid={member.employee._id} componentid={graphItem.componentid}>
+                                                <EditMember membername={member.employee.fullname} memberid={member._id} role={member.role} memberlist={employee} userid={member.employee._id} componentid={graphItem.componentid}>
                                                   {member.employee.initials}
                                                 </EditMember>
                                                
@@ -2043,12 +2071,12 @@ export default function Yourworkload() {
                                       <div key={index} className={`w-full h-full ${item}`}></div>
                                         ))}
                                       </div>
-                                      <p className="relative text-black font-bold text-[.5rem] z-30">
+                                      <p className="relative text-black font-bold text-[.45rem] z-30">
                                         {
                                           member.leave?.some(leave =>
                                             isDateInRange(formatDate(dateObj), leave.leavestart, leave.leaveend)
                                           )
-                                            ?  (memberDate?.totalhoursofjobcomponents ?? '-') 
+                                            ?  (memberDate?.totalhoursofjobcomponents.toLocaleString() ?? '-') 
                                             :'-' 
                                         }
                                       </p>
@@ -2076,7 +2104,16 @@ export default function Yourworkload() {
                 {/* prject */}
                 <tbody className=' translate-y-[.5px] '>
                       {list.map((graphItem, graphIndex) =>
-                        graphItem.members.map((member, memberIndex) => {
+                        graphItem.members.sort((a, b) => {
+                                          const roleOrder = ["Engr.", "Engr. Revr.", "Drft.", "Drft. Revr."];
+
+                                          const clean = (role: string) => role.trim().toLowerCase();
+
+                                          const indexA = roleOrder.findIndex(r => clean(r) === clean(a.role));
+                                          const indexB = roleOrder.findIndex(r => clean(r) === clean(b.role));
+
+                                          return (indexA === -1 ? 999 : indexA) - (indexB === -1 ? 999 : indexB);
+                                        }).map((member, memberIndex) => {
                           // Precompute weekly totals
                           const totalHoursForWeek: number[] = [];
                           let currentWeekTotal = 0;
@@ -2084,28 +2121,44 @@ export default function Yourworkload() {
     
     
     
-                          longestAlldates.allDates.forEach((dateObj, index) => {
-                            const formattedDate = formatDate(dateObj);
-                          
-                            // Check if the date is on leave
-                            const isOnLeave = member.leaveDates?.some(leave =>
-                              isDateInRange(formattedDate, leave.leavestart, leave.leaveend)
-                            );
-                          
-                            if (!isOnLeave) {
-                              const memberDate = member.dates?.find(
-                                (date) => formatDate(date.date) === formattedDate
-                              );
-                              currentWeekTotal += memberDate?.hours || 0;
-                            }
-                          
-                            const isLastDate = index === longestAlldates.allDates.length - 1;
-                            if (new Date(dateObj).getDay() === 5 || isLastDate) {
-                              totalHoursForWeek.push(currentWeekTotal);
+                       longestAlldates.allDates.forEach((dateObj, index) => {
+                        const formattedDate = formatDate(dateObj);
+
+                        const isOnLeave = member.leaveDates?.some(leave =>
+                          isDateInRange(formattedDate, leave.leavestart, leave.leaveend)
+                        );
+
+                        const memberDate = member.dates?.find(
+                          (date) => formatDate(date.date) === formattedDate
+                        );
+
+                        // Skip computation if memberDate.status includes 'Leave'
+                        if (memberDate?.status?.includes('Leave')) {
+                          return; // Skip this date
+                        }
+
+                        let hoursToAdd = 0;
+
+                        if (isOnLeave) {
+                          if (typeof memberDate?.workinghoursduringleave !== 'undefined') {
+                            hoursToAdd = memberDate.workinghoursduringleave || 0;
+                          } else {
+                            hoursToAdd = memberDate?.hours || 0;
+                          }
+                        } else {
+                          hoursToAdd = memberDate?.hours || 0;
+                        }
+
+                        currentWeekTotal += hoursToAdd;
+
+                        const isLastDate = index === longestAlldates.allDates.length - 1;
+                        if (new Date(dateObj).getDay() === 5 || isLastDate) {
+                          totalHoursForWeek.push(currentWeekTotal);
                               currentWeekTotal = 0;
                               weekCounter++;
                             }
                           });
+
                           
     
                           return (
@@ -2196,14 +2249,27 @@ export default function Yourworkload() {
                                         {/* {memberDate ? memberDate.hours : "-"} */}
                                         {/* {memberDate ? memberDate.hours : "-"} */}
 
-                                        {
-                                        member.leaveDates?.some(leave =>
-                                          isDateInRange(formatDate(dateObj), leave.leavestart, leave.leaveend)
-                                        )
-                                          ? '-' 
-                                          : (memberDate?.hours ?? '-') 
-                                      }
+                                        {/* {
+                                          member.leaveDates?.some(leave =>
+                                            isDateInRange(formatDate(dateObj), leave.leavestart, leave.leaveend)
+                                          )
+                                            ? (
+                                                typeof memberDate?.workinghoursduringleave !== 'undefined'
+                                                  ? (memberDate.workinghoursduringleave > 0
+                                                      ? memberDate.workinghoursduringleave.toLocaleString()
+                                                      : '-')
+                                                  : (memberDate?.hours && memberDate.hours > 0
+                                                      ? memberDate.hours.toLocaleString()
+                                                      : '-')
+                                              )
+                                            : (
+                                                memberDate?.hours && memberDate.hours > 0
+                                                  ? memberDate.hours.toLocaleString()
+                                                  : '-'
+                                              )
+                                        } */}
 
+                                        {memberDate?.status?.includes('Leave') ? '-' : memberDate?.hours.toLocaleString()}
                                       </p>
                                     </td>
     
@@ -2306,20 +2372,19 @@ export default function Yourworkload() {
                                              
              
                                                  <DatePicker
-                                                   selected={form.startdate ? new Date(form.startdate) : null} // Ensure a valid Date object
-                                                   onChange={(date) =>
-                                                     handleChange(index, "startdate", date ? date.toISOString() : "")
-                                                   }
-                                                   startDate={new Date(startReq)}
-                                                   maxDate={new Date(endReq)}
-                                                   selectsEnd 
-                                                   minDate={new Date(startReq)} 
-                                                   dateFormat="dd/MM/yyyy"
-                                                   placeholderText="DD/MM/YYYY"
-                                                   className="bg-primary text-xs p-2 w-fit relative"
-                                                     onKeyDown={(e) => e.preventDefault()}
-             
-                                                 />
+                                                    selected={form.startdate ? new Date(form.startdate) : new Date()} // Use today's date if no startdate
+                                                    onChange={(date) =>
+                                                      handleChange(index, "startdate", date ? date.toISOString() : "")
+                                                    }
+                                                    startDate={new Date(startReq)}
+                                                    maxDate={new Date(endReq)}
+                                                    selectsEnd
+                                                    minDate={new Date(startReq)}
+                                                    dateFormat="dd/MM/yyyy"
+                                                    placeholderText="DD/MM/YYYY"
+                                                    className="bg-primary text-xs p-2 w-fit relative"
+                                                    onKeyDown={(e) => e.preventDefault()}
+                                                  />
              
                                                <label className="block text-sm font-medium">End Date</label>
              

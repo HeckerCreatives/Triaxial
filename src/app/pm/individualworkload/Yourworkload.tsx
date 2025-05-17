@@ -62,11 +62,29 @@ type WFHDates = {
 
 type WellnessDates = string
 
+interface EmployeeObject {
+  _id: string;
+  fullname: string;
+  initials: string;
+}
+
 
 
 type Members = {
     dates: Dates[]
-employee: {_id: string,fullname: string, initials: string}
+employee: string
+eventDates: Request[]
+leaveDates: Leavedates[]
+notes: string
+role: string
+wellnessDates: WellnessDates[]
+wfhDates: WFHDates[]
+_id: string
+ }
+
+ type MembersList = {
+    dates: Dates[]
+employee: EmployeeObject 
 eventDates: Request[]
 leaveDates: Leavedates[]
 notes: string
@@ -79,7 +97,7 @@ _id: string
 
 type Workload = {
     _id: string
-    jobmanager: {employeeid: string, fullname: string}
+    jobmanager: {employeeid: string, fullname: string,initials: string}
     componentid:  string
     clientname: string
     clientid: string
@@ -99,7 +117,7 @@ export default function Indiviualworkloads() {
   const [list, setList] = useState<Workload[]>([])
   const [dates, setDates] = useState<string[]>([])
   const [dateFilter, setDateFilter] = useState<Date | null>(null)
-  const [memberslist, setMemberslist] = useState<Members[]>([])
+  const [memberslist, setMemberslist] = useState<MembersList[]>([])
   
   
 
@@ -146,7 +164,7 @@ export default function Indiviualworkloads() {
     //  const isWFH = wfhDates.some((wfh) => String(wfh).includes(date));
 
 
-    if(!isWithinAnyLeaveDate){
+    if(!data.includes('Leave')){
       if(data.includes('1')){
         colorData.push('bg-red-500')
       } else
@@ -290,7 +308,7 @@ export default function Indiviualworkloads() {
          
              <Legends/>
        
-             <div className=' text-[.6rem] flex items-center gap-2 '>
+             <div className=' relative z-[99999] text-[.6rem] flex items-center gap-2 '>
                <p>Filter by dates</p>
                {/* <input value={dateFilter} onChange={(e) => setDateFilter(e.target.value)}  min="1900-01-01" max="2099-12-31" type="date" className=' text-white bg-secondary p-2 rounded-md' /> */}
                <DatePicker
@@ -318,7 +336,7 @@ export default function Indiviualworkloads() {
        
                    <tr className=' text-[0.5rem] text-zinc-100 font-normal border-collapse'>
                      <th className=' text-left font-normal min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Team</th>
-                     <th className=' text-left font-normal min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Job No.</th>
+                     <th className=' text-left font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Job No.</th>
                      <th className=' text-left font-normal min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Client</th>
                      <th className=' text-left font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Project Name</th>
                      <th className=' text-left font-normal min-w-[60px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Job Mgr.</th>
@@ -370,7 +388,7 @@ export default function Indiviualworkloads() {
                          
                          <TooltipProvider delayDuration={.1}>
                            <Tooltip>
-                             <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.jobno, 5)}</TooltipTrigger>
+                             <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.jobno, 25)}</TooltipTrigger>
                              <TooltipContent>
                                <p className=' text-[.6rem]'>{memberIndex === 0 && graphItem.jobno}</p>
                              </TooltipContent>
@@ -400,12 +418,12 @@ export default function Indiviualworkloads() {
                          </TooltipProvider>
        
                          </td>
-                         <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && getInitials(graphItem.jobmanager.fullname)}</td>
+                         <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">{memberIndex === 0 && graphItem.jobmanager.initials}</td>
                          <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">
        
                          <TooltipProvider delayDuration={.1}>
                            <Tooltip>
-                             <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.jobcomponent, 6)}</TooltipTrigger>
+                             <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.jobcomponent, 15)}</TooltipTrigger>
                              <TooltipContent>
                                <p className=' text-[.6rem]'>{memberIndex === 0 && graphItem.jobcomponent}</p>
                              </TooltipContent>
@@ -441,7 +459,12 @@ export default function Indiviualworkloads() {
                        <td className="text-left text-[.5rem whitespace-normal break-all border-[1px] border-zinc-600 px-2">{member.role}</td>
        
        
-                         <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">{graphItem.teammembers.join(", ")}</td>
+                         <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                          {graphItem.teammembers
+                          .filter((item) => item !== memberslist[0]?.employee.initials) 
+                          .join(', ')
+                        }
+                         </td>
        
                      
        
@@ -516,12 +539,16 @@ export default function Indiviualworkloads() {
                            const formattedDate = formatDate(dateObj);
        
                            // Calculate total hours for this date
-                           const totalHoursForDate = list.reduce((total, graphItem) => {
-                             return total + graphItem.members.reduce((memberTotal, member) => {
-                               const memberDate = member.dates?.find((date) => formatDate(date.date) === formattedDate);
-                               return memberTotal + (memberDate?.hours || 0);
-                             }, 0);
-                           }, 0);
+                            const totalHoursForDate = list.reduce((total, graphItem) => {
+                                               return total + graphItem.members.reduce((memberTotal, member) => {
+                                                 const memberDate = member.dates?.find((date) => formatDate(date.date) === formattedDate);
+                                                 return memberTotal + (memberDate?.hours || 0);
+                                               }, 0);
+                                             }, 0);
+
+
+
+                         
        
                            // Compute the total hours for every 5 dates
                            const totalHoursForWeek = dates
@@ -629,27 +656,20 @@ export default function Indiviualworkloads() {
                                const memberDate = member.dates?.find((date) => formatDate(date.date) === formatDate(dateObj));
        
                                // Compute the total hours for every 5 dates
-                               const totalHoursForWeek = dates
-                                                              .slice(index - (index % 5), index + 1) // Previous 5 weekdays or less
-                                                              .reduce((total, currentDate) => {
-                                                                const formattedCurrent = formatDate(currentDate);
-                              
-                                                                // Check if this date is within an approved leave range
-                                                                const isOnLeave = member.leaveDates?.some(leave => {
-                              
-                                                                  const leaveStart = formatDate(leave.leavestart);
-                                                                  const leaveEnd = formatDate(leave.leaveend);
-                                                                  return formattedCurrent >= leaveStart && formattedCurrent <= leaveEnd;
-                                                                });
-                              
-                                                                if (isOnLeave) return total; // Skip hours for leave days
-                              
-                                                                const memberDateForCurrent = member.dates?.find(date =>
-                                                                  formatDate(date.date) === formattedCurrent
-                                                                );
-                              
-                                                                return total + (memberDateForCurrent?.hours || 0);
-                                                              }, 0);
+                              const totalHoursForWeek = dates
+                                                     .slice(index - (index % 5), index + 1) // Get up to the last 5 dates
+                                                     .reduce((total, currentDate) => {
+                                                       const formattedCurrentDate = formatDate(currentDate); // Ensure date is in YYYY-MM-DD
+                             
+                                                       const memberDateForCurrent = member.dates?.find(
+                                                         (date) => formatDate(date.date) === formattedCurrentDate
+                                                       );
+                             
+                                                       return total + (memberDateForCurrent?.hours || 0);
+                                                     }, 0);
+
+                                                              // Move this above the return/JSX block
+                           
        
                                return (
                                  <React.Fragment key={index}>
@@ -673,14 +693,7 @@ export default function Indiviualworkloads() {
                                      </div>
        
                                      <p className="relative text-black font-bold text-[.5rem] z-30">
-                                       {/* {memberDate ? memberDate.hours : '-'} */}
-                                         {
-                                           member.leaveDates?.some(leave =>
-                                             isDateInRange(formatDate(dateObj), leave.leavestart, leave.leaveend)
-                                           )
-                                             ? '-' 
-                                             : (memberDate?.hours ?? '-') 
-                                         }
+                                       { memberDate?.hours.toLocaleString() || ''}
                                      </p>
                                    </td>
        

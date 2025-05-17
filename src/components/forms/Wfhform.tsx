@@ -157,9 +157,9 @@ export default function Wfhform( prop: Data) {
    },[dialog])
  
    const workingDays = totalWorkingDays() - holidays;
-   const hoursonleave = ((totalWorkingDays() - holidays) * hours) - onLeave
+   const hoursonleave = (((totalWorkingDays() - holidays) * hours) - onLeave).toFixed(2)
    useEffect(() => {
-     setValue('totalhoursonleave', hoursonleave)
+     setValue('totalhoursonleave', Number(hoursonleave))
  }, [workingDays, setValue, hoursonleave, wd]);
 
  const startDateValue = watch("startdate")

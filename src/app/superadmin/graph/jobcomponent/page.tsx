@@ -42,8 +42,9 @@ export default function page() {
   return (
    
       <SuperadminLayout>
-       
-          <div className=' p-6 top-0 left-0 w-full h-[40px] bg-zinc-800'
+
+        <div className=' h-full w-full hide-scrollbar'>
+           <div className=' p-6 top-0 left-0 w-full h-[40px] bg-zinc-800'
           style={{backgroundImage: `url('/dbbg.png')`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat:"no-repeat"}}
           
           >
@@ -52,6 +53,9 @@ export default function page() {
       
      
       <Yourworkload/>
+        </div>
+       
+         
     </SuperadminLayout>
 
     
