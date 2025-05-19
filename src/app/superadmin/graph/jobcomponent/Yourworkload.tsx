@@ -155,6 +155,7 @@ export default function Yourworkload() {
   const [projectid, setProjectid] = useState('')
   const params = useSearchParams()
   const id = params.get('teamid')
+  const jobid = params.get('682ada5577050389a5178073')
   const scrollId= params.get('jobno')
   const refresh = params.get('state')
   const [addStatus, setAddstatus] = useState<string[]>([])
@@ -198,6 +199,9 @@ export default function Yourworkload() {
 
   const containerRef1 = useRef<HTMLDivElement>(null);
   const containerRef2 = useRef<HTMLDivElement>(null);
+  // const rowRefs = useRef<{ [key: string]: HTMLTableRowElement | null }>({});
+  const rowRefs = useRef<{ [key: string]: HTMLTableRowElement | null }>({});
+
 
   const isDownRef = useRef(false);
   const startXRef = useRef(0);
@@ -995,7 +999,30 @@ export default function Yourworkload() {
     return selectedDate.getTime() >= today.getTime();
   };
 
-  console.log(containerRef1, containerRef2)
+
+  useEffect(() => {
+     const timeout = setTimeout(() => {
+      if (scrollId && typeof scrollId === 'string') {
+        const rowElement = rowRefs.current[scrollId];
+        console.log('Attempting scroll', rowElement, scrollId);
+
+        if (rowElement) {
+          rowElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          });
+        }
+
+    
+    }
+     return () => clearTimeout(timeout);
+  }, 5000);
+  
+}, [scrollId]);
+
+
+  console.log('Available rowRefs:', Object.keys(rowRefs.current));
+
 
 
   return (
@@ -1844,6 +1871,8 @@ export default function Yourworkload() {
                                           return (indexA === -1 ? 999 : indexA) - (indexB === -1 ? 999 : indexB);
                                         })
                                         .map((member, memberIndex) => {
+
+                                          
                                           // Sum all hours for the member
                                            const totalHours = member.dates?.reduce((sum, date) => {
                                             // Skip hours if the status array includes 'Leave'
@@ -1856,7 +1885,14 @@ export default function Yourworkload() {
                                           return (
                                             <tr 
                                               key={`${graphItem._id}-${memberIndex}`}
-                                              data-invoice-id={graphItem._id} 
+                                                data-invoice-id={graphItem._id}
+                                               ref={el => {
+                                                  if (memberIndex === 0) {
+                                                    console.log('Setting ref for', graphItem._id, el);
+                                                    rowRefs.current[graphItem._id] = el;
+                                                  }
+                                                }}
+
                                               className={`text-left text-[.55rem] py-2 h-[30px] border-[1px] border-zinc-600 border-collapse ${graphItem.isVariation ? 'text-red-600' : 'text-black'} ${clientColor(graphItem.clientname.priority)}`}
                                             >
                                               <td className="text-center text-white h-[30px] flex items-center justify-center gap-1">
@@ -1876,6 +1912,10 @@ export default function Yourworkload() {
                                                       setNotes4(graphItem.members[3]?.notes || "");
                                                       setIsmanager(graphItem.jobmanager.isManager);
                                                       setIsjobmanager(graphItem.jobmanager.isJobManager);
+
+                                                      setTimeout(() => {
+                                                        rowRefs.current[graphItem._id]?.scrollIntoView({ behavior: "smooth", block: "center" });
+                                                      }, 100); 
                                                     }}
                                                   />
                                                 )}

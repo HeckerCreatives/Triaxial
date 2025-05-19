@@ -32,8 +32,10 @@ type values = {
 
 type InvoiceProjection = {
 componentid: string
+isVariation: boolean
 jobnumber: string
 jobcomponent: string
+teamname: string
 jobmanager: {
     employeeid: string
     fullname: string
@@ -44,7 +46,6 @@ priority: string
 projectname: string
 budgettype: string
 estimatedbudget: number
-teamname: string
 projectedValues: [
     {
         date: string
@@ -389,7 +390,7 @@ const totalsByDate = allDates.map((dateObj) => {
 
               <tr className=' text-[0.6rem] text-zinc-100 font-normal border-collapse'>
                 <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Action</th>
-                <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Job no:</th>
+                <th className=' min-w-[90px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Job no:</th>
                 <th className={`min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2`}>Client</th>
                 <th className=' min-w-[90px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Project Name</th>
                 <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>JM</th>
@@ -399,7 +400,7 @@ const totalsByDate = allDates.map((dateObj) => {
                 <th className=' min-w-[70px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Invoiced $</th>
                 <th className=' min-w-[80px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Remaining $</th>
                 <th className=' min-w-[100px] font-normal border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Sub-cont. costs</th>
-                <th className=' font-normal min-w-[70px] border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Wip</th>
+                <th className=' font-normal min-w-[70px] border-[1px] border-zinc-600 whitespace-normal break-all px-2'>WIP</th>
                 <th className=' font-normal min-w-[100px] border-[1px] border-zinc-600 whitespace-normal break-all px-2'>Catchup Invoice</th>
 
               
@@ -408,67 +409,68 @@ const totalsByDate = allDates.map((dateObj) => {
             <tbody>
             {list.map((graphItem, graphIndex) => {
               return (
-                <tr key={`${graphIndex}`} className={`text-[.6rem] text-black py-2 h-[40px] border-[1px] border-zinc-600 ${clientColor(graphItem.priority)}`}>
-                  <td className="text-center  text-red-600 border-[1px] border-zinc-600 whitespace-normal break-all px-2 ">
-                    <input 
-                     type="checkbox"
-                     checked={selectedId === graphItem.componentid}
-                     onChange={() => {handleSelect(graphItem.componentid), setComponentid(graphItem.componentid)}}
-                    />
-                  </td>
-                  <td className="text-center underline cursor-pointer border-[1px] border-zinc-600 whitespace-normal break-all px-2 ">
-                  <a href={`/pm/graph/jobcomponent?teamid=${id}&jobno=${graphItem.componentid}&teamname=${graphItem.teamname}`} className='  '>
-                   <TooltipProvider delayDuration={.1}>
-                      <Tooltip>
-                        <TooltipTrigger>{truncateText(graphItem.jobnumber, 6)}</TooltipTrigger>
-                        <TooltipContent>
-                          <p className=' text-[.6rem]'>{graphItem.jobnumber}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </a>
+                <tr key={`${graphIndex}`} className={`text-[.6rem] ${graphItem.isVariation ? 'text-red-500' : 'text-black'} py-2 h-[40px] border-[1px] border-zinc-600 ${clientColor(graphItem.priority)}`}>
+                <td className="text-center  text-red-600 border-[1px] border-zinc-600 whitespace-normal break-all px-2 ">
+                  <input 
+                   type="checkbox"
+                   checked={selectedId === graphItem.componentid}
+                   onChange={() => {handleSelect(graphItem.componentid), setComponentid(graphItem.componentid)}}
+                  />
+                </td>
+                <td className="text-center underline cursor-pointer border-[1px] border-zinc-600 whitespace-normal break-all px-2 ">
+                <a href={`/pm/graph/jobcomponent?teamid=${id}&jobno=${graphItem.componentid}&teamname=${graphItem.teamname}`} className=' underline'>
+                 <TooltipProvider delayDuration={.1}>
+                    <Tooltip>
+                      <TooltipTrigger className=' underline'>{truncateText(graphItem.jobnumber, 18)}</TooltipTrigger>
+                      <TooltipContent>
+                        <p className=' text-[.6rem]'>{graphItem.jobnumber}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </a>
 
-                  </td>
-                  <td className={`text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2   ${clientColor(graphItem.priority)}`}>
-                  <TooltipProvider delayDuration={.1}>
-                      <Tooltip>
-                        <TooltipTrigger>{truncateText(graphItem.clientname, 6)}</TooltipTrigger>
-                        <TooltipContent>
-                          <p className=' text-[.6rem]'>{graphItem.clientname}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </td>
-                  <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">
-                  <TooltipProvider delayDuration={.1}>
-                      <Tooltip>
-                        <TooltipTrigger>{truncateText(graphItem.projectname, 8)}</TooltipTrigger>
-                        <TooltipContent>
-                          <p className=' text-[.6rem]'>{graphItem.projectname}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </td>
-                  <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">{graphItem.jobmanager.initials}</td>
-                  <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">
-                  <TooltipProvider delayDuration={.1}>
-                      <Tooltip>
-                        <TooltipTrigger>{truncateText(graphItem.jobcomponent, 8)}</TooltipTrigger>
-                        <TooltipContent>
-                          <p className=' text-[.6rem]'>{graphItem.jobcomponent}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+                </td>
+                <td className={`text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2   ${clientColor(graphItem.priority)}`}>
+                <TooltipProvider delayDuration={.1}>
+                    <Tooltip>
+                      <TooltipTrigger>{truncateText(graphItem.clientname, 6)}</TooltipTrigger>
+                      <TooltipContent>
+                        <p className=' text-[.6rem]'>{graphItem.clientname}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </td>
+                <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">
+                <TooltipProvider delayDuration={.1}>
+                    <Tooltip>
+                      <TooltipTrigger>{truncateText(graphItem.projectname, 8)}</TooltipTrigger>
+                      <TooltipContent>
+                        <p className=' text-[.6rem]'>{graphItem.projectname}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </td>
+                <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">{graphItem.jobmanager.initials}</td>
 
-                  </td>
-                  <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">{graphItem.budgettype === 'rates' ? `Rates` : `$ ${ graphItem.estimatedbudget.toLocaleString()}` }</td>
-                  <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">{graphItem.budgettype === 'rates' ? `` : ` ${ graphItem.invoice.percentage.toLocaleString()}%` }</td>
-                  <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">$ {graphItem.budgettype === 'rates' ? `${ graphItem.rates.invoiced.toLocaleString()}` : `${ graphItem.lumpsum.invoiced.toLocaleString()}` }</td>
-                  <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">{graphItem.budgettype === 'rates' ? `-` : `$ ${ graphItem.lumpsum.remaining.toLocaleString()}`}</td>
-                  <td onClick={() => {setDialog2(graphItem.budgettype === 'lumpsum' && true), setComponentid(graphItem.componentid), setSubAmount(graphItem.lumpsum.subconts)}} className={` border-[1px] border-zinc-600 whitespace-normal break-all px-2 text-center cursor-pointer font-semibold text-red-500 ${graphItem.budgettype === 'lumpsum' && ''}`}> {graphItem.budgettype === 'rates' ? '-' : `$ ${graphItem.lumpsum.subconts.toLocaleString()}`}</td>
-                  <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">$ {graphItem.budgettype === 'rates' ? `${ graphItem.rates.wip.toLocaleString()}` : ` ${ graphItem.lumpsum.wip.toLocaleString()}`}</td>
-                  <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">{graphItem.budgettype === 'rates' ? `-` : `$ ${ graphItem.lumpsum.catchupinv.toLocaleString()}`}</td>
-                </tr>
+                <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">
+                <TooltipProvider delayDuration={.1}>
+                    <Tooltip>
+                      <TooltipTrigger>{truncateText(graphItem.jobcomponent, 8)}</TooltipTrigger>
+                      <TooltipContent>
+                        <p className=' text-[.6rem]'>{graphItem.jobcomponent}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+
+                </td>
+                <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">{graphItem.budgettype === 'rates' ? `Rates` : `$ ${ graphItem.estimatedbudget.toLocaleString()}` }</td>
+                <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">{graphItem.budgettype === 'rates' ? `` : ` ${ graphItem.invoice.percentage.toLocaleString()}%` }</td>
+                <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">$ {graphItem.budgettype === 'rates' ? `${ graphItem.rates.invoiced.toLocaleString()}` : `${ graphItem.lumpsum.invoiced.toLocaleString()}` }</td>
+                <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">{graphItem.budgettype === 'rates' ? `-` : `$ ${ graphItem.lumpsum.remaining.toLocaleString()}`}</td>
+                <td onClick={() => {setDialog2(graphItem.budgettype === 'lumpsum' && true), setComponentid(graphItem.componentid), setSubAmount(graphItem.lumpsum.subconts)}} className={` border-[1px] border-zinc-600 whitespace-normal break-all px-2 text-center cursor-pointer font-semibold text-red-500 ${graphItem.budgettype === 'lumpsum' && ''}`}> {graphItem.budgettype === 'rates' ? '-' : `$ ${graphItem.lumpsum.subconts.toLocaleString()}`}</td>
+                <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">$ {graphItem.budgettype === 'rates' ? `${ graphItem.rates.wip.toLocaleString()}` : ` ${ graphItem.lumpsum.wip.toLocaleString()}`}</td>
+                <td className="text-center border-[1px] border-zinc-600 whitespace-normal break-all px-2  ">{graphItem.budgettype === 'rates' ? `-` : `$ ${ graphItem.lumpsum.catchupinv.toLocaleString()}`}</td>
+              </tr>
               );
             })}
 

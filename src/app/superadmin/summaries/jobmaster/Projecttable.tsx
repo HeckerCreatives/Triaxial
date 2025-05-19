@@ -48,6 +48,7 @@ import {
 
 type Components = {
   name: string,
+  isVariation: boolean
   estimatedBudget: number,
   members: [
     {
@@ -102,7 +103,7 @@ export default function Projecttable() {
     setLoading(true)
     const timer = setTimeout(() => {
       const getList = async () => {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/projects/listprojectsa?searchproject=${search}&page=${currentpage}&limit=10&filter=${teamid}`,{
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/projects/listprojectsa?searchproject=${search}&page=${currentpage}&limit=10&filter=${teamid !== 'all' ? teamid : ''}`,{
           withCredentials: true,
           headers: {
             'Content-Type': 'application/json'
@@ -161,6 +162,8 @@ export default function Projecttable() {
                         {team.map((item, index) => (
                           <SelectItem value={item.teamid}>{item.teamname}</SelectItem>
                         ))}
+                          <SelectItem value='all'>All</SelectItem>
+
                        
                       </SelectContent>
                     </Select>
@@ -202,22 +205,22 @@ export default function Projecttable() {
         <TableBody>
         {list.map((project) =>
           project.jobComponents.map((job, index) => (
-            <TableRow key={index} className=' text-white'>
-              <TableCell className={` ${clientColor(project.priority)} text-black underline cursor-pointer`}>
-                <a href={`/superadmin/graph/jobcomponent?teamid=${project.teamid}&jobno=${job.id}`} className=' '>{project.jobno}</a>
+            <TableRow key={index} className={``}>
+              <TableCell className={` ${clientColor(project.priority)} underline cursor-pointer`}>
+                <a href={`/superadmin/graph/jobcomponent?teamid=${project.teamid}&jobno=${job.id}&teamname=${project.teamname}`} className={`${job.isVariation ? 'text-red-500' : 'text-black'}`}>{project.jobno}</a>
 
               </TableCell>
-              <TableCell className={` ${clientColor(project.priority)} text-black`}>{project.client}</TableCell>
-              <TableCell className={` ${clientColor(project.priority)} text-black`}>{project.projectname}</TableCell>
-              <TableCell className={` ${clientColor(project.priority)} text-black`}>{project.managerName}</TableCell>
-              <TableCell className={` ${clientColor(project.priority)} text-black`}>${job.estimatedBudget?.toLocaleString()}</TableCell>
-              <TableCell className={` ${clientColor(project.priority)} text-black`}>{project.invoiced}%</TableCell>
-              <TableCell className={` ${clientColor(project.priority)} text-black`}>{job.name}</TableCell>
-              <TableCell className={` flex items-center gap-2 h-[50px] ${clientColor(project.priority)} text-black`}>{job.members?.map((item, index) => (
+              <TableCell className={` ${clientColor(project.priority)} ${job.isVariation ? 'text-red-500' : 'text-black'}`}>{project.client}</TableCell>
+              <TableCell className={` ${clientColor(project.priority)} ${job.isVariation ? 'text-red-500' : 'text-black'}`}>{project.projectname}</TableCell>
+              <TableCell className={` ${clientColor(project.priority)} ${job.isVariation ? 'text-red-500' : 'text-black'}`}>{project.managerName}</TableCell>
+              <TableCell className={` ${clientColor(project.priority)} ${job.isVariation ? 'text-red-500' : 'text-black'}`}>${job.estimatedBudget?.toLocaleString()}</TableCell>
+              <TableCell className={` ${clientColor(project.priority)} ${job.isVariation ? 'text-red-500' : 'text-black'}`}>{project.invoiced}%</TableCell>
+              <TableCell className={` ${clientColor(project.priority)} ${job.isVariation ? 'text-red-500' : 'text-black'}`}>{job.name}</TableCell>
+              <TableCell className={` flex items-center gap-2 h-[50px] ${clientColor(project.priority)} ${job.isVariation ? 'text-red-500' : 'text-black'}`}>{job.members?.map((item, index) => (
                 <a href={`/superadmin/individualworkload?employeeid=${item.id}&name=${item.initial}&teamname=${job.name}`} className=' underline cursor-pointer'>{item.initial || ''}</a>
                 // <p key={index} className=' h-full'></p>
               ))}</TableCell>
-              <TableCell className={` ${clientColor(project.priority)} text-black`}>{project.teamname}</TableCell>
+              <TableCell className={` ${clientColor(project.priority)} ${job.isVariation ? 'text-red-500' : 'text-black'}`}>{project.teamname}</TableCell>
             </TableRow>
           ))
         )}
