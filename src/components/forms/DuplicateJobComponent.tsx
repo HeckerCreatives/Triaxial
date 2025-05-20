@@ -460,7 +460,7 @@ export default function DuplicateJobComponent( prop: Data) {
                         
           <div className=' flex flex-col'>
            <Label className=" text-zinc-500">Job Number</Label>
-           <Input type='text' value={jobno} onChange={(e) => setJobno(e.target.value)} className=' text-xs bg-zinc-200' placeholder='Job no'/>
+           <Input type='text' maxLength={15} value={jobno} onChange={(e) => setJobno(e.target.value)} className=' text-xs bg-zinc-200' placeholder='Job no'/>
 
           </div>
                                               

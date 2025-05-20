@@ -218,7 +218,7 @@ export default function Createprojectform( prop: Data) {
 
            
            <label htmlFor="" className=' text-xs'>Job no</label>
-          <Input type='text' className=' text-xs h-[35px] bg-zinc-200' placeholder='Job no' {...register('jobno')}/>
+          <Input type='text' maxLength={15} className=' text-xs h-[35px] bg-zinc-200' placeholder='Job no' {...register('jobno')}/>
           {errors.jobno && <p className=' text-[.6em] text-red-500'>{errors.jobno.message}</p>}
 
 

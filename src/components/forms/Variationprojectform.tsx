@@ -124,7 +124,7 @@ export default function Variationprojectform( prop: Data) {
                     <div className=' flex items-start gap-4 mt-2'>
                     <div className=' w-full'>
                         <Label className=' mt-2 text-zinc-500'>Job no <span className=' text-red-700'>*</span></Label>
-                        <Input type='text' value={jobno} className=' text-xs h-[35px] bg-white' placeholder='Job no.' {...register("jobno")}/>
+                        <Input type='text' maxLength={15} value={jobno} className=' text-xs h-[35px] bg-white' placeholder='Job no.' {...register("jobno")}/>
                         {errors.jobno && <p className=' text-[.6em] text-red-500'>{errors.jobno.message}</p>}
 
                     </div>
