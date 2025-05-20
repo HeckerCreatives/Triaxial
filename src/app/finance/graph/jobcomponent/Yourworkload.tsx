@@ -1927,7 +1927,7 @@ export default function Yourworkload() {
                                               <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
                                                 <TooltipProvider delayDuration={.1}>
                                                   <Tooltip>
-                                                    <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.jobno, 10)}</TooltipTrigger>
+                                                    <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.jobno, 8)}</TooltipTrigger>
                                                     <TooltipContent className=' text-[.6rem]'>
                                                       <p>{memberIndex === 0 && graphItem.jobno}</p>
                                                     </TooltipContent>
