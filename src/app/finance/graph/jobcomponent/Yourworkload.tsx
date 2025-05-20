@@ -1874,11 +1874,14 @@ export default function Yourworkload() {
 
                                           
                                           // Sum all hours for the member
-                                           const totalHours = member.dates?.reduce((sum, date) => {
-                                            // Skip hours if the status array includes 'Leave'
-                                            if (date.status?.includes('Leave')) {
+                                          const totalHours = member.dates?.reduce((sum, date) => {
+                                            const day = new Date(date.date).getDay();
+
+                                            // Skip if it's a weekend or if status includes 'Leave'
+                                            if (day === 0 || day === 6 || date.status?.includes('Leave')) {
                                               return sum;
                                             }
+
                                             return sum + date.hours;
                                           }, 0) || 0;
                     
@@ -1895,7 +1898,7 @@ export default function Yourworkload() {
 
                                               className={`text-left text-[.55rem] py-2 h-[31px] border-[1px] border-zinc-600 border-collapse ${graphItem.isVariation ? 'text-red-600' : 'text-black'} ${clientColor(graphItem.clientname.priority)}`}
                                             >
-                                              <td className="text-center text-white flex items-center justify-center gap-1">
+                                              <td className="text-center text-white h-[29.9px] flex items-center justify-center gap-1">
                                                 {memberIndex === 0 && (
                                                   <input
                                                     type="checkbox"
@@ -1924,7 +1927,7 @@ export default function Yourworkload() {
                                               <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
                                                 <TooltipProvider delayDuration={.1}>
                                                   <Tooltip>
-                                                    <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.jobno, 20)}</TooltipTrigger>
+                                                    <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.jobno, 10)}</TooltipTrigger>
                                                     <TooltipContent className=' text-[.6rem]'>
                                                       <p>{memberIndex === 0 && graphItem.jobno}</p>
                                                     </TooltipContent>
@@ -2440,26 +2443,27 @@ export default function Yourworkload() {
                                                <label className="block text-sm font-medium">End Date</label>
              
              
-                                                 <DatePicker
-                                                                                                 selected={form.enddate ? new Date(form.enddate) : null}
-                                                                                                 onChange={(date) =>
-                                                                                                   handleChange(
-                                                                                                     index,
-                                                                                                     "enddate",
-                                                                                                     date
-                                                                                                       ? new Date(date.getTime() + 1 * 24 * 60 * 60 * 1000).toISOString()
-                                                                                                       : ""
-                                                                                                   )
-                                                                                                 }
-                                                                                                 startDate={new Date(startReq)}
-                                                                                                 maxDate={new Date(endReq)}
-                                                                                                 selectsEnd 
-                                                                                                 minDate={new Date(startReq)} 
-                                                                                                 dateFormat="dd/MM/yyyy"
-                                                                                                 placeholderText="DD/MM/YYYY"
-                                                                                                 className="bg-primary text-xs p-2 w-fit relative"
-                                                                                                 onKeyDown={(e) => e.preventDefault()}
-                                                                                               />
+                                                <DatePicker
+                                                selected={form.enddate ? new Date(form.enddate) : null}
+                                                onChange={(date) =>
+                                                  handleChange(
+                                                    index,
+                                                    "enddate",
+                                                    date
+                                                      ? new Date(date.getTime() + 1 * 24 * 60 * 60 * 1000).toISOString()
+                                                      : ""
+                                                  )
+                                                }
+                                                startDate={new Date(startReq)}
+                                                maxDate={new Date(endReq)}
+                                                selectsEnd 
+                                                minDate={new Date(startReq)} 
+                                                dateFormat="dd/MM/yyyy"
+                                                placeholderText="DD/MM/YYYY"
+                                                className="bg-primary text-xs p-2 w-fit relative"
+                                                onKeyDown={(e) => e.preventDefault()}
+                                              />
+
              
                                              
                                              </div>

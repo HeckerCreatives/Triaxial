@@ -1874,11 +1874,14 @@ export default function Yourworkload() {
 
                                           
                                           // Sum all hours for the member
-                                           const totalHours = member.dates?.reduce((sum, date) => {
-                                            // Skip hours if the status array includes 'Leave'
-                                            if (date.status?.includes('Leave')) {
+                                          const totalHours = member.dates?.reduce((sum, date) => {
+                                            const day = new Date(date.date).getDay();
+
+                                            // Skip if it's a weekend or if status includes 'Leave'
+                                            if (day === 0 || day === 6 || date.status?.includes('Leave')) {
                                               return sum;
                                             }
+
                                             return sum + date.hours;
                                           }, 0) || 0;
                     
@@ -1893,9 +1896,9 @@ export default function Yourworkload() {
                                                   }
                                                 }}
 
-                                              className={`text-left text-[.55rem] py-2 h-[30px] border-[1px] border-zinc-600 border-collapse ${graphItem.isVariation ? 'text-red-600' : 'text-black'} ${clientColor(graphItem.clientname.priority)}`}
+                                              className={`text-left text-[.55rem] py-2 h-[31px] border-[1px] border-zinc-600 border-collapse ${graphItem.isVariation ? 'text-red-600' : 'text-black'} ${clientColor(graphItem.clientname.priority)}`}
                                             >
-                                              <td className="text-center text-white h-[31px] flex items-center justify-center gap-1">
+                                              <td className="text-center text-white h-[29.9px] flex items-center justify-center gap-1">
                                                 {memberIndex === 0 && (
                                                   <input
                                                     type="checkbox"
@@ -2213,7 +2216,7 @@ export default function Yourworkload() {
                           return (
                             <tr
                               key={`${graphIndex}-${memberIndex}`}
-                              className="bg-primary text-[.6rem] py-2 h-[31.8px] border-[1px] border-zinc-600"
+                              className="bg-primary text-[.6rem] py-2 h-[31px] border-[1px] border-zinc-600"
                             >
                               {longestAlldates.allDates.map((dateObj, index) => {
                                 const date = new Date(dateObj);

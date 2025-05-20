@@ -155,6 +155,7 @@ export default function Yourworkload() {
   const [projectid, setProjectid] = useState('')
   const params = useSearchParams()
   const id = params.get('teamid')
+  const jobid = params.get('682ada5577050389a5178073')
   const scrollId= params.get('jobno')
   const refresh = params.get('state')
   const [addStatus, setAddstatus] = useState<string[]>([])
@@ -198,6 +199,9 @@ export default function Yourworkload() {
 
   const containerRef1 = useRef<HTMLDivElement>(null);
   const containerRef2 = useRef<HTMLDivElement>(null);
+  // const rowRefs = useRef<{ [key: string]: HTMLTableRowElement | null }>({});
+  const rowRefs = useRef<{ [key: string]: HTMLTableRowElement | null }>({});
+
 
   const isDownRef = useRef(false);
   const startXRef = useRef(0);
@@ -995,7 +999,30 @@ export default function Yourworkload() {
     return selectedDate.getTime() >= today.getTime();
   };
 
-  console.log(containerRef1, containerRef2)
+
+  useEffect(() => {
+     const timeout = setTimeout(() => {
+      if (scrollId && typeof scrollId === 'string') {
+        const rowElement = rowRefs.current[scrollId];
+        console.log('Attempting scroll', rowElement, scrollId);
+
+        if (rowElement) {
+          rowElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          });
+        }
+
+    
+    }
+     return () => clearTimeout(timeout);
+  }, 5000);
+  
+}, [scrollId]);
+
+
+  console.log('Available rowRefs:', Object.keys(rowRefs.current));
+
 
 
   return (
@@ -1037,7 +1064,7 @@ export default function Yourworkload() {
                   </div>
                 </Createprojectcomponent>
 
-                {componentid === '' ? (
+                    {componentid === '' ? (
                   <div className=' flex flex-col items-center justify-center gap-1 text-[.6rem] w-[40px]'>
                     <button  onClick={() => toast.error('Please select a job component below')} className={`text-xs p-1 bg-red-600  rounded-sm`}><Pen size={20}/></button>
                     <p>Edit</p>
@@ -1343,7 +1370,7 @@ export default function Yourworkload() {
                                               <td className=' border-[1px] border-zinc-600 px-1'>AL, SL & Other Leaves</td>
                                               <td className=' border-[1px] border-zinc-600 px-1'></td>
                                               <td className=' border-[1px] border-zinc-600 px-1'></td>
-                                              <td  className=" border-[1px] border-zinc-600 px-2 text-start">{item.initial}</td>
+                                              <td className=" border-[1px] border-zinc-600 px-2 text-start">{item.initial}</td>
                                               <td></td>
                   
                                             </tr>
@@ -1370,9 +1397,9 @@ export default function Yourworkload() {
                                                                 <tr 
                                                                   key={`${graphItem._id}-${memberIndex}`}
                                                                   data-invoice-id={graphItem._id} 
-                                                                  className={`text-left text-[.5rem] py-2 h-[31px] border-[1px] border-zinc-600 border-collapse ${graphItem.isVariation ? 'text-red-600 font-black' : 'text-black'} ${clientColor(graphItem.clientname.priority)}`}
+                                                                  className={`text-left text-[.5rem] py-2 h-[30px] border-[1px] border-zinc-600 border-collapse ${graphItem.isVariation ? 'text-red-600 font-black' : 'text-black'} ${clientColor(graphItem.clientname.priority)}`}
                                                                 >
-                                                                  <td className="text-center text-white flex items-center justify-center gap-1">
+                                                                  <td className="text-center text-white h-[30px] flex items-center justify-center gap-1">
                                                                     {memberIndex === 0 && (
                                                                       <input
                                                                         type="checkbox"
@@ -1822,7 +1849,7 @@ export default function Yourworkload() {
                           <td className=' border-[1px] border-zinc-600 px-1'>AL, SL & Other Leaves</td>
                           <td className=' border-[1px] border-zinc-600 px-1'></td>
                           <td className=' border-[1px] border-zinc-600 px-1'></td>
-                          <td onClick={() => router.push(`/finance/individualworkload?employeeid=${item.id}&name=${item.name}&teamname=${list[0].teamname}`)} className=" border-[1px] border-zinc-600 px-2 text-start cursor-pointer underline text-blue-400">{item.initial}</td>
+                          <td onClick={() => router.push(`/superadmin/individualworkload?employeeid=${item.id}&name=${item.name}&teamname=${list[0].teamname}`)} className=" border-[1px] border-zinc-600 px-2 text-start cursor-pointer underline text-blue-400">{item.initial}</td>
                           <td></td>
 
                         </tr>
@@ -1844,22 +1871,34 @@ export default function Yourworkload() {
                                           return (indexA === -1 ? 999 : indexA) - (indexB === -1 ? 999 : indexB);
                                         })
                                         .map((member, memberIndex) => {
+
+                                          
                                           // Sum all hours for the member
-                                           const totalHours = member.dates?.reduce((sum, date) => {
-                                            // Skip hours if the status array includes 'Leave'
-                                            if (date.status?.includes('Leave')) {
+                                          const totalHours = member.dates?.reduce((sum, date) => {
+                                            const day = new Date(date.date).getDay();
+
+                                            // Skip if it's a weekend or if status includes 'Leave'
+                                            if (day === 0 || day === 6 || date.status?.includes('Leave')) {
                                               return sum;
                                             }
+
                                             return sum + date.hours;
                                           }, 0) || 0;
                     
                                           return (
                                             <tr 
                                               key={`${graphItem._id}-${memberIndex}`}
-                                              data-invoice-id={graphItem._id} 
-                                              className={`text-left text-[.55rem] py-2 h-[30px] border-[1px] border-zinc-600 border-collapse ${graphItem.isVariation ? 'text-red-600' : 'text-black'} ${clientColor(graphItem.clientname.priority)}`}
+                                                data-invoice-id={graphItem._id}
+                                               ref={el => {
+                                                  if (memberIndex === 0) {
+                                                    console.log('Setting ref for', graphItem._id, el);
+                                                    rowRefs.current[graphItem._id] = el;
+                                                  }
+                                                }}
+
+                                              className={`text-left text-[.55rem] py-2 h-[31px] border-[1px] border-zinc-600 border-collapse ${graphItem.isVariation ? 'text-red-600' : 'text-black'} ${clientColor(graphItem.clientname.priority)}`}
                                             >
-                                              <td className="text-center text-white h-[30px] flex items-center justify-center gap-1">
+                                              <td className="text-center text-white h-[29.9px] flex items-center justify-center gap-1">
                                                 {memberIndex === 0 && (
                                                   <input
                                                     type="checkbox"
@@ -1876,6 +1915,10 @@ export default function Yourworkload() {
                                                       setNotes4(graphItem.members[3]?.notes || "");
                                                       setIsmanager(graphItem.jobmanager.isManager);
                                                       setIsjobmanager(graphItem.jobmanager.isJobManager);
+
+                                                      setTimeout(() => {
+                                                        rowRefs.current[graphItem._id]?.scrollIntoView({ behavior: "smooth", block: "center" });
+                                                      }, 100); 
                                                     }}
                                                   />
                                                 )}
@@ -1884,7 +1927,7 @@ export default function Yourworkload() {
                                               <td className="text-wrap whitespace-normal break-all border-[1px] border-zinc-600 px-2">
                                                 <TooltipProvider delayDuration={.1}>
                                                   <Tooltip>
-                                                    <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.jobno, 20)}</TooltipTrigger>
+                                                    <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.jobno, 10)}</TooltipTrigger>
                                                     <TooltipContent className=' text-[.6rem]'>
                                                       <p>{memberIndex === 0 && graphItem.jobno}</p>
                                                     </TooltipContent>
@@ -2081,13 +2124,13 @@ export default function Yourworkload() {
                                         ))}
                                       </div>
                                       <p className="relative text-black font-bold text-[.45rem] z-30">
-                                        {
-                                                                               member.leave?.some(leave =>
-                                                                                 isDateInRange(formatDate(dateObj), leave.leavestart, leave.leaveend)
-                                                                               )
-                                                                                 ? Math.max(memberDate?.totalhoursofjobcomponents ?? 0, 0).toLocaleString() // ensures result is never negative
-                                                                                 : '-'
-                                                                                  }
+                                          {
+                                        member.leave?.some(leave =>
+                                          isDateInRange(formatDate(dateObj), leave.leavestart, leave.leaveend)
+                                        )
+                                          ? Math.max(memberDate?.totalhoursofjobcomponents ?? 0, 0).toLocaleString() // ensures result is never negative
+                                          : '-'
+                                           }
                                       </p>
                                     </td>
     
@@ -2278,8 +2321,9 @@ export default function Yourworkload() {
                                               )
                                         } */}
 
-                                                                               {memberDate?.status?.includes('Leave') ? '-' : memberDate?.hours.toLocaleString() ?? '-'}
+                                        {memberDate?.status?.includes('Leave') ? '-' : memberDate?.hours.toLocaleString() ?? '-'}
 
+                                        {/* { memberDate?.hours.toLocaleString()} */}
                                       </p>
                                     </td>
     
@@ -2399,26 +2443,27 @@ export default function Yourworkload() {
                                                <label className="block text-sm font-medium">End Date</label>
              
              
-                                                 <DatePicker
-                                                                                                 selected={form.enddate ? new Date(form.enddate) : null}
-                                                                                                 onChange={(date) =>
-                                                                                                   handleChange(
-                                                                                                     index,
-                                                                                                     "enddate",
-                                                                                                     date
-                                                                                                       ? new Date(date.getTime() + 1 * 24 * 60 * 60 * 1000).toISOString()
-                                                                                                       : ""
-                                                                                                   )
-                                                                                                 }
-                                                                                                 startDate={new Date(startReq)}
-                                                                                                 maxDate={new Date(endReq)}
-                                                                                                 selectsEnd 
-                                                                                                 minDate={new Date(startReq)} 
-                                                                                                 dateFormat="dd/MM/yyyy"
-                                                                                                 placeholderText="DD/MM/YYYY"
-                                                                                                 className="bg-primary text-xs p-2 w-fit relative"
-                                                                                                 onKeyDown={(e) => e.preventDefault()}
-                                                                                               />
+                                                <DatePicker
+                                                selected={form.enddate ? new Date(form.enddate) : null}
+                                                onChange={(date) =>
+                                                  handleChange(
+                                                    index,
+                                                    "enddate",
+                                                    date
+                                                      ? new Date(date.getTime() + 1 * 24 * 60 * 60 * 1000).toISOString()
+                                                      : ""
+                                                  )
+                                                }
+                                                startDate={new Date(startReq)}
+                                                maxDate={new Date(endReq)}
+                                                selectsEnd 
+                                                minDate={new Date(startReq)} 
+                                                dateFormat="dd/MM/yyyy"
+                                                placeholderText="DD/MM/YYYY"
+                                                className="bg-primary text-xs p-2 w-fit relative"
+                                                onKeyDown={(e) => e.preventDefault()}
+                                              />
+
              
                                              
                                              </div>
