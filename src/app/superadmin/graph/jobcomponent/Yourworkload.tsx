@@ -1893,7 +1893,7 @@ export default function Yourworkload() {
                                                   }
                                                 }}
 
-                                              className={`text-left text-[.55rem] py-2 h-[31px] border-[1px] border-zinc-600 border-collapse ${graphItem.isVariation ? 'text-red-600' : 'text-black'} ${clientColor(graphItem.clientname.priority)}`}
+                                              className={`text-left text-[.55rem] py-2 h-[30px] border-[1px] border-zinc-600 border-collapse ${graphItem.isVariation ? 'text-red-600' : 'text-black'} ${clientColor(graphItem.clientname.priority)}`}
                                             >
                                               <td className="text-center text-white h-[31px] flex items-center justify-center gap-1">
                                                 {memberIndex === 0 && (
@@ -2213,7 +2213,7 @@ export default function Yourworkload() {
                           return (
                             <tr
                               key={`${graphIndex}-${memberIndex}`}
-                              className="bg-primary text-[.6rem] py-2 h-[31px] border-[1px] border-zinc-600"
+                              className="bg-primary text-[.6rem] py-2 h-[31.8px] border-[1px] border-zinc-600"
                             >
                               {longestAlldates.allDates.map((dateObj, index) => {
                                 const date = new Date(dateObj);

@@ -589,7 +589,7 @@ export default function Createprojectcomponent( prop: Data) {
                                                                                     <Label className="text-zinc-500">
                                                                                       Client Name<span className="text-red-500 text-lg">*</span>
                                                                                     </Label>
-                                                                                    <Select value={clientid} onValueChange={setClientid} disabled={!!client}>
+                                                                                    <Select value={clientid} onValueChange={setClientid} disabled={client.trim() !== ''} >
                                                                                       <SelectTrigger className="text-xs h-[35px] bg-white">
                                                                                         <SelectValue placeholder="Select Client" className="text-black" />
                                                                                       </SelectTrigger>
@@ -602,9 +602,9 @@ export default function Createprojectcomponent( prop: Data) {
                                                                                             {item.clientname}
                                                                                           </SelectItem>
                                                                                         ))}
-                                                                                        <SelectItem value='Other'>
+                                                                                        {/* <SelectItem value='Other'>
                                                                                             Other
-                                                                                          </SelectItem>
+                                                                                          </SelectItem> */}
                                                                                       </SelectContent>
                                                                                     </Select>
                                                                                   </div>
@@ -624,7 +624,7 @@ export default function Createprojectcomponent( prop: Data) {
                                                                                       onChange={(e) => setClient(e.target.value)}
                                                                                       className="text-xs h-[35px] bg-white"
                                                                                       placeholder="Client name"
-                                                                                      disabled={clientid !== 'Other'} // Disable if a client is selected
+                                                                                       disabled={clientid !== ''} // Disable if a client is selected
                                                                                     />
                                                                                   </div>
 

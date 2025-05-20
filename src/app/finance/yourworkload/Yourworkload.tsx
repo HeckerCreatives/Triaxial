@@ -394,8 +394,8 @@ export default function Yourworkload() {
           <thead className=' bg-secondary h-[95px]'>
 
             <tr className=' text-[0.5rem] text-zinc-100 font-normal border-collapse'>
-              <th className=' text-left font-normal min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Team</th>
-              <th className=' text-left font-normal min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Job No.</th>
+              {/* <th className=' text-left font-normal min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Team</th> */}
+              <th className=' text-left font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Job No.</th>
               <th className=' text-left font-normal min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Client</th>
               <th className=' text-left font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Project Name</th>
               <th className=' text-left font-normal min-w-[60px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Job Mgr.</th>
@@ -417,9 +417,7 @@ export default function Yourworkload() {
                           <td className=' border-[1px] border-zinc-600'></td>
                           <td className=' border-[1px] border-zinc-600'>AL, SL & Other Leaves</td>
                           <td className=' border-[1px] border-zinc-600'></td>
-                          <td className=' border-[1px] border-zinc-600'></td>
                           <td className=" border-[1px] border-zinc-600 px-2 text-start">{item.employee.initials}</td>
-                          <td className=' border-[1px] border-zinc-600'></td>
 
                         </tr>
                     )}
@@ -431,7 +429,7 @@ export default function Yourworkload() {
               <tr key={`${graphIndex}-${memberIndex}`} className={` text-black text-[.5rem] py-2 h-[40px] border-[1px] border-zinc-600 ${clientColor(graphItem.clientpriority)}`}>
                  
                   {/* <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">{graphItem.teamname}</td> */}
-                  <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                  {/* <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">
                   
                   <TooltipProvider delayDuration={.1}>
                     <Tooltip>
@@ -442,12 +440,12 @@ export default function Yourworkload() {
                     </Tooltip>
                   </TooltipProvider>
 
-                  </td>
+                  </td> */}
                   <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">
                   
                   <TooltipProvider delayDuration={.1}>
                     <Tooltip>
-                      <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.jobno, 5)}</TooltipTrigger>
+                      <TooltipTrigger>{memberIndex === 0 && truncateText(graphItem.jobno, 12)}</TooltipTrigger>
                       <TooltipContent>
                         <p className=' text-[.6rem]'>{memberIndex === 0 && graphItem.jobno}</p>
                       </TooltipContent>
@@ -518,7 +516,11 @@ export default function Yourworkload() {
                 <td className="text-left text-[.5rem whitespace-normal break-all border-[1px] border-zinc-600 px-2">{member.role}</td>
 
 
-                  <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">{graphItem.teammembers.join(", ")}</td>
+                  <td className="text-left whitespace-normal break-all border-[1px] border-zinc-600 px-2">{graphItem.teammembers
+                            .filter(item => item !== memberslist[0]?.employee.initials) // remove first
+                            .slice(0, 3) // limit to 3 items
+                            .join(', ')
+                          }</td>
 
               
 
@@ -674,13 +676,13 @@ export default function Yourworkload() {
              
                                                    <p className="relative text-black font-bold text-[.5rem] z-30">
                                                      {/* {memberDate ? memberDate.hours : '-'} */}
-                                                      {
-                                                         member.leaveDates?.some(leave =>
-                                                           isDateInRange(formatDate(dateObj), leave.leavestart, leave.leaveend)
-                                                         )
-                                                           ?  (memberDate?.hours ?? '-') 
-                                                           :'-' 
-                                                       }
+                                                       {
+                                                                                            member.leaveDates?.some(leave =>
+                                                                                              isDateInRange(formatDate(dateObj), leave.leavestart, leave.leaveend)
+                                                                                            )
+                                                                                              ? Math.max(memberDate?.hours ?? 0, 0).toLocaleString() // ensures result is never negative
+                                                                                              : '-'
+                                                                                               }
                                                    </p>
                                                  </td>
              
