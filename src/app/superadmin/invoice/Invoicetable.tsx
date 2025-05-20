@@ -82,7 +82,7 @@ export default function Invoicetable() {
     setLoading(true)
     const getInvoice = async () => {
         try {
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/invoice/getinvoicelistsa?jobnofilter=${jobno}&status=${status}&page=${currentpage}&limit=999999`,{
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/invoice/getinvoicelist?jobnofilter=${jobno}&status=${status}&page=${currentpage}&limit=999999`,{
                 withCredentials: true
             })
 
@@ -286,7 +286,7 @@ export default function Invoicetable() {
         </div>
 
         <div className=' flex items-center gap-2'>
-        {/* { status === 'Pending' && (
+        { status === 'Pending' && (
             <>
             {selectedItems.length === 0 ? (
             <button onClick={() => toast.error('Please select a invoice request below')} className=' bg-red-600 p-2 text-xs rounded-sm text-white flex items-center gap-2 w-fit mt-4'><RotateCw size={15}/>Proccess</button>
@@ -324,7 +324,7 @@ export default function Invoicetable() {
             </Dialog>
             )}
             </>
-        )} */}
+        )}
 
         {/* { status === 'Pending' && (
             <>
@@ -376,9 +376,9 @@ export default function Invoicetable() {
           )}
         <TableHeader>
             <TableRow>
-            {/* {status === 'Pending' && (
+            {status === 'Pending' && (
                 <TableHead className=" text-[.6rem]">Select</TableHead>
-            )} */}
+            )}
             <TableHead className=" text-[.6rem]">Timestamp</TableHead>
             {/* <TableHead className=" text-[.6rem]">Invoice Id</TableHead> */}
             <TableHead className=' text-[.6rem]'>Job Number</TableHead>
@@ -405,7 +405,7 @@ export default function Invoicetable() {
         <TableBody>
             {list.map((item, index) => (
                 <TableRow key={index}>
-                {/* {status === 'Pending' && (
+                {status === 'Pending' && (
                     <TableCell className="font-medium">
                         <input 
                         type="checkbox"
@@ -413,7 +413,7 @@ export default function Invoicetable() {
                         onChange={() => {handleSelect(item.invoiceid), setAmount(item.invoiceamount)}}
                         />
                     </TableCell> 
-                )} */}
+                )}
                
                 <TableCell className="font-medium text-[.6rem]">{DDMMYYHMS(item.createdAt)}</TableCell>
                 {/* <TableCell className="font-medium text-[.6rem]">{item.invoiceid}</TableCell> */}

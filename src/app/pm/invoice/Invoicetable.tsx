@@ -280,13 +280,13 @@ export default function Invoicetable() {
         
         <div className=' flex flex-col gap-1'>
                 <label htmlFor="" className=' text-xs'>Search</label>
-                <Input value={jobno} placeholder='Search job no.' onChange={(e) => setJobno(e.target.value)} type='text' className=' w-[300px] bg-primary text-zinc-100 text-xs h-[35px]'/>
+                <Input value={jobno} placeholder='Search job no (clear the input to reset)' onChange={(e) => setJobno(e.target.value)} type='text' className=' w-[300px] bg-primary text-zinc-100 text-xs h-[35px]'/>
             </div>
             
         </div>
 
         <div className=' flex items-center gap-2'>
-        {/* { status === 'Pending' && (
+        { status === 'Pending' && (
             <>
             {selectedItems.length === 0 ? (
             <button onClick={() => toast.error('Please select a invoice request below')} className=' bg-red-600 p-2 text-xs rounded-sm text-white flex items-center gap-2 w-fit mt-4'><RotateCw size={15}/>Proccess</button>
@@ -324,7 +324,7 @@ export default function Invoicetable() {
             </Dialog>
             )}
             </>
-        )} */}
+        )}
 
         {/* { status === 'Pending' && (
             <>
@@ -376,9 +376,9 @@ export default function Invoicetable() {
           )}
         <TableHeader>
             <TableRow>
-            {/* {status === 'Pending' && (
+            {status === 'Pending' && (
                 <TableHead className=" text-[.6rem]">Select</TableHead>
-            )} */}
+            )}
             <TableHead className=" text-[.6rem]">Timestamp</TableHead>
             {/* <TableHead className=" text-[.6rem]">Invoice Id</TableHead> */}
             <TableHead className=' text-[.6rem]'>Job Number</TableHead>
@@ -405,7 +405,7 @@ export default function Invoicetable() {
         <TableBody>
             {list.map((item, index) => (
                 <TableRow key={index}>
-                {/* {status === 'Pending' && (
+                {status === 'Pending' && (
                     <TableCell className="font-medium">
                         <input 
                         type="checkbox"
@@ -414,7 +414,7 @@ export default function Invoicetable() {
                         />
                     </TableCell> 
                 )}
-                */}
+               
                 <TableCell className="font-medium text-[.6rem]">{DDMMYYHMS(item.createdAt)}</TableCell>
                 {/* <TableCell className="font-medium text-[.6rem]">{item.invoiceid}</TableCell> */}
                 <TableCell className="font-medium text-[.6rem]">{item.jobcomponent.jobno}</TableCell>
