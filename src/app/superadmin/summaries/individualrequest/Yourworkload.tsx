@@ -93,7 +93,7 @@ export default function Yourworkload() {
     const getList = async () => {
     
         try {
-          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/getmasterleavelist?teamid=${id}&filterDate=${filterDate}`,{
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/jobcomponent/getmasterleavelist?teamid&filterDate=${filterDate}`,{
             withCredentials: true
           })
 
