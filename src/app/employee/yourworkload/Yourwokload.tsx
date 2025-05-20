@@ -394,7 +394,7 @@ export default function Yourworkload() {
           <thead className=' bg-secondary h-[95px]'>
 
             <tr className=' text-[0.5rem] text-zinc-100 font-normal border-collapse'>
-              {/* <th className=' text-left font-normal min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Team</th> */}
+              <th className=' text-left font-normal min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Team</th>
               <th className=' text-left font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Job No.</th>
               <th className=' text-left font-normal min-w-[50px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Client</th>
               <th className=' text-left font-normal min-w-[80px] whitespace-normal break-all border-[1px] border-zinc-600 px-2'>Project Name</th>
@@ -410,6 +410,7 @@ export default function Yourworkload() {
           <tbody>
                     {memberslist.map((item, graphIndex) =>
                         <tr key={`${graphIndex}`} className="bg-primary text-[.5rem] py-2 h-[30px] border-[1px] border-zinc-600">
+                          <td className=' border-[1px] border-zinc-600'></td>
                           <td className=' border-[1px] border-zinc-600'>TX10010.00-</td>
                           <td className=' border-[1px] border-zinc-600'></td>
                           <td className=' border-[1px] border-zinc-600'>Triaxial Consulting</td>
@@ -429,7 +430,7 @@ export default function Yourworkload() {
               <tr key={`${graphIndex}-${memberIndex}`} className={` text-black text-[.5rem] py-2 h-[40px] border-[1px] border-zinc-600 ${clientColor(graphItem.clientpriority)}`}>
                  
                   {/* <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">{graphItem.teamname}</td> */}
-                  {/* <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">
+                  <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">
                   
                   <TooltipProvider delayDuration={.1}>
                     <Tooltip>
@@ -440,7 +441,7 @@ export default function Yourworkload() {
                     </Tooltip>
                   </TooltipProvider>
 
-                  </td> */}
+                  </td>
                   <td className="text-left  whitespace-normal break-all border-[1px] border-zinc-600 px-2">
                   
                   <TooltipProvider delayDuration={.1}>
