@@ -526,6 +526,11 @@ export default function Createprojectcomponent( prop: Data) {
       
       
     },[])
+
+    useEffect(() =>{
+      setClient('')
+      setClientid('')
+    },[dialog])
   
 
 
