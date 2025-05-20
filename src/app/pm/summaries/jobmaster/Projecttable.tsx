@@ -207,7 +207,7 @@ export default function Projecttable() {
                   project.jobComponents.map((job, index) => (
                     <TableRow key={index} className={``}>
                       <TableCell className={` ${clientColor(project.priority)} underline cursor-pointer`}>
-                        <a href={`/pm/graph/jobcomponent?teamid=${project.teamid}&jobno=${job.id}&teamname=${project.teamname}`} className={`${job.isVariation ? 'text-red-500' : 'text-black'}`}>{project.jobno}</a>
+                        <a target='_blank' href={`/pm/graph/jobcomponent?teamid=${project.teamid}&jobno=${job.id}&teamname=${project.teamname}`} className={`${job.isVariation ? 'text-red-500' : 'text-black'}`}>{project.jobno}</a>
         
                       </TableCell>
                       <TableCell className={` ${clientColor(project.priority)} ${job.isVariation ? 'text-red-500' : 'text-black'}`}>{project.client}</TableCell>
