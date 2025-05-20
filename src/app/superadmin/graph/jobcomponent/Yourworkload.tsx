@@ -2440,21 +2440,27 @@ export default function Yourworkload() {
                                                <label className="block text-sm font-medium">End Date</label>
              
              
-                                                 <DatePicker
-                                                   selected={form.enddate ? new Date(form.enddate) : null} // Ensure a valid Date object
-                                                   onChange={(date) =>
-                                                     handleChange(index, "enddate", date ? date.toISOString() : "")
-                                                   }
-                                                   startDate={new Date(startReq)}
-                                                   maxDate={new Date(endReq)}
-                                                   selectsEnd 
-                                                   minDate={new Date(startReq)} 
-                                                   dateFormat="dd/MM/yyyy"
-                                                   placeholderText="DD/MM/YYYY"
-                                                   className="bg-primary text-xs p-2 w-fit relative"
-                                                   onKeyDown={(e) => e.preventDefault()}
-             
-                                                 />
+                                                <DatePicker
+                                                selected={form.enddate ? new Date(form.enddate) : null}
+                                                onChange={(date) =>
+                                                  handleChange(
+                                                    index,
+                                                    "enddate",
+                                                    date
+                                                      ? new Date(date.getTime() + 1 * 24 * 60 * 60 * 1000).toISOString()
+                                                      : ""
+                                                  )
+                                                }
+                                                startDate={new Date(startReq)}
+                                                maxDate={new Date(endReq)}
+                                                selectsEnd 
+                                                minDate={new Date(startReq)} 
+                                                dateFormat="dd/MM/yyyy"
+                                                placeholderText="DD/MM/YYYY"
+                                                className="bg-primary text-xs p-2 w-fit relative"
+                                                onKeyDown={(e) => e.preventDefault()}
+                                              />
+
              
                                              
                                              </div>
