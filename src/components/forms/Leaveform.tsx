@@ -335,14 +335,24 @@ export default function Leaveform( prop: Data) {
               <Label className=' mt-2 text-zinc-500'>Last Day Of Leave: <span className=' text-red-500'>*</span></Label>
               {/* <Input type='date' className=' text-xs h-[35px] bg-zinc-200' placeholder='Name' {...register('enddate', { onChange: (e) => setEnd(e.target.value)})}/> */}
               <DatePicker
-                selected={endDateValue} // Convert string to Date
-                onChange={(date) => {setValue("enddate", date?.toISOString().split("T")[0] || ''); setEnd(date?.toISOString().split("T")[0] || '')}} // Store as string
+                selected={endDateValue}
+                onChange={(date) => {
+                  if (date) {
+                    const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+                    const isoDate = localDate.toISOString().split("T")[0];
+                    setValue("enddate", isoDate);
+                    setEnd(isoDate);
+                  } else {
+                    setValue("enddate", '');
+                    setEnd('');
+                  }
+                }}
                 dateFormat="dd/MM/yyyy"
                 placeholderText="DD/MM/YYYY"
                 className="bg-zinc-100 text-xs p-2 w-fit z-[9999] relative rounded-md"
                 onKeyDown={(e) => e.preventDefault()}
-
               />
+
               {errors.enddate && <p className=' text-[.6em] text-red-500'>{errors.enddate.message}</p>}
 
             </div>
