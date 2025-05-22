@@ -326,7 +326,7 @@ export default function Invoice( prop: Props) {
                                     </td>
 
                                     <td className="text-left text-gray-700">
-                                    <Input max={100} type='number'  value={newInvoice} onChange={(e) => setNewInvoice(e.target.valueAsNumber)} placeholder='Amount' className=' bg-zinc-200 text-xs'/>
+                                    <Input max={100} type='number'  value={newInvoice} onChange={(e) => setNewInvoice(e.target.valueAsNumber)} placeholder='Amount' className=' bg-white text-xs'/>
                                     </td>
                                     </>
                                   ) : (
@@ -380,7 +380,7 @@ export default function Invoice( prop: Props) {
                                     value={amount}
                                     onChange={handleChange}
                                     placeholder="Amount"
-                                    className="bg-zinc-200 pl-6 text-xs w-full [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                                    className="bg-white pl-6 text-xs w-full [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                                 />
                             </div>
                         </>
@@ -392,7 +392,7 @@ export default function Invoice( prop: Props) {
                     
 
                       <label htmlFor="" className=' mt-8 text-xs'>Please insert an instruction or comments for the invoice</label>
-                      <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder=' Please input here' className=' bg-zinc-200 text-xs'/>
+                      <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder=' Please input here' className=' bg-white text-xs'/>
                       
                     </div>
 
