@@ -160,10 +160,10 @@ export default function Invoice( prop: Props) {
 
 
     const requestInvoiceRates = async () => {
-        if(amount as any > prop.estimatedbudget){
-            toast.error(`Invoice amount should not exceed to the estimated budget.`)              
+        // if(amount as any > prop.estimatedbudget){
+        //     toast.error(`Invoice amount should not exceed to the estimated budget.`)              
 
-        } else {
+        // } else {
             try {
                 const request = axios.post(`${process.env.NEXT_PUBLIC_API_URL}${dynamicCreateInvoiceApiUrl}`,{
                     jobcomponentid: prop.jobcid,
@@ -224,7 +224,7 @@ export default function Invoice( prop: Props) {
     
                 
             }
-        }
+        // }
         
     }
 
